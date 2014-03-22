@@ -21,19 +21,31 @@ The canonical pronunciation of Clojuratica starts with Clojure and rhymes with e
 
 ## Author ##
 
-Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the [Community](http://clojuratica.weebly.com/community.html) page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.
+Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the [Community](http://clojuratica.weebly.com/community.html) page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.  It is currently maintained by [Norman Richards](http://github.com/orb).
+
+## Dependencies ##
+
+Clojuratica requires J/Link, which is currently only available with a
+Mathematica install. On Mac OS X, for example, J/Link is located in
+`/Applications/Mathematica.app/SystemFiles/Links/JLink/JLink.jar`.
+
+To install JLink as a maven dependency:
+
+`mvn install:install-file -DgroupId=com.wolfram.jlink -DartifactId=JLink -Dversion=4.4 -Dpackaging=jar -Dfile=/Applications/Mathematica.app/SystemFiles/Links/JLink/JLink.jar`
+
+
+It is also necessary to set the `JLINK_LIB_DIR` to this directory.  For example:
+
+`export JLINK_LIB_DIR=/Applications/Mathematica.app/SystemFiles/Links/JLink/`
+
+The Clojuratica team is working on making the use of J/Link smoother.
+
 
 ## License ##
 
-Clojuratica is open-source software. It is released under the "Mozilla tri-license," otherwise known as the MPL/GPL/LGPL triple license. Permission is granted to use the software under the terms of any one of:
+* The [Mozilla Public License, version 2.0][MPL] or later (MPL)
 
-* The [Mozilla Public License, version 1.1][MPL] or later (MPL)
-* The [GNU General Public License, version 2][GPL] or later (GPL)
-* The [GNU Lesser General Public License, version 2.1][LGPL] or later (LGPL)
-
-[MPL]: http://www.mozilla.org/MPL/MPL-1.1.html
-[GPL]: http://www.gnu.org/licenses/gpl-2.0.html
-[LGPL]: http://www.gnu.org/licenses/lgpl-2.1.html
+[MPL]: http://www.mozilla.org/MPL/
 
 ## Legal ##
 
