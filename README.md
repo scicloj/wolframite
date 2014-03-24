@@ -31,21 +31,50 @@ Mathematica install. On Mac OS X, for example, J/Link is located in
 
 To install JLink as a maven dependency:
 
-`mvn install:install-file -DgroupId=com.wolfram.jlink -DartifactId=JLink -Dversion=4.4 -Dpackaging=jar -Dfile=/Applications/Mathematica.app/SystemFiles/Links/JLink/JLink.jar`
+```
+mvn install:install-file -DgroupId=com.wolfram.jlink -DartifactId=JLink -Dversion=4.4 -Dpackaging=jar -Dfile=jlink/JLink.jar
+```
 
+To install the JLink native JAR for OS X:
 
-It is also necessary to set the `JLINK_LIB_DIR` to this directory.  For example:
+```
+mvn install:install-file -DgroupId=com.wolfram.jlink -DartifactId=JLink-native -Dversion=4.4 -Dclassifier=native-osx -Dpackaging=jar -Dfile=jlink/JLink-native-osx.jar
+```
+
+If we don't have a native JAR for your platform, set the
+`JLINK_LIB_DIR` to the JLink directory in your platform's mathematica installation.
 
 `export JLINK_LIB_DIR=/Applications/Mathematica.app/SystemFiles/Links/JLink/`
 
 The Clojuratica team is working on making the use of J/Link smoother.
 
+## Running
+
+OS X Example
+```
+$ lein with-profile +osx repl
+nREPL server started on port 49363 on host 127.0.0.1
+REPL-y 0.3.0
+Clojure 1.5.1
+    Docs: (doc function-name-here)
+          (find-doc "part-of-name-here")
+  Source: (source function-name-here)
+ Javadoc: (javadoc java-object-or-class-here)
+    Exit: Control+D or (exit) or (quit)
+ Results: Stored in vars *1, *2, *3, an exception in *e
+
+user=> (init-osx)
+(#'user/math)
+user=> (math (WolframAlpha "How many licks does it take to get to the center of a Tootsie Pop?"))
+[(-> [["Input" 1] "Plaintext"] "How many licks does it take to get to the Tootsie Roll center of a Tootsie Pop?") (-> [["Result" 1] "Plaintext"] "3481\n(according to student researchers at the University of Cambridge)")]
+user=> (math (N Pi 20))
+3.141592653589793238462643383279502884197169399375105820285M
+```
 
 ## License ##
 
-* The [Mozilla Public License, version 2.0][MPL] or later (MPL)
-
-[MPL]: http://www.mozilla.org/MPL/
+Distributed under the Eclipse Public License either version 1.0 or (at
+your option) any later version.
 
 ## Legal ##
 
