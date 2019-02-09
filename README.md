@@ -1,5 +1,33 @@
 # Clojuratica #
 
+## Dan's Fork ##
+The original authors seem to have moved on; so far I've only updated the project.clj to bring things up to a more recent version of Clojure (and JLink to match Mathematica 11.3), I added the lein-repo plugin for folks that don't want to mess with the Maven steps below and wrote a basic (init-win) function for Windows users.
+
+As far as real improvements go I'd like to:
+- [ ] Add support for plotting
+- [ ] Replace the home-grown HashMaps with Mathematica's built-in Associations (they weren't in Mathematica when the original author wrote the package)
+
+Assuming you're on OS X or Windows and have Mathematica installed in the default location you should be able to run:
+```
+lein localrepo install "C:/Program Files/Wolfram Research/Mathematica/11.3/SystemFiles/Links/JLink/JLink.jar" com.wolfram.jlink/JLink 4.9.1
+
+lein repl
+```
+
+A few things to try/example outputs:
+```
+user=> (math (Dot [1 2 3] [4 5 6]))
+32
+user=> (math (D (Power x 2) x))
+(* 2 x)
+user=> (math (ChemicalData "Ethanol" "MolarMass"))
+(Quantity 46.069M (* "Grams" (Power "Moles" -1)))
+```
+
+Now back to the original README...
+
+---------------------------------
+
 An interface between Clojure and Wolfram Mathematica.
 
 ## What is Clojuratica? ##

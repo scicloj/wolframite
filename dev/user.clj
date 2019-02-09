@@ -13,3 +13,12 @@
   (.discardAnswer kernel-link)
   (defonce math-evaluate (math-evaluator kernel-link))
   (def-math-macro math math-evaluate))
+
+
+(defn init-win []
+  (def cmdline "-linkmode launch -linkname '\"/c:/Program Files/Wolfram Research/Mathematica/11.3/MathKernel.exe\"'")
+
+  (def kernel-link (MathLinkFactory/createKernelLink cmdline))
+  (.discardAnswer kernel-link)
+  (defonce math-evaluate (math-evaluator kernel-link))
+  (def-math-macro math math-evaluate))
