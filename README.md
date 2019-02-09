@@ -16,6 +16,8 @@ lein repl
 
 A few things to try/example outputs:
 ```
+(init-win) ; If your path is different this may pop up a window where you can manually locate MathKernel.exe
+(#'user/math)
 user=> (math (Dot [1 2 3] [4 5 6]))
 32
 user=> (math (D (Power x 2) x))
