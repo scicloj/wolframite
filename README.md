@@ -34,7 +34,7 @@ user=> (math (ChemicalData "Ethanol" "MolarMass"))
 user=>
 ```
 
-#![](./mma1.png)
+![](./mma1.png)
 
 -----
 
