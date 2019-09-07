@@ -33,6 +33,9 @@ user=> (math (ChemicalData "Ethanol" "MolarMass"))
 (Quantity 46.069M (* "Grams" (Power "Moles" -1)))
 user=>
 ```
+
+#[](./mma1.png)
+
 -----
 
 ## Dan's Fork ##
