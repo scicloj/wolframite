@@ -2,6 +2,15 @@
 ;;http://clojuratica.weebly.com/intro.html
 ;;http://clojuratica.weebly.com/tutorial.html
 
+;; 用mma来辅助机器学习
+;;https://www.wolfram.com/language/elementary-introduction/2nd-ed/35-natural-language-understanding.html
+;;https://reference.wolfram.com/language/guide/LinguisticData.html
+;;https://reference.wolfram.com/language/guide/MachineLearning.html
+;;https://reference.wolfram.com/language/guide/TextAnalysis.html
+;;https://reference.wolfram.com/language/guide/ProcessingTextualData.html
+(init-osx)
+;;
+
 (math (Dot [1 2 3] [4 5 6])) ;; => 32
 
 (math (D (Power x 2) x)) ;;=> (* 2 x)
@@ -160,3 +169,72 @@ PlusFn ;; => #object[clojuratica.base.parse$parse_fn$fn__311 0x65b88b76 "clojura
    (doall (map await agents))
    (map deref agents))) ;; 函数定义总是用不了!!!
 ;; :cause "clojure.lang.PersistentList cannot be cast to clojure.lang.IFn"
+
+;; ==================== 你不够速度不够块就会被黑暗吞噬
+;; https://reference.wolfram.com/language/ref/TextStructure.html
+(clojure.pprint/pprint
+ (math (TextStructure "The cat sat on the mat.")))
+;;=>
+(TextElement
+ [(TextElement
+   [(TextElement
+     [(TextElement
+       "The"
+       (Association
+        (->
+         "GrammaticalUnit"
+         (Entity "GrammaticalUnit" "Determiner"))))
+      (TextElement
+       "cat"
+       (Association
+        (-> "GrammaticalUnit" (Entity "GrammaticalUnit" "Noun"))))]
+     (Association
+      (-> "GrammaticalUnit" (Entity "GrammaticalUnit" "NounPhrase"))))
+    (TextElement
+     [(TextElement
+       "sat"
+       (Association
+        (-> "GrammaticalUnit" (Entity "GrammaticalUnit" "Verb"))))
+      (TextElement
+       [(TextElement
+         "on"
+         (Association
+          (->
+           "GrammaticalUnit"
+           (Entity "GrammaticalUnit" "Preposition"))))
+        (TextElement
+         [(TextElement
+           "the"
+           (Association
+            (->
+             "GrammaticalUnit"
+             (Entity "GrammaticalUnit" "Determiner"))))
+          (TextElement
+           "mat"
+           (Association
+            (-> "GrammaticalUnit" (Entity "GrammaticalUnit" "Noun"))))]
+         (Association
+          (->
+           "GrammaticalUnit"
+           (Entity "GrammaticalUnit" "NounPhrase"))))]
+       (Association
+        (->
+         "GrammaticalUnit"
+         (Entity "GrammaticalUnit" "PrepositionalPhrase"))))]
+     (Association
+      (-> "GrammaticalUnit" (Entity "GrammaticalUnit" "VerbPhrase"))))
+    (TextElement
+     "."
+     (Association
+      (->
+       "GrammaticalUnit"
+       (Entity "GrammaticalUnit" "Punctuation"))))]
+   (Association
+    (-> "GrammaticalUnit" (Entity "GrammaticalUnit" "Sentence"))))])
+
+;; INTERPRETER["CITY"]["NYC"]
+(math ((Interpreter "City")  "cyc"))
+;; => (Failure "InterpretationFailure" (Association
+
+;; 会显示一颗文本树
+(math (TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs"))
