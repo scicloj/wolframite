@@ -1,5 +1,40 @@
 # Clojuratica #
 
+## Steve Chan Update
+```clojure
+;; in project.clj
+  ;; 参考两年前项目: https://github.com/chanshunli/clj-jri
+  :jvm-opts [~(str "-Djava.library.path=/Applications/Mathematica.app/Contents/SystemFiles/Links/JLink:"
+                   (System/getProperty "java.library.path"))]
+
+  :resource-paths ["/Applications/Mathematica.app/Contents/SystemFiles/Links/JLink/JLink.jar"]
+  
+```
+```bash
+坚持去λ化(eshell) Clojuratica  master $ lein repl
+nREPL server started on port 50577 on host 127.0.0.1 - nrepl://127.0.0.1:50577
+REPL-y 0.4.3, nREPL 0.6.0
+Clojure 1.9.0
+Java HotSpot(TM) 64-Bit Server VM 1.8.0_121-b13
+    Docs: (doc function-name-here)
+          (find-doc "part-of-name-here")
+  Source: (source function-name-here)
+ Javadoc: (javadoc java-object-or-class-here)
+    Exit: Control+D or (exit) or (quit)
+ Results: Stored in vars *1, *2, *3, an exception in *e
+
+user=> (init-osx)
+(#'user/math)
+user=> (math (Dot [1 2 3] [4 5 6]))
+32
+user=> (math (D (Power x 2) x))
+(* 2 x)
+user=> (math (ChemicalData "Ethanol" "MolarMass"))
+(Quantity 46.069M (* "Grams" (Power "Moles" -1)))
+user=>
+```
+-----
+
 ## Dan's Fork ##
 The original authors seem to have moved on; so far I've only updated the project.clj to bring things up to a more recent version of Clojure (and JLink to match Mathematica 11.3), I added the lein-repo plugin for folks that don't want to mess with the Maven steps below and wrote a basic (init-win) function for Windows users.
 
