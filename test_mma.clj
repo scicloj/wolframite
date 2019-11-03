@@ -44,7 +44,20 @@
   (math
    (Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output."))))
 
+;;( (list 11 22) "aaa") java.lang.ClassCastException: clojure.lang.PersistentList cannot be cast to clojure.lang.IFn
+
 ;;(hello "World") ;; :cause "clojure.lang.PersistentList cannot be cast to clojure.lang.IFn"
+
+;;(first hello) => ClojurianScopes/Function
+;;(math (hello "World")) ;; => (hello "World")
+
+;;(math ((Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output.")) "aaa"))
+;; => ((ClojurianScopes/Function [x] (<> "Hello, " x "! This is a Mathematica function's output.")) "aaa")
+
+;; 需要看 ClojurianScopes.m的实现, mma里面是如何封装Function函数的
+;; ClojurianScopes`Function[bindings_, body__] := Function[bindings, CompoundExpression[body]];
+;; ClojurianScopes`Function[body__] := Function[CompoundExpression[body]];
+
 
 (def test-mma-fn (math (Function [x] (Pause 0.5) $KernelID)))
 ;; => (ClojurianScopes/Function [x] nil 0)
