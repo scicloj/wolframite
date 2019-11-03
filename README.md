@@ -32,6 +32,17 @@ user=> (math (D (Power x 2) x))
 user=> (math (ChemicalData "Ethanol" "MolarMass"))
 (Quantity 46.069M (* "Grams" (Power "Moles" -1)))
 user=>
+
+### Linux: lein repl 
+
+user> (init-linux)
+user> (math (Dot [1 2 3] [4 5 6]))
+32
+user> (math (ChemicalData "Ethanol" "MolarMass"))
+(Quantity 46.069M (* "Grams" (Power "Moles" -1)))
+user> (math (WolframAlpha "How many licks does it take to get to the center of a Tootsie Pop?"))
+[(-> [["Input" 1] "Plaintext"] "How many licks does it take to get to the Tootsie Roll center of a Tootsie Pop?") (-> [["Result" 1] "Plaintext"] "3481\n(according to student researchers at the University of Cambridge)")]
+user> 
 ```
 
 ![](./mma1.png)
@@ -48,6 +59,8 @@ As far as real improvements go I'd like to:
 Assuming you're on OS X or Windows and have Mathematica installed in the default location you should be able to run:
 ```
 lein localrepo install "C:/Program Files/Wolfram Research/Mathematica/11.3/SystemFiles/Links/JLink/JLink.jar" com.wolfram.jlink/JLink 4.9.1
+## MAC: lein localrepo install /Applications/Mathematica.app/Contents/SystemFiles/Links/JLink/JLink.jar com.wolfram.jlink/JLink 4.9.1
+## linux: lein localrepo install /usr/local/Wolfram/Mathematica/12.0/SystemFiles/Links/JLink/JLink.jar com.wolfram.jlink/JLink 4.9.1
 
 lein repl
 ```

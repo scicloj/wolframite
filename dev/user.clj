@@ -22,3 +22,10 @@
   (.discardAnswer kernel-link)
   (defonce math-evaluate (math-evaluator kernel-link))
   (def-math-macro math math-evaluate))
+
+(defn init-linux []
+  (def cmdline "-linkmode launch -linkname '\"/usr/local/Wolfram/Mathematica/12.0/Executables/MathKernel\" -mathlink'")
+  (def kernel-link (MathLinkFactory/createKernelLink cmdline))
+  (.discardAnswer kernel-link)
+  (defonce math-evaluate (math-evaluator kernel-link))
+  (def-math-macro math math-evaluate))
