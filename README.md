@@ -1,5 +1,28 @@
 # Clojuratica 商业化最成功的LISP,计算论文,计算博客,计算代码 #
 
+
+## 2021 re:Clojurative :)
+
+### Usage
+
+Getting started:
+
+```
+clj -A:dev
+(dev)
+```
+
+`(dev)` drops you into dev namespace also requiring `init` ns which is side effecting!
+See docstring on `init` ns.
+
+Check if you're all set:
+
+```
+(WL (Dot [1 2 3] [4 5 6]))
+;=> 32
+```
+
+
 ## Steve Chan Update
 ```clojure
 ;; in project.clj
