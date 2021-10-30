@@ -3,7 +3,7 @@
             [clojure.java.io :as io]
             [clojure.string :as str]))
 
-(def ^:private unable-to-find-message "Unable to find Mathematica installation. Please specify JLink jar path using the JLINK_JAR environment variable.")
+(def ^:private unable-to-find-message "Unable to find Mathematica installation. Please specify using either the MATHEMATICA_INSTALL_PATH or WOLFRAM_INSTALL_PATH environment variable.")
 
 (def ^:private default-mac-base-path "/Applications/Mathematica.app/Contents")
 (def ^:private default-linux-base-path "/usr/local/Wolfram/Mathematica")
@@ -21,7 +21,7 @@
   "Coerce to a common platform identifier"
   [platform]
   (cond
-    (= platform :linux)                  :linux
+    (#{:linux "Linux"} platform)         :linux
     (#{:osx :macos "Mac OS X"} platform) :macos
     (or (#{:win :windows} platform) (str/starts-with? platform "Windows")) :windows))
 
@@ -46,7 +46,8 @@
     (throw (Exception. unable-to-find-message))))
 
 (defn base-path [platform]
-  (or (System/getenv "JLINK_JAR")
+  (or (System/getenv "MATHEMATICA_INSTALL_PATH")
+      (System/getenv "WOLFRAM_INSTALL_PATH")
       (str (case platform
              :linux   (version-path default-linux-base-path)
              :windows (version-path default-windows-base-path)
@@ -55,9 +56,10 @@
 
 (defn get-jlink-path
   ([platform]
-   (-> platform
-       base-path
-       (str jlink-suffix))))
+   (or (System/getenv "JLINK_JAR_PATH")
+       (-> platform
+           base-path
+           (str jlink-suffix)))))
 
 (defn get-mathlink-path
   ([platform]
