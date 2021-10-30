@@ -9,4 +9,5 @@
         (println "Done" (str ~msg "."))
         result#))))
 
+;; TODO This function should really be moved to a utils ns
 (defn third [coll] (nth coll 2))
