@@ -1,0 +1,4 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.10.3"}
+        clj-commons/pomegranate {:mvn/version "1.2.1"}}}
+        ;com.wolfram.jlink/JLink {:local/root}}}
