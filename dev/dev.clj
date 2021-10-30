@@ -1,5 +1,7 @@
 (ns dev
-  (:require [clojuratica.init :as init :refer [WL]]))
+  (:require [clojuratica.init :as init :refer [WL]]
+            [clojuratica :as wl]
+            [clojuratica.base.evaluate :as eval]))
 
 (comment ;; Get Started!
 
@@ -13,12 +15,12 @@
   ;; => 32
 
   ;; * Intern WL fns as macros
-  (wl/math-intern math-evaluate Plus)
+  (wl/math-intern init/math-evaluate Plus)
 
   (Plus [1 2] [3 4])
 
   ;; * Intern WL fns as fns (w/ aliasing)
-  (wl/math-intern :as-function math-evaluate [PlusFn Plus])
+  (wl/math-intern :as-function init/math-evaluate [PlusFn Plus])
   (map #(apply PlusFn %) [[1 2] [3 4 'a] [5 6]])
 
   ;; * Define fns through clj vars
@@ -31,4 +33,4 @@
 
   (WL '"{1, Sqrt[4], 3+4}")
 
-  )
+  #_:end-comment)
