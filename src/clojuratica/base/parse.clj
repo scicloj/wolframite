@@ -9,7 +9,7 @@
 (in-ns 'clojuratica.base.cep)
 (declare cep)
 (in-ns 'clojuratica.base.parse)
-(require '[clojuratica.base.cep :as cep])
+;; (require '[clojuratica.base.cep :as cep])
 ;(refer 'clojuratica.base.cep)
 
 (declare
@@ -183,10 +183,9 @@
       (options/let-options [enclosed-options [:as-expression] dynamic-vars/*options*] []
         (options/fn-binding-options [dynamic-vars/*options* enclosed-options] [& args]
           (binding [dynamic-vars/*kernel* enclosed-kernel]
-            (cep/cep (apply list expr args))))))))
+            ((requiring-resolve `clojuratica.base.cep/cep) (apply list expr args))))))))
 
 (defn parse-generic-expression [expr]
   (-> (list)  ;must start with a real list because the promise is that expressions will be converted to lists
       (into (map parse (rseq (vec (.args expr)))))
       (conj (parse (.head expr)))))
-
