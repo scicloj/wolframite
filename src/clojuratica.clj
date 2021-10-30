@@ -36,6 +36,9 @@
 (ns clojuratica
   (:refer-clojure :exclude [intern])
   (:require
+    ;; This namespace must be loaded before any other code will work, since this is what adds the jlink jar to
+    ;; the classpath
+    [clojuratica.jlink]
     [clojuratica.lib.options :as options]
     [clojuratica.runtime.dynamic-vars :as dynamic-vars]
     [clojuratica.runtime.default-options :as default-options]
