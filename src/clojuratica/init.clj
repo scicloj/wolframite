@@ -1,7 +1,7 @@
 (ns clojuratica.init
   "NOTE: this is a side effecting namespace!
   Loading this namespaces will:
-  * modify the classpath (adding JLing jar)
+  * modify the classpath (adding JLink jar)
   * run the `init!`
     * creating KernelLink
     * exposing a `WL` macro"
