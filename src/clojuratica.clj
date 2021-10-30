@@ -65,7 +65,7 @@
       (binding [dynamic-vars/*kernel* enclosed-kernel]
         (cep/cep expr)))))
 
-(defmacro math-intern [& args] 
+(defmacro math-intern [& args]
   (options/let-options [options args {#{:as-function :as-macro} :as-macro
                                       #{:no-scopes :scopes}     :no-scopes}]
                        [math-eval & opspecs]
@@ -73,12 +73,12 @@
                      (into opspecs (keys (default-options/*default-options* :clojure-scope-aliases)))
                      opspecs)]
        (if (options/flag? options :as-macro)
-         `(intern :macro '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))
-         `(intern :fn    '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))))))
+         `(intern/intern :macro '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))
+         `(intern/intern :fn    '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))))))
 
 
 (defmacro def-math-macro [m math-eval]
   `(math-intern :as-macro ~math-eval [~m ~'CompoundExpression]))
 
 (defn mathematica->clojure [s math-eval]
-  (math-eval :no-evaluate (list 'quote s))) 
+  (math-eval :no-evaluate (list 'quote s)))

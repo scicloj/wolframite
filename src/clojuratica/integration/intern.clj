@@ -31,7 +31,7 @@
                                           (throw (Exception. "If math macro intern spec is nil, math macro can contain just one form."))
                                           (first args#))
                                         (cons (quote ~op) args#))
-              expr#                   (read unread-expr#)]
+              expr#                   (read/read unread-expr#)]
           (if (and (some #{:no-convert} flags#) (not (nil? (quote ~op))))
             (throw (Exception. "The :no-convert flag cannot be used in a math macro unless the intern spec is nil.")))
           (list 'apply '~math-eval-symbol expr# (list 'apply 'concat flags# params#)))))))
