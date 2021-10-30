@@ -1,30 +1,34 @@
 (ns dev
-  (:require [clojuratica :as wl])
-  (:import [com.wolfram.jlink MathLinkFactory]))
+  (:require [clojuratica.init :as init :refer [WL]]))
 
-;; http://reference.wolfram.com/mathematica/JLink/ref/java/com/wolfram/jlink/MathLinkFactory.html
+(comment ;; Get Started!
 
-(defn init-osx []
-  (def cmdline "-linkmode launch -linkname '\"/Applications/Mathematica.app/Contents/MacOS/MathKernel\" -mathlink'")
+  ;; * Init
+  ;;
 
-  #_(def cmdline "-linkmode connect -linkname 9999 -linkprotocol TCPIP")
+  (WL (Dot [1 2 3] [4 5 6]))
+  ;; * Check
+  ;; => 32
+  (WL '"{1 , 2, 3} . {4, 5, 6}")
+  ;; => 32
 
-  (def kernel-link (MathLinkFactory/createKernelLink cmdline))
-  (.discardAnswer kernel-link)
-  (defonce math-evaluate (wl/math-evaluator kernel-link))
-  (wl/def-math-macro math math-evaluate))
+  ;; * Intern WL fns as macros
+  (wl/math-intern math-evaluate Plus)
 
-(defn init-win []
-  (def cmdline "-linkmode launch -linkname '\"/c:/Program Files/Wolfram Research/Mathematica/11.3/MathKernel.exe\"'")
+  (Plus [1 2] [3 4])
 
-  (def kernel-link (MathLinkFactory/createKernelLink cmdline))
-  (.discardAnswer kernel-link)
-  (defonce math-evaluate (wl/math-evaluator kernel-link))
-  (wl/def-math-macro math math-evaluate))
+  ;; * Intern WL fns as fns (w/ aliasing)
+  (wl/math-intern :as-function math-evaluate [PlusFn Plus])
+  (map #(apply PlusFn %) [[1 2] [3 4 'a] [5 6]])
 
-(defn init-linux []
-  (def cmdline "-linkmode launch -linkname '\"/usr/local/Wolfram/Mathematica/12.0/Executables/MathKernel\" -mathlink'")
-  (def kernel-link (MathLinkFactory/createKernelLink cmdline))
-  (.discardAnswer kernel-link)
-  (defonce math-evaluate (wl/math-evaluator kernel-link))
-  (wl/def-math-macro math math-evaluate))
+  ;; * Define fns through clj vars
+  (def hello
+    (WL
+     (Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output."))))
+
+  ;; * ISSUES
+  (WL {a b c d}) ;; => [[a b] [c d]]
+
+  (WL '"{1, Sqrt[4], 3+4}")
+
+  )
