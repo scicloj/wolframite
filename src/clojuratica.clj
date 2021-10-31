@@ -35,44 +35,50 @@
 
 (ns clojuratica
   (:refer-clojure :exclude [intern])
-  (:use [clojuratica.lib.options]
-        [clojuratica.runtime.dynamic-vars]
-        [clojuratica.runtime.default-options]
-        [clojuratica.base.cep]
-        [clojuratica.base.convert]
-        [clojuratica.base.evaluate]
-        [clojuratica.base.kernel]
-        [clojuratica.integration.intern]))
+  (:require
+    ;; This namespace must be loaded before any other code will work, since this is what adds the jlink jar to
+    ;; the classpath
+    [clojuratica.jlink]
+    [clojuratica.lib.options :as options]
+    [clojuratica.runtime.dynamic-vars :as dynamic-vars]
+    [clojuratica.runtime.default-options :as default-options]
+    [clojuratica.base.cep :as cep]
+    [clojuratica.base.convert :as convert]
+    [clojuratica.base.evaluate :as evaluate]
+    [clojuratica.base.kernel :as kernel]
+    [clojuratica.integration.intern :as intern]))
 
-(defn-let-options math-evaluator [enclosed-options *default-options*] [kernel-link & [init]]
-  (let [enclosed-kernel (kernel kernel-link)]
-    (binding [*options* enclosed-options
-              *kernel*  enclosed-kernel]
-			(evaluate (convert init))
-			(evaluate (convert '(Needs "Parallel`Developer`")))
-			(evaluate (convert '(Needs "Developer`")))
-			(evaluate (convert '(ParallelNeeds "Developer`")))
-			(evaluate (convert '(Needs "ClojurianScopes`")))
-			(evaluate (convert '(ParallelNeeds "ClojurianScopes`")))
-			(evaluate (convert '(Needs "HashMaps`")))
-			(evaluate (convert '(ParallelNeeds "HashMaps`"))))
-    (fn-binding-options [*options* enclosed-options] [expr]
-      (binding [*kernel* enclosed-kernel]
-        (cep expr)))))
+(options/defn-let-options math-evaluator [enclosed-options default-options/*default-options*] [kernel-link & [init]]
+  (let [enclosed-kernel (kernel/kernel kernel-link)]
+    (binding [dynamic-vars/*options* enclosed-options
+              dynamic-vars/*kernel*  enclosed-kernel]
+      (evaluate/evaluate (convert/convert init))
+      (evaluate/evaluate (convert/convert '(Needs "Parallel`Developer`")))
+      (evaluate/evaluate (convert/convert '(Needs "Developer`")))
+      (evaluate/evaluate (convert/convert '(ParallelNeeds "Developer`")))
+      (evaluate/evaluate (convert/convert '(Needs "ClojurianScopes`")))
+      (evaluate/evaluate (convert/convert '(ParallelNeeds "ClojurianScopes`")))
+      (evaluate/evaluate (convert/convert '(Needs "HashMaps`")))
+      (evaluate/evaluate (convert/convert '(ParallelNeeds "HashMaps`"))))
+    ;#_{:clj-kondo/ignore {:unresolved-symbol #{'expr}}}
+    (options/fn-binding-options [dynamic-vars/*options* enclosed-options] [expr]
+      (binding [dynamic-vars/*kernel* enclosed-kernel]
+        (cep/cep expr)))))
 
-(defmacro math-intern [& args] 
-  (let-options [options args {#{:as-function :as-macro} :as-macro
-															#{:no-scopes :scopes}     :no-scopes}]
-							 [math-eval & opspecs]
-		(let [opspecs (if (flag? options :scopes)
-									  (into opspecs (keys (*default-options* :clojure-scope-aliases)))
-										opspecs)]
-			(if (flag? options :as-macro)
-				`(intern :macro '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))
-				`(intern :fn    '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))))))
+(defmacro math-intern [& args]
+  (options/let-options [options args {#{:as-function :as-macro} :as-macro
+                                      #{:no-scopes :scopes}     :no-scopes}]
+                       [math-eval & opspecs]
+     (let [opspecs (if (options/flag? options :scopes)
+                     (into opspecs (keys (default-options/*default-options* :clojure-scope-aliases)))
+                     opspecs)]
+       (if (options/flag? options :as-macro)
+         `(intern/intern :macro '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))
+         `(intern/intern :fn    '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))))))
+
 
 (defmacro def-math-macro [m math-eval]
   `(math-intern :as-macro ~math-eval [~m ~'CompoundExpression]))
 
 (defn mathematica->clojure [s math-eval]
-  (math-eval :no-evaluate (list 'quote s))) 
+  (math-eval :no-evaluate (list 'quote s)))
