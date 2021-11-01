@@ -23,7 +23,12 @@ The canonical pronunciation of Clojuratica starts with Clojure and rhymes with e
 
 ## Usage
 
-Getting started:
+### Prerequisites:
+
+First, if you haven't already, install the [Clojure CLI toolchain](https://clojure.org/guides/getting_started) (homebrew is a great way to do this if you're on Mac or Linux, but you can just as easily use the install scripts if you prefer).
+Next, obviously, you'll need to ensure that you have Wolfram Language or Mathematica installed.
+
+### Getting started
 
 ```
 clj -A:dev
