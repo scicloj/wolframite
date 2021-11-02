@@ -94,9 +94,9 @@
 
 (defn bound-map [f coll]
   (cond
-    (options/flag? dynamic-vars/*options* :vectors) (vec-bound-map f coll)
-    (options/flag? dynamic-vars/*options* :seqs     (seq-bound-map f coll))
-    (options/flag? dynamic-vars/*options* :seq-fn   (seq-fn-bound-map f coll))))
+    (options/flag? dynamic-vars/*options* :vectors)  (vec-bound-map f coll)
+    (options/flag? dynamic-vars/*options* :seqs)     (seq-bound-map f coll)
+    (options/flag? dynamic-vars/*options* :seq-fn)   (seq-fn-bound-map f coll)))
 
 (defn parse-simple-vector [expr & [type]]
   (debug/with-debug-message (and (options/flag? dynamic-vars/*options* :verbose) (nil? type)) "simple vector parse"
@@ -171,8 +171,8 @@
           rules     (parse
                       (cond (.listQ inside) inside
                             (= "Dispatch" (expr/head-str inside)) (first (.args inside))
-                            :else (assert (or (.listQ inside))
-                                          (= "Dispatch" (expr/head-str inside)))))
+                            :else (assert (or (.listQ inside)
+                                              (= "Dispatch" (expr/head-str inside))))))
           keys      (map second rules)
           vals      (map (comp second debug/third) rules)]
       (zipmap keys vals))))
