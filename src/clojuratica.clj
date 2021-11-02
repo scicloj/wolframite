@@ -80,5 +80,14 @@
 (defmacro def-math-macro [m math-eval]
   `(math-intern :as-macro ~math-eval [~m ~'CompoundExpression]))
 
-(defn mathematica->clojure [s math-eval]
+(defn wl->clj [s math-eval]
   (math-eval :no-evaluate (list 'quote s)))
+
+(defn clj->wl
+  "Convert clojure forms to mathematica Expr.
+  Generally useful, especially for working with graphics."
+  [clj-form {:keys [kernel-link output-fn]}]
+  (binding [dynamic-vars/*options* default-options/*default-options*
+            dynamic-vars/*kernel*  (kernel/kernel kernel-link)]
+    (cond-> (convert/convert clj-form)
+      (ifn? output-fn) output-fn)))
