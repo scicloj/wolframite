@@ -41,7 +41,7 @@
         (or (atom? expr) (options/flag? dynamic-vars/*options* :full-form))   (parse-complex-atom expr)
         (simple-vector-type expr)                        (parse-simple-vector expr)
         (simple-matrix-type expr)                        (parse-simple-matrix expr)
-        'else                                            (parse-complex-list expr)))
+        :else                                            (parse-complex-list expr)))
 
 (defn simple? [expr]
   (or (atom? expr) (simple-array-type expr)))
@@ -60,7 +60,7 @@
         (.vectorQ expr Expr/STRING)      Expr/STRING
         (.vectorQ expr Expr/RATIONAL)    Expr/RATIONAL
         (.vectorQ expr Expr/SYMBOL)      Expr/SYMBOL
-        'else                            nil))
+        :else                            nil))
 
 (defn simple-matrix-type [expr]
   (cond (.matrixQ expr Expr/INTEGER)     Expr/INTEGER
@@ -70,7 +70,7 @@
         (.matrixQ expr Expr/STRING)      Expr/STRING
         (.matrixQ expr Expr/RATIONAL)    Expr/RATIONAL
         (.matrixQ expr Expr/SYMBOL)      Expr/SYMBOL
-        'else                            nil))
+        :else                            nil))
 
 (defn vec-bound-map [f coll]
   (vec (map f coll)))
@@ -94,9 +94,9 @@
 
 (defn bound-map [f coll]
   (cond
-    (options/flag? dynamic-vars/*options* :vectors) (vec-bound-map f coll)
-    (options/flag? dynamic-vars/*options* :seqs     (seq-bound-map f coll))
-    (options/flag? dynamic-vars/*options* :seq-fn   (seq-fn-bound-map f coll))))
+    (options/flag? dynamic-vars/*options* :vectors)  (vec-bound-map f coll)
+    (options/flag? dynamic-vars/*options* :seqs)     (seq-bound-map f coll)
+    (options/flag? dynamic-vars/*options* :seq-fn)   (seq-fn-bound-map f coll)))
 
 (defn parse-simple-vector [expr & [type]]
   (debug/with-debug-message (and (options/flag? dynamic-vars/*options* :verbose) (nil? type)) "simple vector parse"
@@ -137,7 +137,7 @@
                                             (not (options/flag? dynamic-vars/*options* :full-form)))
                                      (parse-hash-map expr)
                                      (parse-generic-expression expr))
-          'else                    (parse-generic-expression expr))))
+          :else                    (parse-generic-expression expr))))
 
 (defn parse-complex-list [expr]
   (bound-map parse (.args expr)))
@@ -163,7 +163,7 @@
       (cond (= "True" s)   true
             (= "False" s)  false
             (= "Null" s)   nil
-            'else          sym))))
+            :else          sym))))
 
 (defn parse-hash-map [expr]
   (debug/with-debug-message (options/flag? dynamic-vars/*options* :verbose) "hash-map parse"
@@ -171,8 +171,8 @@
           rules     (parse
                       (cond (.listQ inside) inside
                             (= "Dispatch" (expr/head-str inside)) (first (.args inside))
-                            'else (assert (or (.listQ inside))
-                                          (= "Dispatch" (expr/head-str inside)))))
+                            :else (assert (or (.listQ inside)
+                                              (= "Dispatch" (expr/head-str inside))))))
           keys      (map second rules)
           vals      (map (comp second debug/third) rules)]
       (zipmap keys vals))))

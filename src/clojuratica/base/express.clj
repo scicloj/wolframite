@@ -1,13 +1,12 @@
 (ns clojuratica.base.express
-  (:require [clojuratica.lib.debug :as debug]
-            [clojuratica.lib.options :as options]
+  (:require [clojuratica.lib.options :as options]
             [clojuratica.runtime.dynamic-vars :as dynamic-vars]))
 
 (defn express [s]
   (let [kernel-link (dynamic-vars/*kernel* :link)]
     (assert (string? s))
     (assert (instance? com.wolfram.jlink.KernelLink kernel-link))
-    (if (options/flag? dynamic-vars/*options* :verbose) (println "express string>" s))
+    (when (options/flag? dynamic-vars/*options* :verbose) (println "express string>" s))
     (let [held-s (str "HoldComplete[" s "]")
           output (io!
                    (locking kernel-link

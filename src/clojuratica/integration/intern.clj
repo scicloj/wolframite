@@ -18,7 +18,7 @@
                                (math-eval :restore-defaults (list 'Names opspec)))))
         (symbol? opspec) [[opspec opspec]]
         (and (vector? opspec) (= 2 (count opspec))) [opspec]
-        'else (throw (Exception. (str "Invalid opspec in math-intern: " opspec)))))
+        :else (throw (Exception. (str "Invalid opspec in math-intern: " opspec)))))
 
 (defn defmacro-op [math-eval-symbol macro-name op]
   (let [math-eval        (eval math-eval-symbol)

@@ -1,8 +1,5 @@
 (ns clojuratica.base.convert
-  ;(:require [clojure.contrib.str-utils2 :as str-utils])
-  (:require [clojuratica.lib.debug :as debug]
-            [clojuratica.lib.options :as options]
-            [clojuratica.base.parse :as parse]
+  (:require [clojuratica.lib.options :as options]
             [clojuratica.base.express :as express]
             [clojuratica.base.expr :as expr]
             [clojuratica.runtime.dynamic-vars :as dynamic-vars])
@@ -23,7 +20,7 @@
         (map? obj)           :hash-map
         (symbol? obj)        :symbol
         (nil? obj)           :null
-        'else                nil))
+        :else                nil))
 
 (defmulti convert dispatch)
 
@@ -39,7 +36,7 @@
 (defmethod convert :rational [n]
   (convert (list 'Rational (.numerator n) (.denominator n))))
 
-(defmethod convert :hash-map [map] 
+(defmethod convert :hash-map [map]
   (if (options/flag? dynamic-vars/*options* :hash-maps)
     (convert (apply list 'HashMap (for [[key value] map] (list 'Rule key value))))
     (convert (seq map))))
@@ -66,12 +63,12 @@
         (simple-vector? coll)   (do
                                   (when (options/flag? dynamic-vars/*options* :verbose) (println "Converting simple vector..."))
                                   (convert (to-array coll)))
-        'else                   (do
+        :else                   (do
                                   (when (options/flag? dynamic-vars/*options* :verbose) (println "Converting complex list..."))
                                   (convert
                                     (to-array
                                       (map #(cond (dispatch %)         (convert %)
-                                                  'else                %)
+                                                  :else                %)
                                            coll))))))
 
 (defmethod convert :expr [cexpr]
@@ -81,7 +78,7 @@
           (= 'clojure.core/meta macro)     (convert (cexpr-from-postfix-form arg))
           (= 'var macro)                   (convert (list 'Function arg))
           (= 'quote macro)                 (express/express arg)
-          'else                            (expr/expr-from-parts (map convert cexpr)))))
+          :else                            (expr/expr-from-parts (map convert cexpr)))))
 
 (defn- simple-vector? [coll]
   (and (sequential? coll)
@@ -102,4 +99,3 @@
 (defn- cexpr-from-prefix-form [cexprs]
   (assert (sequential? cexprs))
   (cexpr-from-postfix-form (reverse cexprs)))
-
