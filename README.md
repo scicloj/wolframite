@@ -2,7 +2,7 @@
 
 An interface between Clojure and the Wolfram Language and Mathematica.
 
-## What is Clojuratica? ##
+## What is Clojuratica?
 
 Clojuratica brings together two of today's most exciting tools for high-performance, parallel computation.
 
@@ -20,7 +20,6 @@ Clojuratica is open-source and targeted at applications in scientific computing,
 
 The canonical pronunciation of Clojuratica starts with Clojure and rhymes with erotica.
 
-
 ## Usage
 
 ### Prerequisites:
@@ -30,13 +29,15 @@ Next, obviously, you'll need to ensure that you have Wolfram Language or Mathema
 
 ### Getting started
 
+After starting a REPL, `(dev)` drops you into dev namespace. This is side effecting, altering the classpath to require JLink (see docstring on `init` ns):
+
 ```
-clj -A:dev
+clj -M:dev
 (dev)
+:loaded
 ```
 
-`(dev)` drops you into dev namespace also requiring `init` ns which is side effecting!
-See docstring on `init` ns.
+If the above complains that the installation path cannot be found, please export either `MATHEMATICA_INSTALL_PATH` or `WOLFRAM_INSTALL_PATH` environment variables to tell Clojuratica where it needs to look.
 
 Check if you're all set:
 
@@ -61,17 +62,20 @@ More examples
 ;=> 3.141592653589793238462643383279502884197169399375105820285M
 ```
 
-
 ## Dependencies
 
-Clojuratica requires JLink, which is currently only available with a Mathematica install.
+Clojuratica requires JLink, which is currently only available with a Mathematica or Wolfram Language install.
 It will also need to know where the `MathKernel` is, in order to initialize against it (see `clojuratica.init` ns for details).
 
 If you've installed Mathematica in a default location on Mac, Linux or Windows, Clojuratica _should_ be able to find these files automatically.
 However, if necessary, you can specify either the `MATHEMATICA_INSTALL_PATH` or `WOLFRAM_INSTALL_PATH` environment variable to tell Clojuratica where it needs to look.
+For example, if you have Wolfram Language installed, do the following before starting Clojuratica:
 
-We have not yet tested this setup against Wolfram Language sans Mathematica, but intend to support this, and can accommodate changes if necessary.
+```bash
+export WOLFRAM_INSTALL_PATH=/usr/local/Wolfram/WolframEngine/12.3
+```
 
+The example location corresponds to a typical Wolfram Language installation, but please check this is a valid location in your environment.
 
 ## Authors
 

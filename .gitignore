@@ -5,3 +5,4 @@ hs*.log
 .nrepl-port
 
 /.clj-kondo/.cache/
+.cpcache/
