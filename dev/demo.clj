@@ -3,9 +3,8 @@
    [clojuratica :as wl]
    [clojuratica.base.convert :as convert]
    [clojuratica.base.kernel :as kernel]
-   [clojuratica.init :as init]
+   [clojuratica.init :as init :refer [WL]]
    [clojuratica.runtime.dynamic-vars :as dynamic-vars]
-   [clojuratica.base.convert :as convert]
    [clojuratica.runtime.default-options :as default-options]))
 
 ;; * Clojure a 1min intro
@@ -52,9 +51,6 @@
 
 ;; Init
 
-(require '[clojuratica.init :as init :refer [WL]]
-         '[clojuratica :as wl])
-
 (WL (Dot [1 2 3] [4 5 6]))
 
 (WL '"{1 , 2, 3} . {4, 5, 6}")
@@ -63,6 +59,7 @@
 
 (wl/math-intern init/math-evaluate Plus)
 
+#_{:clj-kondo/ignore true}
 (Plus [1 2] [3 4])
 
 (def greetings
@@ -102,8 +99,9 @@
             Snippet)]
      (WordFrequency ~t (TextWords ~t)))
 
-(wl/mathematica->clojure "GridGraph[{5, 5}]" init/math-evaluate)
-;; => (GridGraph [5 5])
+(wl/wl->clj "GridGraph[{5, 5}]" init/math-evaluate)
+
+(require 'graphics)
 
 (defn clojure->mathematica [clj-form & {:keys [output-fn]}]
   (binding [dynamic-vars/*options* default-options/*default-options*
@@ -111,22 +109,30 @@
     (cond-> (convert/convert clj-form)
       (ifn? output-fn) output-fn)))
 
-(def clj->wl clojure->mathematica)
+(wl/clj->wl '(GridGraph [5 5]) {:kernel-link init/kernel-link
+                                :output-fn str})
 
+(def canvas (graphics/make-math-canvas! init/kernel-link))
+(def app (graphics/make-app! canvas))
 
-(graphics/show! graphics/canvas (clj->wl '(GridGraph [5 5]) :output-fn str))
-(graphics/show! graphics/canvas (clj->wl '(ChemicalData "Ethanol" "StructureDiagram") :output-fn str))
+(graphics/show! canvas (wl/clj->wl '(GridGraph [5 5]) {:output-fn str}))
+(graphics/show! canvas (wl/clj->wl '(ChemicalData "Ethanol" "StructureDiagram") {:output-fn str}))
 
 (defn quick-show [clj-form]
-  (graphics/show! graphics/canvas (clj->wl clj-form :output-fn str)))
+  (graphics/show! canvas (wl/clj->wl clj-form {:output-fn str})))
 
 (quick-show '(ChemicalData "Ethanol" "StructureDiagram"))
 (quick-show '(GridGraph [5 5]))
 (quick-show '(GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"])))
 
 (comment
-  (wl/mathematica->clojure
-   "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]"
-   init/math-evaluate)
-  ;; => (GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"]))
+  (wl/wl->clj "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]" init/math-evaluate)
   )
+
+;; differen type of return values
+
+(WL :full-form (ChemicalData "Ethanol" "StructureDiagram"))
+
+(WL :no-parse (ChemicalData "Ethanol" "StructureDiagram"))
+
+(WL :as-function (ChemicalData "Ethanol" "StructureDiagram"))
