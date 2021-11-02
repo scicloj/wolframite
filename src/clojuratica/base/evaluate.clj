@@ -1,8 +1,7 @@
 (ns clojuratica.base.evaluate
-  (:require [clojuratica.lib.debug :as debug]
-            [clojuratica.lib.options :as options]
+  (:require [clojuratica.lib.options :as options]
             [clojuratica.base.convert :as convert]
-            [clojuratica.runtime.default-options :as default-options]
+            #_[clojuratica.runtime.default-options :as default-options]
             [clojuratica.runtime.dynamic-vars :as dynamic-vars]))
 
 (declare process-state queue-run-or-wait)
@@ -39,8 +38,8 @@
     (cond (= \r state-prefix) [:running nil]
           (= \f state-prefix) [:finished (.part state-expr 1)]
           (= \q state-prefix) [:queued nil]
-          true
-            (throw (Exception. (str "Error! State unrecognized: " state-expr))))))
+          :else
+          (throw (Exception. (str "Error! State unrecognized: " state-expr))))))
 
 (defn queue-run-or-wait []
   (assert (options/flag? dynamic-vars/*options* :serial))

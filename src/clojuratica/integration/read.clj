@@ -11,4 +11,4 @@
         (vector? expr) (vec (map read expr))
         (map? expr)    (zipmap (map read (keys expr))
                          (map read (vals expr)))
-        'else          expr))
+        :else          expr))

@@ -33,8 +33,7 @@
   (not (nil? (some #{flag} (vals (filter-flags current-options))))))
 
 (defn parse-options [current-options args]
-  (let [pairs   (partition 2 1 args)
-        flag?   #(seq (filter-flag-sets % current-options))
+  (let [flag?   #(seq (filter-flag-sets % current-options))
         param?  #(contains? (filter-params current-options) %)]
     (loop [remain  args
            args    []
@@ -44,7 +43,7 @@
             (#(and (flag? %) (param? %)) (first remain))   (recur (drop 2 remain) args (conj flags (first remain)) (conj params (vec (take 2 remain))))
             (flag? (first remain))                         (recur (rest remain) args (conj flags (first remain)) params)
             (param? (first remain))                        (recur (drop 2 remain) args flags (conj params (vec (take 2 remain))))
-            'else                                          (recur (rest remain) (conj args (first remain)) flags params)))))
+            :else                                          (recur (rest remain) (conj args (first remain)) flags params)))))
 
 (defmacro scoping-options [scoper [*options* options+args current-options] parsed-args & body]
  `(let [[flags# params# ~parsed-args] (parse-options ~current-options ~options+args)]
