@@ -1,6 +1,12 @@
 (ns demo
-  (:require [clojuratica :as wl]
-            [clojuratica.init :as init]))
+  (:require
+   [clojuratica :as wl]
+   [clojuratica.base.convert :as convert]
+   [clojuratica.base.kernel :as kernel]
+   [clojuratica.init :as init]
+   [clojuratica.runtime.dynamic-vars :as dynamic-vars]
+   [clojuratica.base.convert :as convert]
+   [clojuratica.runtime.default-options :as default-options]))
 
 ;; * Clojure a 1min intro
 ;; ** Interactive developement
@@ -86,3 +92,41 @@
 (WL (TextStructure "The cat sat on the mat."))
 
 (WL (TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs"))
+
+(wl/math-intern init/math-evaluate :scopes)
+
+#_{:clj-kondo/ignore true}
+(Let [t (-> ["Text" "AliceInWonderland"]
+            ExampleData
+            ContentObject
+            Snippet)]
+     (WordFrequency ~t (TextWords ~t)))
+
+(wl/mathematica->clojure "GridGraph[{5, 5}]" init/math-evaluate)
+;; => (GridGraph [5 5])
+
+(defn clojure->mathematica [clj-form & {:keys [output-fn]}]
+  (binding [dynamic-vars/*options* default-options/*default-options*
+            dynamic-vars/*kernel*  (kernel/kernel init/kernel-link)]
+    (cond-> (convert/convert clj-form)
+      (ifn? output-fn) output-fn)))
+
+(def clj->wl clojure->mathematica)
+
+
+(graphics/show! graphics/canvas (clj->wl '(GridGraph [5 5]) :output-fn str))
+(graphics/show! graphics/canvas (clj->wl '(ChemicalData "Ethanol" "StructureDiagram") :output-fn str))
+
+(defn quick-show [clj-form]
+  (graphics/show! graphics/canvas (clj->wl clj-form :output-fn str)))
+
+(quick-show '(ChemicalData "Ethanol" "StructureDiagram"))
+(quick-show '(GridGraph [5 5]))
+(quick-show '(GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"])))
+
+(comment
+  (wl/mathematica->clojure
+   "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]"
+   init/math-evaluate)
+  ;; => (GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"]))
+  )
