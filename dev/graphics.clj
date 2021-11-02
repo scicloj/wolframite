@@ -1,7 +1,7 @@
 (ns graphics
   (:require [clojuratica.init :as init])
   (:import (com.wolfram.jlink MathCanvas KernelLink)
-           (java.awt Color)
+           (java.awt Color Frame)
            (java.awt.event WindowAdapter ActionEvent)))
 
 (defn make-math-canvas! [kernel-link]
@@ -12,17 +12,18 @@
 (defn make-app! [math-canvas]
   (.evaluateToInputForm init/kernel-link (str "Needs[\""  KernelLink/PACKAGE_CONTEXT "\"]") 0)
   (.evaluateToInputForm init/kernel-link "ConnectToFrontEnd[]" 0)
-  (doto (Frame.)
-    (.setLayout nil)
-    (.setTitle "Wolframite Graphics")
-    (.add math-canvas)
-    (.setBackground Color/white)
-    (.setSize 300 400)
-    (.setLocation 50 50)
-    (.setVisible true)
-    (.addWindowListener (proxy [WindowAdapter] []
-                          (windowClosing [^ActionEvent e]
-                            (.dispose app))))))
+  (let [app (Frame.)]
+    (doto app
+      (.setLayout nil)
+      (.setTitle "Wolframite Graphics")
+      (.add math-canvas)
+      (.setBackground Color/white)
+      (.setSize 300 400)
+      (.setLocation 50 50)
+      (.setVisible true)
+      (.addWindowListener (proxy [WindowAdapter] []
+                            (windowClosing [^ActionEvent e]
+                              (.dispose app)))))))
 
 (defn show!
   [math-canvas wl-form]
@@ -44,5 +45,13 @@
   ;; e.g.
   ;;
   ;; (WL :show (GeoGraphics))
+
+  )
+
+(comment ;; fun is good
+
+  (show! canvas "GeoGraphics[]")
+  (show! canvas "Graph3D[GridGraph[{3, 3, 3}, VertexLabels -> Automatic]]")
+  (show! canvas "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]")
 
   )
