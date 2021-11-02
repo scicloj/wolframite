@@ -88,7 +88,6 @@ Ongoing maintenance and development over the years have been thanks to
 
 The project is now being maintained as part of the [SciCloj](https://github.com/scicloj) project.
 
-
 ## License
 
 Distributed under the Eclipse Public License either version 1.0 or (at
@@ -100,4 +99,3 @@ The product names used in this web site are for identification purposes only.
 All trademarks and registered trademarks, including "Wolfram Mathematica," are the property of their respective owners.
 Clojuratica is not a product of Wolfram Research.
 The software on this site is provided "as-is," without any express or implied warranty.
-
