@@ -1,5 +1,13 @@
 (ns clojuratica.jlink
+  "ATTENTION! This namespace is side effecting, and is required for many of the files in this project to compile.
+  It uses Pomegranate to dynamically add the Wolfram Language / Mathematica JLink jar to the JVM classpath.
+  Because many of the namespaces in this project either import or reference the jlink classes, it's necessary to have loaded this namespace before those namespaces will compile.
+  ;Thus, you'll this library required but inused across the codebase.
+  This is to get around that fact that we don't have the jar available to us through a standard maven repository, and can't use environment variables in our `deps.edn` specifications."
   (:require [cemerick.pomegranate :as pom]
+            [clojuratica.lib.debug :as debug]
+            [clojuratica.lib.options :as options]
+            [clojuratica.runtime.dynamic-vars :as dynamic-vars]
             [clojure.java.io :as io]
             [clojure.string :as str]))
 
@@ -70,11 +78,15 @@
                   :linux   mathlink-linux-suffix
                   :windows mathlink-windows-suffix)))))
 
-(defn add-jlink-to-classpath
+(defn add-jlink-to-classpath!
   ([]
-   (add-jlink-to-classpath (platform-id (System/getProperty "os.name"))))
+   (add-jlink-to-classpath! (platform-id (System/getProperty "os.name"))))
   ([platform]
-   (pom/add-classpath (get-jlink-path platform))))
+   (let [path (get-jlink-path platform)]
+     (println "Adding path to classpath:" path)
+     (pom/add-classpath path))))
+
+(add-jlink-to-classpath!)
 
 (comment
 
@@ -85,6 +97,6 @@
   (get-jlink-path :linux)
 
   (get-mathlink-path :macos)
-  (get-mathlink-path :linux)
+  (get-mathlink-path :linux))
 
-  )
+  

@@ -27,10 +27,14 @@
   (def hello
     (WL
      (Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output."))))
+  ;; Try calling
+  (hello "world")
 
   ;; * ISSUES
   (WL {a b c d}) ;; => [[a b] [c d]]
 
   (WL '"{1, Sqrt[4], 3+4}")
+
+  (WL (ChemicalData "Ethanol" "MolarMass"))
 
   #_:end-comment)

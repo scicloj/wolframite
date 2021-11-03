@@ -1,5 +1,6 @@
 (ns clojuratica.base.convert
-  (:require [clojuratica.lib.options :as options]
+  (:require [clojuratica.jlink]
+            [clojuratica.lib.options :as options]
             [clojuratica.base.express :as express]
             [clojuratica.base.expr :as expr]
             [clojuratica.runtime.dynamic-vars :as dynamic-vars])

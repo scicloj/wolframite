@@ -1,11 +1,11 @@
 (ns demo
   (:require
-   [clojuratica :as wl]
+   [clojuratica.core :as wl :refer [WL]]
    [clojuratica.base.convert :as convert]
    [clojuratica.base.kernel :as kernel]
-   [clojuratica.init :as init :refer [WL]]
    [clojuratica.runtime.dynamic-vars :as dynamic-vars]
    [clojuratica.runtime.default-options :as default-options]))
+
 
 ;; * Clojure a 1min intro
 ;; ** Interactive developement
@@ -57,7 +57,7 @@
 
 (WL (Plus 23 '"{1 , 2, 3} . {4, 5, 6}"))
 
-(wl/math-intern init/math-evaluate Plus)
+(wl/math-intern wl/math-evaluate Plus)
 
 #_{:clj-kondo/ignore true}
 (Plus [1 2] [3 4])
@@ -90,29 +90,23 @@
 
 (WL (TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs"))
 
-(wl/math-intern init/math-evaluate :scopes)
+(wl/math-intern wl/math-evaluate :scopes)
 
-#_{:clj-kondo/ignore true}
-(Let [t (-> ["Text" "AliceInWonderland"]
-            ExampleData
-            ContentObject
-            Snippet)]
-     (WordFrequency ~t (TextWords ~t)))
 
-(wl/wl->clj "GridGraph[{5, 5}]" init/math-evaluate)
+(wl/wl->clj "GridGraph[{5, 5}]" wl/math-evaluate)
 
 (require 'graphics)
 
 (defn clojure->mathematica [clj-form & {:keys [output-fn]}]
   (binding [dynamic-vars/*options* default-options/*default-options*
-            dynamic-vars/*kernel*  (kernel/kernel init/kernel-link)]
+            dynamic-vars/*kernel*  (kernel/kernel wl/kernel-link)]
     (cond-> (convert/convert clj-form)
       (ifn? output-fn) output-fn)))
 
-(wl/clj->wl '(GridGraph [5 5]) {:kernel-link init/kernel-link
+(wl/clj->wl '(GridGraph [5 5]) {:kernel-link wl/kernel-link
                                 :output-fn str})
 
-(def canvas (graphics/make-math-canvas! init/kernel-link))
+(def canvas (graphics/make-math-canvas! wl/kernel-link))
 (def app (graphics/make-app! canvas))
 
 (graphics/show! canvas (wl/clj->wl '(GridGraph [5 5]) {:output-fn str}))
@@ -123,11 +117,11 @@
 
 (quick-show '(ChemicalData "Ethanol" "StructureDiagram"))
 (quick-show '(GridGraph [5 5]))
-(quick-show '(GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"])))
+
 
 (comment
-  (wl/wl->clj "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]" init/math-evaluate)
-  )
+  (wl/wl->clj "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]" wl/math-evaluate))
+  
 
 ;; differen type of return values
 
@@ -136,3 +130,18 @@
 (WL :no-parse (ChemicalData "Ethanol" "StructureDiagram"))
 
 (WL :as-function (ChemicalData "Ethanol" "StructureDiagram"))
+
+
+(comment
+  ;; TODO Having trouble with these
+  (quick-show '(GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"])))
+
+  ;; TODO Fix this one
+  #_{:clj-kondo/ignore true}
+  (Let [t (-> ["Text" "AliceInWonderland"]
+              ExampleData
+              ContentObject
+              Snippet)]
+    (WordFrequency ~t (TextWords ~t)))
+
+  :end-comment)

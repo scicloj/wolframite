@@ -1,10 +1,11 @@
 (ns clojuratica.base.parse
-  (:import [com.wolfram.jlink Expr])
   (:require ;[clojure.par]
+    [clojuratica.jlink]
     [clojuratica.lib.debug :as debug]
     [clojuratica.lib.options :as options]
     [clojuratica.base.expr :as expr]
-    [clojuratica.runtime.dynamic-vars :as dynamic-vars]))
+    [clojuratica.runtime.dynamic-vars :as dynamic-vars])
+  (:import [com.wolfram.jlink Expr]))
 
 (in-ns 'clojuratica.base.cep)
 (declare cep)

@@ -1,5 +1,6 @@
 (ns clojuratica.base.express
-  (:require [clojuratica.lib.options :as options]
+  (:require [clojuratica.jlink]
+            [clojuratica.lib.options :as options]
             [clojuratica.runtime.dynamic-vars :as dynamic-vars]))
 
 (defn express [s]

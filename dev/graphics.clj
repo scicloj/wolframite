@@ -1,5 +1,6 @@
 (ns graphics
-  (:require [clojuratica.init :as init])
+  (:require [clojuratica.jlink]
+            [clojuratica.core :as wl])
   (:import (com.wolfram.jlink MathCanvas KernelLink)
            (java.awt Color Frame)
            (java.awt.event WindowAdapter ActionEvent)))
@@ -10,8 +11,8 @@
     (.setImageType MathCanvas/GRAPHICS)))
 
 (defn make-app! [math-canvas]
-  (.evaluateToInputForm init/kernel-link (str "Needs[\""  KernelLink/PACKAGE_CONTEXT "\"]") 0)
-  (.evaluateToInputForm init/kernel-link "ConnectToFrontEnd[]" 0)
+  (.evaluateToInputForm wl/kernel-link (str "Needs[\""  KernelLink/PACKAGE_CONTEXT "\"]") 0)
+  (.evaluateToInputForm wl/kernel-link "ConnectToFrontEnd[]" 0)
   (let [app (Frame.)]
     (doto app
       (.setLayout nil)
@@ -31,12 +32,12 @@
 
 (comment
 
-  (def canvas (make-math-canvas! init/kernel-link))
+  (def canvas (make-math-canvas! wl/kernel-link))
   (def app (make-app! canvas))
 
   (show! canvas "GeoGraphics[]")
 
-  (.dispose app)
+  (.dispose app))
 
   ;; TODO: improve
   ;; - better api (?)
@@ -46,7 +47,7 @@
   ;;
   ;; (WL :show (GeoGraphics))
 
-  )
+  
 
 (comment ;; fun is good
 
