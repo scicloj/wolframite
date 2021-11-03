@@ -3,5 +3,5 @@
  ;; for now, this is simple and works:
  ;; :lint-as {clojuratica.lib.options/let-options clojure.core/let}
  :linters {:unresolved-symbol {:exclude [(clojuratica.lib.options/let-options [options math-eval opspecs])
-                                         (clojuratica.init/WL)
-                                         (clojuratica/math-intern)]}}}
+                                         (clojuratica.core/WL)
+                                         (clojuratica.core/math-intern)]}}}
