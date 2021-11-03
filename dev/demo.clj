@@ -1,6 +1,8 @@
 (ns demo
-  (:require [clojuratica :as wl]
-            [clojuratica.init :as init]))
+  (:require
+   [clojuratica.core :as wl :refer [WL]]
+   graphics))
+
 
 ;; * Clojure a 1min intro
 ;; ** Interactive developement
@@ -46,17 +48,15 @@
 
 ;; Init
 
-(require '[clojuratica.init :as init :refer [WL]]
-         '[clojuratica :as wl])
-
 (WL (Dot [1 2 3] [4 5 6]))
 
 (WL '"{1 , 2, 3} . {4, 5, 6}")
 
 (WL (Plus 23 '"{1 , 2, 3} . {4, 5, 6}"))
 
-(wl/math-intern init/math-evaluate Plus)
+(wl/math-intern wl/math-evaluate Plus)
 
+#_{:clj-kondo/ignore true}
 (Plus [1 2] [3 4])
 
 (def greetings
@@ -72,17 +72,63 @@
     (GeoNearest Here)
     WL)
 
-;; Wolfram Alpha
+;; - Wolfram Alpha
 
 (WL (WolframAlpha "number of moons of Saturn" "Result"))
 
-;; more examples
+;; - more examples
 
-;; dealing with WL's syntactic sugar
+;; - WL syntactic sugar
 (WL @(a b c d))
 
-;; more interesting examples...
+;; - more interesting examples...
 
 (WL (TextStructure "The cat sat on the mat."))
 
 (WL (TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs"))
+
+;; - Bidirectional translation
+
+(wl/wl->clj "GridGraph[{5, 5}]" wl/math-evaluate)
+
+(wl/clj->wl '(GridGraph [5 5]) {:kernel-link wl/kernel-link
+                                :output-fn str})
+
+;; ** Graphics
+
+;; *** Init math canvas & app
+
+(def canvas (graphics/make-math-canvas! wl/kernel-link))
+(def app (graphics/make-app! canvas))
+
+;; *** Draw Something!
+
+(graphics/show! canvas (wl/clj->wl '(GridGraph [5 5]) {:output-fn str}))
+(graphics/show! canvas (wl/clj->wl '(ChemicalData "Ethanol" "StructureDiagram") {:output-fn str}))
+
+;; *** Make it easier (Dev Helper: closing over the canvas)
+
+(defn quick-show [clj-form]
+  (graphics/show! canvas (wl/clj->wl clj-form {:output-fn str})))
+
+;; *** Some Simple Graphiscs Examples
+
+(quick-show '(ChemicalData "Ethanol" "StructureDiagram"))
+(quick-show '(GridGraph [5 5]))
+(quick-show '(GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"])))
+
+(comment ;; WIP
+
+  ;; TODO: understand scopes
+  (wl/math-intern wl/math-evaluate :scopes)
+
+  ;; TODO Fix this one
+  ;; prnc: need to understand this scoping construct better, seemed to work :/
+  #_{:clj-kondo/ignore true}
+  (Let [t (-> ["Text" "AliceInWonderland"]
+              ExampleData
+              ContentObject
+              Snippet)]
+       (WordFrequency ~t (TextWords ~t)))
+
+  :end-comment)

@@ -1,4 +1,5 @@
 (ns clojuratica.base.expr
+  (:require [clojuratica.jlink])
   (:import [com.wolfram.jlink Expr]))
 
 (defn head-str [expr]
