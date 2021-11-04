@@ -1,4 +1,4 @@
-(ns graphics
+(ns clojuratica.tools.graphics
   (:require [clojuratica.jlink]
             [clojuratica.core :as wl])
   (:import (com.wolfram.jlink MathCanvas KernelLink)
@@ -47,7 +47,7 @@
   ;;
   ;; (WL :show (GeoGraphics))
 
-  
+
 
 (comment ;; fun is good
 
