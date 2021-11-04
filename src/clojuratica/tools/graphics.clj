@@ -3,14 +3,22 @@
             [clojuratica.core :as wl])
   (:import (com.wolfram.jlink MathCanvas KernelLink)
            (java.awt Color Frame)
+           (java.awt.image BufferedImage)
+           (javax.imageio ImageIO)
+           (java.io ByteArrayInputStream)
            (java.awt.event WindowAdapter ActionEvent)))
 
-(defn make-math-canvas! [kernel-link]
+(defn scaled
+  [x factor]
+  (* x (or factor 1)))
+
+(defn make-math-canvas! [kernel-link & {:keys [scale-factor]}]
   (doto (MathCanvas. kernel-link)
-    (.setBounds 10, 25, 280, 240)
+    (.setBounds 25, 25, (scaled 280 scale-factor), (scaled 240 scale-factor))
+    (.setUsesFE true)
     (.setImageType MathCanvas/GRAPHICS)))
 
-(defn make-app! [math-canvas]
+(defn make-app! [math-canvas & {:keys [scale-factor]}]
   (.evaluateToInputForm wl/kernel-link (str "Needs[\""  KernelLink/PACKAGE_CONTEXT "\"]") 0)
   (.evaluateToInputForm wl/kernel-link "ConnectToFrontEnd[]" 0)
   (let [app (Frame.)]
@@ -19,7 +27,7 @@
       (.setTitle "Wolframite Graphics")
       (.add math-canvas)
       (.setBackground Color/white)
-      (.setSize 300 400)
+      (.setSize (scaled 300 scale-factor) (scaled 400 scale-factor))
       (.setLocation 50 50)
       (.setVisible true)
       (.addWindowListener (proxy [WindowAdapter] []
@@ -32,8 +40,8 @@
 
 (comment
 
-  (def canvas (make-math-canvas! wl/kernel-link))
-  (def app (make-app! canvas))
+  (def canvas (make-math-canvas! wl/kernel-link :scale-factor 1.5))
+  (def app (make-app! canvas :scale-factor 1.5))
 
   (show! canvas "GeoGraphics[]")
 
@@ -54,5 +62,20 @@
   (show! canvas "GeoGraphics[]")
   (show! canvas "Graph3D[GridGraph[{3, 3, 3}, VertexLabels -> Automatic]]")
   (show! canvas "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]")
+
+  )
+
+(comment ;; better quality images
+  (import '[com.wolfram.jlink KernelLink])
+  (.evaluateToImage wl/kernel-link "GeoGraphics[]" 300 300) ;; this has another arity where you can set `dpi`
+  ;; then byte array -> java.awt.Image
+  ;; and (.setImage canvas)
+
+  (let [{:keys [height width]} (bean (.getSize app))]
+    (prn [width height])
+    (.setImage canvas
+               (ImageIO/read (ByteArrayInputStream. (.evaluateToImage wl/kernel-link "GeoGraphics[]" (int width) (int height) 600 true)))))
+
+  ;; doesn't make much difference (maybe a bit), seems like we can go lower dpi, but we already get maximum by default (?)
 
   )
