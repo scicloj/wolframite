@@ -1,7 +1,7 @@
 (ns demo
   (:require
    [clojuratica.core :as wl :refer [WL]]
-   graphics))
+   [clojuratica.tools.graphics :as graphics]))
 
 
 ;; * Clojure a 1min intro
@@ -116,6 +116,15 @@
 (quick-show '(ChemicalData "Ethanol" "StructureDiagram"))
 (quick-show '(GridGraph [5 5]))
 (quick-show '(GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"])))
+
+(comment ;; WIP
+  (graphics/show! canvas
+                  "Map[# -> WikipediaData[#, \"ImageList\"] &,
+                      Take[WikipediaData[\"Brutalism\", \"BacklinksList\"], 1]]")
+
+  (.dispose app)
+
+  )
 
 (comment ;; WIP
 
