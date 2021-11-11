@@ -1,5 +1,5 @@
 {:paths ["src"]
  :deps {org.clojure/clojure {:mvn/version "1.10.3"}
         clj-commons/pomegranate {:mvn/version "1.2.1"}}
- :aliases {:dev {:extra-paths ["dev"]}}}
+ :aliases {:dev {:extra-paths ["dev" "test"]}}}
         ;com.wolfram.jlink/JLink {:local/root}}}
