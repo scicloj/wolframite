@@ -1,4 +1,6 @@
-(ns clojuratica.lib.options)
+(ns clojuratica.lib.options
+  (:require [clojuratica.runtime.default-options :as default-options]
+            [clojuratica.runtime.defaults :as defaults]))
 
 (defn filter-params [current-options]
   (into {} (filter #(keyword? (key %)) current-options)))
@@ -31,6 +33,9 @@
 
 (defn flag? [current-options flag]
   (not (nil? (some #{flag} (vals (filter-flags current-options))))))
+
+(defn flag?' [user-flags flag]
+  (flag? (flags-into defaults/default-options user-flags) flag))
 
 (defn parse-options [current-options args]
   (let [flag?   #(seq (filter-flag-sets % current-options))
