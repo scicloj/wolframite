@@ -80,3 +80,12 @@
 
 (defmacro defn-let-options [& args]
  `(defn-scoping-options fn-let-options ~@args))
+
+;;
+
+(defn set-flag [flags f]
+  (flags-into flags [f]))
+
+(defn aliases [base-list]
+  (or (defaults/default-options base-list)
+      (defaults/default-options :clojure-aliases)))

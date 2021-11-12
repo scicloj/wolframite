@@ -2,13 +2,13 @@
   (:require clojure.set))
 
 ;; * Flags
-(def flag-sets {#{:vectors :seqs #_:seq-fn} :vectors
+(def flag-sets {#{:vectors :seqs #_:seq-fn} :vectors ;; FIXME: this is not really a flag, not sure how useful at all
                 #{:parallel :serial}        :serial
                 #{:parse :no-parse}         :parse
                 #{:evaluate :no-evaluate}   :evaluate
                 #{:convert :no-convert}     :convert
-                #{:hash-maps :no-hash-maps} :hash-maps
-                #{:functions :no-functions} :functions
+                #{:hash-maps :no-hash-maps} :hash-maps ;; FIXME: remove when Association's impltd
+                #{:functions :no-functions} :functions ;; ??
                 #{:aliases :no-aliases}     :aliases
                 #{:N :no-N}                 :no-N
                 #{:verbose :no-verbose}     :no-verbose
@@ -17,7 +17,8 @@
                 #{:full-form
                   :clojure-form}            :clojure-form
                 #{:restore-defaults
-                  :no-restore-defaults}     :no-restore-defaults})
+                  :no-restore-defaults}     :no-restore-defaults} ;; FIXME: not really a flag but side effecting op (?)
+  )
 
 (def all-flags (apply clojure.set/union (keys flag-sets)))
 
@@ -63,30 +64,36 @@
 
 (def default-options
   (merge flag-sets
-         {:alias-list                 :clojure-aliases
+         {#_#_:alias-list                 :clojure-aliases
           :poll-interval              20 ;; ms
           :clojure-scope-aliases      clojure-scope-aliases
-          :clojure-aliases            base-aliases}))
+          :clojure-aliases            base-aliases
+          :all-aliases all-aliases}))
 
-;; NOTE: DEPRECATED *default-options*
-(def ^:dynamic *default-options*
-   {#{:vectors :seqs :seq-fn}   :vectors
-    #{:parallel :serial}        :serial
-    #{:parse :no-parse}         :parse
-    #{:evaluate :no-evaluate}   :evaluate
-    #{:convert :no-convert}     :convert
-    #{:hash-maps :no-hash-maps} :hash-maps
-    #{:functions :no-functions} :functions
-    #{:aliases :no-aliases}     :aliases
-    #{:N :no-N}                 :no-N
-    #{:verbose :no-verbose}     :no-verbose
-    #{:as-function
-      :as-expression}           :as-expression
-    #{:full-form
-      :clojure-form}            :clojure-form
-    #{:restore-defaults
-      :no-restore-defaults}     :no-restore-defaults
-    :alias-list                 :clojure-aliases
-    :poll-interval              20 ;ms
-    :clojure-scope-aliases      clojure-scope-aliases
-    :clojure-aliases            base-aliases})
+
+;; * DEV: WIP!
+
+(comment
+  (def default-flags'
+    {:serial       true
+     :convert      true
+     :evaluate     true
+     :parse        true
+     :functions    true
+     :aliases      true
+     :as-expression true ;; FIXME: shouldn't be a flag but a parsing option?
+     :clojure-form true ;; FIXME: better name
+     :N false
+     })
+
+  ;; support some better merging with a lib
+  ;; top level options spec
+  ;; default options
+  {:flags {:convert true
+           :parse false}
+   :aliases {}
+   :config {:poll-interval 20}
+   ;; runtime opts
+   :kernel/link nil
+   }
+  )

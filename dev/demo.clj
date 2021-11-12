@@ -1,8 +1,19 @@
 (ns demo
   (:require
-   [clojuratica.core :as wl :refer [WL]]
-   [clojuratica.tools.graphics :as graphics]))
+   [clojuratica.core :as wl]
+   [clojuratica.tools.graphics :as graphics]
+   [clojuratica.base.parse :as parse]
+   [clojuratica.runtime.defaults :as defaults]))
 
+(wl/wl '(Dot [1 2 3] [4 5 6]))
+
+(comment
+
+  ((parse/parse-fn 'Plus (merge {:kernel/link @wl/kernel-link-atom}
+                          defaults/default-options))
+   1 2)
+
+  )
 
 ;; * Clojure a 1min intro
 ;; ** Interactive developement
