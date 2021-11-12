@@ -36,30 +36,40 @@
 (ns clojuratica.core
   (:refer-clojure :exclude [intern])
   (:require
-    ;; This namespace must be loaded before any other code will work, since this is what adds the jlink jar to
-    ;; the classpath
-    [clojuratica.jlink :as jlink]
-    [clojuratica.lib.options :as options]
-    [clojuratica.runtime.dynamic-vars :as dynamic-vars]
-    [clojuratica.runtime.default-options :as default-options]
-    [clojuratica.base.cep :as cep]
-    [clojuratica.base.convert :as convert]
-    [clojuratica.base.evaluate :as evaluate]
-    [clojuratica.base.kernel :as kernel]
-    [clojuratica.integration.intern :as intern])
+   ;; This namespace must be loaded before any other code will work, since this is what adds the jlink jar to
+   ;; the classpath
+   [clojuratica.jlink :as jlink]
+   [clojuratica.lib.options :as options]
+   [clojuratica.runtime.dynamic-vars :as dynamic-vars]
+   [clojuratica.runtime.default-options :as default-options]
+   [clojuratica.base.cep :as cep]
+   [clojuratica.base.convert :as convert]
+   [clojuratica.base.evaluate :as evaluate]
+   [clojuratica.base.kernel :as kernel]
+   [clojuratica.integration.intern :as intern]
+   [clojuratica.runtime.defaults :as defaults])
   (:import com.wolfram.jlink.MathLinkFactory))
 
 ;; http://reference.wolfram.com/mathematica/JLink/ref/java/com/wolfram/jlink/MathLinkFactory.html
 
-(declare kernel-link
-         math-evaluate
-         def-math-macro
-         WL)
+(def kernel-link-atom (atom nil))
 
 (defn kernel-link-opts [platform]
   (format "-linkmode launch -linkname '\"%s\" -mathlink'" (jlink/get-mathlink-path platform)))
 
-(options/defn-let-options math-evaluator [enclosed-options default-options/*default-options*] [kernel-link & [init]]
+(defn evaluator-init [opts]
+  (let [wl-convert #(convert/convert   % opts)
+        wl-eval    #(evaluate/evaluate % opts)]
+    (wl-eval (wl-convert 'init))
+    (wl-eval (wl-convert '(Needs "Parallel`Developer`")))
+    (wl-eval (wl-convert '(Needs "Developer`")))
+    (wl-eval (wl-convert '(ParallelNeeds "Developer`")))
+    (wl-eval (wl-convert '(Needs "ClojurianScopes`")))
+    (wl-eval (wl-convert '(ParallelNeeds "ClojurianScopes`")))
+    (wl-eval (wl-convert '(Needs "HashMaps`")))
+    (wl-eval (wl-convert '(ParallelNeeds "HashMaps`")))))
+
+#_(options/defn-let-options math-evaluator [enclosed-options default-options/*default-options*] [kernel-link & [init]]
   (let [enclosed-kernel (kernel/kernel kernel-link)]
     (binding [dynamic-vars/*options* enclosed-options
               dynamic-vars/*kernel*  enclosed-kernel]
@@ -76,32 +86,32 @@
       (binding [dynamic-vars/*kernel* enclosed-kernel]
         (cep/cep expr)))))
 
-(defmacro math-intern [& args]
-  (options/let-options [options args {#{:as-function :as-macro} :as-macro
-                                      #{:no-scopes :scopes}     :no-scopes}]
-                       [math-eval & opspecs]
-     (let [opspecs (if (options/flag? options :scopes)
-                     (into opspecs (keys (default-options/*default-options* :clojure-scope-aliases)))
-                     opspecs)]
-       (if (options/flag? options :as-macro)
-         `(intern/intern :macro '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))
-         `(intern/intern :fn    '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))))))
+;; (defmacro math-intern [& args]
+;;   (options/let-options [options args {#{:as-function :as-macro} :as-macro
+;;                                       #{:no-scopes :scopes}     :no-scopes}]
+;;                        [math-eval & opspecs]
+;;      (let [opspecs (if (options/flag? options :scopes)
+;;                      (into opspecs (keys (default-options/*default-options* :clojure-scope-aliases)))
+;;                      opspecs)]
+;;        (if (options/flag? options :as-macro)
+;;          `(intern/intern :macro '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))
+;;          `(intern/intern :fn    '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))))))
 
+;; (defmacro def-math-macro [m math-eval]
+;;   `(math-intern :as-macro ~math-eval [~m ~'CompoundExpression]))
 
-(defmacro def-math-macro [m math-eval]
-  `(math-intern :as-macro ~math-eval [~m ~'CompoundExpression]))
+;; FIXME: bring back!
+;; (defn wl->clj [s math-eval]
+;;   (math-eval :no-evaluate (list 'quote s)))
 
-(defn wl->clj [s math-eval]
-  (math-eval :no-evaluate (list 'quote s)))
-
-(defn clj->wl
-  "Convert clojure forms to mathematica Expr.
-  Generally useful, especially for working with graphics."
-  [clj-form {:keys [kernel-link output-fn]}]
-  (binding [dynamic-vars/*options* default-options/*default-options*
-            dynamic-vars/*kernel*  (kernel/kernel kernel-link)]
-    (cond-> (convert/convert clj-form)
-      (ifn? output-fn) output-fn)))
+;; (defn clj->wl
+;;   "Convert clojure forms to mathematica Expr.
+;;   Generally useful, especially for working with graphics."
+;;   [clj-form {:keys [kernel-link output-fn]}]
+;;   (binding [dynamic-vars/*options* default-options/*default-options*
+;;             dynamic-vars/*kernel*  kernel-link]
+;;     (cond-> (convert/convert clj-form)
+;;       (ifn? output-fn) output-fn)))
 
 (defn init!
   "Provide platform identifier as one of: `:linux`, `:macos` or `:windows`
@@ -110,12 +120,16 @@
    (init! (jlink/platform-id (System/getProperty "os.name"))))
   ([platform]
    {:pre [(jlink/supported-platform? platform)]}
-   #_{:clj-kondo/ignore true}
-   (def kernel-link (MathLinkFactory/createKernelLink (kernel-link-opts platform)))
-   (.discardAnswer kernel-link)
+   (let [kl (doto (MathLinkFactory/createKernelLink (kernel-link-opts platform))
+              (.discardAnswer))]
+     (reset! kernel-link-atom kl)
+     kl)))
 
-   #_{:clj-kondo/ignore true}
-   (def math-evaluate (math-evaluator kernel-link))
-   (def-math-macro WL clojuratica.core/math-evaluate)))
+(defn make-wl-evaluator [opts]
+  (when-not (instance? com.wolfram.jlink.KernelLink @kernel-link-atom) (init!))
+  (let [initialized-opts (merge {:kernel/link @kernel-link-atom} opts)]
+    (evaluator-init initialized-opts)
+    (fn [expr]
+      (cep/cep expr initialized-opts))))
 
-(init!)
+(def wl (make-wl-evaluator defaults/default-options))
