@@ -1,4 +1,4 @@
-(ns clojuratica.base.kernel)
+;; (ns clojuratica.base.kernel)
 
 ;; (defn kernel [kernel-link]
 ;;   {:link                  kernel-link})

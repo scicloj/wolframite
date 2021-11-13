@@ -52,7 +52,7 @@
    '!    'Not})
 
 (def clojure-scope-aliases
-  {'Function 'ClojurianScopes/Function
+  {#_#_'Function 'ClojurianScopes/Function
    'Let      'ClojurianScopes/Let
    'With     'ClojurianScopes/With
    'Block    'ClojurianScopes/Block

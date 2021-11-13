@@ -92,5 +92,5 @@
     (cond (= 'clojure.core/deref macro)    (convert (cexpr-from-prefix-form arg) opts)
           (= 'clojure.core/meta macro)     (convert (cexpr-from-postfix-form arg) opts)
           (= 'var macro)                   (convert (list 'Function arg) opts)
-          (= 'quote macro)                 (express/express arg)
+          (= 'quote macro)                 (express/express arg opts)
           :else                            (expr/expr-from-parts (map #(convert % opts) cexpr)))))
