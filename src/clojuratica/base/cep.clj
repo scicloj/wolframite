@@ -8,14 +8,14 @@
 (defn cep
   "Convert-Evaluate-Parase pipeline.
   Convert:  from clj data to jlink Expr
-  Evaluate: the Expr on Wolfram Engine
+  Evaluate: the Expr on (some) Wolfram Engine
   Parse:    returned result into clj data.
-  Each stage can be skipped with appropraite `opts` `:flag` e.g. `:no-parse`"
+  Each stage can be skipped with appropriate `opts` `:flag` e.g. `:no-parse`"
   [expr {:keys [flags]
          :as   opts}]
-  (let [convert  (if (options/flag?' flags :convert)   convert/convert   identity)
-        evaluate (if (options/flag?' flags :evaluate)  evaluate/evaluate identity)
-        parse    (if (options/flag?' flags :parse)     parse/parse       identity)]
+  (let [convert  (if (options/flag?' flags :convert)   convert/convert   (fn [& args] (first args)))
+        evaluate (if (options/flag?' flags :evaluate)  evaluate/evaluate (fn [& args] (first args)))
+        parse    (if (options/flag?' flags :parse)     parse/parse       (fn [& args] (first args)))]
     (-> expr
         (convert  opts)
         (evaluate opts)

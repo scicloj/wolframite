@@ -1,6 +1,5 @@
 (ns clojuratica.lib.options
-  (:require [clojuratica.runtime.default-options :as default-options]
-            [clojuratica.runtime.defaults :as defaults]))
+  (:require [clojuratica.runtime.defaults :as defaults]))
 
 (defn filter-params [current-options]
   (into {} (filter #(keyword? (key %)) current-options)))

@@ -5,9 +5,6 @@
   ;Thus, you'll this library required but inused across the codebase.
   This is to get around that fact that we don't have the jar available to us through a standard maven repository, and can't use environment variables in our `deps.edn` specifications."
   (:require [cemerick.pomegranate :as pom]
-            [clojuratica.lib.debug :as debug]
-            [clojuratica.lib.options :as options]
-            [clojuratica.runtime.dynamic-vars :as dynamic-vars]
             [clojure.java.io :as io]
             [clojure.string :as str]))
 
@@ -98,5 +95,3 @@
 
   (get-mathlink-path :macos)
   (get-mathlink-path :linux))
-
-  

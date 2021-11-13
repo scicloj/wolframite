@@ -1,4 +1,4 @@
-(ns clojuratica.runtime.dynamic-vars)
+;; (ns clojuratica.runtime.dynamic-vars)
 
-(declare ^:dynamic *options*)
-(declare ^:dynamic *kernel*)
+;; (declare ^:dynamic *options*)
+;; (declare ^:dynamic *kernel*)

@@ -1,7 +1,6 @@
 (ns clojuratica.base.parse
-  (:require ;[clojure.par]
+  (:require
    [clojuratica.jlink]
-   [clojuratica.lib.debug :as debug]
    [clojuratica.lib.options :as options]
    [clojuratica.base.expr :as expr])
   (:import [com.wolfram.jlink Expr]))
@@ -35,10 +34,10 @@
   (or (simple-vector-type expr) (simple-matrix-type expr)))
 
 ;; FIXME: change name (it's more of a concrete type map)
-(defn bound-map [f coll {:keys [flags]}]
+(defn bound-map [f coll {:keys [flags] :as opts}]
   (if (options/flag?' flags :vectors)
-    (mapv f coll)
-    (map f coll)))
+    (mapv #(f % opts) coll)
+    (map  #(f % opts) coll)))
 
 (defn parse-complex-list [expr opts]
   (bound-map parse (.args expr) opts))
@@ -75,7 +74,7 @@
                                            (= "Dispatch" (expr/head-str inside)))))
                    opts)
         keys      (map second rules)
-        vals      (map (comp second debug/third) rules)]
+        vals      (map (comp second #(nth % 2)) rules)]
     (zipmap keys vals)))
 
 (defn parse-simple-atom [expr type opts]
@@ -93,7 +92,7 @@
     (if (and (options/flag?' flags :N)
              (some #{Expr/INTEGER Expr/BIGINTEGER Expr/REAL Expr/BIGDECIMAL} #{type}))
       ((if (options/flag?' flags :vectors) vec seq) (.asArray expr Expr/REAL 1))
-      (bound-map #(parse-simple-atom %  type opts) (.args expr) opts))))
+      (bound-map (fn [e _opts] (parse-simple-atom e type opts)) (.args expr) opts))))
 
 (defn parse-simple-matrix [expr type opts]
   (let [type (or type (simple-matrix-type expr))]
@@ -102,7 +101,7 @@
 (defn parse-fn [expr opts]
   (fn [& args]
     (let [cep-fn (requiring-resolve `clojuratica.base.cep/cep)]
-      (cep-fn (apply list expr args) (update opts :flags #(options/set-flag % :as-expression))))))
+      (cep-fn (apply list expr args) opts #_(update opts :flags #(options/set-flag % :as-expression))))))
 
 (defn parse-generic-expression [expr opts]
   (-> (list)  ;must start with a real list because the promise is that expressions will be converted to lists

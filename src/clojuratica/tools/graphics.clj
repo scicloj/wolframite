@@ -72,7 +72,6 @@
   ;; and (.setImage canvas)
 
   (let [{:keys [height width]} (bean (.getSize app))]
-    (prn [width height])
     (.setImage canvas
                (ImageIO/read (ByteArrayInputStream. (.evaluateToImage wl/kernel-link-atom "GeoGraphics[]" (int width) (int height) 600 true)))))
 
