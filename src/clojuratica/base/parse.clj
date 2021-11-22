@@ -114,15 +114,21 @@
 
 (defn parse-hash-map [expr opts]
   (let [inside    (first (.args expr))
-        rules     (parse
-                   (cond (.listQ inside) inside
-                         (= "Dispatch" (expr/head-str inside)) (first (.args inside))
-                         :else (assert (or (.listQ inside)
-                                           (= "Dispatch" (expr/head-str inside)))))
-                   opts)
+        ;; inside    (first (.args expr))
+        all-rules? (every? true? (map #(= "Rule" (expr/head-str %)) (.args expr)))
+        rules     (cond (.listQ inside) (parse inside opts)
+                        all-rules? (into {}
+                                         (map (fn [kv]
+                                                (bound-map (fn [x _opts] (parse x opts)) kv opts))
+                                              (.args expr)))
+                        (= "Dispatch" (expr/head-str inside)) (parse (first (.args inside)) opts)
+                        :else (assert (or (.listQ inside)
+                                          (= "Dispatch" (expr/head-str inside)))))
         keys      (map second rules)
         vals      (map (comp second #(nth % 2)) rules)]
-    (zipmap keys vals)))
+    (if (map? rules)
+      rules
+      (zipmap keys vals))))
 
 (defn parse-simple-atom [expr type opts]
   (cond (= type Expr/BIGINTEGER)   (.asBigInteger expr)
@@ -143,7 +149,8 @@
 
 (defn parse-simple-matrix [expr type opts]
   (let [type (or type (simple-matrix-type expr))]
-    (bound-map #(parse-simple-vector % type opts) (.args expr) opts)))
+    (bound-map (fn process-bound-map [a _opts]
+                 (parse-simple-vector a type opts)) (.args expr) opts)))
 
 (defn parse-fn [expr opts]
   (fn [& args]
@@ -156,7 +163,12 @@
       (conj (parse (.head expr) opts))))
 
 (defn parse-complex-atom [expr {:keys [flags] :as opts}]
-  (let [head (expr/head-str expr)]
+  (let [head (expr/head-str expr)
+        ;; NOTE: leaving this in until hash map support has been tested
+        #_#_handle-hash-map (fn [expr opts] (if (and (options/flag?' flags :hash-maps)
+                                                     (not (options/flag?' flags :full-form)))
+                                              (parse-hash-map expr opts)
+                                              (parse-generic-expression expr opts)))]
     (cond (.bigIntegerQ expr)      (.asBigInteger expr)
           (.bigDecimalQ expr)      (.asBigDecimal expr)
           (.integerQ expr)         (parse-integer expr)
@@ -164,20 +176,19 @@
           (.stringQ expr)          (.asString expr)
           (.rationalQ expr)        (parse-rational expr)
           (.symbolQ expr)          (parse-symbol expr opts)
+          (= "Association" head)   (parse-hash-map expr opts) #_(parse-generic-expression expr opts)
           (= "Function" head)      (if (and (options/flag?' flags :functions)
                                             (not (options/flag?' flags :full-form)))
                                      (parse-fn expr opts)
                                      (parse-generic-expression expr opts))
-          (= "HashMapObject" head) (if (and (options/flag?' flags :hash-maps)
-                                            (not (options/flag?' flags :full-form)))
-                                     (parse-hash-map expr opts)
-                                     (parse-generic-expression expr opts))
+          ;; (= "HashMapObject" head) (handle-hash-map expr opts)
           :else                    (parse-generic-expression expr opts))))
 
 (defn parse [expr {:keys [flags] :as opts}]
   (assert (instance? com.wolfram.jlink.Expr expr))
-  (cond (options/flag?' flags :as-function)                   (parse-fn expr opts)
-        (or (atom? expr) (options/flag?' flags :full-form))   (parse-complex-atom expr opts)
-        (simple-vector-type expr)                        (parse-simple-vector expr nil opts)
-        (simple-matrix-type expr)                        (parse-simple-matrix nil expr opts)
-        :else                                            (parse-complex-list expr opts)))
+  (or (when (options/flag?' flags :custom-parse) (custom-parse expr opts))
+      (cond (options/flag?' flags :as-function)                   (parse-fn expr opts)
+            (or (atom? expr) (options/flag?' flags :full-form))   (parse-complex-atom expr opts)
+            (simple-vector-type expr)                        (parse-simple-vector expr nil opts)
+            (simple-matrix-type expr)                        (parse-simple-matrix expr nil opts)
+            :else                                            (parse-complex-list expr opts))))
