@@ -2,10 +2,57 @@
   (:require
    [clojuratica.jlink]
    [clojuratica.lib.options :as options]
-   [clojuratica.base.expr :as expr])
+   [clojuratica.base.expr :as expr]
+   [clojure.string :as str])
   (:import [com.wolfram.jlink Expr]))
 
 (declare parse)
+
+(defn pascal->kebab
+  [s]
+  (some-> s
+          (str/replace #"\w(\p{Upper})" (fn [[[p l] _]] (str  p "-" (str/lower-case l))))
+          str/lower-case))
+
+(defn entity-type->keyword [expr opts]
+  (let [head (pascal->kebab (expr/head-str expr))
+        parts (reduce (fn [acc part]
+                        (into acc (cond
+                                    (string? part) [(pascal->kebab part)]
+                                    (coll? part) (reverse (map pascal->kebab part))
+                                    :else nil)))
+                      [head]
+                      (map #(parse % opts) (.args expr)))]
+    ;; BAIL: if any of the parts are not reckognized,
+    ;; let it go through normal parsing
+    (when (not-any? nil? parts)
+      (keyword (str/join "." (butlast parts))
+               (last parts)))))
+
+(defn custom-parse-dispatch [expr {:keys [parse/custom-parse-symbols]}]
+  (let [head (symbol (expr/head-str expr))]
+    (when-not
+        (and (seq custom-parse-symbols) (not (contains? (set custom-parse-symbols) head)))
+      head)))
+
+(ns-unmap *ns* 'custom-parse)
+(defmulti custom-parse #'custom-parse-dispatch)
+
+;; (defmethod custom-parse 'Hyperlink [expr opts]
+;;   (let [parsed-url (parse (second (.args expr)) opts)]
+;;     (try
+;;       (java.net.URL. parsed-url)
+;;       (catch java.net.MalformedURLException _
+;;         parsed-url))))
+
+(defmethod custom-parse 'EntityProperty [expr opts]
+  (entity-type->keyword expr opts))
+
+(defmethod custom-parse 'Entity [expr opts]
+  (entity-type->keyword expr opts))
+
+(defmethod custom-parse :default [_ _]
+  nil)
 
 (defn atom? [expr]
   (not (.listQ expr)))
