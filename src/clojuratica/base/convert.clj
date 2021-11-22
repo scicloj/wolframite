@@ -76,7 +76,7 @@
                                         ;(let [s (str-utils/replace (str sym) #"\|(.*?)\|" #(str "\\\\[" (second %) "]"))]   )
         (let [s (str sym)]
           (if (re-find #"[^a-zA-Z0-9$\/]" s)
-            (throw (Exception. "Symbols passed to Mathematica must be alphanumeric (apart from forward slashes and dollar signs)."))
+            (throw (Exception. (str "Symbols passed to Mathematica must be alphanumeric (apart from forward slashes and dollar signs). Passed: " s)))
             (Expr. Expr/SYMBOL (apply str (replace {\/ \`} s)))))))))
 
 (defmethod convert :list [coll opts]
