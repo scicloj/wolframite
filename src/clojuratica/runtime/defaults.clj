@@ -49,7 +49,8 @@
    '<>   'StringJoin
    '&&   'And
    '||   'Or
-   '!    'Not})
+   '!    'Not
+   'fn   'Function})
 
 (def clojure-scope-aliases
   {#_#_'Function 'ClojurianScopes/Function
