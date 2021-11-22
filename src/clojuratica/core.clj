@@ -34,7 +34,9 @@
 ; ***** END LICENSE BLOCK *****
 
 (ns clojuratica.core
+  (:refer-clojure :exclude [eval])
   (:require
+   [clojure.walk :as walk]
    [clojuratica.base.cep :as cep]
    [clojuratica.base.convert :as convert]
    [clojuratica.base.evaluate :as evaluate]
@@ -80,6 +82,13 @@
      (reset! kernel-link-atom kl)
      kl)))
 
+(defn un-qualify [form]
+  (walk/postwalk (fn [form]
+                   (if (qualified-symbol? form)
+                     (symbol (name form))
+                     form))
+                 form))
+
 (defn make-wl-evaluator [opts]
   (when-not (instance? com.wolfram.jlink.KernelLink @kernel-link-atom) (init!))
   (let [initialized-opts (merge {:kernel/link @kernel-link-atom} opts)]
@@ -89,18 +98,21 @@
        (wl-eval expr {}))
       ([expr eval-opts]
        (let [with-eval-opts (merge initialized-opts eval-opts)
-             expr' (if (string? expr) (express/express expr with-eval-opts) expr)]
+             expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
          (cep/cep expr' with-eval-opts))))))
 
 (defonce wl (make-wl-evaluator defaults/default-options))
+(def eval wl)
 
 (defn clj-intern
   ([wl-fn-sym]
    (clj-intern wl-fn-sym {}))
-  ([wl-fn-sym opts]
-   (intern *ns* wl-fn-sym (parse/parse-fn wl-fn-sym (merge {:kernel/link @kernel-link-atom}
-                                                           defaults/default-options
-                                                           opts)))))
+  ([wl-fn-sym {:intern/keys [ns-sym extra-meta] :as opts}]
+   (intern (create-ns (or ns-sym (.name *ns*)))
+           (with-meta wl-fn-sym (merge {:clj-intern true} extra-meta))
+           (parse/parse-fn wl-fn-sym (merge {:kernel/link @kernel-link-atom}
+                                            defaults/default-options
+                                            opts)))))
 
 (defn ->clj! [s]
   {:flags [:no-evaluate]}
@@ -112,3 +124,17 @@
   [clj-form {:keys [output-fn] :as opts}]
   (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
     (ifn? output-fn) output-fn))
+
+(defn load-all-symbols
+  "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`.
+  May take some time to complete.
+  Returns a future."
+  [ns-sym]
+  (future
+    (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage")))
+                      (WolframLanguageData))
+                wl
+                (map vec)
+                (map (fn [[sym doc]]
+                       (clj-intern (symbol sym) {:intern/ns-sym ns-sym
+                                                 :intern/extra-meta {:doc doc}})))))))
