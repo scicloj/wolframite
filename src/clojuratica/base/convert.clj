@@ -13,9 +13,9 @@
 (defn- dispatch [obj]
   (cond (and (list? obj)
              (empty? obj))   :null
-        (list? obj)          :expr
+        (seq? obj)           :expr
         (or (vector? obj)
-            (seq? obj))      :list
+            (list? obj))     :list
         (ratio? obj)         :rational
         (map? obj)           :hash-map
         (symbol? obj)        :symbol
@@ -63,7 +63,7 @@
 
 (defmethod convert :hash-map [map {:keys [flags] :as opts}]
   (if (options/flag?' flags :hash-maps)
-    (convert (apply list 'HashMap (for [[key value] map] (list 'Rule key value))) opts)
+    (convert (apply list 'Association (for [[key value] map] (list 'Rule key value))) opts)
     (convert (seq map) opts)))
 
 (defmethod convert :symbol [sym {:keys [aliases] :as opts}]
