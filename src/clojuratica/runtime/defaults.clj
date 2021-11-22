@@ -17,7 +17,9 @@
                 #{:full-form
                   :clojure-form}            :clojure-form
                 #{:restore-defaults
-                  :no-restore-defaults}     :no-restore-defaults} ;; FIXME: not really a flag but side effecting op (?)
+                  :no-restore-defaults}     :no-restore-defaults
+                #{:custom-parse
+                  :no-custom-parse}         :no-custom-parse} ;; FIXME: not really a flag but side effecting op (?)
   )
 
 (def all-flags (apply clojure.set/union (keys flag-sets)))
