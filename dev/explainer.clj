@@ -5,6 +5,19 @@
    [clojuratica.base.parse :as parse :refer [custom-parse]]
    [clojuratica.lib.helpers :as h]))
 
+"Hello Everyone!"
+
+;; ### Start a clerk web server and file watcher
+
+(comment
+  (require '[nextjournal.clerk :as clerk])
+  (clerk/serve! {:browse? true :watch-paths ["src"]})
+
+  (clerk/serve! {:browse? true})
+  (clerk/show! "dev/explainer.clj")
+
+  )
+
 ;; * Syntax
 
 ;; RulePlot[CellularAutomaton[30]]
@@ -13,13 +26,14 @@
 ;; * Eval
 
 (eval    '(map (fn [x] (+ x 1)) [1 2 3]))
+
 (wl/eval '(Map (fn [x] (+ x 1)) [1 2 3]))
 
 (wl/eval "Map[Function[{x}, x + 1], {1, 2, 3}]")
 
-;; /////////////////////////
-;; Convert >> Eval >> Parse
-;; /////////////////////////
+;; |/////////////////////////|
+;; |Convert >> Eval >> Parse |
+;; |/////////////////////////|
 
 ;; * Intern
 
@@ -31,7 +45,6 @@
   (wl/wl
    '(Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output."))))
 
-
 ;; ** intern
 
 (wl/clj-intern 'Plus {})
@@ -39,8 +52,10 @@
 (map wl/clj-intern ['Dot 'Plus])
 
 (wl/load-all-symbols 'w)
+(wl/load-all-symbols (.name *ns*))
 
 ;; * REPL
+
 (require '[clojure.repl :as repl])
 
 (repl/doc w/GeoGraphics)
@@ -60,7 +75,7 @@
            n)
          :return-links true)
 
-(w/Information 'GenomeData)
+(Information 'GenomeData)
 
 (wl/wl '((WolframLanguageData "GenomeData") "Association"))
 
@@ -87,3 +102,9 @@
 
 (wl/wl '(Hyperlink "foo" "https://www.google.com") {:flags [:custom-parse]
                                                     :parse/custom-parse-symbols ['Hyperlink]})
+
+;; * More
+
+;; WordFrequency[ExampleData[{"Text", "AliceInWonderland"}], {"a", "an", "the"}, "CaseVariants"]
+
+(WordFrequency (ExampleData ["Text" "AliceInWonderland"]) ["a" "an" "the"] "CaseVariants")
