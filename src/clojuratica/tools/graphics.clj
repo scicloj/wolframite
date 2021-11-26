@@ -67,7 +67,8 @@
 
 (comment ;; better quality images
   (import '[com.wolfram.jlink KernelLink])
-  (.evaluateToImage wl/kernel-link-atom "GeoGraphics[]" 300 300) ;; this has another arity where you can set `dpi`
+
+  (.evaluateToImage @wl/kernel-link-atom "GeoGraphics[]" 300 300) ;; this has another arity where you can set `dpi`
   ;; then byte array -> java.awt.Image
   ;; and (.setImage canvas)
 
