@@ -1,9 +1,10 @@
 (ns clerk-helper
   (:require [clojuratica.core :as wl]
             [nextjournal.clerk :as clerk]
+            [nextjournal.clerk.webserver :as webserver]
+            [nextjournal.beholder :as beholder]
             [clj-http.client        :as client]
-            [clojure.java.io :as io])
-  (:import (com.wolfram.jlink MathLinkFactory)))
+            [clojure.java.io :as io]))
 
 (defn bytes->b64encodedString
   [bs]
@@ -44,3 +45,14 @@
        stream->bytes
        bytes->b64encodedString
        img))
+
+;; There are some issues with the classpath,
+;; (likely) due to dynamic loading of jlink,
+;; so this is a hacky way to watch paths
+(defn clerk-watch!
+  [watch-paths]
+  (webserver/start! {:port 7777})
+  (future
+    (reset! clerk/!watcher {:paths watch-paths
+                            :watcher (apply beholder/watch-blocking #(clerk/file-event %) watch-paths)}))
+  (prn "Clerk Started!"))
