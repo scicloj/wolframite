@@ -44,8 +44,7 @@
    [clojuratica.base.parse :as parse]
    [clojuratica.jlink :as jlink]
    [clojuratica.runtime.defaults :as defaults])
-  (:import
-   com.wolfram.jlink.MathLinkFactory))
+  (:import (com.wolfram.jlink MathLinkFactory)))
 
 (defonce kernel-link-atom (atom nil))
 
