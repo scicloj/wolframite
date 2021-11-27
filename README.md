@@ -61,6 +61,18 @@ More examples
 ;=> 3.141592653589793238462643383279502884197169399375105820285M
 ```
 
+## Clerk Integration
+
+Example usage: (waching for changes in a folder)
+
+```
+user> (require '[clerk-helper :as ch])
+user> (ch/clerk-watch! ["dev/notebook"])
+```
+
+* Open dev/notebook/demo.clj, make a change and save.
+* Open `localhost:7777` in the browser
+
 
 ## Dependencies
 
@@ -96,4 +108,3 @@ The product names used in this web site are for identification purposes only.
 All trademarks and registered trademarks, including "Wolfram Mathematica," are the property of their respective owners.
 Clojuratica is not a product of Wolfram Research.
 The software on this site is provided "as-is," without any express or implied warranty.
-
