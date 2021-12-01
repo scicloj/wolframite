@@ -3,7 +3,7 @@
             [nextjournal.clerk :as clerk]
             [nextjournal.clerk.webserver :as webserver]
             [nextjournal.beholder :as beholder]
-            [clj-http.client        :as client]
+            ;; [clj-http.client        :as client]
             [clojure.java.io :as io]))
 
 (defn bytes->b64encodedString
@@ -36,15 +36,15 @@
     (io/copy is baos)
     (.toByteArray baos)))
 
-(defn fetch-image [url]
-  (:body (client/get url {:as :stream})))
+;; (defn fetch-image [url]
+;;   (:body (client/get url {:as :stream})))
 
-(defn get-image [url]
-  (->> url
-       fetch-image
-       stream->bytes
-       bytes->b64encodedString
-       img))
+;; (defn get-image [url]
+;;   (->> url
+;;        fetch-image
+;;        stream->bytes
+;;        bytes->b64encodedString
+;;        img))
 
 ;; There are some issues with the classpath,
 ;; (likely) due to dynamic loading of jlink,
