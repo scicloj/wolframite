@@ -8,6 +8,11 @@ hs*.log
 # caches
 /.clj-kondo/.cache/
 .cpcache
+/.cache/
 
 # MacOS
 .DS_Store
+
+# Dev
+/dev/scratch/
+todo.org
