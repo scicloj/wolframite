@@ -1,9 +1,9 @@
 (ns notebook.demo
-  (:require [clojuratica.core  :refer [load-all-symbols wl]]
+  (:require [clojuratica.core  :refer [load-all-symbols wl] :as w]
             [clojuratica.base.convert :as cv]
             [clojuratica.jlink :as jlink]
             [clojuratica.lib.helpers :refer [help!]]
-            [clerk-helper :refer [view get-image]]
+            [clojuratica.tools.clerk-helper :refer [view]]
             [aerial.hanami.common :as hc]
             [aerial.hanami.templates :as ht]
             [nextjournal.clerk :as nb]
@@ -13,6 +13,7 @@
             [cemerick.pomegranate :as pom]
             [clojure.string :as str]
             [clojure.repl :refer [doc find-doc apropos]]))
+
 
 ;; # Wolfram Language Graphics
 
@@ -59,7 +60,7 @@
            :HEIGHT 400
            :COLOR "Origin"))
 
-;; # Friday evening fun
+;; # Sunday evening family friendly fun
 
 (defn image [[_ img]]
   ((last (last img)) "URL"))
@@ -91,4 +92,12 @@
                   [:img {:src (image mdata)}]]])
               movie-ents))])
 
-(view '(Animate (Plot (Sin (+ x a)) [x 0 10]) [a 0 5] (-> AnimationRunning true)))
+(view '(Animate (Plot (Sin (+ x a)) [x 0 10]) [a 0 5] (-> AnimationRunning true))
+      :folded? true)
+
+(w/->clj! "Plot[Evaluate[Table[BesselJ[n, x], {n, 4}]], {x, 0, 10},
+               Filling -> Axis]")
+
+(view '(Plot (Evaluate (Table (BesselJ n x) [n 4]))
+             [x 0 10]
+             (-> Filling Axis)))

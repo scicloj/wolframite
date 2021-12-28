@@ -108,3 +108,14 @@
 ;; WordFrequency[ExampleData[{"Text", "AliceInWonderland"}], {"a", "an", "the"}, "CaseVariants"]
 
 (WordFrequency (ExampleData ["Text" "AliceInWonderland"]) ["a" "an" "the"] "CaseVariants")
+
+;; Wrapping in a function
+(defn wf [& {:keys [prop]
+             :or   {prop "CaseVariants"}}]
+  (WordFrequency (ExampleData (conj ["Text"] "AliceInWonderland"))
+                 (vector "a" "an" "the")
+                 prop))
+
+(wf :prop "Total")
+
+(h/help! 'WordFrequencyData)

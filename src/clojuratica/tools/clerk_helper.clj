@@ -14,13 +14,13 @@
   [:img {:src (format "data:image/jpeg;base64,%s" b64img)
          :style {:margin-top "1rem"}}])
 
-(defn view* [form]
+(defn view* [form folded?]
   (let [wl-str (wl/->wl! form {:output-fn str})
         input-img    (.evaluateToImage @wl/kernel-link-atom wl-str 0 0 0 true)
         b64img (bytes->b64encodedString input-img)]
     [:div
-     [:details {:open true}
-      [:summary [:h5 {:style {:display "inline-block"
+     [:details {:open (not folded?)}
+      [:summary [:h5 {:style {:display "inline"
                               :cursor "pointer"
                               :padding "0.5rem 1rem 0 1rem"}}
                  wl-str]]
@@ -28,8 +28,8 @@
        [:hr]
        (img b64img)]]]))
 
-(defn view [form]
-  (clerk/html (view* form)))
+(defn view [form & {:keys [folded?]}]
+  (clerk/html (view* form folded?)))
 
 (defn stream->bytes [is]
   (let [baos (java.io.ByteArrayOutputStream.)]
