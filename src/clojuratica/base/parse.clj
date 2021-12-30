@@ -52,7 +52,7 @@
   (entity-type->keyword expr opts))
 
 (defmethod custom-parse :default [_ _]
-  nil)
+  ::not-implemented)
 
 (defn atom? [expr]
   (not (.listQ expr)))
@@ -184,11 +184,19 @@
           ;; (= "HashMapObject" head) (handle-hash-map expr opts)
           :else                    (parse-generic-expression expr opts))))
 
-(defn parse [expr {:keys [flags] :as opts}]
+(defn standard-parse [expr {:keys [flags] :as opts}]
   (assert (instance? com.wolfram.jlink.Expr expr))
-  (or (when (options/flag?' flags :custom-parse) (custom-parse expr opts))
-      (cond (options/flag?' flags :as-function)                   (parse-fn expr opts)
-            (or (atom? expr) (options/flag?' flags :full-form))   (parse-complex-atom expr opts)
-            (simple-vector-type expr)                        (parse-simple-vector expr nil opts)
-            (simple-matrix-type expr)                        (parse-simple-matrix expr nil opts)
-            :else                                            (parse-complex-list expr opts))))
+  (cond
+    (options/flag?' flags :as-function)                   (parse-fn expr opts)
+    (or (atom? expr) (options/flag?' flags :full-form))   (parse-complex-atom expr opts)
+    (simple-vector-type expr)                        (parse-simple-vector expr nil opts)
+    (simple-matrix-type expr)                        (parse-simple-matrix expr nil opts)
+    :else                                            (parse-complex-list expr opts)))
+
+(defn parse [expr {:keys [flags] :as opts}]
+  (if (options/flag?' flags :custom-parse)
+    (let [cp (custom-parse expr opts)]
+      (if (not= ::not-implemented cp)
+        cp
+        (standard-parse expr opts)))
+    (standard-parse expr opts)))
