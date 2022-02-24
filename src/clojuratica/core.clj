@@ -81,6 +81,10 @@
      (reset! kernel-link-atom kl)
      kl)))
 
+(defn terminate-kernel! []
+  (.terminateKernel @kernel-link-atom)
+  (reset! kernel-link-atom nil))
+
 (defn un-qualify [form]
   (walk/postwalk (fn [form]
                    (if (qualified-symbol? form)
