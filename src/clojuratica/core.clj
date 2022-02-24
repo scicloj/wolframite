@@ -48,8 +48,8 @@
 
 (defonce kernel-link-atom (atom nil))
 
-(defn kernel-link-opts [platform]
-  (format "-linkmode launch -linkname '\"%s\" -mathlink'" (jlink/get-mathlink-path platform)))
+(defn kernel-link-opts [{:keys [platform mathlink-path]}]
+  (format "-linkmode launch -linkname '\"%s\" -mathlink'" (or mathlink-path (jlink/get-mathlink-path platform))))
 
 (defn evaluator-init [opts]
   (let [wl-convert #(convert/convert   % opts)
@@ -73,10 +73,10 @@
   "Provide platform identifier as one of: `:linux`, `:macos`, `:macos-mathematica` or `:windows`
   Defaults to platform identifier based on `os.name`"
   ([]
-   (init! (jlink/platform-id (System/getProperty "os.name"))))
-  ([platform]
-   {:pre [(jlink/supported-platform? platform)]}
-   (let [kl (doto (MathLinkFactory/createKernelLink (kernel-link-opts platform))
+   (init! {:platform (jlink/platform-id (System/getProperty "os.name"))}))
+  ([{:keys [platform] :as init-opts}]
+   {:pre [(if platform (jlink/supported-platform? platform) true)]}
+   (let [kl (doto (MathLinkFactory/createKernelLink (kernel-link-opts init-opts))
               (.discardAnswer))]
      (reset! kernel-link-atom kl)
      kl)))
