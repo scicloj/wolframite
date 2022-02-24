@@ -130,11 +130,10 @@
   May take some time to complete.
   Returns a future."
   [ns-sym]
-  (future
-    (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage")))
-                      (WolframLanguageData))
-                wl
-                (map vec)
-                (map (fn [[sym doc]]
-                       (clj-intern (symbol sym) {:intern/ns-sym ns-sym
-                                                 :intern/extra-meta {:doc doc}})))))))
+  (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage")))
+                    (WolframLanguageData))
+              wl
+              (map vec)
+              (map (fn [[sym doc]]
+                     (clj-intern (symbol sym) {:intern/ns-sym ns-sym
+                                               :intern/extra-meta {:doc doc}}))))))
