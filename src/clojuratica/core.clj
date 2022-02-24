@@ -90,16 +90,16 @@
 
 (defn make-wl-evaluator [opts]
   (when-not (instance? com.wolfram.jlink.KernelLink @kernel-link-atom) (init!))
-  ;; NOTE: probably should deref at the bottom of the stack not here, otherwise we're closing over the value
-  (let [initialized-opts (merge {:kernel/link @kernel-link-atom} opts)]
-    (evaluator-init initialized-opts)
-    (fn wl-eval
-      ([expr]
-       (wl-eval expr {}))
-      ([expr eval-opts]
-       (let [with-eval-opts (merge initialized-opts eval-opts)
-             expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
-         (cep/cep expr' with-eval-opts))))))
+  (evaluator-init (merge {:kernel/link @kernel-link-atom} opts))
+  (fn wl-eval
+    ([expr]
+     (wl-eval expr {}))
+    ([expr eval-opts]
+     (let [with-eval-opts (merge {:kernel/link @kernel-link-atom}
+                                 opts
+                                 eval-opts)
+           expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
+       (cep/cep expr' with-eval-opts)))))
 
 (defonce wl (make-wl-evaluator defaults/default-options))
 (def eval wl)
