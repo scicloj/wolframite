@@ -70,7 +70,7 @@
   )
 
 (defn init!
-  "Provide platform identifier as one of: `:linux`, `:macos` or `:windows`
+  "Provide platform identifier as one of: `:linux`, `:macos`, `:macos-mathematica` or `:windows`
   Defaults to platform identifier based on `os.name`"
   ([]
    (init! (jlink/platform-id (System/getProperty "os.name"))))
