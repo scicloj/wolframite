@@ -10,13 +10,13 @@
 
 (def ^:private unable-to-find-message "Unable to find Mathematica installation. Please specify using either the MATHEMATICA_INSTALL_PATH or WOLFRAM_INSTALL_PATH environment variable.")
 
-(def ^:private default-mac-base-path "/Applications/Mathematica.app/Contents")
+(def ^:private default-mac-base-path "/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents")
 (def ^:private default-linux-base-path "/usr/local/Wolfram/Mathematica")
 (def ^:private default-windows-base-path "/c:/Program Files/Wolfram Research/Mathematica/")
 
 (def ^:private jlink-suffix "/SystemFiles/Links/JLink/JLink.jar")
 
-(def ^:private mathlink-macos-suffix "/MacOS/MathKernel")
+(def ^:private mathlink-macos-suffix "/MacOS/WolframKernel")
 (def ^:private mathlink-linux-suffix "/Executables/MathKernel")
 (def ^:private mathlink-windows-suffix "/MathKernel.exe")
 
