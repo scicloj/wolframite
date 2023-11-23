@@ -4,7 +4,7 @@ An interface between Clojure and the Wolfram Language and Mathematica / [Wolfram
 
 ## Status
 
-**Wolframite is currently (Q4/2023) under active development again. You can [keep track of what is happening in this discussion](/scicloj/wolframite/discussions/17). Notice that the `master` branch is very outdated, and active development happens on [`develop`](/scicloj/wolframite/tree/develop), which we want to bring to a conclusion and merge to master ASAP.**
+**Wolframite is currently (Q4/2023) under active development again. You can [keep track of what is happening in this discussion](https://github.com/scicloj/wolframite/discussions/17). Notice that the `master` branch is very outdated, and active development happens on [`develop`](/scicloj/wolframite/tree/develop), which we want to bring to a conclusion and merge to master ASAP.**
 
 **BEWARE: The documentation below here has mostly not been updated yet.**
 
