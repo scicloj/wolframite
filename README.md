@@ -1,10 +1,16 @@
-# Clojuratica
+# Wolframite
 
-An interface between Clojure and the Wolfram Language and Mathematica.
+An interface between Clojure and the Wolfram Language and Mathematica / [Wolfram Engine](https://www.wolfram.com/engine/).
 
-## What is Clojuratica? ##
+## Status
 
-Clojuratica brings together two of today's most exciting tools for high-performance, parallel computation.
+**Wolframite is currently (Q4/2023) under active development again. You can [keep track of what is happening in this discussion](/scicloj/wolframite/discussions/17). Notice that the `master` branch is very outdated, and active development happens on [`develop`](/scicloj/wolframite/tree/develop), which we want to bring to a conclusion and merge to master ASAP.**
+
+**BEWARE: The documentation below here has mostly not been updated yet.**
+
+## What is Wolframite? ##
+
+Wolframite (formerly Clojuratica) brings together two of today's most exciting tools for high-performance, parallel computation.
 
 [Clojure](http://clojure.org) is a dynamic functional programming language with a compelling approach to concurrency and state, a strong cast of persistent immutable data structures, and a growing reputation for doing all the right things.
 [Wolfram Mathematica](https://www.wolfram.com/mathematica/) is arguably the world's most powerful integrated tool for numerical computation, symbolic mathematics, optimization, and visualization and is build on top of its own splendid functional programming language, [Wolfram Language](https://www.wolfram.com/language/).
