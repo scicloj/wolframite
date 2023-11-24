@@ -39,7 +39,8 @@
 
 ;; ** def
 
-(def P (parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}))
+(def wolfPlus (parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}))
+(wolfPlus 1 2 3) ; => 6
 
 (def greetings
   (wl/wl
@@ -51,6 +52,7 @@
 
 (map wl/clj-intern ['Dot 'Plus])
 
+;; BEWARE: This below may be extremely slow (up to minutes)
 (wl/load-all-symbols 'w)
 (wl/load-all-symbols (.name *ns*))
 
@@ -102,7 +104,6 @@
 
 (wl/wl '(Hyperlink "foo" "https://www.google.com") {:flags [:custom-parse]
                                                     :parse/custom-parse-symbols ['Hyperlink]})
-
 ;; * More
 
 ;; WordFrequency[ExampleData[{"Text", "AliceInWonderland"}], {"a", "an", "the"}, "CaseVariants"]

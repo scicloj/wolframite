@@ -132,12 +132,17 @@
 (defn load-all-symbols
   "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`.
   May take some time to complete.
-  Returns a future."
+  Returns a future." ; FIXME Not sure it returns a future in practice? Though it should!
   [ns-sym]
   (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage")))
-                    (WolframLanguageData))
+                    ;; this map is very slow (few minutes), likely due to fetching the docs; but even just the name takes ~20-30s
+                    ;; All the time is spent in Wolfram; executing `Map[Function[{e},{e["Name"],e["PlaintextUsage"]}],WolframLanguageData[]]` in there
+
+                    ;; directly also takes forever
+                    (WolframLanguageData)) ; this takes 1-2s
               wl
               (map vec)
               (map (fn [[sym doc]]
                      (clj-intern (symbol sym) {:intern/ns-sym ns-sym
-                                               :intern/extra-meta {:doc doc}}))))))
+                                               :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
+                                                                          doc)}}))))))

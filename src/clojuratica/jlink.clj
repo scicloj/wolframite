@@ -8,7 +8,7 @@
             [clojure.java.io :as io]
             [clojure.string :as str]))
 
-(def ^:private unable-to-find-message "Unable to find Mathematica installation. Please specify using either the MATHEMATICA_INSTALL_PATH or WOLFRAM_INSTALL_PATH environment variable.")
+(def ^:private ^String unable-to-find-message "Unable to find Mathematica installation. Please specify using either the MATHEMATICA_INSTALL_PATH or WOLFRAM_INSTALL_PATH environment variable.")
 
 (def ^:private default-mac-base-path "/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents")
 (def ^:private mathematica-mac-base-path "/Applications/Mathematica.app/Contents")

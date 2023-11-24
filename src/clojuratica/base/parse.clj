@@ -1,4 +1,5 @@
 (ns clojuratica.base.parse
+  "Translate a jlink.Expr returned from an evaluation into Clojure data"
   (:require
    [clojuratica.jlink]
    [clojuratica.lib.options :as options]
@@ -36,7 +37,27 @@
       head)))
 
 (ns-unmap *ns* 'custom-parse)
-(defmulti custom-parse #'custom-parse-dispatch)
+(defmulti custom-parse
+  "Modify how Wolfram response is parsed into Clojure data.
+  You need to pass the flag :custom-parse to eval to actually enable this.
+
+  The dispatch-val should be a symbol, matched against the first one of the result list.
+  You can override this by including `:parse/custom-parse-symbols ['sym1 'sym2 ...]` in the flags,
+  to be able to match against multiple symbols.
+
+  Example:
+
+  ```clj
+   ; return a Java URL from a Hyperlink call, instead of `'(Hyperlink <label> <url string>)`
+  (defmethod custom-parse 'Hyperlink [expr opts]
+  (-> (second (.args expr)) ; 1st = label
+      (parse/parse opts)
+      java.net.URL.))
+
+  (wl/eval '(Hyperlink \"foo\" \"https://www.google.com\")
+            {:flags [:custom-parse] :parse/custom-parse-symbols ['Hyperlink]})
+  ```"
+  #'custom-parse-dispatch)
 
 ;; (defmethod custom-parse 'Hyperlink [expr opts]
 ;;   (let [parsed-url (parse (second (.args expr)) opts)]
@@ -152,7 +173,12 @@
     (bound-map (fn process-bound-map [a _opts]
                  (parse-simple-vector a type opts)) (.args expr) opts)))
 
-(defn parse-fn [expr opts]
+(defn parse-fn
+  "Return a function that invokes the Wolfram expression `expr` (typically just a symbol naming a fn),
+  converting any arguments given to it from Clojure to Wolfram and does the opposite conversion on the
+  result.
+  Ex.: `((parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}) 1 2) ; => 3`"
+  [expr opts]
   (fn [& args]
     (let [cep-fn (requiring-resolve `clojuratica.base.cep/cep)]
       (cep-fn (apply list expr args) opts #_(update opts :flags #(options/set-flag % :as-expression))))))

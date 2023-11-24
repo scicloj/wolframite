@@ -6,7 +6,7 @@
     [clojuratica.base.parse :as parse]))
 
 (defn cep
-  "Convert-Evaluate-Parase pipeline.
+  "Convert-Evaluate-Parse pipeline.
   Convert:  from clj data to jlink Expr
   Evaluate: the Expr on (some) Wolfram Engine
   Parse:    returned result into clj data.
