@@ -38,6 +38,8 @@
 
 (ns-unmap *ns* 'custom-parse)
 (defmulti custom-parse
+  ;; TODO Consider *not* requiring to pass the flag to enable the multi (originally added to make
+  ;;      the code less magical and more explicit)
   "Modify how Wolfram response is parsed into Clojure data.
   You need to pass the flag :custom-parse to eval to actually enable this.
 

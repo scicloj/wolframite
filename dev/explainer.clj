@@ -39,8 +39,8 @@
 
 ;; ** def
 
-(def wolfPlus (parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}))
-(wolfPlus 1 2 3) ; => 6
+(def W:Plus (parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}))
+(W:Plus 1 2 3) ; => 6
 
 (def greetings
   (wl/wl

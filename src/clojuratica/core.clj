@@ -106,9 +106,39 @@
        (cep/cep expr' with-eval-opts)))))
 
 (defonce wl (make-wl-evaluator defaults/default-options))
-(def eval wl)
+(def
+  ^{:arglists '([expr]
+                [expr opts])
+    :doc "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
+
+    The `opts` map may contain `:flags [kwd ...]` and is passed e.g. to the `custom-parse` multimethod.
+
+    Example:
+    ```clojure
+    (wl/eval \"Plus[1,2]\")
+    ; => 3
+    (wl/eval '(Plus 1 2))`
+    ; => 3
+    ```
+
+    See also [[clj-intern]] and [[load-all-symbols]], which enable you to make a Wolfram function callable directly."}
+  eval wl) ; TODO Decide whether we should keep both eval and wl, both meaning the same, or settle on just one.
 
 (defn clj-intern
+  "Finds or creates a var named by the symbol `wl-fn-sym` in the current namespace,
+  which will be a function that invokes a Wolfram function of the same name.
+
+  You can override the target namespace and add additional metadata to the var by
+  setting the appropriate `opts`.
+
+  Ex.:
+  ```clj
+  (clj-intern 'Plus {})
+  (Plus 1 2)
+  ; => 3
+  ```
+
+  See also [[load-all-symbols]]."
   ([wl-fn-sym]
    (clj-intern wl-fn-sym {}))
   ([wl-fn-sym {:intern/keys [ns-sym extra-meta] :as opts}]
@@ -130,9 +160,13 @@
     (ifn? output-fn) output-fn))
 
 (defn load-all-symbols
-  "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`.
-  May take some time to complete.
-  Returns a future." ; FIXME Not sure it returns a future in practice? Though it should!
+  ;; BEWARE: This is extremely slow (10s of secs / few minutes), most of this spent in Wolfram itself
+  ;; IDEAS: 1) Have also (load-symbols <list of symbols or a regexp>), which would load only a subset
+  ;;           (hopefully much faster)
+  ;;        2) Pre-load an intern the symbols into a ns here. Pros: available at no wait; cons: sometimes outdated
+  "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`,
+  using [[clj-intern]].
+  Beware: May take quite some time to complete. You may want to run it in a future."
   [ns-sym]
   (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage")))
                     ;; this map is very slow (few minutes), likely due to fetching the docs; but even just the name takes ~20-30s
