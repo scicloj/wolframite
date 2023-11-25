@@ -24,7 +24,7 @@
                                     :else nil)))
                       [head]
                       (map #(parse % opts) (.args expr)))]
-    ;; BAIL: if any of the parts are not reckognized,
+    ;; BAIL: if any of the parts are not recognized,
     ;; let it go through normal parsing
     (when (not-any? nil? parts)
       (keyword (str/join "." (butlast parts))

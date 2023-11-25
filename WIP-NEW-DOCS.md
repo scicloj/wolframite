@@ -61,6 +61,16 @@ On interning: this essentially creates a "proxy" function of the same name as a 
 
 ### How does it work internally
 
+#### The "CEP pipeline": convert - evaluate - parse
+
+Evaluating an expression with Wolfram consists of three stages:
+
+1. Convert (`convert/convert`) the given expression from Clojure to Wolfram (i.e. to an instance of jlink.Expr)
+2. Evaluate (`evaluate/evaluate`) the jlink expression via the remote Wolfram Kernel
+3. Parse (`parse/parse`) the response back from a jlink expression to Clojure data
+
+See `clojuratica.base.cep/cep`.
+
 #### Parse
 
 Modify how Wolfram response is parsed into Clojure data - override `clojuratica.base.parse/custom-parse` with the symbol of interest. 

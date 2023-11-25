@@ -26,7 +26,7 @@
         (evaluate (convert/convert '(QueueRun) opts) opts)
         (swap! lqr-atom (fn [_] (System/nanoTime))))
       ;; TODO: else branch: add debug logging "Sleeping for"
-      (Thread/sleep (quot run-in 1000000)))))
+      (Thread/sleep ^long (quot run-in 1000000)))))
 
 (defn evaluate [expr {:keys [kernel/link]
                       :as   opts}]
