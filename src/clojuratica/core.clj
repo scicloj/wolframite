@@ -167,8 +167,9 @@
   "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`,
   using [[clj-intern]].
   Beware: May take quite some time to complete. You may want to run it in a future."
+  ;; NOTE: There is resources/wld.wl with dumped content of WolframLanguageData (name, usage only) - likely outdated
   [ns-sym]
-  (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage")))
+  (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage"))) ; FIXME (jh) `EntityValue[WolframLanguageData[], {"Name", "PlaintextUsage"}, "EntityPropertyAssociation"];` must faster (=> maps)
                     ;; this map is very slow (few minutes), likely due to fetching the docs; but even just the name takes ~20-30s
                     ;; All the time is spent in Wolfram; executing `Map[Function[{e},{e["Name"],e["PlaintextUsage"]}],WolframLanguageData[]]` in there
 

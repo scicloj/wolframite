@@ -14,7 +14,11 @@
 * Q: What does `wl/wl` do, vs. `wl/eval` ? A: Eval is alias to wl, an evaluator instance.
 * Why do we want to support `:parse/custom-parse-symbols` (and not simply support either a sym or a set of symbols as the dispatch-val?) Also, why do we force the user to set the `:custom-parse` flag? Is always 
  invoking a multimethod considered too expensive?
-
+* The flags - do we need all, how to understand them, ...?
+* How well is WL's Associative supported in parse<>convert? (There is some flag related to this)
+* How to install packages?
+* What are `defaults/clojure-scope-aliases` about?
+ 
 ### Performance
 
 * `graphics/show!` seems pretty slow - multiple seconds to minutes to render a result
