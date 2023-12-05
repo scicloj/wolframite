@@ -18,6 +18,7 @@
 * How well is WL's Associative supported in parse<>convert? (There is some flag related to this)
 * How to install packages?
 * What are `defaults/clojure-scope-aliases` about?
+* How to load .wl file into a REPL?
  
 ### Performance
 

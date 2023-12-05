@@ -192,7 +192,7 @@
 
 (defn parse-complex-atom [expr {:keys [flags] :as opts}]
   (let [head (expr/head-str expr)
-        ;; NOTE: leaving this in until hash map support has been tested
+        ;; TODO(jh) finish this? NOTE: leaving this in until hash map support has been tested
         #_#_handle-hash-map (fn [expr opts] (if (and (options/flag?' flags :hash-maps)
                                                      (not (options/flag?' flags :full-form)))
                                               (parse-hash-map expr opts)

@@ -166,7 +166,9 @@
   ;;        2) Pre-load an intern the symbols into a ns here. Pros: available at no wait; cons: sometimes outdated
   "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`,
   using [[clj-intern]].
-  Beware: May take quite some time to complete. You may want to run it in a future."
+  Beware: May take quite some time to complete. You may want to run it in a future.
+
+  Alternatively, load the included but likely outdated `resources/wld.wl` with a dump of the data."
   ;; NOTE: There is resources/wld.wl with dumped content of WolframLanguageData (name, usage only) - likely outdated
   [ns-sym]
   (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage"))) ; FIXME (jh) `EntityValue[WolframLanguageData[], {"Name", "PlaintextUsage"}, "EntityPropertyAssociation"];` must faster (=> maps)
