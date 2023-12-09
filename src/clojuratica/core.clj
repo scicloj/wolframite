@@ -105,7 +105,10 @@
            expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
        (cep/cep expr' with-eval-opts)))))
 
-(defonce wl (make-wl-evaluator defaults/default-options))
+(defonce ^:private evaluator (make-wl-evaluator defaults/default-options))
+
+(def ^:deprecated wl "DEPRECATED - use `eval` instead." evaluator)
+
 (def
   ^{:arglists '([expr]
                 [expr opts])
@@ -122,7 +125,7 @@
     ```
 
     See also [[clj-intern]] and [[load-all-symbols]], which enable you to make a Wolfram function callable directly."}
-  eval wl) ; TODO Decide whether we should keep both eval and wl, both meaning the same, or settle on just one.
+  eval evaluator)
 
 (defn clj-intern
   "Finds or creates a var named by the symbol `wl-fn-sym` in the current namespace,
@@ -170,7 +173,8 @@
 
   Alternatively, load the included but likely outdated `resources/wld.wl` with a dump of the data."
   ;; NOTE: There is resources/wld.wl with dumped content of WolframLanguageData (name, usage only) - likely outdated
-  [ns-sym]
+  [ns-sym] ; TODO (jh) support loading symbols from a custom context - use (Names <context name>`*) to get the names -> (Information <context name>`<fn name>) -> get FullName (drop ...`), Usage (no PlaintextUsage there) from the entity
+  ;; TODO (jh) Support options to only load functions instead of all symbols ?
   (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage"))) ; FIXME (jh) `EntityValue[WolframLanguageData[], {"Name", "PlaintextUsage"}, "EntityPropertyAssociation"];` must faster (=> maps)
                     ;; this map is very slow (few minutes), likely due to fetching the docs; but even just the name takes ~20-30s
                     ;; All the time is spent in Wolfram; executing `Map[Function[{e},{e["Name"],e["PlaintextUsage"]}],WolframLanguageData[]]` in there

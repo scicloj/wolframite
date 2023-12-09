@@ -7,6 +7,13 @@
   [clojuratica.core/->wl! :as wl])
 ```
 
+## TODO
+
+* Rename namespaces, docs to Wolframite
+* Replace uses of wl/wl with wl/eval (= standardize on a single, understandable one) - in demo etc
+* Add tests for parse, convert, key fns
+* Explore, Leverage for docs dev/explainer.clj, notebook.demo 
+
 ## Open questions
 
 * What is the `parse` ns about? Turn `com.wolfram.jlink.Expr` to Clojure data? Thus likely
@@ -16,7 +23,7 @@
  invoking a multimethod considered too expensive?
 * The flags - do we need all, how to understand them, ...?
 * How well is WL's Associative supported in parse<>convert? (There is some flag related to this)
-* How to install packages?
+* How to install packages? (see `Needs` wl fn)
 * What are `defaults/clojure-scope-aliases` about?
 * How to load .wl file into a REPL?
  

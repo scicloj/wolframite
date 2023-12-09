@@ -8,10 +8,13 @@
             [clojure.java.io :as io]
             [clojure.string :as str]))
 
-(def ^:private ^String unable-to-find-message "Unable to find Mathematica installation. Please specify using either the MATHEMATICA_INSTALL_PATH or WOLFRAM_INSTALL_PATH environment variable.")
+(def ^:private ^String unable-to-find-message
+  ;; TODO (jh) print current values of the install paths
+  "Unable to find Mathematica or Wolfram Engine installation. Please specify using either the MATHEMATICA_INSTALL_PATH or WOLFRAM_INSTALL_PATH environment variable.")
 
 (def ^:private default-mac-base-path "/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents")
 (def ^:private mathematica-mac-base-path "/Applications/Mathematica.app/Contents")
+(def ^:private wolfram-linux-base-path "/opt/WolframEngine") ; it has SystemFiles/Links/JLink/JLink.jar; *might* have WolframEngine/<version>
 (def ^:private default-linux-base-path "/usr/local/Wolfram/Mathematica")
 (def ^:private default-windows-base-path "/c:/Program Files/Wolfram Research/Mathematica/")
 
@@ -54,7 +57,7 @@
     (throw (Exception. unable-to-find-message))))
 
 (defn base-path [platform]
-  (or (System/getenv "MATHEMATICA_INSTALL_PATH")
+  (or (System/getenv "MATHEMATICA_INSTALL_PATH") ; TODO (jh) support alternatively Java system properties?
       (System/getenv "WOLFRAM_INSTALL_PATH")
       (str (case platform
              :linux   (version-path default-linux-base-path)
@@ -86,7 +89,7 @@
                                              (System/getProperty "os.name")))))
   ([platform]
    (let [path (get-jlink-path platform)]
-     (println "Adding path to classpath:" path)
+     (println "Adding path to classpath:" path) ; FIXME (jh) Verify the file exists => good exception
      (pom/add-classpath path))))
 
 (add-jlink-to-classpath!)
