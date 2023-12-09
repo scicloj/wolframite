@@ -1,4 +1,5 @@
 (ns clojuratica.base.evaluate
+  "The core of evaluation: send a converted JLink expression to a Wolfram Kernel for evaluation and return the result."
   (:require [clojuratica.jlink]
             [clojuratica.lib.options :as options]
             [clojuratica.base.convert :as convert]))

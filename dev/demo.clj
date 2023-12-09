@@ -1,4 +1,6 @@
 (ns demo
+  "Demonstrate key features of Wolframite.
+  See also the explainer ns."
   (:require
    [clojuratica.core :as wl]
    [clojuratica.tools.graphics :as graphics]

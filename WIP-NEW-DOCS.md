@@ -4,7 +4,7 @@
 
 ```clojure
 (:require
-  [clojuratica.core/->wl! :as wl])
+  [clojuratica.core :as wl])
 ```
 
 ## TODO
@@ -94,3 +94,4 @@ Modify how Wolfram response is parsed into Clojure data - override `clojuratica.
 
 * `(parse/parse-fn sym opts)` - return a "proxy fn", which will invoke a Wolfram fn of the given name, transforming its arguments from Clojure data to Wolfram expressions and the opposite on the result.
 ** Powered by `clojuratica.base.cep/cep`, the convert-eval-parse fn
+* Naming of options: the convention for opts passed through the pipeline si that the keyword namespace would indicate the stage of the pipeline (convert, parse, eval).
