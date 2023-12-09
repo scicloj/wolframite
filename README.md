@@ -1,10 +1,12 @@
 # Wolframite
 
-An interface between Clojure and the Wolfram Language and Mathematica.
+An interface between Clojure and the Wolfram Language and Mathematica / [Wolfram Engine](https://www.wolfram.com/engine/).
 
 ## Status
 
-**Wolframite is currently (Q4/2023) under active development again. You can [keep track of what is happening in this discussion](https://github.com/scicloj/wolframite/discussions/17). Notice that the `master` branch is very outdated, and active development happens on [`develop`](/scicloj/wolframite/tree/develop), which we want to bring to a conclusion and merge to master ASAP. All the documentation below on this page is outdated.**
+**Wolframite is currently (Q4/2023) under active development again. You can [keep track of what is happening in this discussion](https://github.com/scicloj/wolframite/discussions/17). Notice that the `master` branch is very outdated, and active development happens on [`develop`](/scicloj/wolframite/tree/develop), which we want to bring to a conclusion and merge to master ASAP.**
+
+**BEWARE: The documentation below here has mostly not been updated yet.**
 
 ## What is Wolframite? ##
 
@@ -65,6 +67,18 @@ More examples
 ;=> 3.141592653589793238462643383279502884197169399375105820285M
 ```
 
+## Clerk Integration
+
+Example usage: (waching for changes in a folder)
+
+```
+user> (require '[clerk-helper :as ch])
+user> (ch/clerk-watch! ["dev/notebook"])
+```
+
+* Open dev/notebook/demo.clj, make a change and save.
+* Open `localhost:7777` in the browser
+
 
 ## Dependencies
 
@@ -100,4 +114,3 @@ The product names used in this web site are for identification purposes only.
 All trademarks and registered trademarks, including "Wolfram Mathematica," are the property of their respective owners.
 Clojuratica is not a product of Wolfram Research.
 The software on this site is provided "as-is," without any express or implied warranty.
-

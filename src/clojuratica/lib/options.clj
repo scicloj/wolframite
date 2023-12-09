@@ -1,4 +1,5 @@
-(ns clojuratica.lib.options)
+(ns clojuratica.lib.options
+  (:require [clojuratica.runtime.defaults :as defaults]))
 
 (defn filter-params [current-options]
   (into {} (filter #(keyword? (key %)) current-options)))
@@ -32,46 +33,14 @@
 (defn flag? [current-options flag]
   (not (nil? (some #{flag} (vals (filter-flags current-options))))))
 
-(defn parse-options [current-options args]
-  (let [flag?   #(seq (filter-flag-sets % current-options))
-        param?  #(contains? (filter-params current-options) %)]
-    (loop [remain  args
-           args    []
-           flags   []
-           params  []]
-      (cond (not (seq remain))                             [flags params args]
-            (#(and (flag? %) (param? %)) (first remain))   (recur (drop 2 remain) args (conj flags (first remain)) (conj params (vec (take 2 remain))))
-            (flag? (first remain))                         (recur (rest remain) args (conj flags (first remain)) params)
-            (param? (first remain))                        (recur (drop 2 remain) args flags (conj params (vec (take 2 remain))))
-            :else                                          (recur (rest remain) (conj args (first remain)) flags params)))))
+(defn flag?' [user-flags flag]
+  (flag? (flags-into defaults/default-options user-flags) flag))
 
-(defmacro scoping-options [scoper [*options* options+args current-options] parsed-args & body]
- `(let [[flags# params# ~parsed-args] (parse-options ~current-options ~options+args)]
-    (~scoper [~*options* (options-into ~current-options params# flags#)]
-      ~@body)))
+;;
 
-(defmacro binding-options [& args]
- `(scoping-options binding ~@args))
+(defn set-flag [flags f]
+  (flags-into flags [f]))
 
-(defmacro let-options [& args]
- `(scoping-options let ~@args))
-
-(defmacro fn-scoping-options [scoper [*options* current-options] arg-vector & body]
- `(fn [& options+args#]
-    (~scoper [~*options* options+args# ~current-options] [& parsed-args#]
-      (apply (fn ~arg-vector ~@body) parsed-args#))))
-
-(defmacro fn-binding-options [& args]
- `(fn-scoping-options binding-options ~@args))
-
-(defmacro fn-let-options [& args]
- `(fn-scoping-options let-options ~@args))
-
-(defmacro defn-scoping-options [fn-scoper name & args]
- `(def ~name (~fn-scoper ~@args)))
-
-(defmacro defn-binding-options [& args]
- `(defn-scoping-options fn-binding-options ~@args))
-
-(defmacro defn-let-options [& args]
- `(defn-scoping-options fn-let-options ~@args))
+(defn aliases [base-list]
+  (or (defaults/default-options base-list)
+      (defaults/default-options :clojure-aliases)))

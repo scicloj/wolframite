@@ -3,91 +3,37 @@
             [clojuratica.lib.options :as options]
             [clojuratica.base.express :as express]
             [clojuratica.base.expr :as expr]
-            [clojuratica.runtime.dynamic-vars :as dynamic-vars])
+            [clojuratica.runtime.defaults :as defaults])
   (:import [com.wolfram.jlink Expr MathLinkFactory]))
 
-(declare convert quote-symbols simple-vector? simple-matrix? sequential-to-array)
+;; (remove-ns 'clojuratica.base.convert)
 
-(declare cexpr-from-postfix-form
-         cexpr-from-prefix-form)
+;; * defmulti and dispatch
 
 (defn- dispatch [obj]
   (cond (and (list? obj)
              (empty? obj))   :null
-        (list? obj)          :expr
+        (seq? obj)           :expr
         (or (vector? obj)
-            (seq? obj))      :list
+            (list? obj))     :list
         (ratio? obj)         :rational
         (map? obj)           :hash-map
         (symbol? obj)        :symbol
         (nil? obj)           :null
         :else                nil))
 
-(defmulti convert dispatch)
+(defmulti convert (fn [obj _]
+                    (dispatch obj)))
 
-(defmethod convert nil [obj]
-  (.getExpr
-    (doto (MathLinkFactory/createLoopbackLink)
-      (.put obj)
-      (.endPacket))))
+;; * Helpers
 
-(defmethod convert :null [_]
-  (convert 'Null))
-
-(defmethod convert :rational [n]
-  (convert (list 'Rational (.numerator n) (.denominator n))))
-
-(defmethod convert :hash-map [map]
-  (if (options/flag? dynamic-vars/*options* :hash-maps)
-    (convert (apply list 'HashMap (for [[key value] map] (list 'Rule key value))))
-    (convert (seq map))))
-
-
-(defmethod convert :symbol [sym]
-  (let [all-aliases (into (dynamic-vars/*options* (dynamic-vars/*options* :alias-list))
-                          (dynamic-vars/*options* :clojure-scope-aliasliases))]
-    (if-let [alias (all-aliases sym)]
-      (convert alias)
-      (if-let [[_ n] (re-matches #"%(\d*)" (str sym))]
-        (let [n (Long/valueOf (if (= "" n) "1" n))]
-          (convert (list 'Slot n)))
-        ;(let [s (str-utils/replace (str sym) #"\|(.*?)\|" #(str "\\\\[" (second %) "]"))]   )
-        (let [s (str sym)]
-          (if (re-find #"[^a-zA-Z0-9$\/]" s)
-            (throw (Exception. "Symbols passed to Mathematica must be alphanumeric (apart from forward slashes and dollar signs)."))
-            (Expr. Expr/SYMBOL (apply str (replace {\/ \`} s)))))))))
-
-(defmethod convert :list [coll]
-  (cond (simple-matrix? coll)   (do
-                                  (when (options/flag? dynamic-vars/*options* :verbose) (println "Converting simple matrix..."))
-                                  (convert (to-array-2d coll)))
-        (simple-vector? coll)   (do
-                                  (when (options/flag? dynamic-vars/*options* :verbose) (println "Converting simple vector..."))
-                                  (convert (to-array coll)))
-        :else                   (do
-                                  (when (options/flag? dynamic-vars/*options* :verbose) (println "Converting complex list..."))
-                                  (convert
-                                    (to-array
-                                      (map #(cond (dispatch %)         (convert %)
-                                                  :else                %)
-                                           coll))))))
-
-(defmethod convert :expr [cexpr]
-  (let [macro (first cexpr)
-        arg   (second cexpr)]
-    (cond (= 'clojure.core/deref macro)    (convert (cexpr-from-prefix-form arg))
-          (= 'clojure.core/meta macro)     (convert (cexpr-from-postfix-form arg))
-          (= 'var macro)                   (convert (list 'Function arg))
-          (= 'quote macro)                 (express/express arg)
-          :else                            (expr/expr-from-parts (map convert cexpr)))))
-
-(defn- simple-vector? [coll]
+(defn- simple-vector? [coll _]
   (and (sequential? coll)
        (not-any? dispatch coll)))
 
-(defn- simple-matrix? [coll]
+(defn- simple-matrix? [coll opts]
   (and (sequential? coll)
-       (every? simple-vector? coll)))
+       (every? #(simple-vector? % opts) coll)))
 
 (defn- cexpr-from-postfix-form [cexprs]
   (assert (sequential? cexprs))
@@ -100,3 +46,51 @@
 (defn- cexpr-from-prefix-form [cexprs]
   (assert (sequential? cexprs))
   (cexpr-from-postfix-form (reverse cexprs)))
+
+;; * Method impls
+
+(defmethod convert nil [obj _]
+  (.getExpr
+    (doto (MathLinkFactory/createLoopbackLink)
+      (.put obj)
+      (.endPacket))))
+
+(defmethod convert :null [_ opts]
+  (convert 'Null opts))
+
+(defmethod convert :rational [n opts]
+  (convert (list 'Rational (.numerator n) (.denominator n)) opts))
+
+(defmethod convert :hash-map [map {:keys [flags] :as opts}]
+  (if (options/flag?' flags :hash-maps)
+    (convert (apply list 'Association (for [[key value] map] (list 'Rule key value))) opts)
+    (convert (seq map) opts)))
+
+(defmethod convert :symbol [sym {:keys [aliases] :as opts}]
+  (let [all-aliases (merge defaults/all-aliases aliases)]
+    (if-let [alias (all-aliases sym)]
+      (convert alias opts)
+      (if-let [[_ n] (re-matches #"%(\d*)" (str sym))]
+        (let [n (Long/valueOf (if (= "" n) "1" n))]
+          (convert (list 'Slot n) opts))
+                                        ;(let [s (str-utils/replace (str sym) #"\|(.*?)\|" #(str "\\\\[" (second %) "]"))]   )
+        (let [s (str sym)]
+          (if (re-find #"[^a-zA-Z0-9$\/]" s)
+            (throw (Exception. (str "Symbols passed to Mathematica must be alphanumeric (apart from forward slashes and dollar signs). Passed: " s)))
+            (Expr. Expr/SYMBOL (apply str (replace {\/ \`} s)))))))))
+
+(defmethod convert :list [coll opts]
+  (cond (simple-matrix? coll opts) (convert (to-array-2d coll) opts)
+        (simple-vector? coll opts) (convert (to-array coll) opts)
+        :else                      (convert (to-array (map #(if dispatch (convert % opts) %)
+                                                        coll))
+                                            opts)))
+
+(defmethod convert :expr [cexpr opts]
+  (let [macro (first cexpr)
+        arg   (second cexpr)]
+    (cond (= 'clojure.core/deref macro)    (convert (cexpr-from-prefix-form arg) opts)
+          (= 'clojure.core/meta macro)     (convert (cexpr-from-postfix-form arg) opts)
+          (= 'var macro)                   (convert (list 'Function arg) opts)
+          (= 'quote macro)                 (express/express arg opts)
+          :else                            (expr/expr-from-parts (map #(convert % opts) cexpr)))))

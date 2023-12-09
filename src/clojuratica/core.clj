@@ -34,88 +34,110 @@
 ; ***** END LICENSE BLOCK *****
 
 (ns clojuratica.core
-  (:refer-clojure :exclude [intern])
+  (:refer-clojure :exclude [eval])
   (:require
-    ;; This namespace must be loaded before any other code will work, since this is what adds the jlink jar to
-    ;; the classpath
-    [clojuratica.jlink :as jlink]
-    [clojuratica.lib.options :as options]
-    [clojuratica.runtime.dynamic-vars :as dynamic-vars]
-    [clojuratica.runtime.default-options :as default-options]
-    [clojuratica.base.cep :as cep]
-    [clojuratica.base.convert :as convert]
-    [clojuratica.base.evaluate :as evaluate]
-    [clojuratica.base.kernel :as kernel]
-    [clojuratica.integration.intern :as intern])
-  (:import com.wolfram.jlink.MathLinkFactory))
+   [clojure.walk :as walk]
+   [clojuratica.base.cep :as cep]
+   [clojuratica.base.convert :as convert]
+   [clojuratica.base.evaluate :as evaluate]
+   [clojuratica.base.express :as express]
+   [clojuratica.base.parse :as parse]
+   [clojuratica.jlink :as jlink]
+   [clojuratica.runtime.defaults :as defaults])
+  (:import (com.wolfram.jlink MathLinkFactory)))
 
-;; http://reference.wolfram.com/mathematica/JLink/ref/java/com/wolfram/jlink/MathLinkFactory.html
+(defonce kernel-link-atom (atom nil))
 
-(declare kernel-link
-         math-evaluate
-         def-math-macro
-         WL)
+(defn kernel-link-opts [{:keys [platform mathlink-path]}]
+  (format "-linkmode launch -linkname '\"%s\" -mathlink'" (or mathlink-path (jlink/get-mathlink-path platform))))
 
-(defn kernel-link-opts [platform]
-  (format "-linkmode launch -linkname '\"%s\" -mathlink'" (jlink/get-mathlink-path platform)))
+(defn evaluator-init [opts]
+  (let [wl-convert #(convert/convert   % opts)
+        wl-eval    #(evaluate/evaluate % opts)]
+    (wl-eval (wl-convert 'init))
+    (wl-eval (wl-convert '(Needs "Parallel`Developer`")))
+    (wl-eval (wl-convert '(Needs "Developer`")))
+    (wl-eval (wl-convert '(ParallelNeeds "Developer`")))
+    (wl-eval (wl-convert '(Needs "ClojurianScopes`")))
+    (wl-eval (wl-convert '(ParallelNeeds "ClojurianScopes`")))
+    (wl-eval (wl-convert '(Needs "HashMaps`")))
+    (wl-eval (wl-convert '(ParallelNeeds "HashMaps`")))))
 
-(options/defn-let-options math-evaluator [enclosed-options default-options/*default-options*] [kernel-link & [init]]
-  (let [enclosed-kernel (kernel/kernel kernel-link)]
-    (binding [dynamic-vars/*options* enclosed-options
-              dynamic-vars/*kernel*  enclosed-kernel]
-      (evaluate/evaluate (convert/convert init))
-      (evaluate/evaluate (convert/convert '(Needs "Parallel`Developer`")))
-      (evaluate/evaluate (convert/convert '(Needs "Developer`")))
-      (evaluate/evaluate (convert/convert '(ParallelNeeds "Developer`")))
-      (evaluate/evaluate (convert/convert '(Needs "ClojurianScopes`")))
-      (evaluate/evaluate (convert/convert '(ParallelNeeds "ClojurianScopes`")))
-      (evaluate/evaluate (convert/convert '(Needs "HashMaps`")))
-      (evaluate/evaluate (convert/convert '(ParallelNeeds "HashMaps`"))))
-    ;#_{:clj-kondo/ignore {:unresolved-symbol #{'expr}}}
-    (options/fn-binding-options [dynamic-vars/*options* enclosed-options] [expr]
-      (binding [dynamic-vars/*kernel* enclosed-kernel]
-        (cep/cep expr)))))
+(comment
 
-(defmacro math-intern [& args]
-  (options/let-options [options args {#{:as-function :as-macro} :as-macro
-                                      #{:no-scopes :scopes}     :no-scopes}]
-                       [math-eval & opspecs]
-     (let [opspecs (if (options/flag? options :scopes)
-                     (into opspecs (keys (default-options/*default-options* :clojure-scope-aliases)))
-                     opspecs)]
-       (if (options/flag? options :as-macro)
-         `(intern/intern :macro '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))
-         `(intern/intern :fn    '~math-eval ~@(map (fn [opspec#] (list 'quote opspec#)) opspecs))))))
+  (evaluator-init (merge {:kernel/link @kernel-link-atom} defaults/default-options))
 
-
-(defmacro def-math-macro [m math-eval]
-  `(math-intern :as-macro ~math-eval [~m ~'CompoundExpression]))
-
-(defn wl->clj [s math-eval]
-  (math-eval :no-evaluate (list 'quote s)))
-
-(defn clj->wl
-  "Convert clojure forms to mathematica Expr.
-  Generally useful, especially for working with graphics."
-  [clj-form {:keys [kernel-link output-fn]}]
-  (binding [dynamic-vars/*options* default-options/*default-options*
-            dynamic-vars/*kernel*  (kernel/kernel kernel-link)]
-    (cond-> (convert/convert clj-form)
-      (ifn? output-fn) output-fn)))
+  )
 
 (defn init!
-  "Provide platform identifier as one of: `:linux`, `:macos` or `:windows`
+  "Provide platform identifier as one of: `:linux`, `:macos`, `:macos-mathematica` or `:windows`
   Defaults to platform identifier based on `os.name`"
   ([]
-   (init! (jlink/platform-id (System/getProperty "os.name"))))
-  ([platform]
-   {:pre [(jlink/supported-platform? platform)]}
-   #_{:clj-kondo/ignore true}
-   (def kernel-link (MathLinkFactory/createKernelLink (kernel-link-opts platform)))
-   (.discardAnswer kernel-link)
+   (init! {:platform (jlink/platform-id (System/getProperty "os.name"))}))
+  ([{:keys [platform] :as init-opts}]
+   {:pre [(if platform (jlink/supported-platform? platform) true)]}
+   (let [kl (doto (MathLinkFactory/createKernelLink (kernel-link-opts init-opts))
+              (.discardAnswer))]
+     (reset! kernel-link-atom kl)
+     kl)))
 
-   #_{:clj-kondo/ignore true}
-   (def math-evaluate (math-evaluator kernel-link))
-   (def-math-macro WL clojuratica.core/math-evaluate)))
+(defn terminate-kernel! []
+  (.terminateKernel @kernel-link-atom)
+  (reset! kernel-link-atom nil))
 
-(init!)
+(defn un-qualify [form]
+  (walk/postwalk (fn [form]
+                   (if (qualified-symbol? form)
+                     (symbol (name form))
+                     form))
+                 form))
+
+(defn make-wl-evaluator [opts]
+  (when-not (instance? com.wolfram.jlink.KernelLink @kernel-link-atom) (init!))
+  (evaluator-init (merge {:kernel/link @kernel-link-atom} opts))
+  (fn wl-eval
+    ([expr]
+     (wl-eval expr {}))
+    ([expr eval-opts]
+     (let [with-eval-opts (merge {:kernel/link @kernel-link-atom}
+                                 opts
+                                 eval-opts)
+           expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
+       (cep/cep expr' with-eval-opts)))))
+
+(defonce wl (make-wl-evaluator defaults/default-options))
+(def eval wl)
+
+(defn clj-intern
+  ([wl-fn-sym]
+   (clj-intern wl-fn-sym {}))
+  ([wl-fn-sym {:intern/keys [ns-sym extra-meta] :as opts}]
+   (intern (create-ns (or ns-sym (.name *ns*)))
+           (with-meta wl-fn-sym (merge {:clj-intern true} extra-meta))
+           (parse/parse-fn wl-fn-sym (merge {:kernel/link @kernel-link-atom}
+                                            defaults/default-options
+                                            opts)))))
+
+(defn ->clj! [s]
+  {:flags [:no-evaluate]}
+  (wl (list 'quote s) {:flags [:no-evaluate]}))
+
+(defn ->wl!
+  "Convert clojure forms to mathematica Expr.
+  Generally useful, especially for working with graphics."
+  [clj-form {:keys [output-fn] :as opts}]
+  (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
+    (ifn? output-fn) output-fn))
+
+(defn load-all-symbols
+  "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`.
+  May take some time to complete.
+  Returns a future."
+  [ns-sym]
+  (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage")))
+                    (WolframLanguageData))
+              wl
+              (map vec)
+              (map (fn [[sym doc]]
+                     (clj-intern (symbol sym) {:intern/ns-sym ns-sym
+                                               :intern/extra-meta {:doc doc}}))))))

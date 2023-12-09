@@ -1,40 +1,12 @@
 (ns clojuratica.base.evaluate
   (:require [clojuratica.jlink]
             [clojuratica.lib.options :as options]
-            [clojuratica.base.convert :as convert]
-            #_[clojuratica.runtime.default-options :as default-options]
-            [clojuratica.runtime.dynamic-vars :as dynamic-vars]))
+            [clojuratica.base.convert :as convert]))
 
-(declare process-state queue-run-or-wait)
-
-(defn evaluate [expr]
-  (let [kernel-link (dynamic-vars/*kernel* :link)]
-    (assert (instance? com.wolfram.jlink.Expr       expr))
-    (assert (instance? com.wolfram.jlink.KernelLink kernel-link))
-    (when (options/flag? dynamic-vars/*options* :verbose) (println "evaluate expr>" expr))
-    (if (options/flag? dynamic-vars/*options* :serial)
-      (io!
-        (locking kernel-link
-          (doto kernel-link (.evaluate expr) (.waitForAnswer))
-          (.getExpr kernel-link)))
-      (options/binding-options [dynamic-vars/*options* [:serial] dynamic-vars/*options*] _
-        (let [pid-expr (evaluate (convert/convert '(Unique Clojuratica/Concurrent/process)))]
-          (when (options/flag? dynamic-vars/*options* :verbose) (println "pid-expr:" pid-expr))
-          (evaluate (convert/convert (list '= pid-expr (list 'ParallelSubmit expr))))
-          (evaluate (convert/convert '(QueueRun)))
-          (loop []
-            (let [[state result] (process-state pid-expr)]
-              (if (not= :finished state)
-                (do
-                  (queue-run-or-wait)
-                  (recur))
-                (do
-                  (evaluate (convert/convert (list 'Remove pid-expr)))
-                  result)))))))))
-
-(defn process-state [pid-expr]
-  (assert (options/flag? dynamic-vars/*options* :serial))
-  (let [state-expr    (evaluate (convert/convert (list 'ProcessState pid-expr)))
+(declare evaluate)
+(defn process-state [pid-expr {:keys [flags] :as opts}]
+  (assert (options/flag?' flags :serial))
+  (let [state-expr    (evaluate (convert/convert (list 'ProcessState pid-expr) opts) opts)
         state-prefix  (first (.toString state-expr))]
     (cond (= \r state-prefix) [:running nil]
           (= \f state-prefix) [:finished (.part state-expr 1)]
@@ -42,17 +14,42 @@
           :else
           (throw (Exception. (str "Error! State unrecognized: " state-expr))))))
 
-(defn queue-run-or-wait []
-  (assert (options/flag? dynamic-vars/*options* :serial))
-  (let [lqr-atom (dynamic-vars/*kernel* :latest-queue-run-time)
+(defn queue-run-or-wait [{:keys [flags config] :as opts}]
+  (assert (options/flag?' flags :serial))
+  (let [lqr-atom (atom nil)
         lqr-time @lqr-atom
-        nano-pi  (* 1000000 (dynamic-vars/*options* :poll-interval))
+        nano-pi  (* 1000000 (:poll-interval config))
         run-in   (when lqr-time (- (+ lqr-time nano-pi) (System/nanoTime)))]
     (if (or (nil? run-in) (neg? run-in))
       (do
-        (when (options/flag? dynamic-vars/*options* :verbose) (println "QueueRunning at time" (System/currentTimeMillis)))
-        (evaluate (convert/convert '(QueueRun)))
+        ;; TODO: add debug logging "QueueRunning at time"
+        (evaluate (convert/convert '(QueueRun) opts) opts)
         (swap! lqr-atom (fn [_] (System/nanoTime))))
-      (do
-        (Thread/sleep (quot run-in 1000000))
-        (when (options/flag? dynamic-vars/*options* :verbose) (println "Sleeping for" (quot run-in 1000000) "ms"))))))
+      ;; TODO: else branch: add debug logging "Sleeping for"
+      (Thread/sleep (quot run-in 1000000)))))
+
+(defn evaluate [expr {:keys [kernel/link]
+                      :as   opts}]
+  (assert (instance? com.wolfram.jlink.Expr       expr))
+  (assert (instance? com.wolfram.jlink.KernelLink link))
+  ;; FIXME: debug log: "evaluate expr>"
+  (if (options/flag?' (:flags opts) :serial)
+    (io!
+     (locking link
+       (doto link (.evaluate expr) (.waitForAnswer))
+       (.getExpr link)))
+    (let [opts' (update opts :flags conj :serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
+          pid-expr (evaluate (convert/convert '(Unique Clojuratica/Concurrent/process) opts')
+                             opts)]
+      ;; FIXME: debug log: "pid-expr:"
+      (evaluate (convert/convert (list '= pid-expr (list 'ParallelSubmit expr)) opts') opts)
+      (evaluate (convert/convert '(QueueRun) opts') opts)
+      (loop []
+        (let [[state result] (process-state pid-expr opts)]
+          (if (not= :finished state)
+            (do
+              (queue-run-or-wait opts)
+              (recur))
+            (do
+              (evaluate (convert/convert (list 'Remove pid-expr) opts') opts)
+              result)))))))

@@ -5,25 +5,24 @@
   ;Thus, you'll this library required but inused across the codebase.
   This is to get around that fact that we don't have the jar available to us through a standard maven repository, and can't use environment variables in our `deps.edn` specifications."
   (:require [cemerick.pomegranate :as pom]
-            [clojuratica.lib.debug :as debug]
-            [clojuratica.lib.options :as options]
-            [clojuratica.runtime.dynamic-vars :as dynamic-vars]
             [clojure.java.io :as io]
             [clojure.string :as str]))
 
 (def ^:private unable-to-find-message "Unable to find Mathematica installation. Please specify using either the MATHEMATICA_INSTALL_PATH or WOLFRAM_INSTALL_PATH environment variable.")
 
-(def ^:private default-mac-base-path "/Applications/Mathematica.app/Contents")
+(def ^:private default-mac-base-path "/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents")
+(def ^:private mathematica-mac-base-path "/Applications/Mathematica.app/Contents")
 (def ^:private default-linux-base-path "/usr/local/Wolfram/Mathematica")
 (def ^:private default-windows-base-path "/c:/Program Files/Wolfram Research/Mathematica/")
 
 (def ^:private jlink-suffix "/SystemFiles/Links/JLink/JLink.jar")
 
-(def ^:private mathlink-macos-suffix "/MacOS/MathKernel")
+(def ^:private mathlink-macos-suffix "/MacOS/WolframKernel")
+(def ^:private mathematica-mathlink-macos-suffix "/MacOS/MathKernel")
 (def ^:private mathlink-linux-suffix "/Executables/MathKernel")
 (def ^:private mathlink-windows-suffix "/MathKernel.exe")
 
-(def supported-platform? #{:linux :macos :windows})
+(def supported-platform? #{:linux :macos :windows :macos-mathematica})
 
 (defn platform-id
   "Coerce to a common platform identifier"
@@ -31,7 +30,8 @@
   (cond
     (#{:linux "Linux"} platform)         :linux
     (#{:osx :macos "Mac OS X"} platform) :macos
-    (or (#{:win :windows} platform) (str/starts-with? platform "Windows")) :windows))
+    (or (#{:win :windows} platform) (str/starts-with? platform "Windows")) :windows
+    :else platform))
 
 (defn file-path [& path-parts]
   (let [[path-root & path-tail] path-parts]
@@ -60,6 +60,7 @@
              :linux   (version-path default-linux-base-path)
              :windows (version-path default-windows-base-path)
              :macos   default-mac-base-path
+             :macos-mathematica mathematica-mac-base-path
              (throw (Exception. unable-to-find-message))))))
 
 (defn get-jlink-path
@@ -76,11 +77,13 @@
                 (case platform
                   :macos   mathlink-macos-suffix
                   :linux   mathlink-linux-suffix
-                  :windows mathlink-windows-suffix)))))
+                  :windows mathlink-windows-suffix
+                  :macos-mathematica mathematica-mathlink-macos-suffix)))))
 
 (defn add-jlink-to-classpath!
   ([]
-   (add-jlink-to-classpath! (platform-id (System/getProperty "os.name"))))
+   (add-jlink-to-classpath! (platform-id (or (keyword (System/getenv "WL_PLATFORM"))
+                                             (System/getProperty "os.name")))))
   ([platform]
    (let [path (get-jlink-path platform)]
      (println "Adding path to classpath:" path)
@@ -98,5 +101,3 @@
 
   (get-mathlink-path :macos)
   (get-mathlink-path :linux))
-
-  
