@@ -105,10 +105,43 @@
            expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
        (cep/cep expr' with-eval-opts)))))
 
-(defonce wl (make-wl-evaluator defaults/default-options))
-(def eval wl)
+(defonce ^:private evaluator (make-wl-evaluator defaults/default-options))
+
+(def ^:deprecated wl "DEPRECATED - use `eval` instead." evaluator)
+
+(def
+  ^{:arglists '([expr]
+                [expr opts])
+    :doc "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
+
+    The `opts` map may contain `:flags [kwd ...]` and is passed e.g. to the `custom-parse` multimethod.
+
+    Example:
+    ```clojure
+    (wl/eval \"Plus[1,2]\")
+    ; => 3
+    (wl/eval '(Plus 1 2))`
+    ; => 3
+    ```
+
+    See also [[clj-intern]] and [[load-all-symbols]], which enable you to make a Wolfram function callable directly."}
+  eval evaluator)
 
 (defn clj-intern
+  "Finds or creates a var named by the symbol `wl-fn-sym` in the current namespace,
+  which will be a function that invokes a Wolfram function of the same name.
+
+  You can override the target namespace and add additional metadata to the var by
+  setting the appropriate `opts`.
+
+  Ex.:
+  ```clj
+  (clj-intern 'Plus {})
+  (Plus 1 2)
+  ; => 3
+  ```
+
+  See also [[load-all-symbols]]."
   ([wl-fn-sym]
    (clj-intern wl-fn-sym {}))
   ([wl-fn-sym {:intern/keys [ns-sym extra-meta] :as opts}]
@@ -130,14 +163,27 @@
     (ifn? output-fn) output-fn))
 
 (defn load-all-symbols
-  "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`.
-  May take some time to complete.
-  Returns a future."
-  [ns-sym]
-  (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage")))
-                    (WolframLanguageData))
+  ;; BEWARE: This is extremely slow (10s of secs / few minutes), most of this spent in Wolfram itself
+  ;; IDEAS: 1) Have also (load-symbols <list of symbols or a regexp>), which would load only a subset
+  ;;           (hopefully much faster)
+  ;;        2) Pre-load an intern the symbols into a ns here. Pros: available at no wait; cons: sometimes outdated
+  "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`,
+  using [[clj-intern]].
+  Beware: May take quite some time to complete. You may want to run it in a future.
+
+  Alternatively, load the included but likely outdated `resources/wld.wl` with a dump of the data."
+  ;; NOTE: There is resources/wld.wl with dumped content of WolframLanguageData (name, usage only) - likely outdated
+  [ns-sym] ; TODO (jh) support loading symbols from a custom context - use (Names <context name>`*) to get the names -> (Information <context name>`<fn name>) -> get FullName (drop ...`), Usage (no PlaintextUsage there) from the entity
+  ;; TODO (jh) Support options to only load functions instead of all symbols ?
+  (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage"))) ; FIXME (jh) `EntityValue[WolframLanguageData[], {"Name", "PlaintextUsage"}, "EntityPropertyAssociation"];` must faster (=> maps)
+                    ;; this map is very slow (few minutes), likely due to fetching the docs; but even just the name takes ~20-30s
+                    ;; All the time is spent in Wolfram; executing `Map[Function[{e},{e["Name"],e["PlaintextUsage"]}],WolframLanguageData[]]` in there
+
+                    ;; directly also takes forever
+                    (WolframLanguageData)) ; this takes 1-2s
               wl
               (map vec)
               (map (fn [[sym doc]]
                      (clj-intern (symbol sym) {:intern/ns-sym ns-sym
-                                               :intern/extra-meta {:doc doc}}))))))
+                                               :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
+                                                                          doc)}}))))))

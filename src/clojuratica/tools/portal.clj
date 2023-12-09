@@ -1,4 +1,5 @@
 (ns clojuratica.tools.portal
+  "Integration with https://djblue.github.io/portal/"
   (:require [portal.api :as p]
             [clojuratica.tools.hiccup :as h]))
 

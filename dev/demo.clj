@@ -1,4 +1,6 @@
 (ns demo
+  "Demonstrate key features of Wolframite.
+  See also the explainer ns."
   (:require
    [clojuratica.core :as wl]
    [clojuratica.tools.graphics :as graphics]
@@ -11,6 +13,8 @@
 
 (comment
 
+  ;; Low-level evaluate of a Wolfram expression (here, `Plus[1,2]`)
+  ;; You normally don't want this - just use wl/eval. Notice that all the connection details explicitly specified.
   ((parse/parse-fn 'Plus (merge {:kernel/link @wl/kernel-link-atom}
                                 defaults/default-options))
    1 2)
@@ -60,40 +64,42 @@
 ;; * Wolframite (nee Clojuratica) -- name is a WIP
 ;; ** Init (base example)
 
-(wl/wl '(Dot [1 2 3] [4 5 6]))
+(wl/eval '(Dot [1 2 3] [4 5 6]))
 
 ;; ** Strings of WL code
 
-(wl/wl "{1 , 2, 3} . {4, 5, 6}")
+(wl/eval "{1 , 2, 3} . {4, 5, 6}")
 ;; (convert/convert "{1 , 2, 3} . {4, 5, 6}" {:kernel/link @wl/kernel-link-atom}) ;; FIXME: this doesn't work, probably shouldn't, maybe there is a path to remove in `convert/convert`
 ;; You should use this
 ;; (express/express "{1 , 2, 3} . {4, 5, 6}" {:kernel/link @wl/kernel-link-atom})
 
 ;; NOTE: this is a hack to get this to work
 
-;; ** Def // intern WL fns
+;; ** Def // intern WL fns, i.e. effectively define WL fns as clojure fns:
 
-(def P (parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}))
+(def W:Plus (parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}))
 
-(P 1 2 3)
+(W:Plus 1 2 3) ; ... and call it
 
-(wl/clj-intern 'Plus {})
+(wl/clj-intern 'Plus {}) ; a simpler way to do the same -> fn Plus in this ns
 
 (map wl/clj-intern ['Dot 'Plus])
 
 (comment
+  ;; Call interned Wl functions:
   (Dot [1 2 3] [4 5 6])
   (Plus 1 2 3)
   (Plus [1 2] [3 4]))
 
 (def greetings
-  (wl/wl
+  (wl/eval
    '(Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output."))))
 
 (greetings "Stephen")
 
 
 ;; ** Bidirectional translation
+;; (Somewhat experimental, especially in the wl->clj direction)
 
 (wl/->clj! "GridGraph[{5, 5}]")
 (wl/->wl! '(GridGraph [5 5]) {:output-fn str})
@@ -125,13 +131,13 @@
 
 ;; ** More Working Examples
 
-(wl/wl '(GeoNearest (Entity "Ocean") Here))
+(wl/eval '(GeoNearest (Entity "Ocean") Here))
 
-(wl/wl '(TextStructure "The cat sat on the mat."))
+(wl/eval '(TextStructure "The cat sat on the mat."))
 
 ;; - Wolfram Alpha
 
-(wl/wl '(WolframAlpha "number of moons of Saturn" "Result"))
+(wl/eval '(WolframAlpha "number of moons of Saturn" "Result"))
 
 ;; * Issues
 ;; - WL syntactic sugar
@@ -141,4 +147,4 @@
 ;; - more interesting examples...
 
 ;; FIXME: some loopiness and NPE
-(wl/wl '(TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs"))
+(wl/eval '(TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs"))

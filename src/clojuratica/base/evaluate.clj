@@ -1,4 +1,5 @@
 (ns clojuratica.base.evaluate
+  "The core of evaluation: send a converted JLink expression to a Wolfram Kernel for evaluation and return the result."
   (:require [clojuratica.jlink]
             [clojuratica.lib.options :as options]
             [clojuratica.base.convert :as convert]))
@@ -26,7 +27,7 @@
         (evaluate (convert/convert '(QueueRun) opts) opts)
         (swap! lqr-atom (fn [_] (System/nanoTime))))
       ;; TODO: else branch: add debug logging "Sleeping for"
-      (Thread/sleep (quot run-in 1000000)))))
+      (Thread/sleep ^long (quot run-in 1000000)))))
 
 (defn evaluate [expr {:keys [kernel/link]
                       :as   opts}]

@@ -1,4 +1,5 @@
 (ns clojuratica.base.convert
+  "Convert a Clojure expression into a Wolfram JLink expression"
   (:require [clojuratica.jlink]
             [clojuratica.lib.options :as options]
             [clojuratica.base.express :as express]
@@ -70,7 +71,7 @@
   (let [all-aliases (merge defaults/all-aliases aliases)]
     (if-let [alias (all-aliases sym)]
       (convert alias opts)
-      (if-let [[_ n] (re-matches #"%(\d*)" (str sym))]
+      (if-let [[_ ^String n] (re-matches #"%(\d*)" (str sym))]
         (let [n (Long/valueOf (if (= "" n) "1" n))]
           (convert (list 'Slot n) opts))
                                         ;(let [s (str-utils/replace (str sym) #"\|(.*?)\|" #(str "\\\\[" (second %) "]"))]   )
