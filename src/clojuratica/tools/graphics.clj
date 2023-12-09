@@ -1,4 +1,5 @@
 (ns clojuratica.tools.graphics
+  "Displaying WL graphics with java.awt"
   (:require [clojuratica.jlink]
             [clojuratica.core :as wl])
   (:import (com.wolfram.jlink MathCanvas KernelLink)
