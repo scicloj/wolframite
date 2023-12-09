@@ -163,27 +163,23 @@
     (ifn? output-fn) output-fn))
 
 (defn load-all-symbols
-  ;; BEWARE: This is extremely slow (10s of secs / few minutes), most of this spent in Wolfram itself
-  ;; IDEAS: 1) Have also (load-symbols <list of symbols or a regexp>), which would load only a subset
-  ;;           (hopefully much faster)
-  ;;        2) Pre-load an intern the symbols into a ns here. Pros: available at no wait; cons: sometimes outdated
   "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`,
   using [[clj-intern]].
-  Beware: May take quite some time to complete. You may want to run it in a future.
+  Beware: May take a couple of seconds.
+  Example:
+  ```clojure
+  (wl/load-all-symbols 'w)
+  (w/Plus 1 2) ; now the same as (wl/eval '(Plus 1 2))
+  ```
 
   Alternatively, load the included but likely outdated `resources/wld.wl` with a dump of the data."
-  ;; NOTE: There is resources/wld.wl with dumped content of WolframLanguageData (name, usage only) - likely outdated
-  [ns-sym] ; TODO (jh) support loading symbols from a custom context - use (Names <context name>`*) to get the names -> (Information <context name>`<fn name>) -> get FullName (drop ...`), Usage (no PlaintextUsage there) from the entity
+  [ns-sym]
+  ;; TODO (jh) support loading symbols from a custom context - use (Names <context name>`*) to get the names -> (Information <context name>`<fn name>) -> get FullName (drop ...`), Usage (no PlaintextUsage there) from the entity
   ;; TODO (jh) Support options to only load functions instead of all symbols ?
-  (doall (->> '(Map (Function [e] ((e "Name") (e "PlaintextUsage"))) ; FIXME (jh) `EntityValue[WolframLanguageData[], {"Name", "PlaintextUsage"}, "EntityPropertyAssociation"];` must faster (=> maps)
-                    ;; this map is very slow (few minutes), likely due to fetching the docs; but even just the name takes ~20-30s
-                    ;; All the time is spent in Wolfram; executing `Map[Function[{e},{e["Name"],e["PlaintextUsage"]}],WolframLanguageData[]]` in there
-
-                    ;; directly also takes forever
-                    (WolframLanguageData)) ; this takes 1-2s
-              wl
-              (map vec)
-              (map (fn [[sym doc]]
+  ;; IDEA: Provide also (load-symbols <list of symbols or a regexp>), which would load only a subset
+  (doall (->> (eval '(EntityValue (WolframLanguageData) ["Name", "PlaintextUsage"] "EntityPropertyAssociation"))
+              vals ; keys ~ `(Entity "WolframLanguageSymbol" "ImageCorrelate")`
+              (map (fn [{sym "Name", doc "PlaintextUsage"}]
                      (clj-intern (symbol sym) {:intern/ns-sym ns-sym
                                                :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
                                                                           doc)}}))))))
