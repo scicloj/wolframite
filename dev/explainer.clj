@@ -58,7 +58,7 @@
 (wl/load-all-symbols 'w) ; intern all Wolfram functions and entities into the namespace `w`; with docstrings
 (wl/load-all-symbols (.name *ns*)) ; some, but into the current ns
 
-;; * REPL
+;; * REPL - load-all-symbols includes docstrings so we can use repl to show them
 
 (require '[clojure.repl :as repl])
 
