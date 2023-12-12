@@ -2,30 +2,61 @@
   "ATTENTION! This namespace is side effecting, and is required for many of the files in this project to compile.
   It uses Pomegranate to dynamically add the Wolfram Language / Mathematica JLink jar to the JVM classpath.
   Because many of the namespaces in this project either import or reference the jlink classes, it's necessary to have loaded this namespace before those namespaces will compile.
-  ;Thus, you'll this library required but inused across the codebase.
+  ;Thus, you'll see this ns required but unused across the codebase.
   This is to get around that fact that we don't have the jar available to us through a standard maven repository, and can't use environment variables in our `deps.edn` specifications."
   (:require [cemerick.pomegranate :as pom]
             [clojure.java.io :as io]
-            [clojure.string :as str]))
+            [clojure.string :as str])
+  (:import (java.nio.file Paths)))
 
-(def ^:private ^String unable-to-find-message
-  ;; TODO (jh) print current values of the install paths
-  "Unable to find Mathematica or Wolfram Engine installation. Please specify using either the MATHEMATICA_INSTALL_PATH or WOLFRAM_INSTALL_PATH environment variable.")
+(defn- read-install-path-setting []
+  (or (System/getProperty "MATHEMATICA_INSTALL_PATH")
+      (System/getProperty "WOLFRAM_INSTALL_PATH")
+      (System/getenv "MATHEMATICA_INSTALL_PATH") ; TODO (jh) support alternatively Java system properties?
+      (System/getenv "WOLFRAM_INSTALL_PATH")))
 
-(def ^:private default-mac-base-path "/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents")
-(def ^:private mathematica-mac-base-path "/Applications/Mathematica.app/Contents")
-(def ^:private wolfram-linux-base-path "/opt/WolframEngine") ; it has SystemFiles/Links/JLink/JLink.jar; *might* have WolframEngine/<version>
-(def ^:private default-linux-base-path "/usr/local/Wolfram/Mathematica")
-(def ^:private default-windows-base-path "/c:/Program Files/Wolfram Research/Mathematica/")
+(defn wolframite-path-settings-info []
+  (str/join ", "
+   (for [v ["JLINK_JAR_PATH" "MATHEMATICA_INSTALL_PATH" "WOLFRAM_INSTALL_PATH"]]
+     (str v ": " (or (some->> (System/getProperty v) (format "\"%s\" (source: system property)"))
+                           (some->> (System/getenv v) (format "\"%s\" (source: environmental variable)"))
+                           "nil")))))
 
-(def ^:private jlink-suffix "/SystemFiles/Links/JLink/JLink.jar")
+(defn- unable-to-find-exc []
+  (let [env (wolframite-path-settings-info)]
+   (ex-info
+     (str "Unable to find Mathematica or Wolfram Engine installation."
+          " Please specify using an appropriate environment variable."
+          " Current values:" env)
+     {:env env})))
 
-(def ^:private mathlink-macos-suffix "/MacOS/WolframKernel")
-(def ^:private mathematica-mathlink-macos-suffix "/MacOS/MathKernel")
-(def ^:private mathlink-linux-suffix "/Executables/MathKernel")
-(def ^:private mathlink-windows-suffix "/MathKernel.exe")
+(def ^:private paths
+  {:linux {:wolfram-engine {:path "/usr/local/Wolfram/WolframEngine"
+                            :mathlink-suffix "/Executables/WolframKernel"} ; FIXME verify
+           :mathematica {:path "/usr/local/Wolfram/Mathematica"
+                         :mathlink-suffix "/Executables/MathKernel"}}
+   :macos {:wolfram-engine {:path "/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents"
+                            :mathlink-suffix "/MacOS/WolframKernel"}
+           :mathematica {:path "/Applications/Mathematica.app/Contents"
+                         :mathlink-suffix "/MacOS/MathKernel"}}
+   :windows {:wolfram-engine {:path "/c:/Program Files/Wolfram Research/Wolfram Engine/"
+                              :mathlink-suffix "/MathKernel.exe"} ; TODO verify
+             :mathematica {:path "/c:/Program Files/Wolfram Research/Mathematica/"
+                           :mathlink-suffix "/WolframKernel.exe"}}})
 
-(def supported-platform? #{:linux :macos :windows :macos-mathematica})
+(defn- file-exists? [path]
+  (and path (.exists (io/file path))))
+
+(defn detect-available-installation [platform]
+  (->> (get paths platform)
+       vals
+       (filter (comp file-exists? :path))
+       first))
+
+  ;; 1) We need the jlink JAR to talk to Wolfram:
+  (def ^:private jlink-suffix "/SystemFiles/Links/JLink/JLink.jar") ; path within the install dir
+
+  (def supported-platform? #{:linux :macos :windows})
 
 (defn platform-id
   "Coerce to a common platform identifier"
@@ -38,50 +69,59 @@
 
 (defn file-path [& path-parts]
   (let [[path-root & path-tail] path-parts]
-    (str (.normalize (java.nio.file.Paths/get path-root (into-array String path-tail))))))
+    (str (.normalize (Paths/get path-root (into-array String path-tail))))))
+
+(defn guess-mathkernel-suffix-for [base-path]
+  (first
+   (for [mathkernel-suffix (->> paths vals (mapcat vals) (map :mathlink-suffix))
+         :when (file-exists? (file-path base-path mathkernel-suffix))]
+     mathkernel-suffix)))
 
 (defn- version-vector [version-dir]
   (->  version-dir
        io/file
        (.getName)
        (str/split #"\.")
-       (->> (mapv #(Integer/parseInt %)))))
+       (->> (mapv parse-long))))
 
-(defn- version-path [base-path]
+(defn- version-path
+  "For installation that use the format <base path>/<version>, detect full path to the latest one"
+  [base-path]
   (if-let [version-dir
            (->> (io/file base-path)
                 (.listFiles)
                 (sort-by version-vector)
                 (last))]
     version-dir
-    (throw (Exception. unable-to-find-message))))
+    (throw (unable-to-find-exc))))
 
-(defn base-path [platform]
-  (or (System/getenv "MATHEMATICA_INSTALL_PATH") ; TODO (jh) support alternatively Java system properties?
-      (System/getenv "WOLFRAM_INSTALL_PATH")
-      (str (case platform
-             :linux   (version-path default-linux-base-path)
-             :windows (version-path default-windows-base-path)
-             :macos   default-mac-base-path
-             :macos-mathematica mathematica-mac-base-path
-             (throw (Exception. unable-to-find-message))))))
+(defn platform-paths [platform]
+  (when-not (supported-platform? platform)
+      (throw (ex-info (str "Unsupported platform: " platform ". Supported: " supported-platform?)
+                      {:platform platform})))
+  (or (when-let [path (read-install-path-setting)]
+        {:path path
+         :mathlink-suffix (or (guess-mathkernel-suffix-for path)
+                              (throw (Exception. (str "Couldn't find MathKernel / WolframKernel under the given path '"
+                                                      path "' at any of the known locations."))))})
+      (cond-> (detect-available-installation platform)
+              (#{:linux :windows} platform)
+              (update :path version-path))))
 
 (defn get-jlink-path
   ([platform]
-   (or (System/getenv "JLINK_JAR_PATH")
+   (or (System/getProperty "JLINK_JAR_PATH")
+       (System/getenv "JLINK_JAR_PATH")
        (-> platform
-           base-path
+           platform-paths
+           :path
            (str jlink-suffix)))))
 
 (defn get-mathlink-path
+  "Get path to the MathKernel executable, to pass to JLink for starting the process"
   ([platform]
-   (let [base-path (base-path platform)]
-     (file-path base-path
-                (case platform
-                  :macos   mathlink-macos-suffix
-                  :linux   mathlink-linux-suffix
-                  :windows mathlink-windows-suffix
-                  :macos-mathematica mathematica-mathlink-macos-suffix)))))
+   (let [{:keys [path mathlink-suffix]} (platform-paths platform)]
+     (file-path path mathlink-suffix))))
 
 (defn add-jlink-to-classpath!
   ([]
@@ -89,13 +129,19 @@
                                              (System/getProperty "os.name")))))
   ([platform]
    (let [path (get-jlink-path platform)]
-     (println "Adding path to classpath:" path) ; FIXME (jh) Verify the file exists => good exception
+     (when-not (.exists (io/file path))
+       (throw (ex-info (str "Unable to find JLink jar at the expected path " path
+                            " Consider setting one of the supported environment variables;"
+                            " currently: " (wolframite-path-settings-info))
+                       {:platform platform
+                        :path path
+                        :env (wolframite-path-settings-info)})))
+     (println "Adding path to classpath:" path)
      (pom/add-classpath path))))
 
 (add-jlink-to-classpath!)
 
 (comment
-
   (base-path :macos)
   (base-path :linux)
 

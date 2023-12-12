@@ -49,7 +49,10 @@
 (defonce kernel-link-atom (atom nil))
 
 (defn kernel-link-opts [{:keys [platform mathlink-path]}]
-  (format "-linkmode launch -linkname '\"%s\" -mathlink'" (or mathlink-path (jlink/get-mathlink-path platform))))
+  (format "-linkmode launch -linkname '\"%s\" -mathlink'"
+          (or mathlink-path
+              (jlink/get-mathlink-path platform)
+              (throw (IllegalStateException. "mathlink path neither provided nor auto-detected")))))
 
 (defn evaluator-init [opts]
   (let [wl-convert #(convert/convert   % opts)
@@ -66,7 +69,6 @@
 (comment
 
   (evaluator-init (merge {:kernel/link @kernel-link-atom} defaults/default-options))
-
   )
 
 (defn init!
@@ -76,8 +78,14 @@
    (init! {:platform (jlink/platform-id (System/getProperty "os.name"))}))
   ([{:keys [platform] :as init-opts}]
    {:pre [(if platform (jlink/supported-platform? platform) true)]}
-   (let [kl (doto (MathLinkFactory/createKernelLink (kernel-link-opts init-opts))
-              (.discardAnswer))]
+   (let [opts (kernel-link-opts init-opts)
+         kl (try (doto (MathLinkFactory/createKernelLink opts)
+                   (.discardAnswer))
+                 (catch Exception e
+                   (throw (ex-info (str "Failed to start a Math/Wolfram Kernel process: "
+                                        (ex-message e)
+                                        " Verify the settings are correct: `" opts "`")
+                                   {:kernel-opts opts}))))]
      (reset! kernel-link-atom kl)
      kl)))
 
