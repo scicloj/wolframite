@@ -44,15 +44,19 @@
    [clojuratica.base.parse :as parse]
    [clojuratica.jlink :as jlink]
    [clojuratica.runtime.defaults :as defaults])
-  (:import (com.wolfram.jlink MathLinkFactory)))
+  (:import (com.wolfram.jlink MathLinkException MathLinkFactory)))
 
 (defonce kernel-link-atom (atom nil))
 
 (defn kernel-link-opts [{:keys [platform mathlink-path]}]
-  (format "-linkmode launch -linkname '\"%s\" -mathlink'"
-          (or mathlink-path
-              (jlink/get-mathlink-path platform)
-              (throw (IllegalStateException. "mathlink path neither provided nor auto-detected")))))
+  ;; See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/MathLinkFactory.html#createKernelLink(java.lang.String%5B%5D)
+  ;; and https://reference.wolfram.com/language/tutorial/RunningTheWolframSystemFromWithinAnExternalProgram.html for the options
+  (into-array String ["-linkmode" "launch"
+                      "-linkname"
+                      (format "\"/%s\" -mathlink"
+                              (or mathlink-path
+                                  (jlink/get-mathlink-path platform)
+                                  (throw (IllegalStateException. "mathlink path neither provided nor auto-detected"))))]))
 
 (defn evaluator-init [opts]
   (let [wl-convert #(convert/convert   % opts)
@@ -81,6 +85,13 @@
    (let [opts (kernel-link-opts init-opts)
          kl (try (doto (MathLinkFactory/createKernelLink opts)
                    (.discardAnswer))
+                 (catch MathLinkException e
+                   (if (= (ex-message e) "MathLink connection was lost.")
+                     (throw (ex-info (str "MathLink connection was lost. Perhaps you need to activate Mathematica first?"
+                                          " Or there is some other issue and you need to retry, or restart and retry...")
+                                     {:kernel-link-opts opts
+                                      :cause e}))
+                     (throw e)))
                  (catch Exception e
                    (throw (ex-info (str "Failed to start a Math/Wolfram Kernel process: "
                                         (ex-message e)
