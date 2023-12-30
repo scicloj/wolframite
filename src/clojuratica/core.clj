@@ -48,7 +48,7 @@
 
 (defonce kernel-link-atom (atom nil))
 
-(defn kernel-link-opts [{:keys [platform mathlink-path]}]
+(defn kernel-link-opts ^"[Ljava.lang.String;" [{:keys [platform mathlink-path]}]
   ;; See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/MathLinkFactory.html#createKernelLink(java.lang.String%5B%5D)
   ;; and https://reference.wolfram.com/language/tutorial/RunningTheWolframSystemFromWithinAnExternalProgram.html for the options
   (into-array String ["-linkmode" "launch"
@@ -172,7 +172,7 @@
 
 (defn ->clj! [s]
   {:flags [:no-evaluate]}
-  (wl (list 'quote s) {:flags [:no-evaluate]}))
+  (eval (list 'quote s) {:flags [:no-evaluate]}))
 
 (defn ->wl!
   "Convert clojure forms to mathematica Expr.
