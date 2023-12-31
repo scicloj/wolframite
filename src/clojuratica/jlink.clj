@@ -48,8 +48,8 @@
   (and path (.exists (io/file path))))
 
 (defn detect-available-installation [platform]
-  (->> (get paths platform)
-       vals
+  (->> (-> (get paths platform)
+           ((juxt :mathematica :wolfram-engine)))  ; prefer Mathematica to Wolfram, it is presumably more capable
        (filter (comp file-exists? :path))
        first))
 
@@ -142,8 +142,6 @@
 (add-jlink-to-classpath!)
 
 (comment
-  (base-path :macos)
-  (base-path :linux)
 
   (get-jlink-path :macos)
   (get-jlink-path :linux)
