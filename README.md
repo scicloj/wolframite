@@ -31,8 +31,19 @@ The canonical pronunciation of Clojuratica starts with Clojure and rhymes with e
 
 ### Prerequisites:
 
+#### Clojure
+
 First, if you haven't already, install the [Clojure CLI toolchain](https://clojure.org/guides/getting_started) (homebrew is a great way to do this if you're on Mac or Linux, but you can just as easily use the install scripts if you prefer).
+
+#### Mathematica or Wolfram Engine
+
 Next, obviously, you'll need to ensure that you have Wolfram Language or Mathematica installed.
+
+Normally, it should be detected and loaded automatically, when you require the `clojuratica.core` namespace. Watch stdout for a message like:
+
+> Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar
+
+However, sometimes Wolframite may fail be find the correct path automatically and need your help. You can set the `MATHEMATICA_INSTALL_PATH` or `WOLFRAM_INSTALL_PATH` environment variables or Java system properties (the latter takes priority) to point to the correct location.
 
 ### Getting started
 

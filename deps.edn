@@ -1,5 +1,5 @@
 {:paths ["src" "resources"]
- :deps {org.clojure/clojure {:mvn/version "1.10.3"}
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
         clj-commons/pomegranate {:mvn/version "1.2.1"}}
  :aliases {:dev {:extra-paths ["dev" "test"]
                  :jvm-opts ["-Djdk.attach.allowAttachSelf" ]
@@ -10,4 +10,5 @@
                               aerial.hanami/aerial.hanami {:mvn/version "0.15.1"}
                               io.github.nextjournal/clerk {:mvn/version "0.3.233"}
                               borkdude/edamame {:mvn/version "0.0.19"}
-                              clj-http/clj-http {:mvn/version "3.11.0"}}}}}
+                              clj-http/clj-http {:mvn/version "3.11.0"}
+                              org.slf4j/slf4j-simple {:mvn/version "2.0.9"}}}}}
