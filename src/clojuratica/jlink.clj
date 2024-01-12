@@ -149,8 +149,10 @@
 
   (get-jlink-path :macos)
   (get-jlink-path :linux)
+  (get-jlink-path :windows)
 
   (get-mathlink-path :macos)
   (get-mathlink-path :linux)
+  (get-mathlink-path :windows)
 
   (platform-paths :linux))

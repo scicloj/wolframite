@@ -43,7 +43,8 @@
    [clojuratica.base.express :as express]
    [clojuratica.base.parse :as parse]
    [clojuratica.jlink :as jlink]
-   [clojuratica.runtime.defaults :as defaults])
+   [clojuratica.runtime.defaults :as defaults]
+   [clojure.string :as string])
   (:import (com.wolfram.jlink MathLinkException MathLinkFactory)))
 
 (defonce kernel-link-atom (atom nil))
@@ -72,8 +73,7 @@
 
 (comment
 
-  (evaluator-init (merge {:kernel/link @kernel-link-atom} defaults/default-options))
-  )
+  (evaluator-init (merge {:kernel/link @kernel-link-atom} defaults/default-options)))
 
 (defn init!
   "Provide platform identifier as one of: `:linux`, `:macos`, `:macos-mathematica` or `:windows`
@@ -202,3 +202,34 @@
                      (clj-intern (symbol sym) {:intern/ns-sym ns-sym
                                                :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
                                                                           doc)}}))))))
+
+(comment
+  (->
+   (eval ('Names "System`*"))
+   println)
+
+  (-> (eval '(Information "System`Plus"))
+      (nth 1))
+
+  (defn is-function?
+    "Guesses whether or not the given symbol is a 'function' in the normal sense.
+
+  NOTE: It turns out that this is pretty difficult because everything in Mathematica is pretty much technically a function...
+  "
+    [symbol]
+    (let [ks ["UpValues" "DefaultValues" "SubValues" "OwnValues" "FormatValues" "DownValues" "NValues"]
+          data (-> (eval `(Information ~symbol)) second)
+          has-values? (->> data
+                           (partial get)
+                           (#(map % ks))
+                           (mapv #(not= 'None %))
+                           (some identity))
+          has-function? (-> data
+                            (get "Attributes")
+                            (->> (map str)
+                                 (mapv #(string/includes? % "Function"))
+                                 (some identity)))]
+
+      (or has-values? has-function?)))
+
+  (->  (is-function? "System`Subtract")))
