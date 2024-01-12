@@ -17,14 +17,14 @@
 
 (defn wolframite-path-settings-info []
   (str/join ", "
-   (for [v ["JLINK_JAR_PATH" "MATHEMATICA_INSTALL_PATH" "WOLFRAM_INSTALL_PATH"]]
-     (str v ": " (or (some->> (System/getProperty v) (format "\"%s\" (source: system property)"))
-                           (some->> (System/getenv v) (format "\"%s\" (source: environmental variable)"))
-                           "nil")))))
+            (for [v ["JLINK_JAR_PATH" "MATHEMATICA_INSTALL_PATH" "WOLFRAM_INSTALL_PATH"]]
+              (str v ": " (or (some->> (System/getProperty v) (format "\"%s\" (source: system property)"))
+                              (some->> (System/getenv v) (format "\"%s\" (source: environmental variable)"))
+                              "nil")))))
 
 (defn- unable-to-find-exc []
   (let [env (wolframite-path-settings-info)]
-   (ex-info
+    (ex-info
      (str "Unable to find Mathematica or Wolfram Engine installation."
           " Please specify using an appropriate environment variable."
           " Current values:" env)
@@ -54,9 +54,9 @@
        first))
 
   ;; 1) We need the jlink JAR to talk to Wolfram:
-  (def ^:private jlink-suffix "/SystemFiles/Links/JLink/JLink.jar") ; path within the install dir
+(def ^:private jlink-suffix "/SystemFiles/Links/JLink/JLink.jar") ; path within the install dir
 
-  (def supported-platform? #{:linux :macos :windows})
+(def supported-platform? #{:linux :macos :windows})
 
 (defn platform-id
   "Coerce to a common platform identifier"
@@ -85,28 +85,32 @@
        (->> (mapv parse-long))))
 
 (defn- version-path
-  "For installation that use the format <base path>/<version>, detect full path to the latest one"
+  "For installation that use the format <base path>/<version>, detect full path to the latest one
+
+  NOTE: Returns a string.
+  "
   [base-path]
   (if-let [version-dir
-           (->> (io/file base-path)
-                (.listFiles)
-                (sort-by version-vector)
-                (last))]
+           (some->> (io/file base-path)
+                    (.listFiles)
+                    (sort-by version-vector)
+                    (last)
+                    (.getAbsolutePath))]
     version-dir
     (throw (unable-to-find-exc))))
 
 (defn platform-paths [platform]
   (when-not (supported-platform? platform)
-      (throw (ex-info (str "Unsupported platform: " platform ". Supported: " supported-platform?)
-                      {:platform platform})))
+    (throw (ex-info (str "Unsupported platform: " platform ". Supported: " supported-platform?)
+                    {:platform platform})))
   (or (when-let [path (read-install-path-setting)]
         {:path path
          :mathlink-suffix (or (guess-mathkernel-suffix-for path)
                               (throw (Exception. (str "Couldn't find MathKernel / WolframKernel under the given path '"
                                                       path "' at any of the known locations."))))})
       (cond-> (detect-available-installation platform)
-              (#{:linux :windows} platform)
-              (update :path version-path))))
+        (#{:linux :windows} platform)
+        (update :path version-path))))
 
 (defn get-jlink-path
   ([platform]
@@ -147,4 +151,6 @@
   (get-jlink-path :linux)
 
   (get-mathlink-path :macos)
-  (get-mathlink-path :linux))
+  (get-mathlink-path :linux)
+
+  (platform-paths :linux))
