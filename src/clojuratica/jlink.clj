@@ -88,10 +88,11 @@
   "For installation that use the format <base path>/<version>, detect full path to the latest one"
   [base-path]
   (if-let [version-dir
-           (->> (io/file base-path)
-                (.listFiles)
-                (sort-by version-vector)
-                (last))]
+           (some->> (io/file base-path)
+                    (.listFiles)
+                    (sort-by version-vector)
+                    (last)
+                    (.getAbsolutePath))]
     version-dir
     (throw (unable-to-find-exc))))
 
