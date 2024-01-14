@@ -4,7 +4,7 @@ An interface between Clojure and the Wolfram Language and Mathematica / [Wolfram
 
 ## Status
 
-**Wolframite is currently (Q4/2023) under active development again. You can [keep track of what is happening in this discussion](https://github.com/scicloj/wolframite/discussions/17). Notice that the `master` branch is very outdated, and active development happens on [`develop`](/scicloj/wolframite/tree/develop), which we want to bring to a conclusion and merge to master ASAP.**
+**Wolframite is currently (Q4/2023) under active development again. You can [keep track of what is happening in this discussion](https://github.com/scicloj/wolframite/discussions/17).**
 
 **BEWARE: The documentation below here has mostly not been updated yet.**
 
@@ -17,15 +17,12 @@ Wolframite (formerly Clojuratica) brings together two of today's most exciting t
 
 By linking the two:
 
-* Clojuratica lets you **write and evaluate Mathematica code in Clojure** with full **syntactic integration**. Now Clojure programs can take advantage of Mathematica's enormous range of numerical and symbolic mathematics algorithms and fast matrix algebra routines.
-* Clojuratica provides the **seamless and transparent translation of native data structures** between Clojure and Mathematica. This includes high-precision numbers, matricies, N-dimensional arrays, and evaluated and unevaluated Mathematica expressions and formulae.
-* Clojuratica lets you **call, pass, and store Mathematica functions just as if they were first-class functions in Clojure.** This is high-level functional programming at its finest. You can write a function in whichever language is more suited to the task and never think again about which platform is evaluating calls to that function.
-* Clojuratica facilitates **the "Clojurization" of Mathematica's existing parallel-computing capabilities.** Mathematica is not designed for threads or concurrency. It has excellent support for parallel computation, but parallel evaluations are initiated from a single-threaded master kernel which blocks until all parallel evaluations return. By contrast, Clojuratica includes a concurrency framework that lets multiple Clojure threads execute Mathematica expressions without blocking others. Now it is easy to run a simulation in Clojure with 1,000 independent threads asynchronously evaluating processor-intensive expressions in Mathematica. The computations will be farmed out adaptively and transparently to however many Mathematica kernels are available on any number of processor cores, either locally or across a cluster, grid, or network.
+* Wolframite lets you **write and evaluate Wolfram/Mathematica code in Clojure** with full **syntactic integration**. Now Clojure programs can take advantage of Wolfram's enormous range of numerical and symbolic mathematics algorithms and fast matrix algebra routines.
+* Wolframite provides the **seamless and transparent translation of native data structures** between Clojure and Wolfram. This includes high-precision numbers, matricies, N-dimensional arrays, and evaluated and unevaluated Mathematica expressions and formulae.
+* Wolframite lets you **call, pass, and store Wolfram functions just as if they were first-class functions in Clojure.** This is high-level functional programming at its finest. You can write a function in whichever language is more suited to the task and never think again about which platform is evaluating calls to that function.
+* Wolframite facilitates **the "Clojurization" of Wolfram's existing parallel-computing capabilities.** Wolfram is not designed for threads or concurrency. It has excellent support for parallel computation, but parallel evaluations are initiated from a single-threaded master kernel which blocks until all parallel evaluations return. By contrast, Wolframite includes a concurrency framework that lets multiple Clojure threads execute Wolfram expressions without blocking others. Now it is easy to run a simulation in Clojure with 1,000 independent threads asynchronously evaluating processor-intensive expressions in Wolfram. The computations will be farmed out adaptively and transparently to however many Wolfram kernels are available on any number of processor cores, either locally or across a cluster, grid, or network.
 
-Clojuratica is open-source and targeted at applications in scientific computing, computational economics, finance, and other fields that rely on the combination of parallelized simulation and high-performance number-crunching. Clojuratica gives the programmer access to Clojure's most cutting-edge features--easy concurrency and multithreading, immutable persistent data structures, and software transactional memory---alongside Mathematica's easy-to-use algorithms for numerics, symbolic mathematics, optimization, statistics, visualization, and image-processing.
-
-The canonical pronunciation of Clojuratica starts with Clojure and rhymes with erotica.
-
+Wolframite is open-source and targeted at applications in scientific computing, computational economics, finance, and other fields that rely on the combination of parallelized simulation and high-performance number-crunching. Wolframite gives the programmer access to Clojure's most cutting-edge features--easy concurrency and multithreading, immutable persistent data structures, and software transactional memory---alongside Wolfram's easy-to-use algorithms for numerics, symbolic mathematics, optimization, statistics, visualization, and image-processing.
 
 ## Usage
 
@@ -33,57 +30,68 @@ The canonical pronunciation of Clojuratica starts with Clojure and rhymes with e
 
 #### Clojure
 
-First, if you haven't already, install the [Clojure CLI toolchain](https://clojure.org/guides/getting_started) (homebrew is a great way to do this if you're on Mac or Linux, but you can just as easily use the install scripts if you prefer).
+First, if you haven't already, install the [Clojure CLI toolchain](https://clojure.org/guides/getting_started) (homebrew is a great way to do this if you're on Mac or Linux, but you can just as easily use the installation scripts if you prefer).
 
 #### Mathematica or Wolfram Engine
 
-Next, obviously, you'll need to ensure that you have Wolfram Language or Mathematica installed.
+Next, obviously, you'll need to ensure that you have Wolfram Engine or Mathematica installed.
 
-Normally, it should be detected and loaded automatically, when you require the `clojuratica.core` namespace. Watch stdout for a message like:
+Normally, it should be detected and loaded automatically, when you require the `wolframite.core` namespace. Watch stdout for a message like:
 
 > Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar
 
-However, sometimes Wolframite may fail be find the correct path automatically and need your help. You can set the `MATHEMATICA_INSTALL_PATH` or `WOLFRAM_INSTALL_PATH` environment variables or Java system properties (the latter takes priority) to point to the correct location.
+However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the `MATHEMATICA_INSTALL_PATH` or `WOLFRAM_INSTALL_PATH` environment variables or Java system properties (the latter takes priority) to point to the correct location. Ex.:
+
+```shell
+export MATHEMATICA_INSTALL_PATH=/opt/mathematica/13.1
+```
+
+If you have both Mathematica and Wolfram Engine, then the former is preferred. Set `WOLFRAM_INSTALL_PATH` to override that.
 
 ### Getting started
 
 ```
 clj -A:dev
-(dev)
+(dev) ; this takes few 10s of seconds
 ```
 
-`(dev)` drops you into dev namespace also requiring `init` ns which is side effecting!
-See docstring on `init` ns.
+`(dev)` drops you into the dev namespace and requires `wolframite.core` ns, which is side effecting (detecting and initializing Wolfram/Mathematica and internalizing all Wolfram functions)!
 
 Check if you're all set:
 
 ```clojure
-(WL (Dot [1 2 3] [4 5 6]))
+(wl/eval (Dot [1 2 3] [4 5 6]))
 ;=> 32
 ```
 
 More examples
 
 ```clojure
-(WL (D (Power x 2) x))
+(wl/eval (D (Power 'x 2) 'x))
 ;=> (* 2 x)
-(WL (ChemicalData "Ethanol" "MolarMass"))
+(wl/eval (ChemicalData "Ethanol" "MolarMass"))
 ;=> (Quantity 46.069M (* "Grams" (Power "Moles" -1)))
 
 ;; Accessing WlframAlpha
-(WL (WolframAlpha "How many licks does it take to get to the center of a Tootsie Pop?"))
+(wl/eval (WolframAlpha "How many licks does it take to get to the center of a Tootsie Pop?"))
 ;=> [(-> [["Input" 1] "Plaintext"] "How many licks does it take to get to the Tootsie Roll center of a Tootsie Pop?") (-> [["Result" 1] "Plaintext"] "3481\n(according to student researchers at the University of Cambridge)")]
+; FIXME Try this out; when offline, we get just []
 
-(WL (N Pi 20))
+(wl/eval '(N Pi 20))
+(wl/eval (N 'Pi 20))
 ;=> 3.141592653589793238462643383279502884197169399375105820285M
 ```
 
-## Clerk Integration
+#### Further study
 
-Example usage: (waching for changes in a folder)
+Read through and play with [explainer.clj](dev%2Fexplainer.clj) and [demo.clj](dev%2Fdemo.clj), which demonstrate a bunch of Wolframite's features.
+
+### Clerk Integration
+
+Example usage: (watching for changes in a folder)
 
 ```
-user> (require '[clerk-helper :as ch])
+user> (require '[clojuratica.tools.clerk-helper :as ch])
 user> (ch/clerk-watch! ["dev/notebook"])
 ```
 
@@ -93,26 +101,24 @@ user> (ch/clerk-watch! ["dev/notebook"])
 
 ## Dependencies
 
-Clojuratica requires JLink, which is currently only available with a Mathematica install.
-It will also need to know where the `MathKernel` is, in order to initialize against it (see `clojuratica.init` ns for details).
-
-If you've installed Mathematica in a default location on Mac, Linux or Windows, Clojuratica _should_ be able to find these files automatically.
-However, if necessary, you can specify either the `MATHEMATICA_INSTALL_PATH` or `WOLFRAM_INSTALL_PATH` environment variable to tell Clojuratica where it needs to look.
-
-We have not yet tested this setup against Wolfram Language sans Mathematica, but intend to support this, and can accommodate changes if necessary.
-
+Wolframite requires JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the `WolframKernel` / `MathKernel` executable is, in order to initialize against it. Normally, `wolframite.jlink` should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.
 
 ## Authors
 
-Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the [Community](http://clojuratica.weebly.com/community.html) page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.  It is currently maintained by [Norman Richards](http://github.com/orb).
+The original Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the [Community](http://clojuratica.weebly.com/community.html) page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.
 
 Ongoing maintenance and development over the years have been thanks to
 * [Steve Chan](https://github.com/chanshunli)
 * [Dan Farmer](https://github.com/dfarmer)
 * [Norman Richards](https://github.com/orb)
 
-The project is now being maintained as part of the [SciCloj](https://github.com/scicloj) project.
+Clojuratica has been turned into Wolframite and further maintained by:
 
+* Pawel Ceranka
+* Thomas Clark
+* [Jakub Holý](https://holyjak.cz)
+
+The project is now being maintained as part of the [SciCloj](https://github.com/scicloj) project.
 
 ## License
 
@@ -121,7 +127,7 @@ your option) any later version.
 
 ## Legal
 
-The product names used in this web site are for identification purposes only.
+The product names used in this website are for identification purposes only.
 All trademarks and registered trademarks, including "Wolfram Mathematica," are the property of their respective owners.
-Clojuratica is not a product of Wolfram Research.
+Wolframite is not a product of Wolfram Research.
 The software on this site is provided "as-is," without any express or implied warranty.

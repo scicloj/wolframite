@@ -36,16 +36,16 @@
 (ns clojuratica.core
   (:refer-clojure :exclude [eval])
   (:require
-   [clojure.walk :as walk]
-   [clojuratica.base.cep :as cep]
-   [clojuratica.base.convert :as convert]
-   [clojuratica.base.evaluate :as evaluate]
-   [clojuratica.base.express :as express]
-   [clojuratica.base.parse :as parse]
-   [clojuratica.jlink :as jlink]
-   [clojuratica.runtime.defaults :as defaults]
-   [clojure.string :as string])
-  (:import (com.wolfram.jlink MathLinkException MathLinkFactory)))
+    [clojure.string :as str]
+    [clojure.walk :as walk]
+    [clojuratica.base.cep :as cep]
+    [clojuratica.base.convert :as convert]
+    [clojuratica.base.evaluate :as evaluate]
+    [clojuratica.base.express :as express]
+    [clojuratica.base.parse :as parse]
+    [clojuratica.jlink :as jlink]
+    [clojuratica.runtime.defaults :as defaults])
+  (:import (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
 
 (defonce kernel-link-atom (atom nil))
 
@@ -75,6 +75,9 @@
 
   (evaluator-init (merge {:kernel/link @kernel-link-atom} defaults/default-options)))
 
+(defn- array? [x]
+  (-> x class str (str/starts-with? "class [L")))
+
 (defn init!
   "Provide platform identifier as one of: `:linux`, `:macos`, `:macos-mathematica` or `:windows`
   Defaults to platform identifier based on `os.name`"
@@ -87,9 +90,12 @@
                    (.discardAnswer))
                  (catch MathLinkException e
                    (if (= (ex-message e) "MathLink connection was lost.")
-                     (throw (ex-info (str "MathLink connection was lost. Perhaps you need to activate Mathematica first?"
-                                          " Or there is some other issue and you need to retry, or restart and retry...")
-                                     {:kernel-link-opts opts
+                     (throw (ex-info (str "MathLink connection was lost. Perhaps you need to activate Mathematica first,"
+                                          " you are trying to start multiple concurrent connections (from separate REPLs),"
+                                          " or there is some other issue and you need to retry, or restart and retry...")
+                                     {:kernel-link-opts (cond-> opts
+                                                                (array? opts)
+                                                                vec)
                                       :cause e}))
                      (throw e)))
                  (catch Exception e
@@ -101,7 +107,7 @@
      kl)))
 
 (defn terminate-kernel! []
-  (.terminateKernel @kernel-link-atom)
+  (.terminateKernel ^KernelLink @kernel-link-atom)
   (reset! kernel-link-atom nil))
 
 (defn un-qualify [form]
@@ -112,7 +118,7 @@
                  form))
 
 (defn make-wl-evaluator [opts]
-  (when-not (instance? com.wolfram.jlink.KernelLink @kernel-link-atom) (init!))
+  (when-not (instance? KernelLink @kernel-link-atom) (init!))
   (evaluator-init (merge {:kernel/link @kernel-link-atom} opts))
   (fn wl-eval
     ([expr]
@@ -197,6 +203,7 @@
   ;; TODO (jh) Support options to only load functions instead of all symbols ?
   ;; IDEA: Provide also (load-symbols <list of symbols or a regexp>), which would load only a subset
   (doall (->> (eval '(EntityValue (WolframLanguageData) ["Name", "PlaintextUsage"] "EntityPropertyAssociation"))
+              ;; FIXME Only process functions! clj-intern only makes sense w/ those, e.g. not Pi etc
               vals ; keys ~ `(Entity "WolframLanguageSymbol" "ImageCorrelate")`
               (map (fn [{sym "Name", doc "PlaintextUsage"}]
                      (clj-intern (symbol sym) {:intern/ns-sym ns-sym
@@ -227,7 +234,7 @@
           has-function? (-> data
                             (get "Attributes")
                             (->> (map str)
-                                 (mapv #(string/includes? % "Function"))
+                                 (mapv #(str/includes? % "Function"))
                                  (some identity)))]
 
       (or has-values? has-function?)))

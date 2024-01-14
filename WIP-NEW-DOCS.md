@@ -13,19 +13,45 @@
 * Replace uses of wl/wl with wl/eval (= standardize on a single, understandable one) - in demo etc
 * Add tests for parse, convert, key fns
 * Explore, Leverage for docs dev/explainer.clj, notebook.demo 
+* Get rid of the custom-parse flag requirement
+* `load-all-symbols` should be renamed and only load fns, b/c nothing else makes sense to be wrapped with clj fns
+* Running `(First (WolframLanguageData))` when offline returns `(Entity "WolframLanguageSymbol" "$Aborted")` while in W.Eng. it also prints a bunch of useful error info; can we get hold of it? Aslo, should we turn the $Aborted into an exception?! See below:
+
+```wolram
+In[6]:= First[WolframLanguageData[]]                                                              
+
+EntityValue::conopen: 
+   Using EntityValue requires internet connectivity. Please check your network connection. You
+     may need to configure your firewall program or set a proxy in the Internet Connectivity tab
+     of the Preferences dialog.
+
+EntityValue::nodat: Unable to download data. Some or all results may be missing.
+
+EntityValue::outdcache: Using potentially outdated cached values.
+
+Out[6]= Entity[WolframLanguageSymbol, $Aborted]
+```
+
+Similar, when offline:
+
+```wolfram
+In[9]:= WolframAlpha["How many licks does it take to get to the center of a Tootsie Pop?"]        
+
+URLFetch::invurl: Internal`HouseKeep[https://api.wolframalpha.com/v1/query.jsp, 
+     {input -> How%20many%20licks%20does%20it%20take%20to%20get%20to%20the%20center%20of%20a%20To
+        otsie%20Pop%3F, async -> false, format -> minput,plaintext, <<12>>, uuid -> None}] is not
+     a valid URL
+```
 
 ## Open questions
 
-* What is the `parse` ns about? Turn `com.wolfram.jlink.Expr` to Clojure data? Thus likely
-  the opposite of `clojuratica.core/->wl!` ?
-* Q: What does `wl/wl` do, vs. `wl/eval` ? A: Eval is alias to wl, an evaluator instance.
-* Why do we want to support `:parse/custom-parse-symbols` (and not simply support either a sym or a set of symbols as the dispatch-val?) Also, why do we force the user to set the `:custom-parse` flag? Is always 
- invoking a multimethod considered too expensive?
+* Why cannot I start three Wolframite REPLs on the same PC? (The 3rd fails w/ "MathLink connection was lost")
+* Why do we want to support `:parse/custom-parse-symbols` (and not simply support either a sym or a set of symbols as the dispatch-val?) Also, why do we force the user to set the `:custom-parse` flag?
 * The flags - do we need all, how to understand them, ...?
 * How well is WL's Associative supported in parse<>convert? (There is some flag related to this)
 * How to install packages? (see `Needs` wl fn)
 * What are `defaults/clojure-scope-aliases` about?
-* How to load .wl file into a REPL?
+* How to load .wl file into a REPL? (Thomas may know)
  
 ### Performance
 
