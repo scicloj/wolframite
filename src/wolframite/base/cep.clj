@@ -1,9 +1,9 @@
-(ns clojuratica.base.cep
+(ns wolframite.base.cep
   (:require
-    [clojuratica.lib.options :as options]
-    [clojuratica.base.convert :as convert]
-    [clojuratica.base.evaluate :as evaluate]
-    [clojuratica.base.parse :as parse]))
+    [wolframite.lib.options :as options]
+    [wolframite.base.convert :as convert]
+    [wolframite.base.evaluate :as evaluate]
+    [wolframite.base.parse :as parse]))
 
 (defn cep
   "Convert-Evaluate-Parse pipeline.

@@ -1,4 +1,4 @@
-(ns clojuratica.base.express)
+(ns wolframite.base.express)
 
 (defn express [s {:keys [kernel/link]}]
   (assert (string? s))

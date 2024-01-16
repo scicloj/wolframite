@@ -1,8 +1,8 @@
-(ns clojuratica.base.evaluate
+(ns wolframite.base.evaluate
   "The core of evaluation: send a converted JLink expression to a Wolfram Kernel for evaluation and return the result."
-  (:require [clojuratica.jlink]
-            [clojuratica.lib.options :as options]
-            [clojuratica.base.convert :as convert]))
+  (:require [wolframite.jlink]
+            [wolframite.lib.options :as options]
+            [wolframite.base.convert :as convert]))
 
 (declare evaluate)
 (defn process-state [pid-expr {:keys [flags] :as opts}]
@@ -33,14 +33,16 @@
                       :as   opts}]
   (assert (instance? com.wolfram.jlink.Expr       expr))
   (assert (instance? com.wolfram.jlink.KernelLink link))
-  ;; FIXME: debug log: "evaluate expr>"
   (if (options/flag?' (:flags opts) :serial)
     (io!
      (locking link
        (doto link (.evaluate expr) (.waitForAnswer))
        (.getExpr link)))
     (let [opts' (update opts :flags conj :serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
-          pid-expr (evaluate (convert/convert '(Unique Clojuratica/Concurrent/process) opts')
+          pid-expr (evaluate (convert/convert
+                               (list 'Unique
+                                     ; Beware: technically, this is an invalid clj symbol due to the slashes:
+                                     (symbol "Wolframite/Concurrent/process")) opts')
                              opts)]
       ;; FIXME: debug log: "pid-expr:"
       (evaluate (convert/convert (list '= pid-expr (list 'ParallelSubmit expr)) opts') opts)

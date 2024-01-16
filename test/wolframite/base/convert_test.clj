@@ -1,6 +1,6 @@
-(ns clojuratica.base.convert-test
+(ns wolframite.base.convert-test
   (:require [clojure.test :refer :all])
-  (:require [clojuratica.base.convert :refer [convert]]))
+  (:require [wolframite.base.convert :refer [convert]]))
 
 (deftest test-convert
   (testing "Basics"

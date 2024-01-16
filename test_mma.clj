@@ -1,6 +1,6 @@
 ;;-------- 用宏和Repl把其他语言的解释器包起来: Lisp化
-;;http://clojuratica.weebly.com/intro.html
-;;http://clojuratica.weebly.com/tutorial.html
+;;http://wolframite.weebly.com/intro.html
+;;http://wolframite.weebly.com/tutorial.html
 
 ;; 用mma来辅助机器学习
 ;;https://www.wolfram.com/language/elementary-introduction/2nd-ed/35-natural-language-understanding.html
@@ -91,7 +91,7 @@ Plus ;; :cause "Can't take value of a macro: #'user/Plus"
 
 (math-intern :as-function math-evaluate [PlusFn Plus]) ;;=> (#'user/PlusFn)
 
-PlusFn ;; => #object[clojuratica.base.parse$parse_fn$fn__311 0x65b88b76 "clojuratica.base.parse$parse_fn$fn__311@65b88b76"]
+PlusFn ;; => #object[wolframite.base.parse$parse_fn$fn__311 0x65b88b76 "wolframite.base.parse$parse_fn$fn__311@65b88b76"]
 
 ;; 专家系统编程: clojure prolog
 (map #(apply PlusFn %) [[1 2] [3 4 'a] [5 6]]) ;;=> (3 (+ 7 a) 11)

@@ -1,4 +1,4 @@
-(ns clojuratica.runtime.defaults
+(ns wolframite.runtime.defaults
   (:require clojure.set))
 
 ;; * Flags

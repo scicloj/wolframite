@@ -4,18 +4,19 @@
 
 ```clojure
 (:require
-  [clojuratica.core :as wl])
+  [wolframite.core :as wl])
 ```
 
 ## TODO
 
-* Rename namespaces, docs to Wolframite
-* Replace uses of wl/wl with wl/eval (= standardize on a single, understandable one) - in demo etc
-* Add tests for parse, convert, key fns
-* Explore, Leverage for docs dev/explainer.clj, notebook.demo 
-* Get rid of the custom-parse flag requirement
-* `load-all-symbols` should be renamed and only load fns, b/c nothing else makes sense to be wrapped with clj fns
-* Running `(First (WolframLanguageData))` when offline returns `(Entity "WolframLanguageSymbol" "$Aborted")` while in W.Eng. it also prints a bunch of useful error info; can we get hold of it? Aslo, should we turn the $Aborted into an exception?! See below:
+[ ] FIXME: With Wolf fns loaded, running `(Plus 1 (Plus 2 3))` will evaluate _two_ expressions: `Plus[2, 3]]` and `Plus[1, 5]]`, while we only want to evaluate once.
+[x] Rename namespaces, docs to Wolframite
+[x] Replace uses of wl/wl with wl/eval (= standardize on a single, understandable one) - in demo etc
+[ ] Add tests for parse, convert, key fns
+[x] Explore, Leverage for docs dev/explainer.clj, notebook.demo 
+[ ] Get rid of the custom-parse flag requirement
+[ ] `load-all-symbols` should be renamed and only load fns, b/c nothing else makes sense to be wrapped with clj fns
+[ ] Running `(First (WolframLanguageData))` when offline returns `(Entity "WolframLanguageSymbol" "$Aborted")` while in W.Eng. it also prints a bunch of useful error info; can we get hold of it? Aslo, should we turn the $Aborted into an exception?! See below:
 
 ```wolram
 In[6]:= First[WolframLanguageData[]]                                                              
@@ -62,10 +63,6 @@ URLFetch::invurl: Internal`HouseKeep[https://api.wolframalpha.com/v1/query.jsp,
 ## How does it work
 
 We talk to a locally installed Wolfram Engine with the Wolfram library JLink for Wolfram <-> Java interop.
-
-## Setup
-
-Finding JLink: Wolframite finds it at the OS-default location (see `clojuratica.jlink/add-jlink-to-classpath!`) at start, e.g., on OSX, it would look for `/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar` - look for `Adding path to classpath: <path>` in the stdout. You can override the path by setting the env var `JLINK_JAR_PATH` and influence it by setting either of `MATHEMATICA_INSTALL_PATH`, `WOLFRAM_INSTALL_PATH`.
 
 ## Learning Wolframite
 

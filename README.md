@@ -6,8 +6,6 @@ An interface between Clojure and the Wolfram Language and Mathematica / [Wolfram
 
 **Wolframite is currently (Q4/2023) under active development again. You can [keep track of what is happening in this discussion](https://github.com/scicloj/wolframite/discussions/17).**
 
-**BEWARE: The documentation below here has mostly not been updated yet.**
-
 ## What is Wolframite? ##
 
 Wolframite (formerly Clojuratica) brings together two of today's most exciting tools for high-performance, parallel computation.
@@ -40,7 +38,7 @@ Normally, it should be detected and loaded automatically, when you require the `
 
 > Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar
 
-However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the `MATHEMATICA_INSTALL_PATH` or `WOLFRAM_INSTALL_PATH` environment variables or Java system properties (the latter takes priority) to point to the correct location. Ex.:
+However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the `MATHEMATICA_INSTALL_PATH` or `WOLFRAM_INSTALL_PATH` environment variables or Java system properties (the latter takes priority) to point to the correct location. Example:
 
 ```shell
 export MATHEMATICA_INSTALL_PATH=/opt/mathematica/13.1
@@ -60,31 +58,31 @@ clj -A:dev
 Check if you're all set:
 
 ```clojure
-(wl/eval (Dot [1 2 3] [4 5 6]))
+(wl/eval '(Dot [1 2 3] [4 5 6]))
 ;=> 32
 ```
 
 More examples
 
 ```clojure
-(wl/eval (D (Power 'x 2) 'x))
+(wl/eval '(D (Power 'x 2) 'x))
 ;=> (* 2 x)
-(wl/eval (ChemicalData "Ethanol" "MolarMass"))
+(wl/eval '(ChemicalData "Ethanol" "MolarMass"))
 ;=> (Quantity 46.069M (* "Grams" (Power "Moles" -1)))
 
 ;; Accessing WlframAlpha
-(wl/eval (WolframAlpha "How many licks does it take to get to the center of a Tootsie Pop?"))
+(wl/eval '(WolframAlpha "How many licks does it take to get to the center of a Tootsie Pop?"))
 ;=> [(-> [["Input" 1] "Plaintext"] "How many licks does it take to get to the Tootsie Roll center of a Tootsie Pop?") (-> [["Result" 1] "Plaintext"] "3481\n(according to student researchers at the University of Cambridge)")]
 ; FIXME Try this out; when offline, we get just []
 
 (wl/eval '(N Pi 20))
-(wl/eval (N 'Pi 20))
+(N 'Pi 20)
 ;=> 3.141592653589793238462643383279502884197169399375105820285M
 ```
 
-#### Further study
+#### Learning Wolframite
 
-Read through and play with [explainer.clj](dev%2Fexplainer.clj) and [demo.clj](dev%2Fdemo.clj), which demonstrate a bunch of Wolframite's features.
+Read through and play with [explainer.clj](dev%2Fexplainer.clj) and [demo.clj](dev%2Fdemo.clj), which demonstrate most of Wolframite's features and what you can do with Wolfram.
 
 ### Clerk Integration
 
@@ -98,10 +96,9 @@ user> (ch/clerk-watch! ["dev/notebook"])
 * Open dev/notebook/demo.clj, make a change and save.
 * Open `localhost:7777` in the browser
 
-
 ## Dependencies
 
-Wolframite requires JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the `WolframKernel` / `MathKernel` executable is, in order to initialize against it. Normally, `wolframite.jlink` should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.
+Wolframite requires Wolfram's Java integration library JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the `WolframKernel` / `MathKernel` executable is, in order to be able to start the external evaluation kernel process. Normally, `wolframite.jlink` should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.
 
 ## Authors
 

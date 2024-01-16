@@ -2,10 +2,10 @@
   "A demo ns used for explaining the basics of using Wolframite.
   See also the demo ns."
   (:require
-   [clojuratica.core :as wl]
-   [clojuratica.tools.graphics :as graphics]
-   [clojuratica.base.parse :as parse :refer [custom-parse]]
-   [clojuratica.lib.helpers :as h]))
+   [wolframite.core :as wl]
+   [wolframite.tools.graphics :as graphics]
+   [wolframite.base.parse :as parse :refer [custom-parse]]
+   [wolframite.lib.helpers :as h]))
 
 "Hello Everyone!"
 

@@ -1,5 +1,5 @@
-(ns clojuratica.specs
-  (:require  [clojuratica.runtime.defaults :as defaults]
+(ns wolframite.specs
+  (:require  [wolframite.runtime.defaults :as defaults]
              [clojure.spec.alpha :as s]
              [clojure.spec.test.alpha :as st]
              clojure.set))

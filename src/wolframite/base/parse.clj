@@ -1,9 +1,9 @@
-(ns clojuratica.base.parse
+(ns wolframite.base.parse
   "Translate a jlink.Expr returned from an evaluation into Clojure data"
   (:require
-   [clojuratica.jlink]
-   [clojuratica.lib.options :as options]
-   [clojuratica.base.expr :as expr]
+   [wolframite.jlink]
+   [wolframite.lib.options :as options]
+   [wolframite.base.expr :as expr]
    [clojure.string :as str])
   (:import [com.wolfram.jlink Expr]))
 
@@ -182,7 +182,7 @@
   Ex.: `((parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}) 1 2) ; => 3`"
   [expr opts]
   (fn [& args]
-    (let [cep-fn (requiring-resolve `clojuratica.base.cep/cep)]
+    (let [cep-fn (requiring-resolve `wolframite.base.cep/cep)]
       (cep-fn (apply list expr args) opts #_(update opts :flags #(options/set-flag % :as-expression))))))
 
 (defn parse-generic-expression [expr opts]

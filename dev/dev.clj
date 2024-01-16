@@ -1,36 +1,32 @@
 (ns dev
-  (:require [clojuratica.core :as wl]))
+  (:refer-clojure
+    ;; Exclude symbols also used by Wolfram:
+    :exclude [Byte Character Integer Number Short String Thread])
+  (:require
+    [wolframite.core :as wl]))
 
+(println "Loading Wolfram symbols, this make take a few seconds...")
 (wl/load-all-symbols (symbol (ns-name *ns*)))
 
 (comment ;; Get Started!
 
-  ;; * Init
+  ;;
+  ;; Evaluation
   ;;
 
-  (wl/eval '(Dot [1 2 3] [4 5 6]))
-  (Dot [1 2 3] [4 5 6])
+  ;; Use eval with a quoted Wolfram-as-clojure-data expression (`Fn[..]` becoming `(Fn ..)`):
+  (wl/eval '(Dot [1 2 3] [4 5 6])) ; Wolfram: `Dot[{1, 2, 3}, {4, 5, 6}]]`
+  (Dot [1 2 3] [4 5 6]) ; We have loaded all symbols as Clojure fns and thus can run this directly
+
   (wl/eval '(N Pi 20))
-  (N 'Pi 20) ; Pi must still be quoted, it is not a fn
-  (do Pi)
+  (N 'Pi 20) ; Beware: Pi must still be quoted, it is not a fn
 
-  (clojure.repl/doc EntityProperties)
-  (clojure.repl/doc EntityValue)
-  (clojure.repl/doc WolframLanguageData)
-  (def WLD (WolframLanguageData))
+  ;;
+  ;; Built-in documentation:
+  ;;
+  (clojure.repl/doc Dot)
 
 
-  (wl/eval '(EntityTypeName Pi))
-
-  (EntityProperties 'WolframLanguageSymbol)
-
-  (EntityType 'WolframLanguageSymbol)
-
-  (->> (ns-publics *ns*)
-       keys
-       (filter #(re-matches #".*Entity.*" (name %)))
-       sort
-       )
 
   #_:end-comment)
 

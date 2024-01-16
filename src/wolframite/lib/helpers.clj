@@ -1,4 +1,4 @@
-(ns clojuratica.lib.helpers
+(ns wolframite.lib.helpers
   (:require [clojure.java.browse :refer [browse-url]]))
 
 (defn help-link [fn-sym]

@@ -1,11 +1,11 @@
-(ns clojuratica.tools.clerk-helper
-  (:require [clojuratica.core :as wl]
+(ns wolframite.tools.clerk-helper
+  (:require [wolframite.core :as wl]
             [nextjournal.clerk :as clerk]
             [nextjournal.clerk.webserver :as webserver]
             [nextjournal.beholder :as beholder]
             ;; [clj-http.client        :as client]
             [clojure.java.io :as io]
-            [clojuratica.tools.hiccup :as h]))
+            [wolframite.tools.hiccup :as h]))
 
 (defn view [form & {:keys [folded?]}]
   (clerk/html (h/view* form folded?)))

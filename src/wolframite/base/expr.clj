@@ -1,5 +1,5 @@
-(ns clojuratica.base.expr
-  (:require [clojuratica.jlink])
+(ns wolframite.base.expr
+  (:require [wolframite.jlink])
   (:import [com.wolfram.jlink Expr]))
 
 (defn head-str [expr]

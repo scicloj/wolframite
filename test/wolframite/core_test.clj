@@ -1,6 +1,6 @@
-(ns clojuratica.core-test
+(ns wolframite.core-test
   (:require  [clojure.test :as t :refer [deftest testing is]]
-             [clojuratica.core :as wl]))
+             [wolframite.core :as wl]))
 
 ;; * Basic Sanity Checks
 

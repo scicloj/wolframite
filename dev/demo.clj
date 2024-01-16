@@ -2,13 +2,13 @@
   "Demonstrate key features of Wolframite.
   See also the explainer ns."
   (:require
-   [clojuratica.core :as wl]
-   [clojuratica.tools.graphics :as graphics]
-   [clojuratica.base.parse :as parse]
-   [clojuratica.runtime.defaults :as defaults]
-   [clojuratica.base.convert :as convert]
-   [clojuratica.base.evaluate :as evaluate]
-   [clojuratica.base.express :as express])
+   [wolframite.core :as wl]
+   [wolframite.tools.graphics :as graphics]
+   [wolframite.base.parse :as parse]
+   [wolframite.runtime.defaults :as defaults]
+   [wolframite.base.convert :as convert]
+   [wolframite.base.evaluate :as evaluate]
+   [wolframite.base.express :as express])
   (:import [com.wolfram.jlink Expr MathLinkFactory]))
 
 (comment

@@ -1,5 +1,5 @@
-(ns clojuratica.tools.hiccup
-  (:require [clojuratica.core :as wl]))
+(ns wolframite.tools.hiccup
+  (:require [wolframite.core :as wl]))
 
 (defn bytes->b64encodedString
   [bs]

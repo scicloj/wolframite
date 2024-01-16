@@ -33,18 +33,18 @@
 ;
 ; ***** END LICENSE BLOCK *****
 
-(ns clojuratica.core
+(ns wolframite.core
   (:refer-clojure :exclude [eval])
   (:require
     [clojure.string :as str]
     [clojure.walk :as walk]
-    [clojuratica.base.cep :as cep]
-    [clojuratica.base.convert :as convert]
-    [clojuratica.base.evaluate :as evaluate]
-    [clojuratica.base.express :as express]
-    [clojuratica.base.parse :as parse]
-    [clojuratica.jlink :as jlink]
-    [clojuratica.runtime.defaults :as defaults])
+    [wolframite.base.cep :as cep]
+    [wolframite.base.convert :as convert]
+    [wolframite.base.evaluate :as evaluate]
+    [wolframite.base.express :as express]
+    [wolframite.base.parse :as parse]
+    [wolframite.jlink :as jlink]
+    [wolframite.runtime.defaults :as defaults])
   (:import (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
 
 (defonce kernel-link-atom (atom nil))

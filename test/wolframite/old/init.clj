@@ -1,6 +1,6 @@
-(ns clojuratica.test.init
- (:use [clojuratica]
-	     [clojuratica.runtime.dynamic-vars]))
+(ns wolframite.test.init
+ (:use [wolframite.
+	     [wolframite.runtime.dynamic-vars]))
 
 
 (import '[com.wolfram.jlink MathLinkFactory])
@@ -14,10 +14,10 @@
 ;          "-linkmode Connect -linkprotocol TCPIP -linkname 65515@127.0.0.1,65516@127.0.0.1"))
 ;(.discardAnswer kernel-link)
 
-(use 'clojuratica)
+(use 'wolframite.
 
-(def kernel (clojuratica.base.kernel/kernel kernel-link))
-(def options clojuratica.runtime.default-options/*default-options*)
+(def kernel (wolframite.base.kernel/kernel kernel-link))
+(def options wolframite.runtime.default-options/*default-options*)
 
 (def math-eval (math-evaluator kernel-link))
 (math-intern math-eval :scopes)

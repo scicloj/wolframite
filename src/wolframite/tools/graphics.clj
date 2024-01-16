@@ -1,7 +1,7 @@
-(ns clojuratica.tools.graphics
+(ns wolframite.tools.graphics
   "Displaying WL graphics with java.awt"
-  (:require [clojuratica.jlink]
-            [clojuratica.core :as wl])
+  (:require [wolframite.jlink]
+            [wolframite.core :as wl])
   (:import (com.wolfram.jlink MathCanvas KernelLink)
            (java.awt Color Frame)
            (java.awt.image BufferedImage)

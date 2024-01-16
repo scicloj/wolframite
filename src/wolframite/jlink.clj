@@ -1,4 +1,4 @@
-(ns clojuratica.jlink
+(ns wolframite.jlink
   "ATTENTION! This namespace is side effecting, and is required for many of the files in this project to compile.
   It uses Pomegranate to dynamically add the Wolfram Language / Mathematica JLink jar to the JVM classpath.
   Because many of the namespaces in this project either import or reference the jlink classes, it's necessary to have loaded this namespace before those namespaces will compile.

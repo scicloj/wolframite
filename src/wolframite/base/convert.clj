@@ -1,13 +1,13 @@
-(ns clojuratica.base.convert
+(ns wolframite.base.convert
   "Convert a Clojure expression into a Wolfram JLink expression"
-  (:require [clojuratica.jlink]
-            [clojuratica.lib.options :as options]
-            [clojuratica.base.express :as express]
-            [clojuratica.base.expr :as expr]
-            [clojuratica.runtime.defaults :as defaults])
+  (:require [wolframite.jlink]
+            [wolframite.lib.options :as options]
+            [wolframite.base.express :as express]
+            [wolframite.base.expr :as expr]
+            [wolframite.runtime.defaults :as defaults])
   (:import [com.wolfram.jlink Expr MathLinkFactory]))
 
-;; (remove-ns 'clojuratica.base.convert)
+;; (remove-ns 'wolframite.base.convert)
 
 ;; * defmulti and dispatch
 
