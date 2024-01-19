@@ -1,5 +1,10 @@
 # Dev docs
 
+## Notes 2024-01-18
+
+* Rename ns convert and parse to st. like clj-to-wolfram and wolfram-to-clj ?
+* Add a diagram documenting the eval pipeline and the relations of the other modules
+
 ## Common ns aliases
 
 ```clojure
@@ -9,14 +14,13 @@
 
 ## TODO
 
-[ ] FIXME: With Wolf fns loaded, running `(Plus 1 (Plus 2 3))` will evaluate _two_ expressions: `Plus[2, 3]]` and `Plus[1, 5]]`, while we only want to evaluate once.
+[ ] FIXME: `load-all-symbols` should make each symbol into a var that just contains a symbol, and requires an explicit call to `wl/eval`. Justification: 1) wrapping each symbol with a fn breaks expression that use them as values, such as `(Plus 1 Pi)` (we'd try to add 1 to a clojure lambda fn), 2) Nested expressions result in multiple calls to Wolfram: e.g. `(Plus 1 (Plus 2 3))` would evaluate _two_ expressions: `Plus[2, 3]]` and `Plus[1, 5]]`, while we only want to evaluate once. Perhaps keep a fn to enable explicit turning of selected vars into functions? 
+[ ] Add tests for parse, convert, key fns
 [x] Rename namespaces, docs to Wolframite
 [x] Replace uses of wl/wl with wl/eval (= standardize on a single, understandable one) - in demo etc
-[ ] Add tests for parse, convert, key fns
 [x] Explore, Leverage for docs dev/explainer.clj, notebook.demo 
-[ ] Get rid of the custom-parse flag requirement
-[ ] `load-all-symbols` should be renamed and only load fns, b/c nothing else makes sense to be wrapped with clj fns
-[ ] Running `(First (WolframLanguageData))` when offline returns `(Entity "WolframLanguageSymbol" "$Aborted")` while in W.Eng. it also prints a bunch of useful error info; can we get hold of it? Aslo, should we turn the $Aborted into an exception?! See below:
+[x] Get rid of the custom-parse flag requirement
+[ ] Get better errors from the Kernel: Running `(First (WolframLanguageData))` when offline returns `(Entity "WolframLanguageSymbol" "$Aborted")` while in W.Eng. it also prints a bunch of useful error info; can we get hold of it? Aslo, should we turn the $Aborted into an exception?! See below:
 
 ```wolram
 In[6]:= First[WolframLanguageData[]]                                                              
@@ -47,9 +51,8 @@ URLFetch::invurl: Internal`HouseKeep[https://api.wolframalpha.com/v1/query.jsp,
 ## Open questions
 
 * Why cannot I start three Wolframite REPLs on the same PC? (The 3rd fails w/ "MathLink connection was lost")
-* Why do we want to support `:parse/custom-parse-symbols` (and not simply support either a sym or a set of symbols as the dispatch-val?) Also, why do we force the user to set the `:custom-parse` flag?
 * The flags - do we need all, how to understand them, ...?
-* How well is WL's Associative supported in parse<>convert? (There is some flag related to this)
+* How well is WL's Associative supported in parse<>convert? (There is some flag related to this, some TODO/FIXME comments, ...)
 * How to install packages? (see `Needs` wl fn)
 * What are `defaults/clojure-scope-aliases` about?
 * How to load .wl file into a REPL? (Thomas may know)
@@ -58,30 +61,9 @@ URLFetch::invurl: Internal`HouseKeep[https://api.wolframalpha.com/v1/query.jsp,
 
 * `graphics/show!` seems pretty slow - multiple seconds to minutes to render a result
 * Loading symbol names + docs very slow - https://community.wolfram.com/groups/-/m/t/3071114?p_p_auth=Lqs4farl
-* 
+
 
 ## How does it work
-
-We talk to a locally installed Wolfram Engine with the Wolfram library JLink for Wolfram <-> Java interop.
-
-## Learning Wolframite
-
-Go through `dev/explainer.clj`
-
-### Basic usage
-
-```clojure
-(require '[clojuratica.core :as wl])
-(wl/eval <symbolic expr or string>)
-```
-
-#### The 3 ways of invoking Wolfram
-
-1. Wolfram lang as a string: `(wl/eval "Plus[1,2]")`
-2. Wolfram lang as Clojure data: `(wl/eval '(Plus 1 2))`
-3. Wolfram functions interned into a workspace as Clojure functions: `(do (wl/load-all-symbols 'w) (w/Plus 1 2))`
-
-On interning: this essentially creates a "proxy" function of the same name as a Wolfram function, which will convert the passed-in Clojure expression to the JLink `Expr`, send it to a Wolfram Kernel for evaluation, and parse the result back into Clojure data. Beware that `wl/load-all-symbols` may take 10s of seconds - some minutes.
 
 #### Wolfram expressions <-> Clojure EDN
 

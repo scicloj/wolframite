@@ -167,6 +167,9 @@
   ```
 
   See also [[load-all-symbols]]."
+  ;; On interning: parse/parse-fn essentially creates a "proxy" function of the same name as a Wolfram function, which will convert the passed-in Clojure expression to the JLink `Expr`,
+  ;; send it to a Wolfram Kernel for evaluation, and parse the result back into Clojure data. Beware that `wl/load-all-symbols` may take 10s of seconds - some minutes.
+
   ([wl-fn-sym]
    (clj-intern wl-fn-sym {}))
   ([wl-fn-sym {:intern/keys [ns-sym extra-meta] :as opts}]
