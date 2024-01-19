@@ -36,47 +36,6 @@
         (and (seq custom-parse-symbols) (not (contains? (set custom-parse-symbols) head)))
       head)))
 
-(ns-unmap *ns* 'custom-parse)
-(defmulti custom-parse
-  ;; TODO Consider *not* requiring to pass the flag to enable the multi (originally added to make
-  ;;      the code less magical and more explicit)
-  "Modify how Wolfram response is parsed into Clojure data.
-  You need to pass the flag :custom-parse to eval to actually enable this.
-
-  The dispatch-val should be a symbol, matched against the first one of the result list.
-  You can override this by including `:parse/custom-parse-symbols ['sym1 'sym2 ...]` in the flags,
-  to be able to match against multiple symbols.
-
-  Example:
-
-  ```clj
-   ; return a Java URL from a Hyperlink call, instead of `'(Hyperlink <label> <url string>)`
-  (defmethod custom-parse 'Hyperlink [expr opts]
-  (-> (second (.args expr)) ; 1st = label
-      (parse/parse opts)
-      java.net.URL.))
-
-  (wl/eval '(Hyperlink \"foo\" \"https://www.google.com\")
-            {:flags [:custom-parse] :parse/custom-parse-symbols ['Hyperlink]})
-  ```"
-  #'custom-parse-dispatch)
-
-;; (defmethod custom-parse 'Hyperlink [expr opts]
-;;   (let [parsed-url (parse (second (.args expr)) opts)]
-;;     (try
-;;       (java.net.URL. parsed-url)
-;;       (catch java.net.MalformedURLException _
-;;         parsed-url))))
-
-(defmethod custom-parse 'EntityProperty [expr opts]
-  (entity-type->keyword expr opts))
-
-(defmethod custom-parse 'Entity [expr opts]
-  (entity-type->keyword expr opts))
-
-(defmethod custom-parse :default [_ _]
-  ::not-implemented)
-
 (defn atom? [expr]
   (not (.listQ expr)))
 
@@ -221,10 +180,38 @@
     (simple-matrix-type expr)                        (parse-simple-matrix expr nil opts)
     :else                                            (parse-complex-list expr opts)))
 
-(defn parse [expr {:keys [flags] :as opts}]
-  (if (options/flag?' flags :custom-parse)
-    (let [cp (custom-parse expr opts)]
-      (if (not= ::not-implemented cp)
-        cp
-        (standard-parse expr opts)))
-    (standard-parse expr opts)))
+
+(ns-unmap *ns* 'custom-parse)
+(defmulti custom-parse
+  "Modify how Wolfram response is parsed into Clojure data.
+
+  The dispatch-val should be a symbol, matched against the first one of the result list.
+  You can override this by including `:parse/custom-parse-symbols ['sym1 'sym2 ...]` in the flags,
+  to be able to match against multiple symbols.
+
+  Example:
+
+  ```clj
+   ; return a Java URL from a Hyperlink call, instead of `'(Hyperlink <label> <url string>)`
+  (defmethod custom-parse 'Hyperlink [expr opts]
+    (-> (second (.args expr)) ; 1st = label
+        (parse/parse opts)
+        java.net.URI.))
+
+  (wl/eval '(Hyperlink \"foo\" \"https://www.google.com\"))
+  ; or: (wl/eval '(Hyperlink \"foo\" \"https://www.google.com\") {:parse/custom-parse-symbols ['Hyperlink, #_...]})
+  ; => #object[java.net.URI 0x3f5e5a46 \"https://www.google.com\"]
+  ```"
+  #'custom-parse-dispatch)
+
+(defmethod custom-parse 'EntityProperty [expr opts]
+  (entity-type->keyword expr opts))
+
+(defmethod custom-parse 'Entity [expr opts]
+  (entity-type->keyword expr opts))
+
+(defmethod custom-parse :default [expr opts]
+  (standard-parse expr opts))
+
+(defn parse [expr opts]
+  (custom-parse expr opts))

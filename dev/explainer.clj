@@ -104,8 +104,7 @@
       (parse/parse opts)
       java.net.URI.))
 
-(wl/eval '(Hyperlink "foo" "https://www.google.com") {:flags [:custom-parse]
-                                                      :parse/custom-parse-symbols ['Hyperlink]})
+(wl/eval '(Hyperlink "foo" "https://www.google.com"))
 ;; * More
 
 ;; WordFrequency[ExampleData[{"Text", "AliceInWonderland"}], {"a", "an", "the"}, "CaseVariants"]

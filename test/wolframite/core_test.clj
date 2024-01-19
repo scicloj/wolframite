@@ -8,7 +8,7 @@
 ;;   (testing (is wl/math-evaluate)))
 
 (deftest basic-math
-  (testing "1 + 1" (is (= 2 (wl/wl '(Plus 1 1))))))
+  (testing "1 + 1" (is (= 2 (wl/eval '(Plus 1 1))))))
 
 ;; (deftest basic-string<->data-translation
 ;;   (testing "translating TO clj" (is (= '(GridGraph [5 5])
