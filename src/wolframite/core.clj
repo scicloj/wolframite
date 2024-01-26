@@ -170,6 +170,13 @@
   ;; On interning: parse/parse-fn essentially creates a "proxy" function of the same name as a Wolfram function, which will convert the passed-in Clojure expression to the JLink `Expr`,
   ;; send it to a Wolfram Kernel for evaluation, and parse the result back into Clojure data. Beware that `wl/load-all-symbols` may take 10s of seconds - some minutes.
 
+  ;; FIXME: Use something like this, where at val position we get a symbol (or we do once we process it) and at fn position we get a fn that returns a list of symbs
+  #_(do (defn- wolfram-fn [sym] ^{::wolfram-sym sym} (fn wolf-fn [& args] (apply list sym (->> args (map #(or (when (fn? %) (-> % meta ::wolfram-sym)) %))))))
+        (def Plus (wolfram-fn 'Plus))
+        (def Pi (wolfram-fn 'Pi))
+        (Plus 1 2) ; => (Plus 1 2)
+        (Plus 1 Pi) ; => (Plus 1 Pi)) ; TODO Add the fn -> sym processing also to wl/eval so that it works e.g. also for (+ 1 Pi) etc ?
+
   ([wl-fn-sym]
    (clj-intern wl-fn-sym {}))
   ([wl-fn-sym {:intern/keys [ns-sym extra-meta] :as opts}]
