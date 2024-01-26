@@ -39,7 +39,7 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
   ;; (requores the Quarto CLI installed):
   (clay/make! {:source-path "dev/kindly_demo.clj"
                :base-target-path "docs"
-               :format [:quarto :htmo]}))
+               :format [:quarto :html]}))
 
 (md "## Init (base example)")
 ^:note-to-test/skip
