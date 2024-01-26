@@ -175,7 +175,7 @@
         (def Plus (wolfram-fn 'Plus))
         (def Pi (wolfram-fn 'Pi))
         (Plus 1 2) ; => (Plus 1 2)
-        (Plus 1 Pi) ; => (Plus 1 Pi)) ; TODO Add the fn -> sym processing also to wl/eval so that it works e.g. also for (+ 1 Pi) etc ?
+        (Plus 1 Pi)) ; => (Plus 1 Pi) ; TODO Add the fn -> sym processing also to wl/eval so that it works e.g. also for (+ 1 Pi) etc ?
 
   ([wl-fn-sym]
    (clj-intern wl-fn-sym {}))
