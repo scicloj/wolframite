@@ -83,7 +83,7 @@
 
 (wl/clj-intern 'Plus {}) ; a simpler way to do the same -> fn Plus in this ns
 
-(map wl/clj-intern ['Dot 'Plus])
+(run! wl/clj-intern ['Dot 'Plus])
 
 (comment
   ;; Call interned Wl functions:
