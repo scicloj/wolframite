@@ -17,8 +17,7 @@
                 #{:full-form
                   :clojure-form}            :clojure-form
                 #{:restore-defaults
-                  :no-restore-defaults}     :no-restore-defaults}
-  )
+                  :no-restore-defaults}     :no-restore-defaults})
 
 (def all-flags (apply clojure.set/union (keys flag-sets)))
 
@@ -42,7 +41,7 @@
    '+=   'AddTo
    '-=   'SubtractFrom
    '+    'Plus
-   '-    'Subtract
+   '-    'Subtract  ;; TODO: deal with Subtract[x] i.e. single argument; Minus[x] works
    '*    'Times
    '.    'Dot
    '/    'Divide
@@ -71,7 +70,6 @@
           :clojure-aliases            base-aliases
           :all-aliases all-aliases}))
 
-
 ;; * DEV: WIP!
 
 (comment
@@ -84,10 +82,9 @@
      :aliases      true
      :as-expression true ;; FIXME: shouldn't be a flag but a parsing option?
      :clojure-form true ;; FIXME: better name
-     :N false
-     })
+     :N false})
 
-  ;; support some better merging with a lib
+;; support some better merging with a lib
   ;; top level options spec
   ;; default options
   {:flags {:convert true
@@ -95,6 +92,4 @@
    :aliases {}
    :config {:poll-interval 20}
    ;; runtime opts
-   :kernel/link nil
-   }
-  )
+   :kernel/link nil})

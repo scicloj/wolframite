@@ -48,6 +48,12 @@ URLFetch::invurl: Internal`HouseKeep[https://api.wolframalpha.com/v1/query.jsp,
      a valid URL
 ```
 
+
+```wolfram
+In[1]:= Subtract[1]
+
+Subtract::argr: Subtract called with 1 argument; 2 arguments are expected.
+
 ## Open questions
 
 * Why cannot I start three Wolframite REPLs on the same PC? (The 3rd fails w/ "MathLink connection was lost")
@@ -56,6 +62,10 @@ URLFetch::invurl: Internal`HouseKeep[https://api.wolframalpha.com/v1/query.jsp,
 * How to install packages? (see `Needs` wl fn)
 * What are `defaults/clojure-scope-aliases` about?
 * How to load .wl file into a REPL? (Thomas may know)
+```
+ 
+ 
+ 
  
 ### Performance
 
