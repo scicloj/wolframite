@@ -16,3 +16,7 @@ hs*.log
 # Dev
 /dev/scratch/
 todo.org
+
+# Clay
+temp
+.clay.html
