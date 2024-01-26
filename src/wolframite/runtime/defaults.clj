@@ -28,7 +28,7 @@
 (def base-aliases
   {'do   'CompoundExpression
    '=    'Set
-   '..=  'SetDelayed
+   '..=  'SetDelayed ;; TODO: Document this exception. Presumably not := because of clojure's keywords
    '=.   'Unset
    '->   'Rule
    '..>  'RuleDelayed
