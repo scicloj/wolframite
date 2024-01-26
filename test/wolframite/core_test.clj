@@ -23,7 +23,7 @@
          (wl/eval (w/Plus 1 2)))
       "An interned symbol can be used at a function position")
   (is (= 3
-         (wl/eval (list 'Floor w/Pi)))
+         (wl/eval (w/Floor w/Pi)))
       "An interned symbol can be used at a value position")
   (is (= -3
          (wl/eval (w/Floor (w/Plus 1 (w/Minus w/Pi))))
