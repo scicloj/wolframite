@@ -45,7 +45,8 @@
    [wolframite.base.parse :as parse]
    [wolframite.jlink :as jlink]
    [wolframite.runtime.defaults :as defaults])
-  (:import (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
+  (:import (clojure.lang IMeta)
+           (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
 
 (defonce kernel-link-atom (atom nil))
 
@@ -152,6 +153,22 @@
     See also [[clj-intern]] and [[load-all-symbols]], which enable you to make a Wolfram function callable directly."}
   eval evaluator)
 
+(defn- wolfram-fn->name [maybe-fn]
+  (when (instance? IMeta maybe-fn)
+    (-> maybe-fn meta ::wolfram-sym)))
+
+(defn- wolfram-fn
+  "Turn the wolfram symbol into a metadata-tagged function, which returns a list with
+  the symbol at head, and any arguments as-is. The metadata contains the symbol.
+  Used for exposing Wolfram symbols to Clojure code."
+  [sym]
+  ^{::wolfram-sym sym} (fn wolf-fn [& args]
+                         (apply list sym
+                                (->> args
+                                     (map (some-fn wolfram-fn->name
+                                                   ;; I don't think we should ever get to 👇 but better safe than sorry...
+                                                   identity))))))
+
 (defn clj-intern
   "Finds or creates a var named by the symbol `wl-fn-sym` in the current namespace,
   which will be a function that invokes a Wolfram function of the same name.
@@ -177,14 +194,29 @@
         (Plus 1 2) ; => (Plus 1 2)
         (Plus 1 Pi)) ; => (Plus 1 Pi) ; TODO Add the fn -> sym processing also to wl/eval so that it works e.g. also for (+ 1 Pi) etc ?
 
-  ([wl-fn-sym]
-   (clj-intern wl-fn-sym {}))
-  ([wl-fn-sym {:intern/keys [ns-sym extra-meta] :as opts}]
-   (intern (create-ns (or ns-sym (.name *ns*)))
-           (with-meta wl-fn-sym (merge {:clj-intern true} extra-meta))
-           (parse/parse-fn wl-fn-sym (merge {:kernel/link @kernel-link-atom}
-                                            defaults/default-options
-                                            opts)))))
+  ([wl-sym]
+   (clj-intern wl-sym {}))
+  ([wl-sym {:intern/keys [ns-sym extra-meta] :as opts}]
+   (let [f (wolfram-fn wl-sym)]
+    (intern (create-ns (or ns-sym (.name *ns*)))
+            (with-meta wl-sym (merge {:clj-intern true}
+                                     extra-meta
+                                     (meta f)))
+            f))))
+
+;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
+(defn- clj-intern-autoevaled
+  "Intern the given Wolfram symbol into the given `ns-sym` namespace as a function,
+  which will call Wolfram to evaluate itself.
+
+  BEWARE: If you nest these functions, e.g. `(Plus 1 (Plus 2 3))`, there will be a call to Wolfram kernel for each one.
+  This is likely not what you want."
+  [wl-sym {:intern/keys [ns-sym extra-meta] :as opts}]
+  (intern (create-ns (or ns-sym (.name *ns*)))
+          (with-meta wl-sym (merge {:clj-intern true} extra-meta))
+          (parse/parse-fn wl-sym (merge {:kernel/link @kernel-link-atom}
+                                          defaults/default-options
+                                          opts))))
 
 (defn ->clj! [s]
   {:flags [:no-evaluate]}
