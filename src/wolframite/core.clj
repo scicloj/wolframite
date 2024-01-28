@@ -36,15 +36,16 @@
 (ns wolframite.core
   (:refer-clojure :exclude [eval])
   (:require
-   [clojure.string :as str]
-   [clojure.walk :as walk]
-   [wolframite.base.cep :as cep]
-   [wolframite.base.convert :as convert]
-   [wolframite.base.evaluate :as evaluate]
-   [wolframite.base.express :as express]
-   [wolframite.base.parse :as parse]
-   [wolframite.jlink :as jlink]
-   [wolframite.runtime.defaults :as defaults])
+    [clojure.string :as str]
+    [clojure.walk :as walk]
+    [wolframite.base.cep :as cep]
+    [wolframite.base.convert :as convert]
+    [wolframite.base.evaluate :as evaluate]
+    [wolframite.base.express :as express]
+    [wolframite.base.parse :as parse]
+    [wolframite.impl.intern :as intern]
+    [wolframite.jlink :as jlink]
+    [wolframite.runtime.defaults :as defaults])
   (:import (clojure.lang IMeta)
            (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
 
@@ -150,59 +151,8 @@
     ; => 3
     ```
 
-    See also [[clj-intern]] and [[load-all-symbols]], which enable you to make a Wolfram function callable directly."}
+    See also [[load-all-symbols]], which enable you to make a Wolfram function callable directly."}
   eval evaluator)
-
-(defn- wolfram-fn->name [maybe-fn]
-  (when (instance? IMeta maybe-fn)
-    (-> maybe-fn meta ::wolfram-sym)))
-
-(defn- wolfram-fn
-  "Turn the wolfram symbol into a metadata-tagged function, which returns a list with
-  the symbol at head, and any arguments as-is. The metadata contains the symbol.
-  Used for exposing Wolfram symbols to Clojure code."
-  [sym]
-  ^{::wolfram-sym sym} (fn wolf-fn [& args]
-                         (apply list sym
-                                (->> args
-                                     (map (some-fn wolfram-fn->name
-                                                   ;; I don't think we should ever get to 👇 but better safe than sorry...
-                                                   identity))))))
-
-(defn clj-intern
-  "Finds or creates a var named by the symbol `wl-fn-sym` in the current namespace,
-  which will be a function that invokes a Wolfram function of the same name.
-
-  You can override the target namespace and add additional metadata to the var by
-  setting the appropriate `opts`.
-
-  Ex.:
-  ```clj
-  (clj-intern 'Plus {})
-  (Plus 1 2)
-  ; => 3
-  ```
-
-  See also [[load-all-symbols]]."
-  ;; On interning: parse/parse-fn essentially creates a "proxy" function of the same name as a Wolfram function, which will convert the passed-in Clojure expression to the JLink `Expr`,
-  ;; send it to a Wolfram Kernel for evaluation, and parse the result back into Clojure data. Beware that `wl/load-all-symbols` may take 10s of seconds - some minutes.
-
-  ;; FIXME: Use something like this, where at val position we get a symbol (or we do once we process it) and at fn position we get a fn that returns a list of symbs
-  #_(do (defn- wolfram-fn [sym] ^{::wolfram-sym sym} (fn wolf-fn [& args] (apply list sym (->> args (map #(or (when (fn? %) (-> % meta ::wolfram-sym)) %))))))
-        (def Plus (wolfram-fn 'Plus))
-        (def Pi (wolfram-fn 'Pi))
-        (Plus 1 2) ; => (Plus 1 2)
-        (Plus 1 Pi)) ; => (Plus 1 Pi) ; TODO Add the fn -> sym processing also to wl/eval so that it works e.g. also for (+ 1 Pi) etc ?
-
-  ([wl-sym]
-   (clj-intern wl-sym {}))
-  ([wl-sym {:intern/keys [ns-sym extra-meta] :as opts}]
-   (let [f (wolfram-fn wl-sym)]
-    (intern (create-ns (or ns-sym (.name *ns*)))
-            (with-meta wl-sym (merge {:clj-intern true}
-                                     extra-meta
-                                     (meta f)))
-            f))))
 
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
 (defn- clj-intern-autoevaled
@@ -225,13 +175,17 @@
 (defn ->wl!
   "Convert clojure forms to mathematica Expr.
   Generally useful, especially for working with graphics."
-  [clj-form {:keys [output-fn] :as opts}]
-  (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
-    (ifn? output-fn) output-fn))
+  ([clj-form] (->wl! clj-form {:output-fn str}))
+  ([clj-form {:keys [output-fn] :as opts}]
+   (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
+           (ifn? output-fn) output-fn)))
 
 (defn load-all-symbols
-  "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`,
-  using [[clj-intern]].
+  "Loads all WL global symbols as vars with docstrings into a namespace given by symbol `ns-sym`.
+  These vars evaluate into a symbolic form, which can be passed to [[eval]]. You gain docstrings,
+  (possibly) autocompletion, and convenient inclusion of vars that you want evaluated before sending the
+  form off to Wolfram, without the need for quote - unquote: `(let [x 3] (eval (Plus x 1)))`.
+
   Beware: May take a couple of seconds.
   Example:
   ```clojure
@@ -242,20 +196,20 @@
   Alternatively, load the included but likely outdated `resources/wld.wl` with a dump of the data."
   [ns-sym]
   ;; TODO (jh) support loading symbols from a custom context - use (Names <context name>`*) to get the names -> (Information <context name>`<fn name>) -> get FullName (drop ...`), Usage (no PlaintextUsage there) from the entity
-  ;; TODO (jh) Support options to only load functions instead of all symbols ?
   ;; IDEA: Provide also (load-symbols <list of symbols or a regexp>), which would load only a subset
   (doall (->> (eval '(EntityValue (WolframLanguageData) ["Name", "PlaintextUsage"] "EntityPropertyAssociation"))
-              ;; FIXME Only process functions! clj-intern only makes sense w/ those, e.g. not Pi etc
               vals ; keys ~ `(Entity "WolframLanguageSymbol" "ImageCorrelate")`
               (map (fn [{sym "Name", doc "PlaintextUsage"}]
-                     (clj-intern (symbol sym) {:intern/ns-sym ns-sym
-                                               :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
-                                                                          doc)}}))))))
+                     (intern/clj-intern
+                       (symbol sym)
+                       {:intern/ns-sym     ns-sym
+                        :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
+                                                   doc)}}))))))
 
 (comment
   (->
-   (eval ('Names "System`*"))
-   println)
+    (eval ('Names "System`*"))
+    println)
 
   (-> (eval '(Information "System`Plus"))
       (nth 1))
