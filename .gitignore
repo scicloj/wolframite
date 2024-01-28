@@ -20,4 +20,6 @@ todo.org
 # Clay
 temp
 .clay.html
+.clay_files
 *.qmd
+
