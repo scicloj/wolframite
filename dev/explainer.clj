@@ -37,28 +37,31 @@
 ;; |Convert >> Eval >> Parse |
 ;; |/////////////////////////|
 
-;; * Intern a Wolfram function into a Clojure namespace, so that you can call it:
+;; * Intern a Wolfram function into a Clojure namespace
 
-;; ** def
-
-(def W:Plus (parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}))
-(W:Plus 1 2 3) ; => 6
+;; ** define a Clojure fn, which will evaluate Wolfram code:
 
 (def greetings
   (wl/eval
    '(Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output."))))
 
-;; ** intern
+(greetings, "folks") ; => "Hello, folks! This is a Mathematica function's output."
 
-(wl/clj-intern 'Plus {})
+;; ** create a var for each Wolfram symbol, with docstrings, which resolves into a symbol suitable for `wl/eval`:
 
-(map wl/clj-intern ['Dot 'Plus])
-
-;; BEWARE: This is somewhat slow
-(wl/load-all-symbols 'w) ; intern all Wolfram functions and entities into the namespace `w`; with docstrings
+;; BEWARE: This is somewhat slow (few seconds on my PC)
+(wl/load-all-symbols 'w) ; intern all Wolfram functions and entities into the namespace `w` as vars, with docstrings
 (wl/load-all-symbols (.name *ns*)) ; some, but into the current ns
 
-;; * REPL - load-all-symbols includes docstrings so we can use repl to show them
+(def age 42)
+;; Without symbols loaded, when we need interpolation, we need to deal with ` and prevent namespacing of symbols:
+(wl/eval `(~'Floor (~'Plus ~age ~'Pi))) ; => 45
+;; With loaded symbols, we can use them as-is
+;; (Calva will even show their docstrings; clj-kondo and IntelliK though complain about unknown vars, as of now :'( )
+(wl/eval (w/Floor (w/Plus age w/Pi))) ; => 45
+(wl/eval (Floor (Plus age Pi))) ; => 43
+
+;; *** REPL - load-all-symbols includes docstrings, so we can use repl to show them
 
 (require '[clojure.repl :as repl])
 
@@ -68,8 +71,10 @@
 
 (repl/apropos #"(?i)geo")
 
-(h/help! 'Axes)
+(h/help! 'Axes) ;; open a Wolfram docs page for Axes
+(h/help! Axes) ; thx to loaded symbols, this works too
 
+;; Liks to all the symbols in this form:
 (h/help! '(Take
            (Sort
             (Map
@@ -78,10 +83,18 @@
              (GenomeData)))
            n)
          :return-links true)
+(h/help! (Take
+            (Sort
+              (Map
+                (Function ['gene]
+                          [(GenomeData 'gene "SequenceLength") 'gene])
+                (GenomeData)))
+            'n)
+         :return-links true)
 
-(Information 'GenomeData)
+(wl/eval (Information GenomeData))
 
-(wl/eval '((WolframLanguageData "GenomeData") "Association"))
+(wl/eval '((WolframLanguageData "GenomeData") "Association")) ; FIXME broken? returns a few 'Missing "NotAvailable'
 
 ;; * Graphics
 
@@ -109,14 +122,14 @@
 
 ;; WordFrequency[ExampleData[{"Text", "AliceInWonderland"}], {"a", "an", "the"}, "CaseVariants"]
 
-(WordFrequency (ExampleData ["Text" "AliceInWonderland"]) ["a" "an" "the"] "CaseVariants")
+(wl/eval (WordFrequency (ExampleData ["Text" "AliceInWonderland"]) ["a" "an" "the"] "CaseVariants"))
 
 ;; Wrapping in a function
 (defn wf [& {:keys [prop]
              :or   {prop "CaseVariants"}}]
-  (WordFrequency (ExampleData (conj ["Text"] "AliceInWonderland"))
-                 (vector "a" "an" "the")
-                 prop))
+  (wl/eval (WordFrequency (ExampleData (conj ["Text"] "AliceInWonderland"))
+                  (vector "a" "an" "the")
+                  prop)))
 
 (wf :prop "Total")
 
