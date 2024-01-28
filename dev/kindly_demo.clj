@@ -56,14 +56,6 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
 
 (W:Plus 1 2 3) ; ... and call it
 
-(wl/clj-intern 'Plus {}) ; a simpler way to do the same -> fn Plus in this ns
-
-(run! wl/clj-intern ['Dot 'Plus])
-
-(md " Call interned Wl functions:")
-(Dot [1 2 3] [4 5 6])
-(Plus 1 2 3)
-(Plus [1 2] [3 4])
 
 (def greetings
   (wl/eval
