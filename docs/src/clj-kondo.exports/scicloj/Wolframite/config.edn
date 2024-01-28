@@ -1,7 +1,0 @@
-{;; playing around with a more robust strategy for linting macros...
- ;:hooks {:macroexpand {wolframite.lib.options/let-options clojurativa.lib.options/let-options}}
- ;; for now, this is simple and works:
- ;; :lint-as {wolframite.lib.options/let-options clojure.core/let}
- :linters {:unresolved-symbol {:exclude [(wolframite.lib.options/let-options [options math-eval opspecs])
-                                         (wolframite.core/WL)
-                                         (wolframite.core/math-intern)]}}}
