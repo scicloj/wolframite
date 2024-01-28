@@ -84,7 +84,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#init-base-example" id="toc-init-base-example" class="nav-link" data-scroll-target="#init-base-example">Init (base example)</a></li>
   <li><a href="#strings-of-wl-code" id="toc-strings-of-wl-code" class="nav-link" data-scroll-target="#strings-of-wl-code">Strings of WL code</a></li>
-  <li><a href="#def-intern-wl-fns-i.e.-effectively-define-wl-fns-as-clojure-fns" id="toc-def-intern-wl-fns-i.e.-effectively-define-wl-fns-as-clojure-fns" class="nav-link" data-scroll-target="#def-intern-wl-fns-i.e.-effectively-define-wl-fns-as-clojure-fns">Def // intern WL fns, i.e.&nbsp;effectively define WL fns as clojure fns:</a></li>
+  <li><a href="#def-intern-wl-fns-i.e.-effectively-define-wl-fns-as-clojure-fns" id="toc-def-intern-wl-fns-i.e.-effectively-define-wl-fns-as-clojure-fns" class="nav-link" data-scroll-target="#def-intern-wl-fns-i.e.-effectively-define-wl-fns-as-clojure-fns">Def / intern WL fns, i.e.&nbsp;effectively define WL fns as clojure fns:</a></li>
+  <li><a href="#bidirectional-translation" id="toc-bidirectional-translation" class="nav-link" data-scroll-target="#bidirectional-translation">Bidirectional translation</a></li>
   <li><a href="#graphics" id="toc-graphics" class="nav-link" data-scroll-target="#graphics">Graphics</a></li>
   <li><a href="#more-working-examples" id="toc-more-working-examples" class="nav-link" data-scroll-target="#more-working-examples">More Working Examples</a></li>
   <li><a href="#wolfram-alpha" id="toc-wolfram-alpha" class="nav-link" data-scroll-target="#wolfram-alpha">Wolfram Alpha</a></li>
@@ -163,7 +164,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 <section id="def-intern-wl-fns-i.e.-effectively-define-wl-fns-as-clojure-fns" class="level2">
-<h2 class="anchored" data-anchor-id="def-intern-wl-fns-i.e.-effectively-define-wl-fns-as-clojure-fns">Def // intern WL fns, i.e.&nbsp;effectively define WL fns as clojure fns:</h2>
+<h2 class="anchored" data-anchor-id="def-intern-wl-fns-i.e.-effectively-define-wl-fns-as-clojure-fns">Def / intern WL fns, i.e.&nbsp;effectively define WL fns as clojure fns:</h2>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb7"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> W</span><span class="at">:Plus</span> (parse/parse-fn <span class="at">'Plus</span> {<span class="at">:kernel/link</span> <span class="at">@wl/kernel-link-atom</span>}))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -185,7 +186,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="printedClojure">
 <div class="sourceCode" id="cb12"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="st">"Hello, Stephen! This is a Mathematica function's output."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>## Bidirectional translation (Somewhat experimental, especially in the wl-&gt;clj direction)</p>
+</section>
+<section id="bidirectional-translation" class="level2">
+<h2 class="anchored" data-anchor-id="bidirectional-translation">Bidirectional translation</h2>
+<p>(Somewhat experimental, especially in the wl-&gt;clj direction)</p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb13"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>(wl/-&gt;clj! <span class="st">"GridGraph[{5, 5}]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>

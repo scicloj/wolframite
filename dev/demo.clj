@@ -75,7 +75,7 @@
 
 ;; NOTE: this is a hack to get this to work
 
-;; ** Def // intern WL fns, i.e. effectively define WL fns as clojure fns:
+;; ** Def / intern WL fns, i.e. effectively define WL fns as clojure fns:
 
 (def W:Plus (parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}))
 
