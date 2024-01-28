@@ -54,7 +54,7 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
 
 (wl/eval "{1 , 2, 3} . {4, 5, 6}")
 
-(md "## Def // intern WL fns, i.e. effectively define WL fns as clojure fns:")
+(md "## Def / intern WL fns, i.e. effectively define WL fns as clojure fns:")
 
 (def W:Plus (parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}))
 
@@ -67,7 +67,7 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
 
 (greetings "Stephen")
 
-(md " ## Bidirectional translation
+(md "## Bidirectional translation
 (Somewhat experimental, especially in the wl->clj direction)")
 
 
@@ -90,7 +90,7 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
 
 (wl/eval '(GeoNearest (Entity "Ocean") Here))
 
-(md " TODO: Make this work with `view` as well.")
+(md "TODO: Make this work with `view` as well.")
 
 (view '(TextStructure "The cat sat on the mat."))
 
