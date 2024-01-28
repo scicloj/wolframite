@@ -9,7 +9,7 @@
    ;; Exclude symbols also used by Wolfram:
    :exclude [Byte Character Integer Number Short String Thread])
   (:require
-   [wolframite.core :as wl :refer [wl]]
+   [wolframite.core :as wl]
    [wolframite.tools.hiccup :refer [view]]
    [wolframite.base.parse :as parse]
    [wolframite.jlink]
