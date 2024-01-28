@@ -34,11 +34,15 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
   (require '[scicloj.clay.v2.api :as clay])
   ;; Make HTML:
   (clay/make! {:source-path "dev/kindly_demo.clj"
-               :base-target-path "docs"})
+               :base-target-path "docs/generated"
+               :clean-up-target-dir true
+               :subdirs-to-sync []})
   ;; Make Quarto-based HTML
   ;; (requores the Quarto CLI installed):
   (clay/make! {:source-path "dev/kindly_demo.clj"
-               :base-target-path "docs"
+               :base-target-path "docs/generated"
+               :clean-up-target-dir true
+               :subdirs-to-sync []
                :format [:quarto :html]}))
 
 (md "## Init (base example)")
