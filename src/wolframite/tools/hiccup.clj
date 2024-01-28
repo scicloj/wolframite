@@ -33,5 +33,5 @@
    (view form nil))
   ([form {:keys [folded?]}]
    (-> form
-       (wolframite.tools.hiccup/view* folded?)
+       (view* folded?)
        kind/hiccup)))
