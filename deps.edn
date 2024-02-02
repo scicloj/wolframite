@@ -10,7 +10,7 @@
                               reagent/reagent {:mvn/version "1.1.0"}
                               aerial.hanami/aerial.hanami {:mvn/version "0.15.1"}
                               io.github.nextjournal/clerk {:mvn/version "0.3.233"}
-                              org.scicloj/clay {:mvn/version "2-alpha72"}
+                              org.scicloj/clay {:mvn/version "2-alpha76"}
                               borkdude/edamame {:mvn/version "0.0.19"}
                               clj-http/clj-http {:mvn/version "3.11.0"}
                               org.slf4j/slf4j-simple {:mvn/version "2.0.9"}}}}}
