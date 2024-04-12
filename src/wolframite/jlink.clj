@@ -47,6 +47,24 @@
 (defn- file-exists? [path]
   (and path (.exists (io/file path))))
 
+(defn leaf-keys-in
+  "Gets the leaf keys of a nested map."
+  ([m] (leaf-keys-in [] m ()))
+  ([prev m result]
+   (reduce-kv (fn [res k v] (if (map? v)
+                              (leaf-keys-in (conj prev k) v res)
+                              (conj res (conj prev k))))
+              result
+              m)))
+
+(defn get-vals-in
+  [m k--leaf]
+  (map (fn [ks]
+         (get-in paths ks))
+       (filter (fn [x] (some #(= % k--leaf) x)) (leaf-keys-in paths))))
+
+(comment (get-vals-in paths :mathlink-suffix))
+
 (defn detect-available-installation [platform]
   (->> (-> (get paths platform)
            ((juxt :mathematica :wolfram-engine)))  ; prefer Mathematica to Wolfram, it is presumably more capable
@@ -71,11 +89,22 @@
   (let [[path-root & path-tail] path-parts]
     (str (.normalize (Paths/get path-root (into-array String path-tail))))))
 
-(defn guess-mathkernel-suffix-for [base-path]
-  (first
-   (for [mathkernel-suffix (->> paths vals (mapcat vals) (map :mathlink-suffix))
-         :when (file-exists? (file-path base-path mathkernel-suffix))]
-     mathkernel-suffix)))
+(defn guess-mathkernel-suffix
+  "Using the given base path, checks if any of the wolfram binaries can be found.
+
+  TODO: Maybe just search to see if the executable is anywhere under the given root?
+  "
+  [base-path]
+  (let [options (->> paths
+                     vals
+                     (mapcat vals)
+                     (map :mathlink-suffix)
+                     (map #(file-path base-path %)))]
+
+    (or (->
+         (filter file-exists? options)
+         first)
+        (throw (ex-info (str "Could not find a Wolfram executable at the given base path. We looked in these places: " (seq options) ".") {:paths options})))))
 
 (defn- version-vector [version-dir]
   (->  version-dir
@@ -105,9 +134,7 @@
                     {:platform platform})))
   (or (when-let [path (read-install-path-setting)]
         {:path path
-         :mathlink-suffix (or (guess-mathkernel-suffix-for path)
-                              (throw (Exception. (str "Couldn't find MathKernel / WolframKernel under the given path '"
-                                                      path "' at any of the known locations."))))})
+         :mathlink-suffix (guess-mathkernel-suffix path)})
       (cond-> (detect-available-installation platform)
         (#{:linux :windows} platform)
         (update :path version-path))))
