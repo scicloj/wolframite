@@ -5,6 +5,9 @@
 * Rename ns convert and parse to st. like clj-to-wolfram and wolfram-to-clj ?
 * Add a diagram documenting the eval pipeline and the relations of the other modules
 
+## Open Questions
+* Should we use 'proper' logging rather than just printing strings?
+
 ## Common ns aliases
 
 ```clojure

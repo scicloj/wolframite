@@ -1,0 +1,12 @@
+#+title: Code Notes
+
+* Definitions
+Platform - general operating system, e.g. macos, linux or windows
+
+* Code structure
+** Ordering
+Where possible, constants and functions should be declared within the namespace according to def^private def, defn-, defn, comment. Furthermore, host-language-specific code should be isolated as much as possible and collected at the top of the namespace. It may seem unlikely now, but we might want to use wolfram with another host.
+** Naming
+Prefer full names rather than abbreviatios or acronyms. Code is more read than written!
+** Labeling
+Entry points should be clearly marked and, where possible, should be the final entry in the code, except for comments.

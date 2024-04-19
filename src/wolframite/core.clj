@@ -36,15 +36,15 @@
 (ns wolframite.core
   (:refer-clojure :exclude [eval])
   (:require
-    [clojure.string :as str]
-    [clojure.walk :as walk]
-    [wolframite.base.cep :as cep]
-    [wolframite.base.convert :as convert]
-    [wolframite.base.evaluate :as evaluate]
-    [wolframite.base.express :as express]
-    [wolframite.base.parse :as parse]
-    [wolframite.jlink :as jlink]
-    [wolframite.runtime.defaults :as defaults])
+   [clojure.string :as str]
+   [clojure.walk :as walk]
+   [wolframite.base.cep :as cep]
+   [wolframite.base.convert :as convert]
+   [wolframite.base.evaluate :as evaluate]
+   [wolframite.base.express :as express]
+   [wolframite.base.parse :as parse]
+   [wolframite.jlink :as jlink]
+   [wolframite.runtime.defaults :as defaults])
   (:import (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
 
 (defonce kernel-link-atom (atom nil))
@@ -56,7 +56,7 @@
                       "-linkname"
                       (format "\"/%s\" -mathlink"
                               (or mathlink-path
-                                  (jlink/get-mathlink-path platform)
+                                  (jlink/path--kernel)
                                   (throw (IllegalStateException. "mathlink path neither provided nor auto-detected"))))]))
 
 (defn evaluator-init [opts]
@@ -82,9 +82,9 @@
   "Provide platform identifier as one of: `:linux`, `:macos`, `:macos-mathematica` or `:windows`
   Defaults to platform identifier based on `os.name`"
   ([]
-   (init! {:platform (jlink/platform-id (System/getProperty "os.name"))}))
+   (init! {:platform (jlink/detect-platform)}))
   ([{:keys [platform] :as init-opts}]
-   {:pre [(if platform (jlink/supported-platform? platform) true)]}
+   {:pre [(if platform (jlink/supported-platforms platform) true)]}
    (let [opts (kernel-link-opts init-opts)
          kl (try (doto (MathLinkFactory/createKernelLink opts)
                    (.discardAnswer))
@@ -94,8 +94,8 @@
                                           " you are trying to start multiple concurrent connections (from separate REPLs),"
                                           " or there is some other issue and you need to retry, or restart and retry...")
                                      {:kernel-link-opts (cond-> opts
-                                                                (array? opts)
-                                                                vec)
+                                                          (array? opts)
+                                                          vec)
                                       :cause e}))
                      (throw e)))
                  (catch Exception e
