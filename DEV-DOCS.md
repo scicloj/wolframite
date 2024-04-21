@@ -17,13 +17,13 @@
 
 ## TODO
 
-[ ] FIXME: `load-all-symbols` should make each symbol into a var that just contains a symbol, and requires an explicit call to `wl/eval`. Justification: 1) wrapping each symbol with a fn breaks expression that use them as values, such as `(Plus 1 Pi)` (we'd try to add 1 to a clojure lambda fn), 2) Nested expressions result in multiple calls to Wolfram: e.g. `(Plus 1 (Plus 2 3))` would evaluate _two_ expressions: `Plus[2, 3]]` and `Plus[1, 5]]`, while we only want to evaluate once. Perhaps keep a fn to enable explicit turning of selected vars into functions? 
-[ ] Add tests for parse, convert, key fns
-[x] Rename namespaces, docs to Wolframite
-[x] Replace uses of wl/wl with wl/eval (= standardize on a single, understandable one) - in demo etc
-[x] Explore, Leverage for docs dev/explainer.clj, notebook.demo 
-[x] Get rid of the custom-parse flag requirement
-[ ] Get better errors from the Kernel: Running `(First (WolframLanguageData))` when offline returns `(Entity "WolframLanguageSymbol" "$Aborted")` while in W.Eng. it also prints a bunch of useful error info; can we get hold of it? Aslo, should we turn the $Aborted into an exception?! See below:
+* [ ] Add tests for parse, convert, key fns
+* [x] FIXME: `load-all-symbols` should make each symbol into a var that just contains a symbol, and requires an explicit call to `wl/eval`. Justification: 1) wrapping each symbol with a fn breaks expression that use them as values, such as `(Plus 1 Pi)` (we'd try to add 1 to a clojure lambda fn), 2) Nested expressions result in multiple calls to Wolfram: e.g. `(Plus 1 (Plus 2 3))` would evaluate _two_ expressions: `Plus[2, 3]]` and `Plus[1, 5]]`, while we only want to evaluate once. Perhaps keep a fn to enable explicit turning of selected vars into functions? 
+* [x] Rename namespaces, docs to Wolframite
+* [x] Replace uses of wl/wl with wl/eval (= standardize on a single, understandable one) - in demo etc
+* [x] Explore, Leverage for docs dev/explainer.clj, notebook.demo 
+* [x] Get rid of the custom-parse flag requirement
+* [ ] Get better errors from the Kernel: Running `(First (WolframLanguageData))` when offline returns `(Entity "WolframLanguageSymbol" "$Aborted")` while in W.Eng. it also prints a bunch of useful error info; can we get hold of it? Aslo, should we turn the $Aborted into an exception?! See below:
 
 ```wolram
 In[6]:= First[WolframLanguageData[]]                                                              
@@ -66,10 +66,7 @@ Subtract::argr: Subtract called with 1 argument; 2 arguments are expected.
 * What are `defaults/clojure-scope-aliases` about?
 * How to load .wl file into a REPL? (Thomas may know)
 ```
- 
- 
- 
- 
+
 ### Performance
 
 * `graphics/show!` seems pretty slow - multiple seconds to minutes to render a result
@@ -107,9 +104,7 @@ Modify how Wolfram response is parsed into Clojure data - override `clojuratica.
 
 ### Various
 
-* `wl/clj-intern` - intern a Wolfram function (e.g. `'Plus`) into a clj ns
 * `wl/load-all-symbols` - intern all Wolf. symbols into the given ns
-
 * `(parse/parse-fn sym opts)` - return a "proxy fn", which will invoke a Wolfram fn of the given name, transforming its arguments from Clojure data to Wolfram expressions and the opposite on the result.
-** Powered by `clojuratica.base.cep/cep`, the convert-eval-parse fn
+  * Powered by `clojuratica.base.cep/cep`, the convert-eval-parse fn
 * Naming of options: the convention for opts passed through the pipeline si that the keyword namespace would indicate the stage of the pipeline (convert, parse, eval).

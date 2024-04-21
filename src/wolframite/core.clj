@@ -36,16 +36,18 @@
 (ns wolframite.core
   (:refer-clojure :exclude [eval])
   (:require
-   [clojure.string :as str]
-   [clojure.walk :as walk]
-   [wolframite.base.cep :as cep]
-   [wolframite.base.convert :as convert]
-   [wolframite.base.evaluate :as evaluate]
-   [wolframite.base.express :as express]
-   [wolframite.base.parse :as parse]
-   [wolframite.jlink :as jlink]
-   [wolframite.runtime.defaults :as defaults])
-  (:import (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
+    [clojure.string :as str]
+    [clojure.walk :as walk]
+    [wolframite.base.cep :as cep]
+    [wolframite.base.convert :as convert]
+    [wolframite.base.evaluate :as evaluate]
+    [wolframite.base.express :as express]
+    [wolframite.base.parse :as parse]
+    [wolframite.impl.intern :as intern]
+    [wolframite.jlink :as jlink]
+    [wolframite.runtime.defaults :as defaults])
+  (:import (clojure.lang IMeta)
+           (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
 
 (defonce kernel-link-atom (atom nil))
 
@@ -149,35 +151,22 @@
     ; => 3
     ```
 
-    See also [[clj-intern]] and [[load-all-symbols]], which enable you to make a Wolfram function callable directly."}
+    See also [[load-all-symbols]], which enable you to make a Wolfram function callable directly."}
   eval evaluator)
 
-(defn clj-intern
-  "Finds or creates a var named by the symbol `wl-fn-sym` in the current namespace,
-  which will be a function that invokes a Wolfram function of the same name.
+;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
+(defn- clj-intern-autoevaled
+  "Intern the given Wolfram symbol into the given `ns-sym` namespace as a function,
+  which will call Wolfram to evaluate itself.
 
-  You can override the target namespace and add additional metadata to the var by
-  setting the appropriate `opts`.
-
-  Ex.:
-  ```clj
-  (clj-intern 'Plus {})
-  (Plus 1 2)
-  ; => 3
-  ```
-
-  See also [[load-all-symbols]]."
-  ;; On interning: parse/parse-fn essentially creates a "proxy" function of the same name as a Wolfram function, which will convert the passed-in Clojure expression to the JLink `Expr`,
-  ;; send it to a Wolfram Kernel for evaluation, and parse the result back into Clojure data. Beware that `wl/load-all-symbols` may take 10s of seconds - some minutes.
-
-  ([wl-fn-sym]
-   (clj-intern wl-fn-sym {}))
-  ([wl-fn-sym {:intern/keys [ns-sym extra-meta] :as opts}]
-   (intern (create-ns (or ns-sym (.name *ns*)))
-           (with-meta wl-fn-sym (merge {:clj-intern true} extra-meta))
-           (parse/parse-fn wl-fn-sym (merge {:kernel/link @kernel-link-atom}
-                                            defaults/default-options
-                                            opts)))))
+  BEWARE: If you nest these functions, e.g. `(Plus 1 (Plus 2 3))`, there will be a call to Wolfram kernel for each one.
+  This is likely not what you want."
+  [wl-sym {:intern/keys [ns-sym extra-meta] :as opts}]
+  (intern (create-ns (or ns-sym (.name *ns*)))
+          (with-meta wl-sym (merge {:clj-intern true} extra-meta))
+          (parse/parse-fn wl-sym (merge {:kernel/link @kernel-link-atom}
+                                          defaults/default-options
+                                          opts))))
 
 (defn ->clj! [s]
   {:flags [:no-evaluate]}
@@ -186,13 +175,17 @@
 (defn ->wl!
   "Convert clojure forms to mathematica Expr.
   Generally useful, especially for working with graphics."
-  [clj-form {:keys [output-fn] :as opts}]
-  (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
-    (ifn? output-fn) output-fn))
+  ([clj-form] (->wl! clj-form {:output-fn str}))
+  ([clj-form {:keys [output-fn] :as opts}]
+   (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
+           (ifn? output-fn) output-fn)))
 
 (defn load-all-symbols
-  "Loads all WL global symbols with docstrings into a namespace given by symbol `ns-sym`,
-  using [[clj-intern]].
+  "Loads all WL global symbols as vars with docstrings into a namespace given by symbol `ns-sym`.
+  These vars evaluate into a symbolic form, which can be passed to [[eval]]. You gain docstrings,
+  (possibly) autocompletion, and convenient inclusion of vars that you want evaluated before sending the
+  form off to Wolfram, without the need for quote - unquote: `(let [x 3] (eval (Plus x 1)))`.
+
   Beware: May take a couple of seconds.
   Example:
   ```clojure
@@ -203,20 +196,20 @@
   Alternatively, load the included but likely outdated `resources/wld.wl` with a dump of the data."
   [ns-sym]
   ;; TODO (jh) support loading symbols from a custom context - use (Names <context name>`*) to get the names -> (Information <context name>`<fn name>) -> get FullName (drop ...`), Usage (no PlaintextUsage there) from the entity
-  ;; TODO (jh) Support options to only load functions instead of all symbols ?
   ;; IDEA: Provide also (load-symbols <list of symbols or a regexp>), which would load only a subset
   (doall (->> (eval '(EntityValue (WolframLanguageData) ["Name", "PlaintextUsage"] "EntityPropertyAssociation"))
-              ;; FIXME Only process functions! clj-intern only makes sense w/ those, e.g. not Pi etc
               vals ; keys ~ `(Entity "WolframLanguageSymbol" "ImageCorrelate")`
               (map (fn [{sym "Name", doc "PlaintextUsage"}]
-                     (clj-intern (symbol sym) {:intern/ns-sym ns-sym
-                                               :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
-                                                                          doc)}}))))))
+                     (intern/clj-intern
+                       (symbol sym)
+                       {:intern/ns-sym     ns-sym
+                        :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
+                                                   doc)}}))))))
 
 (comment
   (->
-   (eval ('Names "System`*"))
-   println)
+    (eval ('Names "System`*"))
+    println)
 
   (-> (eval '(Information "System`Plus"))
       (nth 1))

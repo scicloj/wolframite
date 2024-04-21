@@ -1,5 +1,6 @@
 (ns wolframite.lib.helpers
-  (:require [clojure.java.browse :refer [browse-url]]))
+  (:require [clojure.java.browse :refer [browse-url]]
+            [wolframite.impl.intern :as intern]))
 
 (defn help-link [fn-sym]
   (format "https://reference.wolfram.com/language/ref/%s.html" fn-sym))
@@ -10,14 +11,16 @@
 (defn help!
   "Get web based help for a given symbol or form.
   If a form is given this will operate on all symbols found in the form.
-  By default opens web browser with relevant reference documentation.
+  By default, opens web browser with relevant reference documentation.
   You can pass `return-links true` if you just want URLs."
   [sym-or-form & {:keys [return-links]}]
-  (let [links (cond
-                (symbol? sym-or-form) [(help-link sym-or-form)]
-                (list? sym-or-form)   (map help-link (just-symbols sym-or-form))
+  (let [sym-or-form' (or (intern/interned-var-val->symbol sym-or-form)
+                         sym-or-form)
+        links (cond
+                (symbol? sym-or-form') [(help-link sym-or-form')]
+                (list? sym-or-form') (map help-link (just-symbols sym-or-form'))
                 :else (throw (ex-info "You need to pass `symbol?` or `list?` as argument"
-                                      {:passed-type (type sym-or-form)})))]
+                                      {:passed-type (type sym-or-form')})))]
     (if return-links
       links
       (doseq [l links]

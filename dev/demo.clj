@@ -81,16 +81,6 @@
 
 (W:Plus 1 2 3) ; ... and call it
 
-(wl/clj-intern 'Plus {}) ; a simpler way to do the same -> fn Plus in this ns
-
-(run! wl/clj-intern ['Dot 'Plus])
-
-(comment
-  ;; Call interned Wl functions:
-  (Dot [1 2 3] [4 5 6])
-  (Plus 1 2 3)
-  (Plus [1 2] [3 4]))
-
 (def greetings
   (wl/eval
    '(Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output."))))
@@ -139,12 +129,6 @@
 
 (wl/eval '(WolframAlpha "number of moons of Saturn" "Result"))
 
-;; * Issues
-;; - WL syntactic sugar
-;; FIXME: doesn't work
-(WL @(a b c d))
-
 ;; - more interesting examples...
 
-;; FIXME: some loopiness and NPE
-(wl/eval '(TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs"))
+(wl/eval '(TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs")) ; returns a graph as data

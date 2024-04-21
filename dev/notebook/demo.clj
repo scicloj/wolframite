@@ -1,5 +1,5 @@
 (ns notebook.demo
-  (:require [wolframite.core  :refer [load-all-symbols wl] :as w]
+  (:require [wolframite.core  :refer [eval] :as w]
             [wolframite.base.convert :as cv]
             [wolframite.jlink :as jlink]
             [wolframite.lib.helpers :refer [help!]]
@@ -66,7 +66,7 @@
   ((last (last img)) "URL"))
 
 (def movie-ents
-   (wl
+   (eval
     '(Map (Function [m] [m (m "Image")])
           (Keys
            (Take
