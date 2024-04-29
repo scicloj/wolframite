@@ -71,8 +71,8 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
 (Somewhat experimental, especially in the wl->clj direction)")
 
 
-(wl/->clj! "GridGraph[{5, 5}]")
-(wl/->wl! '(GridGraph [5 5]) {:output-fn str})
+(wl/->clj "GridGraph[{5, 5}]")
+(wl/->wl '(GridGraph [5 5]) {:output-fn str})
 
 (md "## Graphics")
 
