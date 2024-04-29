@@ -102,7 +102,7 @@
 (def canvas (graphics/make-math-canvas! @wl/kernel-link-atom))
 (def app (graphics/make-app! canvas))
 (defn quick-show [clj-form]
-  (graphics/show! canvas (wl/->wl! clj-form {:output-fn str})))
+  (graphics/show! canvas (wl/->wl clj-form {:output-fn str})))
 
 (quick-show '(ChemicalData "Ethanol" "StructureDiagram"))
 (quick-show '(GridGraph [5 5]))

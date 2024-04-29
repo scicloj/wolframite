@@ -91,8 +91,8 @@
 ;; ** Bidirectional translation
 ;; (Somewhat experimental, especially in the wl->clj direction)
 
-(wl/->clj! "GridGraph[{5, 5}]")
-(wl/->wl! '(GridGraph [5 5]) {:output-fn str})
+(wl/->clj "GridGraph[{5, 5}]")
+(wl/->wl '(GridGraph [5 5]) {:output-fn str})
 
 
 ;; ** Graphics
@@ -104,13 +104,13 @@
 
 ;; *** Draw Something!
 
-(graphics/show! canvas (wl/->wl! '(GridGraph [5 5]) {:output-fn str}))
-(graphics/show! canvas (wl/->wl! '(ChemicalData "Ethanol" "StructureDiagram") {:output-fn str}))
+(graphics/show! canvas (wl/->wl '(GridGraph [5 5]) {:output-fn str}))
+(graphics/show! canvas (wl/->wl '(ChemicalData "Ethanol" "StructureDiagram") {:output-fn str}))
 
 ;; *** Make it easier (Dev Helper: closing over the canvas)
 
 (defn quick-show [clj-form]
-  (graphics/show! canvas (wl/->wl! clj-form {:output-fn str})))
+  (graphics/show! canvas (wl/->wl clj-form {:output-fn str})))
 
 ;; *** Some Simple Graphiscs Examples
 

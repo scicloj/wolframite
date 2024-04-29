@@ -151,7 +151,9 @@
     ; => 3
     ```
 
-    See also [[load-all-symbols]], which enable you to make a Wolfram function callable directly."}
+    See also [[load-all-symbols]], which enable you to make a Wolfram function callable directly.
+
+    Tip: Use [[->wl]] to look at the final expression that would be sent to Wolfram for evaluation."}
   eval evaluator)
 
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
@@ -168,14 +170,19 @@
                                           defaults/default-options
                                           opts))))
 
-(defn ->clj! [s]
+(defn ->clj
+  "Turn the given Wolfram expression string into its Clojure data structure form.
+
+  Ex.: `(->clj \"Power[2,3]\") ; => (Power 2 3)`"
+  [s]
   {:flags [:no-evaluate]}
   (eval (list 'quote s) {:flags [:no-evaluate]}))
 
-(defn ->wl!
+(defn ->wl
   "Convert clojure forms to mathematica Expr.
-  Generally useful, especially for working with graphics."
-  ([clj-form] (->wl! clj-form {:output-fn str}))
+  Generally useful, especially for working with graphics - or for troubleshooting
+  what will be sent to Wolfram for evaluation."
+  ([clj-form] (->wl clj-form {:output-fn str}))
   ([clj-form {:keys [output-fn] :as opts}]
    (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
            (ifn? output-fn) output-fn)))

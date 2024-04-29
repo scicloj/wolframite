@@ -95,7 +95,7 @@
 (view '(Animate (Plot (Sin (+ x a)) [x 0 10]) [a 0 5] (-> AnimationRunning true))
       :folded? true)
 
-(w/->clj! "Plot[Evaluate[Table[BesselJ[n, x], {n, 4}]], {x, 0, 10},
+(w/->clj "Plot[Evaluate[Table[BesselJ[n, x], {n, 4}]], {x, 0, 10},
                Filling -> Axis]")
 
 (view '(Plot (Evaluate (Table (BesselJ n x) [n 4]))
