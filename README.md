@@ -1,6 +1,6 @@
 # Wolframite
 
-An interface between Clojure and the Wolfram Language and Mathematica / [Wolfram Engine](https://www.wolfram.com/engine/).
+An interface between Clojure and the Wolfram Language (Supports Mathematica and [Wolfram Engine](https://www.wolfram.com/engine/) ).
 
 ## Status
 
