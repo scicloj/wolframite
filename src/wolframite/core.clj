@@ -36,16 +36,16 @@
 (ns wolframite.core
   (:refer-clojure :exclude [eval])
   (:require
-    [clojure.string :as str]
-    [clojure.walk :as walk]
-    [wolframite.base.cep :as cep]
-    [wolframite.base.convert :as convert]
-    [wolframite.base.evaluate :as evaluate]
-    [wolframite.base.express :as express]
-    [wolframite.base.parse :as parse]
-    [wolframite.impl.intern :as intern]
-    [wolframite.jlink :as jlink]
-    [wolframite.runtime.defaults :as defaults])
+   [clojure.string :as str]
+   [clojure.walk :as walk]
+   [wolframite.base.cep :as cep]
+   [wolframite.base.convert :as convert]
+   [wolframite.base.evaluate :as evaluate]
+   [wolframite.base.express :as express]
+   [wolframite.base.parse :as parse]
+   [wolframite.impl.intern :as intern]
+   [wolframite.jlink :as jlink]
+   [wolframite.runtime.defaults :as defaults])
   (:import (clojure.lang IMeta)
            (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
 
@@ -61,17 +61,33 @@
                                   (jlink/path--kernel)
                                   (throw (IllegalStateException. "mathlink path neither provided nor auto-detected"))))]))
 
-(defn evaluator-init [opts]
+(defn evaluator-init
+  "TODO:
+  - should we put multiple statements inside a 'Let' block or similar? To avoid multiple evals.
+  - Decide where to put the power alias functions.
+  "
+  [opts]
   (let [wl-convert #(convert/convert   % opts)
-        wl-eval    #(evaluate/evaluate % opts)]
-    (wl-eval (wl-convert 'init))
-    (wl-eval (wl-convert '(Needs "Parallel`Developer`")))
-    (wl-eval (wl-convert '(Needs "Developer`")))
-    (wl-eval (wl-convert '(ParallelNeeds "Developer`")))
-    (wl-eval (wl-convert '(Needs "ClojurianScopes`")))
-    (wl-eval (wl-convert '(ParallelNeeds "ClojurianScopes`")))
-    (wl-eval (wl-convert '(Needs "HashMaps`")))
-    (wl-eval (wl-convert '(ParallelNeeds "HashMaps`")))))
+        wl-eval    #(evaluate/evaluate % opts)
+        wl-eval-conv (comp wl-eval wl-convert)]
+
+    (wl-eval-conv '(..= WolframitePower2 (fn [x] (Power x 2))))
+    (wl-eval-conv '(..= WolframitePower3 (fn [x] (Power x 3))))
+    (wl-eval-conv '(..= WolframitePower4 (fn [x] (Power x 4))))
+    (wl-eval-conv '(..= WolframitePower5 (fn [x] (Power x 5))))
+    (wl-eval-conv '(..= WolframitePower6 (fn [x] (Power x 6))))
+    (wl-eval-conv '(..= WolframitePower7 (fn [x] (Power x 7))))
+    (wl-eval-conv '(..= WolframitePower8 (fn [x] (Power x 8))))
+    (wl-eval-conv '(..= WolframitePower9 (fn [x] (Power x 9))))
+
+    (wl-eval-conv 'init)
+    (wl-eval-conv '(Needs "Parallel`Developer`"))
+    (wl-eval-conv '(Needs "Developer`"))
+    (wl-eval-conv '(ParallelNeeds "Developer`"))
+    (wl-eval-conv '(Needs "ClojurianScopes`"))
+    (wl-eval-conv '(ParallelNeeds "ClojurianScopes`"))
+    (wl-eval-conv '(Needs "HashMaps`"))
+    (wl-eval-conv '(ParallelNeeds "HashMaps`"))))
 
 (comment
 
@@ -154,6 +170,9 @@
     See also [[load-all-symbols]], which enable you to make a Wolfram function callable directly."}
   eval evaluator)
 
+(comment
+  (eval '(**3 x)))
+
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
 (defn- clj-intern-autoevaled
   "Intern the given Wolfram symbol into the given `ns-sym` namespace as a function,
@@ -165,8 +184,8 @@
   (intern (create-ns (or ns-sym (.name *ns*)))
           (with-meta wl-sym (merge {:clj-intern true} extra-meta))
           (parse/parse-fn wl-sym (merge {:kernel/link @kernel-link-atom}
-                                          defaults/default-options
-                                          opts))))
+                                        defaults/default-options
+                                        opts))))
 
 (defn ->clj! [s]
   {:flags [:no-evaluate]}
@@ -178,7 +197,7 @@
   ([clj-form] (->wl! clj-form {:output-fn str}))
   ([clj-form {:keys [output-fn] :as opts}]
    (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
-           (ifn? output-fn) output-fn)))
+     (ifn? output-fn) output-fn)))
 
 (defn load-all-symbols
   "Loads all WL global symbols as vars with docstrings into a namespace given by symbol `ns-sym`.
@@ -201,15 +220,15 @@
               vals ; keys ~ `(Entity "WolframLanguageSymbol" "ImageCorrelate")`
               (map (fn [{sym "Name", doc "PlaintextUsage"}]
                      (intern/clj-intern
-                       (symbol sym)
-                       {:intern/ns-sym     ns-sym
-                        :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
-                                                   doc)}}))))))
+                      (symbol sym)
+                      {:intern/ns-sym     ns-sym
+                       :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
+                                                  doc)}}))))))
 
 (comment
   (->
-    (eval ('Names "System`*"))
-    println)
+   (eval ('Names "System`*"))
+   println)
 
   (-> (eval '(Information "System`Plus"))
       (nth 1))
@@ -236,3 +255,7 @@
       (or has-values? has-function?)))
 
   (->  (is-function? "System`Subtract")))
+
+(comment
+  (eval '(**2 x))
+  (eval '(! (== True True))))

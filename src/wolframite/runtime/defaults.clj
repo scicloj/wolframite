@@ -1,5 +1,5 @@
 (ns wolframite.runtime.defaults
-  (:require clojure.set))
+  (:require [clojure.set]))
 
 ;; * Flags
 (def flag-sets {#{:vectors :seqs #_:seq-fn} :vectors ;; FIXME: this is not really a flag, not sure how useful at all
@@ -43,6 +43,7 @@
    '+    'Plus
    '-    'Subtract  ;; TODO: deal with Subtract[x] i.e. single argument; Minus[x] works
    '*    'Times
+   '**   'Power
    '.    'Dot
    '/    'Divide
    '<>   'StringJoin
@@ -58,7 +59,17 @@
    'Block    'ClojurianScopes/Block
    'Module   'ClojurianScopes/Module})
 
-(def all-aliases (merge base-aliases clojure-scope-aliases))
+(def user-aliases
+  {'**2 'WolframitePower2
+   '**3 'WolframitePower3
+   '**4 'WolframitePower4
+   '**5 'WolframitePower5
+   '**6 'WolframitePower6
+   '**7 'WolframitePower7
+   '**8 'WolframitePower8
+   '**9 'WolframitePower9})
+
+(def all-aliases (merge base-aliases clojure-scope-aliases user-aliases))
 
 ;; * Full config options
 
