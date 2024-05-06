@@ -95,7 +95,7 @@
                     {:paths base-path}))))))
 
 (defn- ->os
-  "Coerces to a common os identifier or throws an 'unrecognised' error."
+  "Coerces to a common OS identifier or throws an 'unrecognised' error."
   [os]
   (cond
     (#{:linux "Linux" "linux"} os)         :linux
@@ -114,7 +114,7 @@
   (->os (System/getProperty "os.name")))
 
 (defn- choose-defaults
-  "Selects the application options according to the os, guessing the os if not provided.
+  "Selects the application options according to the OS, guessing the OS if not provided.
 
   TODO: Add the version directory type coercion here?
   "
