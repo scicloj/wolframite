@@ -1,5 +1,5 @@
 (ns wolframite.base.expr
-  (:require [wolframite.jlink])
+  (:require [wolframite.runtime.jlink])
   (:import [com.wolfram.jlink Expr]))
 
 (defn head-str [expr]

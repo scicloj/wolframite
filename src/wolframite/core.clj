@@ -36,16 +36,17 @@
 (ns wolframite.core
   (:refer-clojure :exclude [eval])
   (:require
-    [clojure.string :as str]
-    [clojure.walk :as walk]
-    [wolframite.base.cep :as cep]
-    [wolframite.base.convert :as convert]
-    [wolframite.base.evaluate :as evaluate]
-    [wolframite.base.express :as express]
-    [wolframite.base.parse :as parse]
-    [wolframite.impl.intern :as intern]
-    [wolframite.jlink :as jlink]
-    [wolframite.runtime.defaults :as defaults])
+   [clojure.string :as str]
+   [clojure.walk :as walk]
+   [wolframite.base.cep :as cep]
+   [wolframite.base.convert :as convert]
+   [wolframite.base.evaluate :as evaluate]
+   [wolframite.base.express :as express]
+   [wolframite.base.parse :as parse]
+   [wolframite.impl.intern :as intern]
+   [wolframite.runtime.system :as system]
+   [wolframite.runtime.jlink :as jlink]
+   [wolframite.runtime.defaults :as defaults])
   (:import (clojure.lang IMeta)
            (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
 
@@ -58,7 +59,7 @@
                       "-linkname"
                       (format "\"/%s\" -mathlink"
                               (or mathlink-path
-                                  (jlink/path--kernel)
+                                  (system/path--kernel)
                                   (throw (IllegalStateException. "mathlink path neither provided nor auto-detected"))))]))
 
 (defn evaluator-init [opts]
@@ -81,12 +82,12 @@
   (-> x class str (str/starts-with? "class [L")))
 
 (defn init!
-  "Provide platform identifier as one of: `:linux`, `:macos`, `:macos-mathematica` or `:windows`
-  Defaults to platform identifier based on `os.name`"
+  "Provide os identifier as one of: `:linux`, `:macos`, `:macos-mathematica` or `:windows`
+  Defaults to os identifier based on `os.name`"
   ([]
-   (init! {:platform (jlink/detect-platform)}))
-  ([{:keys [platform] :as init-opts}]
-   {:pre [(if platform (jlink/supported-platforms platform) true)]}
+   (init! {:os (system/detect-os)}))
+  ([{:keys [os] :as init-opts}]
+   {:pre [(if os (system/supported-OS os) true)]}
    (let [opts (kernel-link-opts init-opts)
          kl (try (doto (MathLinkFactory/createKernelLink opts)
                    (.discardAnswer))
@@ -167,8 +168,8 @@
   (intern (create-ns (or ns-sym (.name *ns*)))
           (with-meta wl-sym (merge {:clj-intern true} extra-meta))
           (parse/parse-fn wl-sym (merge {:kernel/link @kernel-link-atom}
-                                          defaults/default-options
-                                          opts))))
+                                        defaults/default-options
+                                        opts))))
 
 (defn ->clj
   "Turn the given Wolfram expression string into its Clojure data structure form.
@@ -185,7 +186,7 @@
   ([clj-form] (->wl clj-form {:output-fn str}))
   ([clj-form {:keys [output-fn] :as opts}]
    (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
-           (ifn? output-fn) output-fn)))
+     (ifn? output-fn) output-fn)))
 
 (defn load-all-symbols
   "Loads all WL global symbols as vars with docstrings into a namespace given by symbol `ns-sym`.
@@ -208,15 +209,15 @@
               vals ; keys ~ `(Entity "WolframLanguageSymbol" "ImageCorrelate")`
               (map (fn [{sym "Name", doc "PlaintextUsage"}]
                      (intern/clj-intern
-                       (symbol sym)
-                       {:intern/ns-sym     ns-sym
-                        :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
-                                                   doc)}}))))))
+                      (symbol sym)
+                      {:intern/ns-sym     ns-sym
+                       :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
+                                                  doc)}}))))))
 
 (comment
   (->
-    (eval ('Names "System`*"))
-    println)
+   (eval ('Names "System`*"))
+   println)
 
   (-> (eval '(Information "System`Plus"))
       (nth 1))

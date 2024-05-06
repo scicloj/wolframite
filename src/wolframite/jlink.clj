@@ -1,5 +1,7 @@
 (ns wolframite.jlink
   "
+  DEPRECATED: Use runtime.jlink now.
+
   'J/Link' integrates the Wolfram Language and Java (https://reference.wolfram.com/language/JLink/tutorial/Introduction.html): providing a two-way bridge between the two.
 
   Accordingly, this namespace manages the J/Link connection in order to extend this bridge to the Clojure language. As such, this namespace is crucial to the whole wolframite project.
@@ -191,24 +193,25 @@
              first)
          (throw (ex-info (str "Could not find a Wolfram executable at the given base path. We looked in these places: " (seq options) ".") {:paths options}))))))
 
-(defn add-jlink-to-classpath!
-  "Tries and 'throws' otherwise."
-  ([]
-   (add-jlink-to-classpath! (detect-platform)))
-  ([os]
-   (let [path (path--jlink os)]
-     (when-not (fs/exists? path)
-       (throw (ex-info (str "Unable to find JLink jar at the expected path " path
-                            " Consider setting one of the supported environment variables;"
-                            " currently: " (into [] (supplied-paths)) ".")
-                       {:platform os
-                        :path path
-                        :env (supplied-paths)})))
-     (println (str "=== Adding path to classpath:" path " ==="))
-     (pom/add-classpath path))))
+;; DEPRECATED: Commenting out temporarily
+;; (defn add-jlink-to-classpath!
+;;   "Tries and 'throws' otherwise."
+;;   ([]
+;;    (add-jlink-to-classpath! (detect-platform)))
+;;   ([os]
+;;    (let [path (path--jlink os)]
+;;      (when-not (fs/exists? path)
+;;        (throw (ex-info (str "Unable to find JLink jar at the expected path " path
+;;                             " Consider setting one of the supported environment variables;"
+;;                             " currently: " (into [] (supplied-paths)) ".")
+;;                        {:platform os
+;;                         :path path
+;;                         :env (supplied-paths)})))
+;;      (println (str "=== Adding path to classpath:" path " ==="))
+;;      (pom/add-classpath path))))
 
 ;; ==================================================
 ;; ENTRY POINT
 ;; ==================================================
-(add-jlink-to-classpath!)
+;; (add-jlink-to-classpath!)
 ;; ==================================================

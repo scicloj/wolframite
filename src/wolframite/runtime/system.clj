@@ -62,6 +62,14 @@
          (apply concat)
          (map #(into {} %)))))
 
+(defn- version-number?
+  [path]
+  (-> (fs/file-name path)
+      first
+      str
+      parse-long
+      some?))
+
 (defn- version
   "Extracts the version from a given path into a vector of numbers.
 
@@ -80,19 +88,20 @@
   - Returns a string.
   "
   [base-path]
-
   (let [path (when (fs/exists? base-path) (str base-path))
         version-dir
-        (some->> path
-                 fs/list-dir
-                 (sort-by version)
-                 last
-                 str)]
+        (some->>  "/opt/Mathematica"
+                  fs/list-dir
+                  (filter fs/directory?)
+                  (filter version-number?)
+                  (sort-by version)
+                  last
+                  str)]
     (if version-dir version-dir
-        (if path
-          (throw
-           (ex-info (str "Could not find a Wolfram base directory (directory with numerical values separated by '.') at the given base path.")
-                    {:paths base-path}))))))
+        (if path path
+            (throw
+             (ex-info (str "Could not find a Wolfram base directory (directory with numerical values separated by '.') at the given base path.")
+                      {:paths base-path}))))))
 
 (defn- ->os
   "Coerces to a common OS identifier or throws an 'unrecognised' error."
@@ -122,10 +131,17 @@
    (choose-defaults (detect-os)))
 
   ([os]
-   (->> defaults
-        (filter #(= os (:os %)))
-        (filter (comp fs/exists? :root))
-        first)))
+   (-> (->> defaults
+            (filter #(= os (:os %)))
+            (filter (comp fs/exists? :root)))
+       first
+       ;; (update :root ->version-path)
+       )))
+(defn info
+  "Publicly available way of guessing the defaults."
+  []
+  {:user-paths (user-paths)
+   :defaults (choose-defaults)})
 
 (defn path--kernel
   "Using the given base path, checks if any of the wolfram binaries can be found.

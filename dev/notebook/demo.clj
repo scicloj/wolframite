@@ -1,7 +1,7 @@
 (ns notebook.demo
   (:require [wolframite.core  :refer [eval] :as w]
             [wolframite.base.convert :as cv]
-            [wolframite.jlink :as jlink]
+            [wolframite.runtime.jlink :as jlink]
             [wolframite.lib.helpers :refer [help!]]
             [wolframite.tools.clerk-helper :refer [view]]
             [aerial.hanami.common :as hc]
@@ -14,14 +14,11 @@
             [clojure.string :as str]
             [clojure.repl :refer [doc find-doc apropos]]))
 
-
 ;; # Wolfram Language Graphics
-
 
 ;; ## Numbers
 
 (view '(BarChart (EntityValue (EntityClass "Planet" All) "Radius")))
-
 
 ;; ## Time
 
@@ -44,7 +41,6 @@
                        (Entity "City" ["Boston" "Massachusetts" "UnitedStates"])]
                       "Geodesic")]))
 
-
 ;; ## 3D
 
 (view '(MoleculePlot3D (Molecule "O=C(C1CCC1)S[C@@H]1CCC1(C)C")))
@@ -66,17 +62,17 @@
   ((last (last img)) "URL"))
 
 (def movie-ents
-   (eval
-    '(Map (Function [m] [m (m "Image")])
-          (Keys
-           (Take
-            (Reverse
-             (Sort
-              (DeleteMissing (MovieData
-                              (MovieData ["RandomEntities" 300])
-                              "DomesticBoxOfficeGross"
-                              "EntityAssociation"))))
-            2)))))
+  (eval
+   '(Map (Function [m] [m (m "Image")])
+         (Keys
+          (Take
+           (Reverse
+            (Sort
+             (DeleteMissing (MovieData
+                             (MovieData ["RandomEntities" 300])
+                             "DomesticBoxOfficeGross"
+                             "EntityAssociation"))))
+           2)))))
 
 (nb/html
  [:div.guess-the-movie
