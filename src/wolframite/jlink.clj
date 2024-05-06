@@ -12,12 +12,15 @@
 
   Paths which are not absolute should not start with a '/'. In general, we should be aiming to comply with the babashka.fs standards.
 
-  It uses Pomegranate to dynamically add the Wolfram Language / Mathematica JLink jar to the JVM classpath.
+  Pomegranate is used to dynamically add the Wolfram Language / Mathematica JLink jar to the JVM classpath.
 
   Because many of the namespaces in this project either import or reference the jlink classes, it's necessary to have loaded this namespace before those namespaces will compile. Thus, you'll see this ns required, but unused, across the codebase. This is to get around that fact that we don't have the jar available to us through a standard maven repository, and can't use environment variables in our `deps.edn` specifications.
 
+  Function argument types (that differ from clojure defaults):
+  os - keyword
+
   TODO:
-  - Rename platform to OS throughout?
+  - Rename platform to OS throughout? (this would be clearer and there are references to screen platforms as well in the code)
   - Should all of the general install definitions/functions be put into a separate namespace?
   - clarify which functions are actually used outside of this file and restructure accordingly.
   "
@@ -25,9 +28,8 @@
   (:require
    [babashka.fs :as fs]
    [cemerick.pomegranate :as pom]
-   ;; [clojure.java.io :as io]
    [clojure.string :as string])
-  (:import ;; (java.nio.file Paths)
+  (:import
    (java.lang System)))
 
 ;; ===
@@ -74,13 +76,17 @@
     :platform :windows}])
 
 (defn- supplied-paths
-  "The paths given via Java property or environment variables. These should be root directories that contain Mathematica or Wolfram engine files, not subdirectories.
+  "The paths given via Java property or environment variables.
+
+  NOTE: These should be root directories that contain Mathematica or Wolfram engine files, not subdirectories.
 
   TODO:
   - Should this be here or somewhere else? Not directly relevant to jlink.
-  - (jh) support alternatively Java system properties?"
+  - (jh) alternatively, support Java system properties?"
   []
-  (let [names  ["JLINK_JAR_PATH" "MATHEMATICA_INSTALL_PATH"  "WOLFRAM_INSTALL_PATH"]
+  (let [names  ["JLINK_JAR_PATH"
+                "MATHEMATICA_INSTALL_PATH"
+                "WOLFRAM_INSTALL_PATH"]
         method (fn [f] (-> f (nth  2) first str (string/split #"/") last))
         fs ['(fn [name] (System/getProperty name)) '(fn [name] (System/getenv name))]]
     (->> (map (fn [f]
@@ -124,16 +130,16 @@
            (ex-info (str "Could not find a Wolfram base directory (directory with numerical values separated by '.') at the given base path.")
                     {:paths base-path}))))))
 
-(defn ->platform-id
-  "Coerces to a common platform identifier or throws an 'unrecognised' error."
-  [platform]
+(defn- ->platform-id
+  "Coerces to a common os identifier or throws an 'unrecognised' error."
+  [os]
   (cond
-    (#{:linux "Linux"} platform)         :linux
-    (#{:osx :macos "Mac OS X"} platform) :macos
-    (or (#{:win :windows} platform) (string/starts-with? platform "Windows")) :windows
+    (#{:linux "Linux" "linux"} os)         :linux
+    (#{:osx :macos "Mac OS X" "mac"} os) :macos
+    (or (#{:win :windows} os) (string/starts-with? os "Windows")) :windows
     :else (throw
-           (ex-info (str "Did not recognise " platform " as a valid platform.")
-                    {:platform platform}))))
+           (ex-info (str "Did not recognise " os " as a valid platform.")
+                    {:platform os}))))
 
 (defn detect-platform
   "Tries to detect the current operating system.
@@ -142,16 +148,31 @@
   []
   (->platform-id (System/getProperty "os.name")))
 
-(defn select-installation
+(defn- select-installation
   "Chooses the application options according to the platform, guessing the platform if not provided."
   ([]
    (select-installation (detect-platform)))
 
-  ([platform]
+  ([os]
    (->> defaults
-        (filter #(= platform (:platform %)))
+        (filter #(= os (:platform %)))
         (filter (comp fs/exists? :root))
         first)))
+
+(defn- path--jlink
+  "The full path to jlink.
+
+  NOTE: Returns a string."
+  ([os]
+   (let [jpaths (keep :JLINK_JAR_PATH (supplied-paths))]
+     (if (not-empty jpaths)
+       (first jpaths)
+       (-> os
+           select-installation
+           :root
+           version-path
+           (fs/path jlink)
+           str)))))
 
 (defn path--kernel
   "Using the given base path, checks if any of the wolfram binaries can be found.
@@ -170,32 +191,17 @@
              first)
          (throw (ex-info (str "Could not find a Wolfram executable at the given base path. We looked in these places: " (seq options) ".") {:paths options}))))))
 
-(defn path--jlink
-  "The full path to jlink.
-
-  NOTE: Returns a string."
-  ([platform]
-   (let [jpaths (keep :JLINK_JAR_PATH (supplied-paths))]
-     (if (not-empty jpaths)
-       (first jpaths)
-       (-> platform
-           select-installation
-           :root
-           version-path
-           (fs/path jlink)
-           str)))))
-
 (defn add-jlink-to-classpath!
-  "Tries to add jlink to the classpath (as you would expect) and 'throws' otherwise."
+  "Tries and 'throws' otherwise."
   ([]
    (add-jlink-to-classpath! (detect-platform)))
-  ([platform]
-   (let [path (path--jlink platform)]
+  ([os]
+   (let [path (path--jlink os)]
      (when-not (fs/exists? path)
        (throw (ex-info (str "Unable to find JLink jar at the expected path " path
                             " Consider setting one of the supported environment variables;"
                             " currently: " (into [] (supplied-paths)) ".")
-                       {:platform platform
+                       {:platform os
                         :path path
                         :env (supplied-paths)})))
      (println (str "=== Adding path to classpath:" path " ==="))
@@ -206,6 +212,3 @@
 ;; ==================================================
 (add-jlink-to-classpath!)
 ;; ==================================================
-
-(comment
-  (version-path "/usr/local/Wolfram/Mathematica"))
