@@ -4,7 +4,7 @@
 
 * Rename ns convert and parse to st. like clj-to-wolfram and wolfram-to-clj ?
 * Add a diagram documenting the eval pipeline and the relations of the other modules
-
+     
 ## Open Questions
 * Should we use 'proper' logging rather than just printing strings?
 
@@ -108,3 +108,8 @@ Modify how Wolfram response is parsed into Clojure data - override `clojuratica.
 * `(parse/parse-fn sym opts)` - return a "proxy fn", which will invoke a Wolfram fn of the given name, transforming its arguments from Clojure data to Wolfram expressions and the opposite on the result.
   * Powered by `clojuratica.base.cep/cep`, the convert-eval-parse fn
 * Naming of options: the convention for opts passed through the pipeline si that the keyword namespace would indicate the stage of the pipeline (convert, parse, eval).
+
+## Aliases
+### To document
+- **<->Power (new convention)
+- **2->(Power ... 2)

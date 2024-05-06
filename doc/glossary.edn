@@ -1,0 +1,5 @@
+;; Making a glossary in the form of a clojure map for the possibility of integrating it with tooltips etc.
+
+{"J/Link" "Integrates the Wolfram Language and Java."
+
+ "MathLink" "The communication protocol binary that allows external programs to call Mathematica and vice versa."}

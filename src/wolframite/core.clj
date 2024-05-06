@@ -65,6 +65,8 @@
   "TODO:
   - should we put multiple statements inside a 'Let' block or similar? To avoid multiple evals.
   - Decide where to put the power alias functions.
+  -- Should this be done using a 'Needs' file? (Like below)
+  - Make a function to allow users to create their own aliases.
   "
   [opts]
   (let [wl-convert #(convert/convert   % opts)
@@ -170,9 +172,6 @@
     See also [[load-all-symbols]], which enable you to make a Wolfram function callable directly."}
   eval evaluator)
 
-(comment
-  (eval '(**3 x)))
-
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
 (defn- clj-intern-autoevaled
   "Intern the given Wolfram symbol into the given `ns-sym` namespace as a function,
@@ -258,4 +257,7 @@
 
 (comment
   (eval '(**2 x))
-  (eval '(! (== True True))))
+  (eval '(! (== True True)))
+
+  (->wl! '(+ (**2 x) (* 3 x) 5))
+  (->clj! "x^2 + 3x + 5"))

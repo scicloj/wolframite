@@ -43,7 +43,9 @@
    '+    'Plus
    '-    'Subtract  ;; TODO: deal with Subtract[x] i.e. single argument; Minus[x] works
    '*    'Times
-   '**   'Power
+   '** 'Power
+   '⮾ 'NonCommutativeMultiply
+   '√ 'Sqrt
    '.    'Dot
    '/    'Divide
    '<>   'StringJoin
@@ -69,10 +71,14 @@
    '**8 'WolframitePower8
    '**9 'WolframitePower9})
 
+(def emmy-aliases
+  {})
+
 (def all-aliases (merge base-aliases clojure-scope-aliases user-aliases))
 
 ;; * Full config options
 
+;; TODO: Do we need separate categories of aliases at this point?
 (def default-options
   (merge flag-sets
          {#_#_:alias-list                 :clojure-aliases

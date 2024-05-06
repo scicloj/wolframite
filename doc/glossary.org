@@ -1,5 +1,0 @@
-#+title: Glossary
-
-J/Link - Integrates the Wolfram Language and Java.
-
-MathLink - The communication protocol binary that allows external programs to call Mathematica and vice versa.
