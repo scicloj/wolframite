@@ -19,15 +19,16 @@
   TODO:
   - Rename platform to OS throughout?
   - Should all of the general install definitions/functions be put into a separate namespace?
+  - clarify which functions are actually used outside of this file and restructure accordingly.
   "
 
   (:require
    [babashka.fs :as fs]
    [cemerick.pomegranate :as pom]
-   [clojure.java.io :as io]
+   ;; [clojure.java.io :as io]
    [clojure.string :as string])
-  (:import (java.nio.file Paths)
-           (java.lang System)))
+  (:import ;; (java.nio.file Paths)
+   (java.lang System)))
 
 ;; ===
 ;; 1) We need the jlink JAR to talk to Wolfram:
@@ -102,21 +103,26 @@
       (->> (mapv parse-long))))
 
 (defn- version-path
-  "For installation that use the format <base path>/<version>, detect full path to the latest one
+  "Detects type of path, i.e. whether or not there is a version number subdirectory, and returns the relevant one.
 
+  TODO: Functions more general than jlink should not be in this namespace. Maybe make a 'system' namespace?
   NOTE:
-  - Currently, not being used?
   - Returns a string.
   "
   [base-path]
-  (if-let [version-dir
-           (some->> (when (fs/exists? base-path)
-                      (fs/list-dir base-path))
-                    (sort-by version-vector)
-                    last)]
-    version-dir
-    (throw
-     (ex-info (str "Could not find a Wolfram version directory (directory with numerical values separated by '.') at the given base path.") {:paths base-path}))))
+
+  (let [path (when (fs/exists? base-path) (str base-path))
+        version-dir
+        (some->> path
+                 fs/list-dir
+                 (sort-by version-vector)
+                 last
+                 str)]
+    (if version-dir version-dir
+        (if path
+          (throw
+           (ex-info (str "Could not find a Wolfram base directory (directory with numerical values separated by '.') at the given base path.")
+                    {:paths base-path}))))))
 
 (defn ->platform-id
   "Coerces to a common platform identifier or throws an 'unrecognised' error."
@@ -151,12 +157,14 @@
   "Using the given base path, checks if any of the wolfram binaries can be found.
 
   TODO: Maybe just search to see if the executable is anywhere under the given root?
+  TODO: replace filter with something that returns on first successful test.
   "
   ([] (path--kernel (:root (select-installation))))
   ([base-path]
-   (let [options (->> defaults
+   (let [path (version-path base-path)
+         options (->> defaults
                       (map :kernel)
-                      (map #(fs/path base-path %)))]
+                      (map #(fs/path path %)))]
 
      (or (-> (filter fs/exists? options)
              first)
@@ -173,6 +181,7 @@
        (-> platform
            select-installation
            :root
+           version-path
            (fs/path jlink)
            str)))))
 
@@ -185,7 +194,7 @@
      (when-not (fs/exists? path)
        (throw (ex-info (str "Unable to find JLink jar at the expected path " path
                             " Consider setting one of the supported environment variables;"
-                            " currently: " (supplied-paths) ".")
+                            " currently: " (into [] (supplied-paths)) ".")
                        {:platform platform
                         :path path
                         :env (supplied-paths)})))
@@ -197,3 +206,6 @@
 ;; ==================================================
 (add-jlink-to-classpath!)
 ;; ==================================================
+
+(comment
+  (version-path "/usr/local/Wolfram/Mathematica"))
