@@ -28,7 +28,7 @@
 (def base-aliases
   {'do   'CompoundExpression
    '=    'Set
-   '..=  'SetDelayed ;; TODO: Document this exception. Presumably not := because of clojure's keywords
+   '..=  'SetDelayed ;; TODO: Document this exception. Presumably not := because of clojure's keywords. It's actually nicer in a way though, because an (almost) ellipsis implies a delay!
    '=.   'Unset
    '->   'Rule
    '..>  'RuleDelayed
