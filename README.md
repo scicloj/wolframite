@@ -38,13 +38,11 @@ Normally, it should be detected and loaded automatically, when you require the `
 
 > Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar
 
-However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the `MATHEMATICA_INSTALL_PATH` or `WOLFRAM_INSTALL_PATH` environment variables or Java system properties (the latter takes priority) to point to the correct location. Example:
+However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the `WOLFRAM_INSTALL_PATH` environment variables or Java system properties (the latter takes priority) to point to the correct location. Example:
 
 ```shell
-export MATHEMATICA_INSTALL_PATH=/opt/mathematica/13.1
+export WOLFRAM_INSTALL_PATH=/opt/mathematica/13.1
 ```
-
-If you have both Mathematica and Wolfram Engine, then the former is preferred. Set `WOLFRAM_INSTALL_PATH` to override that.
 
 ### Getting started
 
