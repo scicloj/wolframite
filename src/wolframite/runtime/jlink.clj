@@ -31,15 +31,16 @@
   ([info]
    (let [{:keys [user-paths defaults]} info
          jpaths (keep :JLINK_JAR_PATH user-paths)]
-     (if (not-empty jpaths)
-       (first jpaths)
-       (-> defaults
-           :root
-           (fs/path jlink)
-           str)))))
+     (or (first jpaths)
+         (-> defaults
+             :root
+             (fs/path default-jlink-path-under-root)
+             str)))))
 
 (defn find-jlink-jar
-  "Searches the machine for an instance of JLink.jar"
+  "Searches the machine for an instance of JLink.jar
+
+  NOTE: Not used by default, but available for the discerning user. "
   []
   (->  (fs/glob "/" "**/JLink.jar")
        first
@@ -51,22 +52,19 @@
   ([]
    (let [info (system/info)
          path (path--jlink info)
-
          add-path (fn [p]
                     (println (str "=== Adding path to classpath: " p " ==="))
                     (pom/add-classpath p)
                     true)]
      (if (fs/exists? path)
        (add-path path)
-       (or (let [path-jar (find-jlink-jar)]
-             (when (fs/exists? path-jar)
-               (add-path path-jar)))
-           (throw (ex-info (str "Unable to find JLink jar at the expected path " path
-                                " Consider setting one of the supported environment variables;"
-                                " currently: " (into [] (:user-paths info)) ".")
-                           {:os (get-in info [:defaults :os])
-                            :path path
-                            :env (:user-paths info)})))))))
+       (or
+        (throw (ex-info (str "Unable to find JLink jar at the expected path " path
+                             " Consider setting one of the supported environment variables;"
+                             " currently: " (into [] (:user-paths info)) ".")
+                        {:os (get-in info [:defaults :os])
+                         :path path
+                         :env (:user-paths info)})))))))
 
 ;; ==================================================
 ;; ENTRY POINT
@@ -74,4 +72,3 @@
 (add-jlink-to-classpath!)
 ;; ==================================================
 
-(comment (fs/exists? (find-jlink-jar)))

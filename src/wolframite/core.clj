@@ -86,7 +86,8 @@
   ([]
    (init! {:os (system/detect-os)}))
   ([{:keys [os] :as init-opts}]
-   {:pre [(or (nil? os) (system/supported-OS os))]}
+   {:pre [(some-> os
+                  system/supported-OS)]}
    (let [opts (kernel-link-opts init-opts)
          kl (try (doto (MathLinkFactory/createKernelLink opts)
                    (.discardAnswer))

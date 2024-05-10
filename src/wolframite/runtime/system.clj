@@ -42,7 +42,10 @@
     :os :windows}])
 
 (defn find-bin
-  "Searches the machine for one of the listed binaries and returns the path of the first one found."
+  "Searches the machine for one of the listed binaries and returns the path of the first one found.
+
+  NOTE: Not used by default as there is a risk that rather than supplying an environment variable the user would just wait several minutes at each startup.
+  "
   []
   (->> (keep :kernel defaults)
        (map fs/file-name)
@@ -59,29 +62,22 @@
   NOTE: These should be root directories that distinguish Mathematica or Wolfram engine files, not subdirectories. E.g.  '/usr/local/Wolfram/Mathematica'.
   "
   []
-;; TODO:
-;;   - (jh) alternatively, support Java system properties?
-  (let  [properties  ["JLINK_JAR_PATH"
-                      "MATHEMATICA_INSTALL_PATH"
-                      "WOLFRAM_INSTALL_PATH"]
-         f-names ["System/getProperty"
-                  "System/getenv"]]
-
-    (->> (map (fn [f-name]
-                (map (fn [property] [[(keyword property) ((read-string f-name) property)]
-                                     [:source f-name]])
-                     properties))
-              f-names)
-         (apply concat)
-         (map #(into {} %)))))
+  (let  [properties  ["JLINK_JAR_PATH" "WOLFRAM_INSTALL_PATH"]]
+    (->> properties
+         (keep (fn [property]
+                 (when-let [v ((some-fn #(System/getProperty %)
+                                        #(System/getenv %))
+                               property)]
+                   [property v])))
+         (into {})
+         not-empty)))
 
 (defn- version-number-path?
   "Checks if the given path is actually a version-number subdirectory."
   [path]
   (-> (fs/file-name path)
-      str
       (->> (re-matches #"(\d+)(?:\.(\d+))*"))
-      some?))
+      boolean))
 
 (defn- version
   "Extracts the version from a given path into a vector of numbers.
@@ -116,13 +112,14 @@
 (defn- ->os
   "Coerces to a common OS identifier keyword or throws an 'unrecognised' error."
   [os]
-  (cond
-    (#{:linux "Linux" "linux"} os) :linux
-    (#{:osx :macos "Mac OS X" "mac"} os) :mac
-    (or (#{:win :windows} os) (str/starts-with? os "Windows")) :windows
-    :else (throw
-           (ex-info (str "Did not recognise " os " as a supported OS.")
-                    {:os os}))))
+  (let [os-str (str os)]
+    (cond
+      (#{"Linux" "linux"} os-str) :linux
+      (#{"osx" "macos" "Mac OS X" "mac"} os-str) :mac
+      (or (#{"win" "windows"} os-str) (str/starts-with? os-str "Windows")) :windows
+      :else (throw
+             (ex-info (str "Did not recognise " os-str " as a supported OS.")
+                      {:os os-str})))))
 
 (defn detect-os
   "Tries to determine the current operating system.
@@ -138,10 +135,10 @@
    (choose-defaults (detect-os)))
 
   ([os]
-   (some-> (->> defaults
-                (filter #(= os (:os %)))
-                (filter (comp fs/exists? :root)))
-           first)))
+   (->> defaults
+        (filter (comp #{os} :os))
+        (filter (comp fs/exists? :root))
+        first)))
 
 (defn info
   "Publicly available way of guessing the defaults."
@@ -154,22 +151,17 @@
   "
   ([] (path--kernel (:root (choose-defaults))))
   ([base-path]
-   (let [path (->version-path base-path)
-         options (when path
-                   (->> defaults
-                        (map :kernel)
-                        (map #(fs/path path %))))]
-
-     (or (-> (filter fs/exists? options)
-             first
-             str)
-         (let [path-bin (find-bin)]
-           (when (fs/exists? path-bin)
-             path-bin))
-         (if path
-           (throw (ex-info (str "Could not find a Wolfram executable at the given base path. We looked in these places: " (seq options) ".") {:paths options}))
-           (throw (ex-info (str "Could not find a Wolfram executable using the given base path. Are you sure that " base-path " exists?")
-                           {:paths base-path})))))))
+   (if-let [path (->version-path base-path)]
+     (let [options (when path
+                     (->> defaults
+                          (map :kernel)
+                          (map #(fs/path path %))))]
+       (or (-> (filter fs/exists? options)
+               first
+               str)
+           (throw (ex-info (str "Could not find a Wolfram executable at the given base path. We looked in these places: " (seq options) ".") {:paths options}))))
+     (throw (ex-info (str "Could not find a Wolfram executable using the given base path. Are you sure that " base-path " exists?")
+                     {:paths base-path})))))
 
 (comment (defn common-path
            "
