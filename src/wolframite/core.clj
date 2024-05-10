@@ -82,6 +82,16 @@
     (wl-eval-conv '(..= WolframitePower8 (fn [x] (Power x 8))))
     (wl-eval-conv '(..= WolframitePower9 (fn [x] (Power x 9))))
 
+    (wl-eval-conv '(..= WolframitePowerMinus1 (fn [x] (Power x -1))))
+    (wl-eval-conv '(..= WolframitePowerMinus2 (fn [x] (Power x -2))))
+    (wl-eval-conv '(..= WolframitePowerMinus3 (fn [x] (Power x -3))))
+    (wl-eval-conv '(..= WolframitePowerMinus4 (fn [x] (Power x -4))))
+    (wl-eval-conv '(..= WolframitePowerMinus5 (fn [x] (Power x -5))))
+    (wl-eval-conv '(..= WolframitePowerMinus6 (fn [x] (Power x -6))))
+    (wl-eval-conv '(..= WolframitePowerMinus7 (fn [x] (Power x -7))))
+    (wl-eval-conv '(..= WolframitePowerMinus8 (fn [x] (Power x -8))))
+    (wl-eval-conv '(..= WolframitePowerMinus9 (fn [x] (Power x -9))))
+
     (wl-eval-conv 'init)
     (wl-eval-conv '(Needs "Parallel`Developer`"))
     (wl-eval-conv '(Needs "Developer`"))
@@ -260,4 +270,26 @@
   (eval '(! (== True True)))
 
   (->wl! '(+ (**2 x) (* 3 x) 5))
-  (->clj! "x^2 + 3x + 5"))
+  (->clj! "x^2 + 3x + 5")
+
+  (-> '(<-> (Cos x)
+            (..> (Cos (_))
+                 (* (+ 1
+                       (* -1
+                          (**2 t)))
+                    (**-1 (+ 1
+                             (**2 t))))))
+      ;; '(ReplaceAll  (Rule t 5))
+      eval)
+
+  (eval '(ReplaceAll (<-> (Cos x)
+                          (..> (Cos (_))
+                               (* (+ 1
+                                     (* -1
+                                        (**2 t)))
+                                  (**-1 (+ 1
+                                           (**2 t))))))
+                     ;; (Rule t 5)
+                     ))
+
+  (eval '(<-> (** x 2) (Rule x 5))))

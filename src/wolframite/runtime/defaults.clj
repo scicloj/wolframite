@@ -32,6 +32,8 @@
    '=.   'Unset
    '->   'Rule
    '..>  'RuleDelayed
+   '_ 'Blank
+   '__ 'BlankSequence
    '==   'Equal
    '===  'SameQ
    '<    'Less
@@ -52,7 +54,8 @@
    '&&   'And
    '||   'Or
    '!    'Not
-   'fn   'Function})
+   'fn   'Function
+   '<-> 'ReplaceAll})
 
 (def clojure-scope-aliases
   {#_#_'Function 'ClojurianScopes/Function
@@ -69,7 +72,17 @@
    '**6 'WolframitePower6
    '**7 'WolframitePower7
    '**8 'WolframitePower8
-   '**9 'WolframitePower9})
+   '**9 'WolframitePower9
+
+   '**-1 'WolframitePowerMinus1
+   '**-2 'WolframitePowerMinus2
+   '**-3 'WolframitePowerMinus3
+   '**-4 'WolframitePowerMinus4
+   '**-5 'WolframitePowerMinus5
+   '**-6 'WolframitePowerMinus6
+   '**-7 'WolframitePowerMinus7
+   '**-8 'WolframitePowerMinus8
+   '**-9 'WolframitePowerMinus9})
 
 (def emmy-aliases
   {})
