@@ -2,7 +2,7 @@
   "For dealing with the runtime system, primarily the operating system specific default paths."
   (:require
    [babashka.fs :as fs]
-   [clojure.string :as string])
+   [clojure.string :as str])
   (:import
    (java.lang System)))
 
@@ -41,21 +41,6 @@
     :product :wolfram-engine
     :os :windows}])
 
-(defn common-path
-  "The longest parental directory path that is common to both input paths.
-
-  TODO: This should be moved to some utility library.
-  NOTE: paths should contain exactly two elements."
-  [paths]
-  (let  [sep "/"
-         rx-sep (re-pattern sep)]
-    (->> paths
-         (map str)
-         (map #(string/split % rx-sep))
-         (apply map (fn [x y] (if (= x y) x false)))
-         (take-while (comp not false?))
-         (string/join rx-sep))))
-
 (defn find-bin
   "Searches the machine for one of the listed binaries and returns the path of the first one found."
   []
@@ -64,9 +49,7 @@
        distinct
        (some #(let [paths (-> (fs/glob "/"
                                        (format "**/%s" %)))]
-                (when
-                 (not-empty paths) paths)))
-
+                (when (seq paths) paths)))
        first
        str))
 
@@ -74,29 +57,30 @@
   "The paths given via Java property or environment variables.
 
   NOTE: These should be root directories that distinguish Mathematica or Wolfram engine files, not subdirectories. E.g.  '/usr/local/Wolfram/Mathematica'.
-
-  TODO:
-  - (jh) alternatively, support Java system properties?"
+  "
   []
-  (let [names  ["JLINK_JAR_PATH"
-                "MATHEMATICA_INSTALL_PATH"
-                "WOLFRAM_INSTALL_PATH"]
-        method (fn [f] (-> f (nth  2) first str (string/split #"/") last))
-        fs ['(fn [name] (System/getProperty name)) '(fn [name] (System/getenv name))]]
-    (->> (map (fn [f]
-                (map (fn [name] [[(keyword name) ((eval f) name)]
-                                 [:source (method f)]])
-                     names))
-              fs)
+;; TODO:
+;;   - (jh) alternatively, support Java system properties?
+  (let  [properties  ["JLINK_JAR_PATH"
+                      "MATHEMATICA_INSTALL_PATH"
+                      "WOLFRAM_INSTALL_PATH"]
+         f-names ["System/getProperty"
+                  "System/getenv"]]
+
+    (->> (map (fn [f-name]
+                (map (fn [property] [[(keyword property) ((read-string f-name) property)]
+                                     [:source f-name]])
+                     properties))
+              f-names)
          (apply concat)
          (map #(into {} %)))))
 
-(defn- version-number?
+(defn- version-number-path?
+  "Checks if the given path is actually a version-number subdirectory."
   [path]
   (-> (fs/file-name path)
-      first
       str
-      parse-long
+      (->> (re-matches #"(\d+)(?:\.(\d+))*"))
       some?))
 
 (defn- version
@@ -107,7 +91,7 @@
   [version-path]
   (-> version-path
       fs/file-name
-      (string/split #"\.")
+      (str/split #"\.")
       (->> (mapv parse-long))))
 
 (defn- ->version-path
@@ -122,7 +106,7 @@
         (some->>  path
                   fs/list-dir
                   (filter fs/directory?)
-                  (filter version-number?)
+                  (filter version-number-path?)
                   (sort-by version)
                   last
                   str)]
@@ -130,18 +114,18 @@
         (when path path))))
 
 (defn- ->os
-  "Coerces to a common OS identifier or throws an 'unrecognised' error."
+  "Coerces to a common OS identifier keyword or throws an 'unrecognised' error."
   [os]
   (cond
-    (#{:linux "Linux" "linux"} os)         :linux
+    (#{:linux "Linux" "linux"} os) :linux
     (#{:osx :macos "Mac OS X" "mac"} os) :mac
-    (or (#{:win :windows} os) (string/starts-with? os "Windows")) :windows
+    (or (#{:win :windows} os) (str/starts-with? os "Windows")) :windows
     :else (throw
            (ex-info (str "Did not recognise " os " as a supported OS.")
                     {:os os}))))
 
 (defn detect-os
-  "Tries to detect the current operating system.
+  "Tries to determine the current operating system.
 
   Currently just checks a java property, but could search default paths in the future.
   "
@@ -187,4 +171,17 @@
            (throw (ex-info (str "Could not find a Wolfram executable using the given base path. Are you sure that " base-path " exists?")
                            {:paths base-path})))))))
 
-(comment (path--kernel))
+(comment (defn common-path
+           "
+  The longest parental directory path that is common to both input paths.
+  "
+           [path1 path2]
+  ;; TODO: This should be moved to some utility library.
+           (let  [sep "/"
+                  rx-sep (re-pattern sep)]
+             (->> [path1 path2]
+                  (map str)
+                  (map #(str/split % rx-sep))
+                  (apply map (fn [x y] (if (= x y) x false)))
+                  (take-while (comp not false?))
+                  (string/join rx-sep)))))

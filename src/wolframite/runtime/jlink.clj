@@ -14,9 +14,6 @@
 
   Function argument types (that differ from clojure defaults):
   os - keyword
-  TODO:
-  - Rename platform to OS throughout? (this would be clearer and there are references to screen platforms as well in the code)
-  - clarify which functions are actually used outside of this file and restructure accordingly.
   "
   (:require
    [babashka.fs :as fs]
@@ -25,7 +22,7 @@
   (:import
    (java.lang System)))
 
-(def ^:private jlink "SystemFiles/Links/JLink/JLink.jar") ; Expected relative path within the install directory.
+(def ^:private default-jlink-path-under-root "SystemFiles/Links/JLink/JLink.jar")
 
 (defn- path--jlink
   "The full path to jlink.

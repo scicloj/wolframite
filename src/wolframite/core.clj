@@ -82,12 +82,11 @@
   (-> x class str (str/starts-with? "class [L")))
 
 (defn init!
-  "Provide os identifier as one of: `:linux`, `:macos`, `:macos-mathematica` or `:windows`
-  Defaults to os identifier based on `os.name`"
+  "Provide os identifier as one of wolframite.runtime.system/supported-OS"
   ([]
    (init! {:os (system/detect-os)}))
   ([{:keys [os] :as init-opts}]
-   {:pre [(if os (system/supported-OS os) true)]}
+   {:pre [(or (nil? os) (system/supported-OS os))]}
    (let [opts (kernel-link-opts init-opts)
          kl (try (doto (MathLinkFactory/createKernelLink opts)
                    (.discardAnswer))
