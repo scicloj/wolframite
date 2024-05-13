@@ -73,6 +73,8 @@
         wl-eval    #(evaluate/evaluate % opts)
         wl-eval-conv (comp wl-eval wl-convert)]
 
+    (wl-eval-conv '(..= WolframiteSubtract (fn [x] (Power x 2))))
+
     (wl-eval-conv '(..= WolframitePower2 (fn [x] (Power x 2))))
     (wl-eval-conv '(..= WolframitePower3 (fn [x] (Power x 3))))
     (wl-eval-conv '(..= WolframitePower4 (fn [x] (Power x 4))))
@@ -293,3 +295,13 @@
                      ))
 
   (eval '(<-> (** x 2) (Rule x 5))))
+
+(comment
+
+  (->clj!    "WolframiteSubtract[xs__] :=
+ Module[{output = Map[Minus[#] &, List[xs]]},
+  If[Length@output != 1, output[[1]] = Minus@output[[1]]];
+  Apply[Plus, output]
+  ]")
+
+  '(..= WolframitePower2 (fn [x] (Power x 2))))

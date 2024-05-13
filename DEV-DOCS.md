@@ -110,6 +110,9 @@ Modify how Wolfram response is parsed into Clojure data - override `clojuratica.
 * Naming of options: the convention for opts passed through the pipeline si that the keyword namespace would indicate the stage of the pipeline (convert, parse, eval).
 
 ## Aliases
+## Other bridges
+Consider communicating with specialist tools for advanced rearrangement, i.e. non commutative operations. 
+- investigate 'FORM'
 ### To document
 - **<->Power (new convention)
 - **2->(Power ... 2)
