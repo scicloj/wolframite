@@ -101,18 +101,37 @@
    ;; runtime opts
    :kernel/link nil}
 
-  (def expression '(+ -x -x -5 -2 (- x 10 5) (** x 2)))
-  (let [syms (-> (filter #(when (symbol? %)
-                            (->> %
-                                 str
-                                 char-array
-                                 first
-                                 str
-                                 ((fn [x] (= x "-")))))
-                         expression)
-                 distinct)
-        syms-base (map (fn [sym] (-> sym)) syms)]
+  (def expression '(+ -x -x -y -5 -2 (- x 10 5) (** x 2)))
 
-    syms
-    ;; (walk/postwalk-replace )
-    ))
+  (defn strip-ns [form]
+    (walk/postwalk (fn [form]
+                     (if (qualified-symbol? form)
+                       (symbol (name form))
+                       form))
+                   form))
+
+  (defn replacement-map
+    "Creates a replacement map for negative symbols, such that they are reasonably interpreted by Wolfram.
+
+  TODO:
+  - Extend the idea to deal with other custom replacements (e.g. greek/hebrew symbols.) .
+  "
+    [expression]
+    (let [syms (->> expression
+                    strip-ns
+                    (into '())
+                    (tree-seq list? seq)
+                    (remove (some-fn list? nil?))
+                    (filter #(when (symbol? %)
+                               (->> %
+                                    str
+                                    (re-matches #"-.+"))))
+                    distinct)
+
+          syms-base (map (fn [sym] (-> sym str char-array rest (#(apply str %)) symbol)) syms)]
+
+      (zipmap syms (map (fn [sym] (format "Minus[%s]" sym)) syms-base))))
+
+  (replacement-map expression)
+
+  (replacement-map `(+ -x -x -y -5 -2 (- x 10 5) (** x 2))))

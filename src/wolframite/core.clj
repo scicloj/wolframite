@@ -46,6 +46,7 @@
    [wolframite.impl.intern :as intern]
    [wolframite.runtime.system :as system]
    [wolframite.runtime.jlink :as jlink]
+   ;;^ currently necessary import to auto-install jlink
    [wolframite.runtime.defaults :as defaults])
   (:import (clojure.lang IMeta)
            (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
