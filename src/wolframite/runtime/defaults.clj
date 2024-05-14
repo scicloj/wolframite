@@ -1,5 +1,12 @@
 (ns wolframite.runtime.defaults
-  (:require clojure.set))
+  "Flags and aliases for the Wolfram runtime."
+  (:require clojure.set
+            [clojure.walk :as walk]
+            [clojure.string :as string]))
+
+"TODO:
+- Consider function that finds all non-numeric symbols (and not '- ') that start with a '-' and replace them with Minus[<symbol>]
+- Consider renaming this namespace. Not clear what it contains."
 
 ;; * Flags
 (def flag-sets {#{:vectors :seqs #_:seq-fn} :vectors ;; FIXME: this is not really a flag, not sure how useful at all
@@ -92,4 +99,20 @@
    :aliases {}
    :config {:poll-interval 20}
    ;; runtime opts
-   :kernel/link nil})
+   :kernel/link nil}
+
+  (def expression '(+ -x -x -5 -2 (- x 10 5) (** x 2)))
+  (let [syms (-> (filter #(when (symbol? %)
+                            (->> %
+                                 str
+                                 char-array
+                                 first
+                                 str
+                                 ((fn [x] (= x "-")))))
+                         expression)
+                 distinct)
+        syms-base (map (fn [sym] (-> sym)) syms)]
+
+    syms
+    ;; (walk/postwalk-replace )
+    ))
