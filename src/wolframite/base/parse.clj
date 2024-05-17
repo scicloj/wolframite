@@ -1,7 +1,7 @@
 (ns wolframite.base.parse
   "Translate a jlink.Expr returned from an evaluation into Clojure data"
   (:require
-   [wolframite.jlink]
+   [wolframite.runtime.jlink]
    [wolframite.lib.options :as options]
    [wolframite.base.expr :as expr]
    [clojure.string :as str])
@@ -33,7 +33,7 @@
 (defn custom-parse-dispatch [expr {:keys [parse/custom-parse-symbols]}]
   (let [head (symbol (expr/head-str expr))]
     (when-not
-        (and (seq custom-parse-symbols) (not (contains? (set custom-parse-symbols) head)))
+     (and (seq custom-parse-symbols) (not (contains? (set custom-parse-symbols) head)))
       head)))
 
 (defn atom? [expr]
@@ -181,7 +181,6 @@
     (simple-vector-type expr)                        (parse-simple-vector expr nil opts)
     (simple-matrix-type expr)                        (parse-simple-matrix expr nil opts)
     :else                                            (parse-complex-list expr opts)))
-
 
 (ns-unmap *ns* 'custom-parse)
 (defmulti custom-parse

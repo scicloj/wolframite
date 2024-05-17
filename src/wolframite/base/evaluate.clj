@@ -1,6 +1,6 @@
 (ns wolframite.base.evaluate
   "The core of evaluation: send a converted JLink expression to a Wolfram Kernel for evaluation and return the result."
-  (:require [wolframite.jlink]
+  (:require [wolframite.runtime.jlink]
             [wolframite.lib.options :as options]
             [wolframite.base.convert :as convert]))
 
@@ -40,9 +40,9 @@
        (.getExpr link)))
     (let [opts' (update opts :flags conj :serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
           pid-expr (evaluate (convert/convert
-                               (list 'Unique
+                              (list 'Unique
                                      ; Beware: technically, this is an invalid clj symbol due to the slashes:
-                                     (symbol "Wolframite/Concurrent/process")) opts')
+                                    (symbol "Wolframite/Concurrent/process")) opts')
                              opts)]
       ;; FIXME: debug log: "pid-expr:"
       (evaluate (convert/convert (list '= pid-expr (list 'ParallelSubmit expr)) opts') opts)

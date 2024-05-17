@@ -1,6 +1,6 @@
 (ns wolframite.tools.graphics
   "Displaying WL graphics with java.awt"
-  (:require [wolframite.jlink]
+  (:require [wolframite.runtime.jlink]
             [wolframite.core :as wl])
   (:import (com.wolfram.jlink MathCanvas KernelLink)
            (java.awt Color Frame)
@@ -56,15 +56,11 @@
   ;;
   ;; (WL :show (GeoGraphics))
 
-
-
 (comment ;; fun is good
 
   (show! canvas "GeoGraphics[]")
   (show! canvas "Graph3D[GridGraph[{3, 3, 3}, VertexLabels -> Automatic]]")
-  (show! canvas "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]")
-
-  )
+  (show! canvas "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]"))
 
 (comment ;; better quality images
   (import '[com.wolfram.jlink KernelLink])
@@ -78,5 +74,4 @@
                (ImageIO/read (ByteArrayInputStream. (.evaluateToImage wl/kernel-link-atom "GeoGraphics[]" (int width) (int height) 600 true)))))
 
   ;; doesn't make much difference (maybe a bit), seems like we can go lower dpi, but we already get maximum by default (?)
-
   )

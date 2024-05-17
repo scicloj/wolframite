@@ -1,6 +1,6 @@
 (ns wolframite.base.convert
   "Convert a Clojure expression into a Wolfram JLink expression"
-  (:require [wolframite.jlink]
+  (:require [wolframite.runtime.jlink]
             [wolframite.lib.options :as options]
             [wolframite.base.express :as express]
             [wolframite.base.expr :as expr]
@@ -52,9 +52,9 @@
 
 (defmethod convert nil [obj _]
   (.getExpr
-    (doto (MathLinkFactory/createLoopbackLink)
-      (.put obj)
-      (.endPacket))))
+   (doto (MathLinkFactory/createLoopbackLink)
+     (.put obj)
+     (.endPacket))))
 
 (defmethod convert :null [_ opts]
   (convert 'Null opts))
@@ -84,7 +84,7 @@
   (cond (simple-matrix? coll opts) (convert (to-array-2d coll) opts)
         (simple-vector? coll opts) (convert (to-array coll) opts)
         :else                      (convert (to-array (map #(if dispatch (convert % opts) %)
-                                                        coll))
+                                                           coll))
                                             opts)))
 
 (defmethod convert :expr [cexpr opts]

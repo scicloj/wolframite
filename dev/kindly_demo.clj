@@ -12,7 +12,7 @@
    [wolframite.core :as wl]
    [wolframite.tools.hiccup :refer [view]]
    [wolframite.base.parse :as parse]
-   [wolframite.jlink]
+   [wolframite.runtime.jlink]
    [scicloj.kindly.v4.kind :as kind]
    [scicloj.kindly.v4.api :as kindly])
   (:import (com.wolfram.jlink MathCanvas KernelLink)
@@ -60,7 +60,6 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
 
 (W:Plus 1 2 3) ; ... and call it
 
-
 (def greetings
   (wl/eval
    '(Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output."))))
@@ -69,7 +68,6 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
 
 (md "## Bidirectional translation
 (Somewhat experimental, especially in the wl->clj direction)")
-
 
 (wl/->clj "GridGraph[{5, 5}]")
 (wl/->wl '(GridGraph [5 5]) {:output-fn str})
