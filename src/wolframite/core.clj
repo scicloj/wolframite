@@ -48,10 +48,11 @@
    [wolframite.runtime.jlink :as jlink]
    ;;^ currently necessary import to auto-install jlink
    [wolframite.runtime.defaults :as defaults])
-  (:import (clojure.lang IMeta)
-           (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
+  ;; Keep the jlink imports, even though the IDE can't see the classes and gets confused
+  (:import (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
 
 (defonce kernel-link-atom (atom nil))
+(defonce opts-atom (atom nil))
 
 (defn kernel-link-opts ^"[Ljava.lang.String;" [{:keys [platform mathlink-path]}]
   ;; See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/MathLinkFactory.html#createKernelLink(java.lang.String%5B%5D)
@@ -82,13 +83,13 @@
 (defn- array? [x]
   (-> x class str (str/starts-with? "class [L")))
 
-(defn init!
+(defn- init-kernel!
   "Provide os identifier as one of wolframite.runtime.system/supported-OS"
   ([]
-   (init! {:os (system/detect-os)}))
+   (init-kernel! {:os (system/detect-os)}))
   ([{:keys [os] :as init-opts}]
-   {:pre [(some-> os
-                  system/supported-OS)]}
+   {:pre [(some-> os system/supported-OS)]}
+   (jlink/add-jlink-to-classpath!)
    (let [opts (kernel-link-opts init-opts)
          kl (try (doto (MathLinkFactory/createKernelLink opts)
                    (.discardAnswer))
@@ -121,27 +122,16 @@
                      form))
                  form))
 
-(defn make-wl-evaluator [opts]
-  (when-not (instance? KernelLink @kernel-link-atom) (init!))
-  (evaluator-init (merge {:kernel/link @kernel-link-atom} opts))
-  (fn wl-eval
-    ([expr]
-     (wl-eval expr {}))
-    ([expr eval-opts]
-     (let [with-eval-opts (merge {:kernel/link @kernel-link-atom}
-                                 opts
-                                 eval-opts)
-           expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
-       (cep/cep expr' with-eval-opts)))))
+(defn init!
+  "Initialize Wolframite and the underlying wolfram Kernel - required once before any eval calls."
+  ([] (init! defaults/default-options))
+  ([opts]
+   (when-not (instance? KernelLink @kernel-link-atom) (init-kernel!))
+   (evaluator-init (merge {:kernel/link @kernel-link-atom} opts))
+   (reset! opts-atom (or opts {}))))
 
-(defonce ^:private evaluator (make-wl-evaluator defaults/default-options))
-
-(def ^:deprecated wl "DEPRECATED - use `eval` instead." evaluator)
-
-(def
-  ^{:arglists '([expr]
-                [expr opts])
-    :doc "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
+(defn eval
+  "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
 
     The `opts` map may contain `:flags [kwd ...]` and is passed e.g. to the `custom-parse` multimethod.
 
@@ -155,8 +145,18 @@
 
     See also [[load-all-symbols]], which enable you to make a Wolfram function callable directly.
 
-    Tip: Use [[->wl]] to look at the final expression that would be sent to Wolfram for evaluation."}
-  eval evaluator)
+    Tip: Use [[->wl]] to look at the final expression that would be sent to Wolfram for evaluation."
+  ([expr] (eval expr {}))
+  ([expr eval-opts]
+   (when-not @opts-atom
+     (throw (IllegalStateException. "You need to `init!` first before calling eval.")))
+   (let [with-eval-opts (merge {:kernel/link @kernel-link-atom}
+                               @opts-atom
+                               eval-opts)
+         expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
+     (cep/cep expr' with-eval-opts))))
+
+(def ^:deprecated wl "DEPRECATED - use `eval` instead." eval)
 
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
 (defn- clj-intern-autoevaled

@@ -18,9 +18,7 @@
   (:require
    [babashka.fs :as fs]
    [cemerick.pomegranate :as pom]
-   [wolframite.runtime.system :as system])
-  (:import
-   (java.lang System)))
+   [wolframite.runtime.system :as system]))
 
 (def ^:private default-jlink-path-under-root "SystemFiles/Links/JLink/JLink.jar")
 
@@ -65,10 +63,3 @@
                         {:os (get-in info [:defaults :os])
                          :path path
                          :env (:user-paths info)})))))))
-
-;; ==================================================
-;; ENTRY POINT
-;; ==================================================
-(add-jlink-to-classpath!)
-;; ==================================================
-
