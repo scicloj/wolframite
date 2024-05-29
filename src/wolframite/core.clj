@@ -44,12 +44,12 @@
    [wolframite.base.express :as express]
    [wolframite.base.parse :as parse]
    [wolframite.impl.intern :as intern]
+   [wolframite.impl.jlink-instance :as jlink-instance]
+   [wolframite.impl.protocols :as proto]
    [wolframite.runtime.system :as system]
    [wolframite.runtime.jlink :as jlink]
    ;;^ currently necessary import to auto-install jlink
-   [wolframite.runtime.defaults :as defaults])
-  ;; Keep the jlink imports, even though the IDE can't see the classes and gets confused
-  (:import (com.wolfram.jlink KernelLink MathLinkException MathLinkFactory)))
+   [wolframite.runtime.defaults :as defaults]))
 
 (defonce kernel-link-atom (atom nil))
 (defonce opts-atom (atom nil))
@@ -80,40 +80,26 @@
 
   (evaluator-init (merge {:kernel/link @kernel-link-atom} defaults/default-options)))
 
-(defn- array? [x]
-  (-> x class str (str/starts-with? "class [L")))
+(defn- init-jlink! [opts]
+  (jlink/add-jlink-to-classpath!)
+  (reset! jlink-instance/jlink-instance
+          ;; req. res. since we can't load this code until the JLink JAR has been loaded
+          ((requiring-resolve 'wolframite.impl.jlink-proto-impl/map->JLinkImpl)
+           {:opts opts
+            :kernel-link-atom kernel-link-atom})))
 
 (defn- init-kernel!
   "Provide os identifier as one of wolframite.runtime.system/supported-OS"
-  ([]
-   (init-kernel! {:os (system/detect-os)}))
-  ([{:keys [os] :as init-opts}]
+  ([jlink-impl]
+   (init-kernel! jlink-impl {:os (system/detect-os)}))
+  ([jlink-impl {:keys [os] :as init-opts}]
    {:pre [(some-> os system/supported-OS)]}
-   (jlink/add-jlink-to-classpath!)
-   (let [opts (kernel-link-opts init-opts)
-         kl (try (doto (MathLinkFactory/createKernelLink opts)
-                   (.discardAnswer))
-                 (catch MathLinkException e
-                   (if (= (ex-message e) "MathLink connection was lost.")
-                     (throw (ex-info (str "MathLink connection was lost. Perhaps you need to activate Mathematica first,"
-                                          " you are trying to start multiple concurrent connections (from separate REPLs),"
-                                          " or there is some other issue and you need to retry, or restart and retry...")
-                                     {:kernel-link-opts (cond-> opts
-                                                          (array? opts)
-                                                          vec)
-                                      :cause e}))
-                     (throw e)))
-                 (catch Exception e
-                   (throw (ex-info (str "Failed to start a Math/Wolfram Kernel process: "
-                                        (ex-message e)
-                                        " Verify the settings are correct: `" opts "`")
-                                   {:kernel-opts opts}))))]
-     (reset! kernel-link-atom kl)
-     kl)))
+   (->> (kernel-link-opts init-opts)
+        (proto/create-kernel-link jlink-impl)
+        (reset! kernel-link-atom))))
 
 (defn terminate-kernel! []
-  (.terminateKernel ^KernelLink @kernel-link-atom)
-  (reset! kernel-link-atom nil))
+  (proto/terminate-kernel! @jlink-instance/jlink-instance))
 
 (defn un-qualify [form]
   (walk/postwalk (fn [form]
@@ -126,7 +112,9 @@
   "Initialize Wolframite and the underlying wolfram Kernel - required once before any eval calls."
   ([] (init! defaults/default-options))
   ([opts]
-   (when-not (instance? KernelLink @kernel-link-atom) (init-kernel!))
+   (when-not @jlink-instance/jlink-instance
+     (-> (init-jlink! opts)
+         (init-kernel!)))
    (evaluator-init (merge {:kernel/link @kernel-link-atom} opts))
    (reset! opts-atom (or opts {}))))
 

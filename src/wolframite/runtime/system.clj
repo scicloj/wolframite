@@ -143,8 +143,13 @@
 (defn info
   "Publicly available way of guessing the defaults."
   []
-  {:user-paths (user-paths)
-   :defaults (choose-defaults)})
+  (let [user (not-empty (user-paths))
+        default (not-empty (choose-defaults))]
+    (when-not (or user default)
+      (throw (ex-info "Could not find Wolfram or Mathematica at the default location and no custom one provided. Is it installed?"
+                      {})))
+    {:user-paths user
+     :defaults default}))
 
 (defn path--kernel
   "Using the given base path, checks if any of the wolfram binaries can be found. If not, perform a 'glob' search and if that doesn't work either then throw an error!

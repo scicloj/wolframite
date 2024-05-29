@@ -1,6 +1,8 @@
 (ns wolframite.base.evaluate
   "The core of evaluation: send a converted JLink expression to a Wolfram Kernel for evaluation and return the result."
-  (:require [wolframite.runtime.jlink]
+  (:require [wolframite.impl.jlink-instance :as jlink-instance]
+            [wolframite.impl.protocols :as proto]
+            [wolframite.runtime.jlink]
             [wolframite.lib.options :as options]
             [wolframite.base.convert :as convert]))
 
@@ -31,8 +33,8 @@
 
 (defn evaluate [expr {:keys [kernel/link]
                       :as   opts}]
-  (assert (instance? com.wolfram.jlink.Expr       expr))
-  (assert (instance? com.wolfram.jlink.KernelLink link))
+  (assert (proto/expr? @jlink-instance/jlink-instance expr))
+  (assert (proto/kernel-link? @jlink-instance/jlink-instance link))
   (if (options/flag?' (:flags opts) :serial)
     (io!
      (locking link

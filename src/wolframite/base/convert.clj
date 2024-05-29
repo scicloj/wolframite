@@ -1,11 +1,12 @@
 (ns wolframite.base.convert
   "Convert a Clojure expression into a Wolfram JLink expression"
-  (:require [wolframite.runtime.jlink]
+  (:require [wolframite.impl.jlink-instance :as jlink-instance]
+            [wolframite.impl.protocols :as proto]
+            [wolframite.runtime.jlink]
             [wolframite.lib.options :as options]
             [wolframite.base.express :as express]
             [wolframite.base.expr :as expr]
-            [wolframite.runtime.defaults :as defaults])
-  (:import [com.wolfram.jlink Expr MathLinkFactory]))
+            [wolframite.runtime.defaults :as defaults]))
 
 ;; (remove-ns 'wolframite.base.convert)
 
@@ -51,10 +52,7 @@
 ;; * Method impls
 
 (defmethod convert nil [obj _]
-  (.getExpr
-   (doto (MathLinkFactory/createLoopbackLink)
-     (.put obj)
-     (.endPacket))))
+  (proto/->expr @jlink-instance/jlink-instance obj))
 
 (defmethod convert :null [_ opts]
   (convert 'Null opts))
@@ -74,11 +72,11 @@
       (if-let [[_ ^String n] (re-matches #"%(\d*)" (str sym))]
         (let [n (Long/valueOf (if (= "" n) "1" n))]
           (convert (list 'Slot n) opts))
-                                        ;(let [s (str-utils/replace (str sym) #"\|(.*?)\|" #(str "\\\\[" (second %) "]"))]   )
+        ;(let [s (str-utils/replace (str sym) #"\|(.*?)\|" #(str "\\\\[" (second %) "]"))]   )
         (let [s (str sym)]
           (if (re-find #"[^a-zA-Z0-9$\/]" s)
             (throw (Exception. (str "Symbols passed to Mathematica must be alphanumeric (apart from forward slashes and dollar signs). Passed: " s)))
-            (Expr. Expr/SYMBOL (apply str (replace {\/ \`} s)))))))))
+            (proto/expr @jlink-instance/jlink-instance :Expr/SYMBOL s)))))))
 
 (defmethod convert :list [coll opts]
   (cond (simple-matrix? coll opts) (convert (to-array-2d coll) opts)
