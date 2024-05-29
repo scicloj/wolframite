@@ -1,8 +1,10 @@
 (ns wolframite.base.convert-test
-  (:require [clojure.test :refer :all])
-  (:require [wolframite.base.convert :refer [convert]]))
+  (:require [clojure.test :refer :all]
+            [wolframite.core :as wl]
+            [wolframite.base.convert :refer [convert]]))
 
 (deftest test-convert
+  (wl/init-jlink! {})
   (testing "Basics"
     (testing "List is invocation"
       (is (= (str (convert '() nil)) "Null")

@@ -80,13 +80,16 @@
 
   (evaluator-init (merge {:kernel/link @kernel-link-atom} defaults/default-options)))
 
-(defn- init-jlink! [opts]
-  (jlink/add-jlink-to-classpath!)
-  (reset! jlink-instance/jlink-instance
-          ;; req. res. since we can't load this code until the JLink JAR has been loaded
-          ((requiring-resolve 'wolframite.impl.jlink-proto-impl/map->JLinkImpl)
-           {:opts opts
-            :kernel-link-atom kernel-link-atom})))
+(defn init-jlink!
+  "DO NOT USE! (internal)"
+  [opts]
+  (when-not @jlink-instance/jlink-instance
+    (jlink/add-jlink-to-classpath!)
+    (reset! jlink-instance/jlink-instance
+            ;; req. res. since we can't load this code until the JLink JAR has been loaded
+            ((requiring-resolve 'wolframite.impl.jlink-proto-impl/map->JLinkImpl)
+             {:opts opts
+              :kernel-link-atom kernel-link-atom}))))
 
 (defn- init-kernel!
   "Provide os identifier as one of wolframite.runtime.system/supported-OS"
