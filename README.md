@@ -4,7 +4,7 @@ An interface between Clojure and the Wolfram Language (Supports Mathematica and 
 
 ## Status
 
-**Wolframite is currently (Q4/2023) under active development again. You can [keep track of what is happening in this discussion](https://github.com/scicloj/wolframite/discussions/17).**
+**Wolframite is currently (Q2/2024) under active development again. You can [keep track of what is happening in this discussion](https://github.com/scicloj/wolframite/discussions/17).**
 
 ## What is Wolframite? ##
 
@@ -32,13 +32,18 @@ First, if you haven't already, install the [Clojure CLI toolchain](https://cloju
 
 #### Mathematica or Wolfram Engine
 
-Next, obviously, you'll need to ensure that you have Wolfram Engine or Mathematica installed.
+Next, obviously, you'll need to ensure that you have Wolfram Engine or Mathematica installed and your license (free for W. E.) registered - make sure you can run these tools on their own before trying Wolframite.
 
-Normally, it should be detected and loaded automatically, when you require the `wolframite.core` namespace. Watch stdout for a message like:
+First of all, you need to initialize a connecting to a Wolfram/Mathematica kernel, like this:
 
-> Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar
+```clojure
+(wolframite.core/init!)
+```
+This should also find and load the JLink JAR included with your installation. Watch stdout for a message like:
 
-However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the `WOLFRAM_INSTALL_PATH` environment variables or Java system properties (the latter takes priority) to point to the correct location. Example:
+> === Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar ===
+
+However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the `WOLFRAM_INSTALL_PATH` environment variable or Java system property (the latter takes priority) to point to the correct location. Example:
 
 ```shell
 export WOLFRAM_INSTALL_PATH=/opt/mathematica/13.1
@@ -46,16 +51,15 @@ export WOLFRAM_INSTALL_PATH=/opt/mathematica/13.1
 
 ### Getting started
 
-```
-clj -A:dev
-(dev) ; this takes few 10s of seconds
-```
-
-`(dev)` drops you into the dev namespace and requires `wolframite.core` ns, which is side effecting (detecting and initializing Wolfram/Mathematica and internalizing all Wolfram functions)!
-
-Check if you're all set:
+Start a REPL with Wolframite on the classpath, then initialize it:
 
 ```clojure
+(require '[wolframite.core :as wl])
+;; Initialize
+(wl/init!) ; => nil
+;; Make all Wolfram functions available as symbols in the current ns (takes some seconds!):
+(wl/load-all-symbols (symbol (ns-name *ns*)))
+;; Use it:
 (wl/eval '(Dot [1 2 3] [4 5 6]))
 ;=> 32
 ```

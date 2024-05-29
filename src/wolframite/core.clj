@@ -116,7 +116,7 @@
      (-> (init-jlink! opts)
          (init-kernel!)))
    (evaluator-init (merge {:kernel/link @kernel-link-atom} opts))
-   (reset! opts-atom (or opts {}))))
+   nil))
 
 (defn eval
   "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
@@ -136,10 +136,10 @@
     Tip: Use [[->wl]] to look at the final expression that would be sent to Wolfram for evaluation."
   ([expr] (eval expr {}))
   ([expr eval-opts]
-   (when-not @opts-atom
-     (throw (IllegalStateException. "You need to `init!` first before calling eval.")))
+   (when-not @jlink-instance/jlink-instance
+     (throw (IllegalStateException. "Not initialized, call init! first")))
    (let [with-eval-opts (merge {:kernel/link @kernel-link-atom}
-                               @opts-atom
+                               (:opts @jlink-instance/jlink-instance)
                                eval-opts)
          expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
      (cep/cep expr' with-eval-opts))))

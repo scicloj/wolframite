@@ -9,7 +9,7 @@
                   (doto link
                     (.evaluate held-s)
                     (.waitForAnswer))
-                  (.. link getExpr args)))]
+                  (.. link getExpr args)))] ; TODO (jakub) get rid of reflection, move into the protocol
     (if (= (count output) 1)
       (first output)
       (throw (Exception. (str "Invalid expression: " s))))))

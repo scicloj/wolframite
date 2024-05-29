@@ -3,7 +3,7 @@
   cannot be loaded/required until JLink is on the classpath."
   (:require [clojure.string :as str]
             [wolframite.impl.protocols :as proto])
-  (:import [com.wolfram.jlink Expr MathLinkFactory]))
+  (:import [com.wolfram.jlink Expr KernelLink MathCanvas MathLinkFactory]))
 
 (defn- array? [x]
   (-> x class str (str/starts-with? "class [L")))
@@ -34,7 +34,7 @@
   (expr [_this expr-coll]
     (com.wolfram.jlink.Expr.
       (first expr-coll)
-      (into-array com.wolfram.jlink.Expr. (rest expr-coll))))
+      (into-array com.wolfram.jlink.Expr (rest expr-coll))))
   (expr [_this type expr-coll]
     (-> (case type
           :Expr/SYMBOL Expr/SYMBOL)
@@ -78,4 +78,10 @@
       ))
   (kernel-link? [_this x]
     (instance? com.wolfram.jlink.KernelLink x))
+  (make-math-canvas! [_this kernel-link]
+    (doto (MathCanvas. kernel-link)
+      (.setUsesFE true)
+      (.setImageType MathCanvas/GRAPHICS)))
+  (jlink-package-name [_this]
+    KernelLink/PACKAGE_CONTEXT)
   )

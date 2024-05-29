@@ -8,10 +8,12 @@
    [wolframite.runtime.defaults :as defaults]
    [wolframite.base.convert :as convert]
    [wolframite.base.evaluate :as evaluate]
-   [wolframite.base.express :as express])
-  (:import [com.wolfram.jlink Expr MathLinkFactory]))
+   [wolframite.base.express :as express]))
 
 (comment
+
+  ;; !!! INIT WOLFRAMITE !!!
+  (wl/init!)
 
   ;; Low-level evaluate of a Wolfram expression (here, `Plus[1,2]`)
   ;; You normally don't want this - just use wl/eval. Notice that all the connection details explicitly specified.

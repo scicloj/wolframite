@@ -2,7 +2,6 @@
   "Convert a Clojure expression into a Wolfram JLink expression"
   (:require [wolframite.impl.jlink-instance :as jlink-instance]
             [wolframite.impl.protocols :as proto]
-            [wolframite.runtime.jlink]
             [wolframite.lib.options :as options]
             [wolframite.base.express :as express]
             [wolframite.base.expr :as expr]

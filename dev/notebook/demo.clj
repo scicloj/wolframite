@@ -1,5 +1,6 @@
 (ns notebook.demo
-  (:require [wolframite.core  :refer [eval] :as w]
+  (:require [wolframite.core :as wl]
+            [wolframite.core :refer [eval] :as w]
             [wolframite.base.convert :as cv]
             [wolframite.runtime.jlink :as jlink]
             [wolframite.lib.helpers :refer [help!]]
@@ -10,11 +11,12 @@
             [nextjournal.beholder :as beholder]
             [nextjournal.clerk.webserver :as webserver]
             [nextjournal.clerk.viewer :as v]
-            [cemerick.pomegranate :as pom]
             [clojure.string :as str]
             [clojure.repl :refer [doc find-doc apropos]]))
 
 ;; # Wolfram Language Graphics
+
+(wl/init!)
 
 ;; ## Numbers
 
