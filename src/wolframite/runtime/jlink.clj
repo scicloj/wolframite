@@ -14,7 +14,7 @@
   "
   (:require
    [babashka.fs :as fs]
-   [clojure.repl.deps :as deps]
+   clojure.repl.deps ; cemerick.pomegranate
    [wolframite.runtime.system :as system]))
 
 (def ^:private default-jlink-path-under-root "SystemFiles/Links/JLink/JLink.jar")
@@ -48,8 +48,12 @@
    (let [info (system/info)
          path (path--jlink info)
          add-path (fn [p]
-                    (println (str "=== Adding path to classpath: " p " ==="))
-                    (deps/add-lib 'w/w {:local/root p})
+                    (if *repl*
+                      (do (println (str "=== Adding path to classpath: " p " ==="))
+                          (clojure.repl.deps/add-lib 'w/w {:local/root p})) ; BEWARE: only works in REPL => not when running from CLI, e.g. via a test runner
+                     (when-not (try (Class/forName "com.wolfram.jlink.Expr") (catch ClassNotFoundException _))
+                       (throw (IllegalStateException. "JLink jar not on the classpath and can't be loaded because we are not in a dynamic context, such as REPL"))))
+                    ;(cemerick.pomegranate/add-classpath p)
                     true)]
      (if (fs/exists? path)
        (add-path path)

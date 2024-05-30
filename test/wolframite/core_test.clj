@@ -21,20 +21,25 @@
 (create-ns 'w) ; w/o this, the code below can be executed in the repl but fails to load due to "No such namespace: w"
 
 (deftest load-all-symbols-test
+  ;; NOTE For this test, we need to wrap expression with (clojure.core/eval (quote ...)) so that
+  ;; we can load the file into REPL even before we run the code which creates the w/* vars the
+  ;; code is using.
+  ;; End-users face the same problem: they code works in the REPL when evaluated line by line, but
+  ;; cannot be loaded as a whole (unless they have init! and load-all-symbols at the top level)
   (wl/init!)
   (wl/load-all-symbols 'w)
   (is (= 3
-         (wl/eval (w/Plus 1 2))) ; FIXME Fails to load due to "No such var: w/Plus"
+         (wl/eval (eval '(w/Plus 1 2)))) ; FIXME Fails to load due to "No such var: w/Plus"
       "An interned symbol can be used at a function position")
   (is (= 3
-         (wl/eval (w/Floor w/Pi)))
+         (wl/eval (eval '(w/Floor w/Pi))))
       "An interned symbol can be used at a value position")
   (is (= -3
-         (wl/eval (w/Floor (w/Plus 1 (w/Minus w/Pi))))
+         (wl/eval (eval '(w/Floor (w/Plus 1 (w/Minus w/Pi)))))
          (wl/eval '(Floor (Plus 1 (Minus Pi)))))
       "Interned vars behave properly also when nested few levels deep")
   (is (= "x+y+z represents a sum of terms."
-         (-> #'w/Plus meta :doc))
+         (eval '(-> #'w/Plus meta :doc)))
       "Interned vars have docstrings"))
 
 (comment

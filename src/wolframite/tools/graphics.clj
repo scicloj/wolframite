@@ -14,13 +14,13 @@
   (* x (or factor 1)))
 
 (defn make-math-canvas! [kernel-link & {:keys [scale-factor]}]
-  (doto (proto/make-math-canvas! @jlink-instance/jlink-instance kernel-link)
+  (doto (proto/make-math-canvas! (jlink-instance/get) kernel-link)
     (.setBounds 25, 25, (scaled 280 scale-factor), (scaled 240 scale-factor))))
 
 (defn make-app! [^Component math-canvas & {:keys [scale-factor]}]
   (.evaluateToInputForm
     @wl/kernel-link-atom
-    (str "Needs[\"" (proto/jlink-package-name @jlink-instance/jlink-instance) "\"]")
+    (str "Needs[\"" (proto/jlink-package-name (jlink-instance/get)) "\"]")
     0)
   (.evaluateToInputForm @wl/kernel-link-atom "ConnectToFrontEnd[]" 0)
   (let [app (Frame.)]

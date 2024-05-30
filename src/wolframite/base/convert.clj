@@ -51,7 +51,7 @@
 ;; * Method impls
 
 (defmethod convert nil [obj _]
-  (proto/->expr @jlink-instance/jlink-instance obj))
+  (proto/->expr (jlink-instance/get) obj))
 
 (defmethod convert :null [_ opts]
   (convert 'Null opts))
@@ -75,7 +75,7 @@
         (let [s (str sym)]
           (if (re-find #"[^a-zA-Z0-9$\/]" s)
             (throw (Exception. (str "Symbols passed to Mathematica must be alphanumeric (apart from forward slashes and dollar signs). Passed: " s)))
-            (proto/expr @jlink-instance/jlink-instance :Expr/SYMBOL s)))))))
+            (proto/expr (jlink-instance/get) :Expr/SYMBOL s)))))))
 
 (defmethod convert :list [coll opts]
   (cond (simple-matrix? coll opts) (convert (to-array-2d coll) opts)

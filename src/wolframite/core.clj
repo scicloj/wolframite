@@ -51,8 +51,7 @@
    ;;^ currently necessary import to auto-install jlink
    [wolframite.runtime.defaults :as defaults]))
 
-(defonce kernel-link-atom (atom nil))
-(defonce opts-atom (atom nil))
+(defonce kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
 
 (defn kernel-link-opts ^"[Ljava.lang.String;" [{:keys [platform mathlink-path]}]
   ;; See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/MathLinkFactory.html#createKernelLink(java.lang.String%5B%5D)
@@ -82,27 +81,25 @@
 
 (defn init-jlink!
   "DO NOT USE! (internal)"
-  [opts]
-  (when-not @jlink-instance/jlink-instance
-    (jlink/add-jlink-to-classpath!)
-    (reset! jlink-instance/jlink-instance
-            ;; req. res. since we can't load this code until the JLink JAR has been loaded
-            ((requiring-resolve 'wolframite.impl.jlink-proto-impl/map->JLinkImpl)
-             {:opts opts
-              :kernel-link-atom kernel-link-atom}))))
+  [kernel-link-atom opts]
+  (or (jlink-instance/get)
+      (do (jlink/add-jlink-to-classpath!)
+          (reset! jlink-instance/jlink-instance
+                  ;; req. res. since we can't load this code until the JLink JAR has been loaded
+                  ((requiring-resolve 'wolframite.impl.jlink-proto-impl/create)
+                   kernel-link-atom opts)))))
 
 (defn- init-kernel!
   "Provide os identifier as one of wolframite.runtime.system/supported-OS"
   ([jlink-impl]
    (init-kernel! jlink-impl {:os (system/detect-os)}))
   ([jlink-impl {:keys [os] :as init-opts}]
-   {:pre [(some-> os system/supported-OS)]}
+   {:pre [(some-> os system/supported-OS) jlink-impl]}
    (->> (kernel-link-opts init-opts)
-        (proto/create-kernel-link jlink-impl)
-        (reset! kernel-link-atom))))
+        (proto/create-kernel-link jlink-impl))))
 
 (defn terminate-kernel! []
-  (proto/terminate-kernel! @jlink-instance/jlink-instance))
+  (proto/terminate-kernel! (jlink-instance/get)))
 
 (defn un-qualify [form]
   (walk/postwalk (fn [form]
@@ -115,10 +112,10 @@
   "Initialize Wolframite and the underlying wolfram Kernel - required once before any eval calls."
   ([] (init! defaults/default-options))
   ([opts]
-   (when-not @jlink-instance/jlink-instance
-     (-> (init-jlink! opts)
-         (init-kernel!)))
-   (evaluator-init (merge {:kernel/link @kernel-link-atom} opts))
+   (when-not (some-> (jlink-instance/get) (proto/kernel-link?)) ; need both, b/c some tests only init jlink
+     (let [jlink-inst (init-jlink! kernel-link-atom opts)]
+       (init-kernel! jlink-inst)
+       (evaluator-init (merge {:jlink-instance jlink-inst :kernel/link @kernel-link-atom} opts))))
    nil))
 
 (defn eval
@@ -139,13 +136,14 @@
     Tip: Use [[->wl]] to look at the final expression that would be sent to Wolfram for evaluation."
   ([expr] (eval expr {}))
   ([expr eval-opts]
-   (when-not @jlink-instance/jlink-instance
-     (throw (IllegalStateException. "Not initialized, call init! first")))
-   (let [with-eval-opts (merge {:kernel/link @kernel-link-atom}
-                               (:opts @jlink-instance/jlink-instance)
-                               eval-opts)
-         expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
-     (cep/cep expr' with-eval-opts))))
+   (if-let [jlink-inst (jlink-instance/get)]
+     (let [with-eval-opts (merge {:jlink-instance jlink-inst
+                                  :kernel/link @kernel-link-atom}
+                                 (:opts jlink-inst)
+                                 eval-opts)
+           expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
+       (cep/cep expr' with-eval-opts))
+     (throw (IllegalStateException. "Not initialized, call init! first")))))
 
 (def ^:deprecated wl "DEPRECATED - use `eval` instead." eval)
 

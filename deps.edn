@@ -15,9 +15,11 @@
                               borkdude/edamame {:mvn/version "0.0.19"}
                               clj-http/clj-http {:mvn/version "3.11.0"}
                               org.slf4j/slf4j-simple {:mvn/version "2.0.9"}}}
-           :test ; run with clj -X:test
+           :test-run ; run with clj -X:test-run
            {:extra-paths ["test"]
-            :extra-deps  {io.github.cognitect-labs/test-runner
+            :extra-deps  {wolfram/jlink
+                          {:local/root "./symlink-jlink.jar"} ; set it for your system
+                          io.github.cognitect-labs/test-runner
                           {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
             :main-opts   ["--main" "cognitect.test-runner"]
             :exec-fn cognitect.test-runner.api/test}}}

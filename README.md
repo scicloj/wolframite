@@ -102,6 +102,17 @@ user> (ch/clerk-watch! ["dev/notebook"])
 
 Wolframite requires Wolfram's Java integration library JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the `WolframKernel` / `MathKernel` executable is, in order to be able to start the external evaluation kernel process. Normally, `wolframite.jlink` should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.
 
+## Development
+
+### Running tests
+
+To run tests from the command line, you need to add JLink to the classpath (only REPL supports dynamically loading jars) -
+create a `./symlink-jlink.jar` symlink and then run the tests:
+
+```shell
+clojure -X:test-run
+```
+
 ## Authors
 
 The original Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the [Community](http://clojuratica.weebly.com/community.html) page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.

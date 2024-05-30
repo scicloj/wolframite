@@ -4,7 +4,7 @@
             [wolframite.base.convert :refer [convert]]))
 
 (deftest test-convert
-  (wl/init-jlink! {})
+  (wl/init-jlink! wl/kernel-link-atom {})
   (testing "Basics"
     (testing "List is invocation"
       (is (= (str (convert '() nil)) "Null")

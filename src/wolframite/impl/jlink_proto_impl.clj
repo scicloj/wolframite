@@ -11,8 +11,9 @@
 (defrecord JLinkImpl [opts kernel-link-atom]
   proto/JLink
   (create-kernel-link [_this kernel-link-opts]
-    (try (doto (com.wolfram.jlink.MathLinkFactory/createKernelLink kernel-link-opts)
-           (.discardAnswer))
+    (try (->> (doto (com.wolfram.jlink.MathLinkFactory/createKernelLink kernel-link-opts)
+                (.discardAnswer))
+              (reset! kernel-link-atom))
          (catch com.wolfram.jlink.MathLinkException e
            (if (= (ex-message e) "MathLink connection was lost.")
              (throw (ex-info (str "MathLink connection was lost. Perhaps you need to activate Mathematica first,"
@@ -76,12 +77,17 @@
       :Expr/RATIONAL Expr/RATIONAL
       :Expr/SYMBOL Expr/SYMBOL
       ))
-  (kernel-link? [_this x]
-    (instance? com.wolfram.jlink.KernelLink x))
+  (kernel-link [_this] @kernel-link-atom)
+  (kernel-link? [_this]
+    (some->> @kernel-link-atom (instance? com.wolfram.jlink.KernelLink)))
   (make-math-canvas! [_this kernel-link]
     (doto (MathCanvas. kernel-link)
       (.setUsesFE true)
       (.setImageType MathCanvas/GRAPHICS)))
   (jlink-package-name [_this]
-    KernelLink/PACKAGE_CONTEXT)
-  )
+    KernelLink/PACKAGE_CONTEXT))
+
+(defn create [kernel-link-atom opts]
+  (map->JLinkImpl
+   {:opts opts
+    :kernel-link-atom kernel-link-atom}))

@@ -40,10 +40,10 @@
   (not (.listQ expr)))
 
 (defn simple-vector-type [expr]
-  (proto/expr-element-type @jlink-instance/jlink-instance :vector expr))
+  (proto/expr-element-type (jlink-instance/get) :vector expr))
 
 (defn simple-matrix-type [expr]
-  (proto/expr-element-type @jlink-instance/jlink-instance :matrix expr))
+  (proto/expr-element-type (jlink-instance/get) :matrix expr))
 
 (defn simple-array-type [expr]
   (or (simple-vector-type expr) (simple-matrix-type expr)))
@@ -113,7 +113,7 @@
     (if (and (options/flag?' flags :N)
              (some #{:Expr/INTEGER :Expr/BIGINTEGER :Expr/REAL :Expr/BIGDECIMAL} #{type}))
       ((if (options/flag?' flags :vectors) vec seq)
-       (.asArray expr (proto/->expr-type @jlink-instance/jlink-instance :Expr/REAL) 1))
+       (.asArray expr (proto/->expr-type (jlink-instance/get) :Expr/REAL) 1))
       (bound-map (fn [e _opts] (parse-simple-atom e type opts)) (.args expr) opts))))
 
 (defn parse-simple-matrix [expr type opts]
@@ -161,7 +161,7 @@
           :else                    (parse-generic-expression expr opts))))
 
 (defn standard-parse [expr {:keys [flags] :as opts}]
-  (assert (proto/expr? @jlink-instance/jlink-instance expr))
+  (assert (proto/expr? (jlink-instance/get) expr))
   (cond
     (options/flag?' flags :as-function)                   (parse-fn expr opts)
     (or (atom? expr) (options/flag?' flags :full-form))   (parse-complex-atom expr opts)
