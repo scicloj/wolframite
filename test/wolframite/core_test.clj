@@ -18,8 +18,6 @@
 ;;                                          (wl/clj->wl '(GridGraph [5 5]) {:kernel-link wl/kernel-link
 ;;                                                                          :output-fn str})))))
 
-(create-ns 'w) ; w/o this, the code below can be executed in the repl but fails to load due to "No such namespace: w"
-
 (deftest load-all-symbols-test
   ;; NOTE For this test, we need to wrap expression with (clojure.core/eval (quote ...)) so that
   ;; we can load the file into REPL even before we run the code which creates the w/* vars the

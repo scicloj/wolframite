@@ -1,7 +1,6 @@
 (ns wolframite.base.evaluate
   "The core of evaluation: send a converted JLink expression to a Wolfram Kernel for evaluation and return the result."
-  (:require [wolframite.impl.jlink-instance :as jlink-instance]
-            [wolframite.impl.protocols :as proto]
+  (:require [wolframite.impl.protocols :as proto]
             [wolframite.lib.options :as options]
             [wolframite.base.convert :as convert]))
 

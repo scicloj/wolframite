@@ -36,10 +36,10 @@
     (com.wolfram.jlink.Expr.
       (first expr-coll)
       (into-array com.wolfram.jlink.Expr (rest expr-coll))))
-  (expr [_this type expr-coll]
+  (expr [_this type name]
     (-> (case type
           :Expr/SYMBOL Expr/SYMBOL)
-        (Expr. (apply str (replace {\/ \`} expr-coll)))))
+        (Expr. (apply str (replace {\/ \`} name)))))
   (->expr [_this obj]
     (.getExpr
       (doto (MathLinkFactory/createLoopbackLink)
