@@ -113,9 +113,11 @@
   ([] (init! defaults/default-options))
   ([opts]
    (when-not (some-> (jlink-instance/get) (proto/kernel-link?)) ; need both, b/c some tests only init jlink
-     (let [jlink-inst (init-jlink! kernel-link-atom opts)]
+     (let [jlink-inst (or (jlink-instance/get)
+                          (init-jlink! kernel-link-atom opts))]
        (init-kernel! jlink-inst)
-       (evaluator-init (merge {:jlink-instance jlink-inst :kernel/link @kernel-link-atom} opts))))
+       (evaluator-init (merge {:jlink-instance jlink-inst}
+                              opts))))
    nil))
 
 (defn eval
@@ -137,8 +139,7 @@
   ([expr] (eval expr {}))
   ([expr eval-opts]
    (if-let [jlink-inst (jlink-instance/get)]
-     (let [with-eval-opts (merge {:jlink-instance jlink-inst
-                                  :kernel/link @kernel-link-atom}
+     (let [with-eval-opts (merge {:jlink-instance jlink-inst}
                                  (:opts jlink-inst)
                                  eval-opts)
            expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
