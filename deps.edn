@@ -1,6 +1,5 @@
 {:paths ["src" "resources"]
- :deps {org.clojure/clojure {:mvn/version "1.11.1"}
-        clj-commons/pomegranate {:mvn/version "1.2.1"}
+ :deps {org.clojure/clojure {:mvn/version "1.12.0-alpha12"}
         org.scicloj/kindly {:mvn/version "4-beta2"}
         babashka/fs {:mvn/version "0.5.20"}}
 
@@ -15,4 +14,12 @@
                               org.scicloj/clay {:mvn/version "2-beta7"}
                               borkdude/edamame {:mvn/version "0.0.19"}
                               clj-http/clj-http {:mvn/version "3.11.0"}
-                              org.slf4j/slf4j-simple {:mvn/version "2.0.9"}}}}}
+                              org.slf4j/slf4j-simple {:mvn/version "2.0.9"}}}
+           :test-run ; run with clj -X:test-run
+           {:extra-paths ["test"]
+            :extra-deps  {wolfram/jlink
+                          {:local/root "./symlink-jlink.jar"} ; set it for your system
+                          io.github.cognitect-labs/test-runner
+                          {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+            :main-opts   ["--main" "cognitect.test-runner"]
+            :exec-fn cognitect.test-runner.api/test}}}

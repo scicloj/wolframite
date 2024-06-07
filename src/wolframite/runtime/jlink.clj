@@ -4,23 +4,18 @@
 
   Accordingly, this namespace manages the J/Link connection in order to extend this bridge to the Clojure language
 
-  WARNING: This namespace is (currently) side effecting, and is required for many of the files in this project to compile.
-
   NOTE:
 
   - Paths which are not absolute should not start with a '/'. In general, we should be aiming to comply with the babashka.fs standards.
-  - Pomegranate is used to dynamically add the Wolfram Language / Mathematica JLink jar to the JVM classpath.
-  - Because many of the namespaces in this project either import or reference the jlink classes, it's necessary to have loaded this namespace before those namespaces will compile. Thus, you'll see this ns required, but unused, across the codebase. This is to get around that fact that we don't have the jar available to us through a standard maven repository, and can't use environment variables in our `deps.edn` specifications.
+  - clojure.repl.deps is used to dynamically add the Wolfram Language / Mathematica JLink jar to the JVM classpath.
 
   Function argument types (that differ from clojure defaults):
   os - keyword
   "
   (:require
    [babashka.fs :as fs]
-   [cemerick.pomegranate :as pom]
-   [wolframite.runtime.system :as system])
-  (:import
-   (java.lang System)))
+   clojure.repl.deps ; cemerick.pomegranate
+   [wolframite.runtime.system :as system]))
 
 (def ^:private default-jlink-path-under-root "SystemFiles/Links/JLink/JLink.jar")
 
@@ -53,8 +48,12 @@
    (let [info (system/info)
          path (path--jlink info)
          add-path (fn [p]
-                    (println (str "=== Adding path to classpath: " p " ==="))
-                    (pom/add-classpath p)
+                    (if *repl*
+                      (do (println (str "=== Adding path to classpath: " p " ==="))
+                          (clojure.repl.deps/add-lib 'w/w {:local/root p})) ; BEWARE: only works in REPL => not when running from CLI, e.g. via a test runner
+                     (when-not (try (Class/forName "com.wolfram.jlink.Expr") (catch ClassNotFoundException _))
+                       (throw (IllegalStateException. "JLink jar not on the classpath and can't be loaded because we are not in a dynamic context, such as REPL"))))
+                    ;(cemerick.pomegranate/add-classpath p)
                     true)]
      (if (fs/exists? path)
        (add-path path)
@@ -65,10 +64,3 @@
                         {:os (get-in info [:defaults :os])
                          :path path
                          :env (:user-paths info)})))))))
-
-;; ==================================================
-;; ENTRY POINT
-;; ==================================================
-(add-jlink-to-classpath!)
-;; ==================================================
-

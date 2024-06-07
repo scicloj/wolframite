@@ -1,11 +1,11 @@
 (ns wolframite.base.parse
   "Translate a jlink.Expr returned from an evaluation into Clojure data"
   (:require
-   [wolframite.runtime.jlink]
-   [wolframite.lib.options :as options]
-   [wolframite.base.expr :as expr]
-   [clojure.string :as str])
-  (:import [com.wolfram.jlink Expr]))
+    [wolframite.impl.jlink-instance :as jlink-instance]
+    [wolframite.impl.protocols :as proto]
+    [wolframite.lib.options :as options]
+    [wolframite.base.expr :as expr]
+    [clojure.string :as str]))
 
 (declare parse)
 
@@ -40,24 +40,10 @@
   (not (.listQ expr)))
 
 (defn simple-vector-type [expr]
-  (cond (.vectorQ expr Expr/INTEGER)     Expr/INTEGER
-        (.vectorQ expr Expr/BIGINTEGER)  Expr/BIGINTEGER
-        (.vectorQ expr Expr/REAL)        Expr/REAL
-        (.vectorQ expr Expr/BIGDECIMAL)  Expr/BIGDECIMAL
-        (.vectorQ expr Expr/STRING)      Expr/STRING
-        (.vectorQ expr Expr/RATIONAL)    Expr/RATIONAL
-        (.vectorQ expr Expr/SYMBOL)      Expr/SYMBOL
-        :else                            nil))
+  (proto/expr-element-type (jlink-instance/get) :vector expr))
 
 (defn simple-matrix-type [expr]
-  (cond (.matrixQ expr Expr/INTEGER)     Expr/INTEGER
-        (.matrixQ expr Expr/BIGINTEGER)  Expr/BIGINTEGER
-        (.matrixQ expr Expr/REAL)        Expr/REAL
-        (.matrixQ expr Expr/BIGDECIMAL)  Expr/BIGDECIMAL
-        (.matrixQ expr Expr/STRING)      Expr/STRING
-        (.matrixQ expr Expr/RATIONAL)    Expr/RATIONAL
-        (.matrixQ expr Expr/SYMBOL)      Expr/SYMBOL
-        :else                            nil))
+  (proto/expr-element-type (jlink-instance/get) :matrix expr))
 
 (defn simple-array-type [expr]
   (or (simple-vector-type expr) (simple-matrix-type expr)))
@@ -113,20 +99,21 @@
       (zipmap keys vals))))
 
 (defn parse-simple-atom [expr type opts]
-  (cond (= type Expr/BIGINTEGER)   (.asBigInteger expr)
-        (= type Expr/BIGDECIMAL)   (.asBigDecimal expr)
-        (= type Expr/INTEGER)      (parse-integer expr)
-        (= type Expr/REAL)         (.asDouble expr)
-        (= type Expr/STRING)       (.asString expr)
-        (= type Expr/RATIONAL)     (parse-rational expr)
-        (= type Expr/SYMBOL)       (parse-symbol expr opts)))
+  (cond (= type :Expr/BIGINTEGER)   (.asBigInteger expr)
+        (= type :Expr/BIGDECIMAL)   (.asBigDecimal expr)
+        (= type :Expr/INTEGER)      (parse-integer expr)
+        (= type :Expr/REAL)         (.asDouble expr)
+        (= type :Expr/STRING)       (.asString expr)
+        (= type :Expr/RATIONAL)     (parse-rational expr)
+        (= type :Expr/SYMBOL)       (parse-symbol expr opts)))
 
 ;; parameters list used to be: [expr & [type]] (??)
 (defn parse-simple-vector [expr type {:keys [flags] :as opts}]
   (let [type (or type (simple-vector-type expr))]
     (if (and (options/flag?' flags :N)
-             (some #{Expr/INTEGER Expr/BIGINTEGER Expr/REAL Expr/BIGDECIMAL} #{type}))
-      ((if (options/flag?' flags :vectors) vec seq) (.asArray expr Expr/REAL 1))
+             (some #{:Expr/INTEGER :Expr/BIGINTEGER :Expr/REAL :Expr/BIGDECIMAL} #{type}))
+      ((if (options/flag?' flags :vectors) vec seq)
+       (.asArray expr (proto/->expr-type (jlink-instance/get) :Expr/REAL) 1))
       (bound-map (fn [e _opts] (parse-simple-atom e type opts)) (.args expr) opts))))
 
 (defn parse-simple-matrix [expr type opts]
@@ -174,7 +161,7 @@
           :else                    (parse-generic-expression expr opts))))
 
 (defn standard-parse [expr {:keys [flags] :as opts}]
-  (assert (instance? com.wolfram.jlink.Expr expr))
+  (assert (proto/expr? (jlink-instance/get) expr))
   (cond
     (options/flag?' flags :as-function)                   (parse-fn expr opts)
     (or (atom? expr) (options/flag?' flags :full-form))   (parse-complex-atom expr opts)

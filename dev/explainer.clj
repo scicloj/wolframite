@@ -20,6 +20,9 @@
 
   )
 
+;; ### Init Wolframite
+(wl/init!)
+
 ;; * Syntax
 
 ;; Wolfram: RulePlot[CellularAutomaton[30]]

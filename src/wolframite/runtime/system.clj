@@ -135,16 +135,22 @@
    (choose-defaults (detect-os)))
 
   ([os]
-   (->> defaults
-        (filter (comp #{os} :os))
-        (filter (comp fs/exists? :root))
-        first)))
+   (-> (->> defaults
+            (filter (comp #{os} :os))
+            (filter (comp fs/exists? :root))
+            first)
+       (update :root ->version-path))))
 
 (defn info
   "Publicly available way of guessing the defaults."
   []
-  {:user-paths (user-paths)
-   :defaults (choose-defaults)})
+  (let [user (not-empty (user-paths))
+        default (not-empty (choose-defaults))]
+    (when-not (or user default)
+      (throw (ex-info "Could not find a Wolfram or Mathematica kernel at a default location and no custom one was provided. Please check the installation and provide a path according to the user guide."
+                      {})))
+    {:user-paths user
+     :defaults default}))
 
 (defn path--kernel
   "Using the given base path, checks if any of the wolfram binaries can be found. If not, perform a 'glob' search and if that doesn't work either then throw an error!

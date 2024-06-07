@@ -1,17 +1,17 @@
 (ns wolframite.base.expr
-  (:require [wolframite.runtime.jlink])
-  (:import [com.wolfram.jlink Expr]))
+  (:require [wolframite.impl.jlink-instance :as jlink-instance]
+            [wolframite.impl.protocols :as proto]))
 
 (defn head-str [expr]
-  (assert (instance? com.wolfram.jlink.Expr expr))
+  (assert (proto/expr? (jlink-instance/get) expr))
   (.toString (.head expr)))
 
 (defn parts [expr]
-  (assert (instance? com.wolfram.jlink.Expr expr))
+  (assert (proto/expr? (jlink-instance/get) expr))
   (cons (.head expr) (seq (.args expr))))
 
 (defn expr-from-parts [expr-coll]
-  (assert (every? #(instance? com.wolfram.jlink.Expr %) expr-coll))
-  (Expr. (first expr-coll) (into-array Expr (rest expr-coll))))
+  (assert (every? #(proto/expr? (jlink-instance/get) %) expr-coll))
+  (proto/expr (jlink-instance/get) expr-coll))
 
 

@@ -12,11 +12,9 @@
    [wolframite.core :as wl]
    [wolframite.tools.hiccup :refer [view]]
    [wolframite.base.parse :as parse]
-   [wolframite.runtime.jlink]
    [scicloj.kindly.v4.kind :as kind]
    [scicloj.kindly.v4.api :as kindly])
-  (:import (com.wolfram.jlink MathCanvas KernelLink)
-           (java.awt Color Frame)
+  (:import (java.awt Color Frame)
            (java.awt.event WindowAdapter ActionEvent)))
 
 ^:kindly/hide-code
@@ -45,7 +43,11 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
                :subdirs-to-sync []
                :format [:quarto :html]}))
 
-(md "## Init (base example)")
+(md "## Init")
+
+(wl/init!)
+
+(md "## Base example")
 ^:note-to-test/skip
 
 (wl/eval '(Dot [1 2 3] [4 5 6]))
