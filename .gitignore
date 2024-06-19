@@ -23,4 +23,5 @@ temp
 .clay_files
 *.qmd
 
+dev/*_scratchpad.clj
 ./symlink-jlink.jar
