@@ -19,9 +19,9 @@
   ;; You normally don't want this - just use wl/eval. Notice that all the connection details explicitly specified.
   ((parse/parse-fn 'Plus (merge {:kernel/link @wl/kernel-link-atom}
                                 defaults/default-options))
-   1 2)
+   1 2))
 
-  )
+
 
 ;; * Clojure a 1min intro
 ;; ** Interactive developement

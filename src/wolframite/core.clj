@@ -36,20 +36,20 @@
 (ns wolframite.core
   (:refer-clojure :exclude [eval])
   (:require
-   [clojure.string :as str]
-   [clojure.walk :as walk]
-   [wolframite.base.cep :as cep]
-   [wolframite.base.convert :as convert]
-   [wolframite.base.evaluate :as evaluate]
-   [wolframite.base.express :as express]
-   [wolframite.base.parse :as parse]
-   [wolframite.impl.intern :as intern]
-   [wolframite.impl.jlink-instance :as jlink-instance]
-   [wolframite.impl.protocols :as proto]
-   [wolframite.runtime.system :as system]
-   [wolframite.runtime.jlink :as jlink]
-   ;;^ currently necessary import to auto-install jlink
-   [wolframite.runtime.defaults :as defaults]))
+    [clojure.string :as str]
+    [clojure.walk :as walk]
+    [wolframite.base.cep :as cep]
+    [wolframite.base.convert :as convert]
+    [wolframite.base.evaluate :as evaluate]
+    [wolframite.base.express :as express]
+    [wolframite.base.parse :as parse]
+    [wolframite.impl.jlink-instance :as jlink-instance]
+    [wolframite.impl.protocols :as proto]
+    [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
+    [wolframite.runtime.system :as system]
+    [wolframite.runtime.jlink :as jlink]
+    ;;^ currently necessary import to auto-install jlink
+    [wolframite.runtime.defaults :as defaults]))
 
 (defonce kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
 
@@ -194,16 +194,7 @@
 
   Alternatively, load the included but likely outdated `resources/wld.wl` with a dump of the data."
   [ns-sym]
-  ;; TODO (jh) support loading symbols from a custom context - use (Names <context name>`*) to get the names -> (Information <context name>`<fn name>) -> get FullName (drop ...`), Usage (no PlaintextUsage there) from the entity
-  ;; IDEA: Provide also (load-symbols <list of symbols or a regexp>), which would load only a subset
-  (doall (->> (eval '(EntityValue (WolframLanguageData) ["Name", "PlaintextUsage"] "EntityPropertyAssociation"))
-              vals ; keys ~ `(Entity "WolframLanguageSymbol" "ImageCorrelate")`
-              (map (fn [{sym "Name", doc "PlaintextUsage"}]
-                     (intern/clj-intern
-                      (symbol sym)
-                      {:intern/ns-sym     ns-sym
-                       :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
-                                                  doc)}}))))))
+  (wolfram-syms/load-all-symbols eval ns-sym))
 
 (comment
   (->
