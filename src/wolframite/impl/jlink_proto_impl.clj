@@ -75,11 +75,13 @@
       :Expr/BIGDECIMAL Expr/BIGDECIMAL
       :Expr/STRING Expr/STRING
       :Expr/RATIONAL Expr/RATIONAL
-      :Expr/SYMBOL Expr/SYMBOL
-      ))
+      :Expr/SYMBOL Expr/SYMBOL))
+
   (kernel-link [_this] @kernel-link-atom)
   (kernel-link? [_this]
     (some->> @kernel-link-atom (instance? com.wolfram.jlink.KernelLink)))
+  (make-math-canvas! [this]
+    (proto/make-math-canvas! this (proto/kernel-link this)))
   (make-math-canvas! [_this kernel-link]
     (doto (MathCanvas. kernel-link)
       (.setUsesFE true)

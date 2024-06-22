@@ -31,6 +31,7 @@
 
 (defn evaluate [expr {:keys [jlink-instance]
                       :as   opts}]
+  {:pre [jlink-instance]}
   (assert (proto/expr? jlink-instance expr))
   (assert (proto/kernel-link? jlink-instance))
   (let [link (proto/kernel-link jlink-instance)]

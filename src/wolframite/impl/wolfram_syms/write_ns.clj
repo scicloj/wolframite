@@ -6,7 +6,8 @@
     [clojure.string :as str]
     [wolframite.core :as core]
     [wolframite.impl.wolfram-syms.intern :as intern]
-    [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]))
+    [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
+    [wolframite.runtime.defaults :as defaults]))
 
 (def wolfram-ns-heading
   ['(ns wolframite.wolfram
@@ -22,6 +23,9 @@
                '[Byte Character Integer Number Short String Thread]))
    ,])
 
+(def wolfram-ns-footer
+  (mapv (fn [[from to]] `(def ~from ~to)) defaults/base-aliases))
+
 (defn- make-defs
   ([] (make-defs (wolfram-syms/fetch-all-wolfram-symbols core/eval)))
   ([all-syms]
@@ -33,7 +37,9 @@
         (str/join "\n"
                   (concat
                     (map pr-str wolfram-ns-heading)
-                    (map pr-str (make-defs))))))
+                    (map pr-str (make-defs))
+                    (map pr-str wolfram-ns-footer)))))
+
 
 ;(defmacro make-wolf-defs []
 ;  `(do ~@(make-defs)))
@@ -42,5 +48,6 @@
 
 (comment
 
+  (load-file "src/wolframite/wolfram.clj")
   (do (time (write-ns!))
       (load-file "src/wolframite/wolfram.clj")))

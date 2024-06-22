@@ -25,7 +25,9 @@
   (->expr-type [this type-kw])
   (kernel-link [_this])
   (kernel-link? [_this])
-  (^Component make-math-canvas! [this kernel-link])
+  (^Component make-math-canvas!
+    [this]
+    [this kernel-link])
   (jlink-package-name [this]))
 
 (extend-protocol JLink
@@ -50,7 +52,9 @@
     (throw (IllegalStateException. "JLink not loaded!")))
   (kernel-link? [_this]
     (throw (IllegalStateException. "JLink not loaded!")))
+  (^Component make-math-canvas! [this]
+    (throw (IllegalStateException. "JLink not loaded!")))
   (^Component make-math-canvas! [this kernel-link]
     (throw (IllegalStateException. "JLink not loaded!")))
   (jlink-package-name [this]
-    (throw (IllegalStateException. "JLink not loaded!"))))
+      (throw (IllegalStateException. "JLink not loaded!"))))

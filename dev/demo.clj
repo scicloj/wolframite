@@ -1,14 +1,17 @@
 (ns demo
   "Demonstrate key features of Wolframite.
   See also the explainer ns."
+  ;; FIXME Why do we have both demo and explainer? Could we settle on one? If not then clarify the difference!
   (:require
-   [wolframite.core :as wl]
-   [wolframite.tools.graphics :as graphics]
-   [wolframite.base.parse :as parse]
-   [wolframite.runtime.defaults :as defaults]
-   [wolframite.base.convert :as convert]
-   [wolframite.base.evaluate :as evaluate]
-   [wolframite.base.express :as express]))
+    [wolframite.core :as wl]
+    [wolframite.impl.jlink-instance :as jlink-instance]
+    [wolframite.wolfram :as w]
+    [wolframite.tools.graphics :as graphics]
+    [wolframite.base.parse :as parse]
+    [wolframite.runtime.defaults :as defaults]
+    [wolframite.base.convert :as convert]
+    [wolframite.base.evaluate :as evaluate]
+    [wolframite.base.express :as express]))
 
 (comment
 
@@ -17,7 +20,7 @@
 
   ;; Low-level evaluate of a Wolfram expression (here, `Plus[1,2]`)
   ;; You normally don't want this - just use wl/eval. Notice that all the connection details explicitly specified.
-  ((parse/parse-fn 'Plus (merge {:kernel/link @wl/kernel-link-atom}
+  ((parse/parse-fn 'Plus (merge {:jlink-instance (jlink-instance/get)}
                                 defaults/default-options))
    1 2))
 
@@ -52,7 +55,7 @@
 :project.media/image
 
 
-;; *** Interesting compund datatypes
+;; *** Interesting compound datatypes
 
 ;; vector
 
@@ -66,22 +69,22 @@
 ;; * Wolframite (nee Clojuratica) -- name is a WIP
 ;; ** Init (base example)
 
-(wl/eval '(Dot [1 2 3] [4 5 6]))
+(wl/eval (w/Dot [1 2 3] [4 5 6]))
 
 ;; ** Strings of WL code
 
 (wl/eval "{1 , 2, 3} . {4, 5, 6}")
-;; (convert/convert "{1 , 2, 3} . {4, 5, 6}" {:kernel/link @wl/kernel-link-atom}) ;; FIXME: this doesn't work, probably shouldn't, maybe there is a path to remove in `convert/convert`
+;; (convert/convert "{1 , 2, 3} . {4, 5, 6}" {:jlink-instance (wolframite.impl.jlink-instance/get)}) ;; FIXME: this doesn't work, probably shouldn't, maybe there is a path to remove in `convert/convert`
 ;; You should use this
-;; (express/express "{1 , 2, 3} . {4, 5, 6}" {:kernel/link @wl/kernel-link-atom})
+;; (express/express "{1 , 2, 3} . {4, 5, 6}" {:jlink-instance (wolframite.impl.jlink-instance/get)})
 
 ;; NOTE: this is a hack to get this to work
 
 ;; ** Def / intern WL fns, i.e. effectively define WL fns as clojure fns:
 
-(def W:Plus (parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}))
+(def W:Plus (parse/parse-fn 'Plus {:jlink-instance (jlink-instance/get)}))
 
-(W:Plus 1 2 3) ; ... and call it
+(W:Plus 1 2 3) ; ... and call it (delegating its evaluation to the Wolfram kernel)
 
 (def greetings
   (wl/eval
@@ -101,13 +104,13 @@
 
 ;; *** Init math canvas & app
 
-(def canvas (graphics/make-math-canvas! @wl/kernel-link-atom))
+(def canvas (graphics/make-math-canvas!))
 (def app (graphics/make-app! canvas))
 
 ;; *** Draw Something!
 
-(graphics/show! canvas (wl/->wl '(GridGraph [5 5]) {:output-fn str}))
-(graphics/show! canvas (wl/->wl '(ChemicalData "Ethanol" "StructureDiagram") {:output-fn str}))
+(graphics/show! canvas (wl/->wl (w/GridGraph [5 5]) {:output-fn str}))
+(graphics/show! canvas (wl/->wl (w/ChemicalData "Ethanol" "StructureDiagram") {:output-fn str}))
 
 ;; *** Make it easier (Dev Helper: closing over the canvas)
 
@@ -116,21 +119,21 @@
 
 ;; *** Some Simple Graphiscs Examples
 
-(quick-show '(ChemicalData "Ethanol" "StructureDiagram"))
-(quick-show '(GridGraph [5 5]))
-(quick-show '(GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"])))
+(quick-show (w/ChemicalData "Ethanol" "StructureDiagram"))
+(quick-show (w/GridGraph [5 5]))
+(quick-show (w/GeoImage (w/Entity "City" ["NewYork" "NewYork" "UnitedStates"])))
 
 
 ;; ** More Working Examples
 
-(wl/eval '(GeoNearest (Entity "Ocean") Here))
+(wl/eval (w/GeoNearest (w/Entity "Ocean") 'Here))
 
-(wl/eval '(TextStructure "The cat sat on the mat."))
+(wl/eval (w/TextStructure "The cat sat on the mat."))
 
 ;; - Wolfram Alpha
 
-(wl/eval '(WolframAlpha "number of moons of Saturn" "Result"))
+(wl/eval (w/WolframAlpha "number of moons of Saturn" "Result"))
 
 ;; - more interesting examples...
 
-(wl/eval '(TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs")) ; returns a graph as data
+(wl/eval (w/TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs")) ; returns a graph as data
