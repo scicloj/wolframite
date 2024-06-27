@@ -1,6 +1,6 @@
 (ns wolframite.base.evaluate
   "The core of evaluation: send a converted JLink expression to a Wolfram Kernel for evaluation and return the result."
-  (:require [wolframite.jlink]
+  (:require [wolframite.impl.protocols :as proto]
             [wolframite.lib.options :as options]
             [wolframite.base.convert :as convert]))
 
@@ -29,30 +29,31 @@
       ;; TODO: else branch: add debug logging "Sleeping for"
       (Thread/sleep ^long (quot run-in 1000000)))))
 
-(defn evaluate [expr {:keys [kernel/link]
+(defn evaluate [expr {:keys [jlink-instance]
                       :as   opts}]
-  (assert (instance? com.wolfram.jlink.Expr       expr))
-  (assert (instance? com.wolfram.jlink.KernelLink link))
-  (if (options/flag?' (:flags opts) :serial)
-    (io!
-     (locking link
-       (doto link (.evaluate expr) (.waitForAnswer))
-       (.getExpr link)))
-    (let [opts' (update opts :flags conj :serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
-          pid-expr (evaluate (convert/convert
-                               (list 'Unique
-                                     ; Beware: technically, this is an invalid clj symbol due to the slashes:
-                                     (symbol "Wolframite/Concurrent/process")) opts')
-                             opts)]
-      ;; FIXME: debug log: "pid-expr:"
-      (evaluate (convert/convert (list '= pid-expr (list 'ParallelSubmit expr)) opts') opts)
-      (evaluate (convert/convert '(QueueRun) opts') opts)
-      (loop []
-        (let [[state result] (process-state pid-expr opts)]
-          (if (not= :finished state)
-            (do
-              (queue-run-or-wait opts)
-              (recur))
-            (do
-              (evaluate (convert/convert (list 'Remove pid-expr) opts') opts)
-              result)))))))
+  (assert (proto/expr? jlink-instance expr))
+  (assert (proto/kernel-link? jlink-instance))
+  (let [link (proto/kernel-link jlink-instance)]
+   (if (options/flag?' (:flags opts) :serial)
+     (io!
+       (locking link
+         (doto link (.evaluate expr) (.waitForAnswer))
+         (.getExpr link)))
+     (let [opts' (update opts :flags conj :serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
+           pid-expr (evaluate (convert/convert
+                                (list 'Unique
+                                      ; Beware: technically, this is an invalid clj symbol due to the slashes:
+                                      (symbol "Wolframite/Concurrent/process")) opts')
+                              opts)]
+       ;; FIXME: debug log: "pid-expr:"
+       (evaluate (convert/convert (list '= pid-expr (list 'ParallelSubmit expr)) opts') opts)
+       (evaluate (convert/convert '(QueueRun) opts') opts)
+       (loop []
+         (let [[state result] (process-state pid-expr opts)]
+           (if (not= :finished state)
+             (do
+               (queue-run-or-wait opts)
+               (recur))
+             (do
+               (evaluate (convert/convert (list 'Remove pid-expr) opts') opts)
+               result))))))))

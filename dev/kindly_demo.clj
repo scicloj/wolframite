@@ -12,11 +12,9 @@
    [wolframite.core :as wl]
    [wolframite.tools.hiccup :refer [view]]
    [wolframite.base.parse :as parse]
-   [wolframite.jlink]
    [scicloj.kindly.v4.kind :as kind]
    [scicloj.kindly.v4.api :as kindly])
-  (:import (com.wolfram.jlink MathCanvas KernelLink)
-           (java.awt Color Frame)
+  (:import (java.awt Color Frame)
            (java.awt.event WindowAdapter ActionEvent)))
 
 ^:kindly/hide-code
@@ -45,7 +43,11 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
                :subdirs-to-sync []
                :format [:quarto :html]}))
 
-(md "## Init (base example)")
+(md "## Init")
+
+(wl/init!)
+
+(md "## Base example")
 ^:note-to-test/skip
 
 (wl/eval '(Dot [1 2 3] [4 5 6]))
@@ -60,7 +62,6 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
 
 (W:Plus 1 2 3) ; ... and call it
 
-
 (def greetings
   (wl/eval
    '(Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output."))))
@@ -70,9 +71,8 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
 (md "## Bidirectional translation
 (Somewhat experimental, especially in the wl->clj direction)")
 
-
-(wl/->clj! "GridGraph[{5, 5}]")
-(wl/->wl! '(GridGraph [5 5]) {:output-fn str})
+(wl/->clj "GridGraph[{5, 5}]")
+(wl/->wl '(GridGraph [5 5]) {:output-fn str})
 
 (md "## Graphics")
 

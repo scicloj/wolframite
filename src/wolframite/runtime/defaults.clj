@@ -1,5 +1,11 @@
 (ns wolframite.runtime.defaults
-  (:require [clojure.set]))
+  "Flags and aliases for the Wolfram runtime."
+  (:require [clojure.set]
+            [clojure.walk :as walk]))
+
+"TODO:
+- Consider function that finds all non-numeric symbols (and not '- ') that start with a '-' and replace them with Minus[<symbol>]
+- Consider renaming this namespace. Not clear what it contains."
 
 ;; * Flags
 (def flag-sets {#{:vectors :seqs #_:seq-fn} :vectors ;; FIXME: this is not really a flag, not sure how useful at all
@@ -28,7 +34,7 @@
 (def base-aliases
   {'do   'CompoundExpression
    '=    'Set
-   '..=  'SetDelayed ;; TODO: Document this exception. Presumably not := because of clojure's keywords
+   '..=  'SetDelayed ;; TODO: Document this exception. Presumably not := because of clojure's keywords. It's actually nicer in a way though, because an (almost) ellipsis implies a delay!
    '=.   'Unset
    '->   'Rule
    '..>  'RuleDelayed
@@ -122,4 +128,39 @@
    :aliases {}
    :config {:poll-interval 20}
    ;; runtime opts
-   :kernel/link nil})
+   :kernel/link nil}
+
+  (def expression '(+ -x -x -y -5 -2 (- x 10 5) (** x 2)))
+
+  (defn strip-ns [form]
+    (walk/postwalk (fn [form]
+                     (if (qualified-symbol? form)
+                       (symbol (name form))
+                       form))
+                   form))
+
+  (defn replacement-map
+    "Creates a replacement map for negative symbols, such that they are reasonably interpreted by Wolfram.
+
+  TODO:
+  - Extend the idea to deal with other custom replacements (e.g. greek/hebrew symbols.) .
+  "
+    [expression]
+    (let [syms (->> expression
+                    strip-ns
+                    (into '())
+                    (tree-seq list? seq)
+                    (remove (some-fn list? nil?))
+                    (filter #(when (symbol? %)
+                               (->> %
+                                    str
+                                    (re-matches #"-.+"))))
+                    distinct)
+
+          syms-base (map (fn [sym] (-> sym str char-array rest (#(apply str %)) symbol)) syms)]
+
+      (zipmap syms (map (fn [sym] (format "Minus[%s]" sym)) syms-base))))
+
+  (replacement-map expression)
+
+  (replacement-map `(+ -x -x -y -5 -2 (- x 10 5) (** x 2))))

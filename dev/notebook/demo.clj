@@ -1,7 +1,8 @@
 (ns notebook.demo
-  (:require [wolframite.core  :refer [eval] :as w]
+  (:require [wolframite.core :as wl]
+            [wolframite.core :refer [eval] :as w]
             [wolframite.base.convert :as cv]
-            [wolframite.jlink :as jlink]
+            [wolframite.runtime.jlink :as jlink]
             [wolframite.lib.helpers :refer [help!]]
             [wolframite.tools.clerk-helper :refer [view]]
             [aerial.hanami.common :as hc]
@@ -10,18 +11,16 @@
             [nextjournal.beholder :as beholder]
             [nextjournal.clerk.webserver :as webserver]
             [nextjournal.clerk.viewer :as v]
-            [cemerick.pomegranate :as pom]
             [clojure.string :as str]
             [clojure.repl :refer [doc find-doc apropos]]))
 
-
 ;; # Wolfram Language Graphics
 
+(wl/init!)
 
 ;; ## Numbers
 
 (view '(BarChart (EntityValue (EntityClass "Planet" All) "Radius")))
-
 
 ;; ## Time
 
@@ -44,7 +43,6 @@
                        (Entity "City" ["Boston" "Massachusetts" "UnitedStates"])]
                       "Geodesic")]))
 
-
 ;; ## 3D
 
 (view '(MoleculePlot3D (Molecule "O=C(C1CCC1)S[C@@H]1CCC1(C)C")))
@@ -66,17 +64,17 @@
   ((last (last img)) "URL"))
 
 (def movie-ents
-   (eval
-    '(Map (Function [m] [m (m "Image")])
-          (Keys
-           (Take
-            (Reverse
-             (Sort
-              (DeleteMissing (MovieData
-                              (MovieData ["RandomEntities" 300])
-                              "DomesticBoxOfficeGross"
-                              "EntityAssociation"))))
-            2)))))
+  (eval
+   '(Map (Function [m] [m (m "Image")])
+         (Keys
+          (Take
+           (Reverse
+            (Sort
+             (DeleteMissing (MovieData
+                             (MovieData ["RandomEntities" 300])
+                             "DomesticBoxOfficeGross"
+                             "EntityAssociation"))))
+           2)))))
 
 (nb/html
  [:div.guess-the-movie
@@ -95,7 +93,7 @@
 (view '(Animate (Plot (Sin (+ x a)) [x 0 10]) [a 0 5] (-> AnimationRunning true))
       :folded? true)
 
-(w/->clj! "Plot[Evaluate[Table[BesselJ[n, x], {n, 4}]], {x, 0, 10},
+(w/->clj "Plot[Evaluate[Table[BesselJ[n, x], {n, 4}]], {x, 0, 10},
                Filling -> Axis]")
 
 (view '(Plot (Evaluate (Table (BesselJ n x) [n 4]))

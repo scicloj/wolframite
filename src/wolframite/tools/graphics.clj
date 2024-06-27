@@ -1,9 +1,9 @@
 (ns wolframite.tools.graphics
   "Displaying WL graphics with java.awt"
-  (:require [wolframite.jlink]
+  (:require [wolframite.impl.jlink-instance :as jlink-instance]
+            [wolframite.impl.protocols :as proto]
             [wolframite.core :as wl])
-  (:import (com.wolfram.jlink MathCanvas KernelLink)
-           (java.awt Color Frame)
+  (:import (java.awt Color Component Frame)
            (java.awt.image BufferedImage)
            (javax.imageio ImageIO)
            (java.io ByteArrayInputStream)
@@ -14,13 +14,14 @@
   (* x (or factor 1)))
 
 (defn make-math-canvas! [kernel-link & {:keys [scale-factor]}]
-  (doto (MathCanvas. kernel-link)
-    (.setBounds 25, 25, (scaled 280 scale-factor), (scaled 240 scale-factor))
-    (.setUsesFE true)
-    (.setImageType MathCanvas/GRAPHICS)))
+  (doto (proto/make-math-canvas! (jlink-instance/get) kernel-link)
+    (.setBounds 25, 25, (scaled 280 scale-factor), (scaled 240 scale-factor))))
 
-(defn make-app! [math-canvas & {:keys [scale-factor]}]
-  (.evaluateToInputForm @wl/kernel-link-atom (str "Needs[\""  KernelLink/PACKAGE_CONTEXT "\"]") 0)
+(defn make-app! [^Component math-canvas & {:keys [scale-factor]}]
+  (.evaluateToInputForm
+    @wl/kernel-link-atom
+    (str "Needs[\"" (proto/jlink-package-name (jlink-instance/get)) "\"]")
+    0)
   (.evaluateToInputForm @wl/kernel-link-atom "ConnectToFrontEnd[]" 0)
   (let [app (Frame.)]
     (doto app
@@ -56,18 +57,13 @@
   ;;
   ;; (WL :show (GeoGraphics))
 
-
-
 (comment ;; fun is good
 
   (show! canvas "GeoGraphics[]")
   (show! canvas "Graph3D[GridGraph[{3, 3, 3}, VertexLabels -> Automatic]]")
-  (show! canvas "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]")
-
-  )
+  (show! canvas "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]"))
 
 (comment ;; better quality images
-  (import '[com.wolfram.jlink KernelLink])
 
   (.evaluateToImage @wl/kernel-link-atom "GeoGraphics[]" 300 300) ;; this has another arity where you can set `dpi`
   ;; then byte array -> java.awt.Image
@@ -78,5 +74,4 @@
                (ImageIO/read (ByteArrayInputStream. (.evaluateToImage wl/kernel-link-atom "GeoGraphics[]" (int width) (int height) 600 true)))))
 
   ;; doesn't make much difference (maybe a bit), seems like we can go lower dpi, but we already get maximum by default (?)
-
   )

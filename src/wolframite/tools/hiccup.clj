@@ -12,7 +12,7 @@
           :style {:margin-top "1rem"}}]))
 
 (defn view* [form folded?]
-  (let [wl-str (wl/->wl! form {:output-fn str})
+  (let [wl-str (wl/->wl form {:output-fn str})
         input-img    (.evaluateToImage @wl/kernel-link-atom wl-str 0 0 0 true)
         b64img (bytes->b64encodedString input-img)]
     (kind/hiccup
