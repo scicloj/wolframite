@@ -37,6 +37,7 @@
   (:refer-clojure :exclude [eval])
   (:require
     [clojure.string :as str]
+    [clojure.tools.logging :as log]
     [clojure.walk :as walk]
     [wolframite.base.cep :as cep]
     [wolframite.base.convert :as convert]
@@ -49,7 +50,8 @@
     [wolframite.runtime.system :as system]
     [wolframite.runtime.jlink :as jlink]
     ;;^ currently necessary import to auto-install jlink
-    [wolframite.runtime.defaults :as defaults]))
+    [wolframite.runtime.defaults :as defaults]
+    [wolframite.wolfram :as w]))
 
 (defonce kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
 
@@ -108,6 +110,38 @@
                      form))
                  form))
 
+(declare eval)
+
+(def kernel-info
+  "A promise map holding information about the Wolfram kernel, initialized when
+  connected to the kernel for the first time. Ex.:
+
+  ```clojure
+
+  @kernel-info
+  ; => {:wolfram-version 14.0
+  ;     :wolfram-kernel-name \"Wolfram Language 14.0.0 Engine\"
+  ;     :max-license-processes 2} ; how many concurrent kernels (=> Wolframite REPLs/processes) may we run
+  ```"
+  (promise))
+
+(defn kernel-info!
+  "Fetches info about the Wolfram kernel, such as:
+
+  ```clojure
+  {:wolfram-version 14.0
+   :wolfram-kernel-name \"Wolfram Language 14.0.0 Engine\"
+   :max-license-processes 2} ; how many concurrent kernels (=> Wolframite REPLs/processes) may we run
+  ```
+  Requires [[init!]] to be called first."
+  []
+  (zipmap
+    [:wolfram-version :wolfram-kernel-name :max-license-processes]
+    (eval '[$VersionNumber
+            (SystemInformation "Kernel", "ProductKernelName")
+            (SystemInformation "Kernel", "MaxLicenseProcesses")])))
+
+
 (defn init!
   "Initialize Wolframite and the underlying wolfram Kernel - required once before any eval calls."
   ([] (init! defaults/default-options))
@@ -117,8 +151,21 @@
                           (init-jlink! kernel-link-atom opts))]
        (init-kernel! jlink-inst)
        (evaluator-init (merge {:jlink-instance jlink-inst}
-                              opts))))
+                              opts))
+       (let [{:keys [wolfram-version]}
+             (doto (kernel-info!)
+               (->> (deliver kernel-info)))]
+         (when (and (number? wolfram-version)
+                    (number? w/*wolfram-version*)
+                    (> wolfram-version w/*wolfram-version*))
+           (log/warnf "You have a newer Wolfram version %s than the %s used to generate wolframite.wolfram
+           and may want to re-create it with (wolframite.impl.wolfram-syms.write-ns/write-ns!)"
+                      wolfram-version w/*wolfram-version*)))
+      (:wolfram-version @kernel-info))
+     nil)
    nil))
+
+(comment (init!))
 
 (defn eval
   "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
@@ -147,22 +194,6 @@
      (throw (IllegalStateException. "Not initialized, call init! first")))))
 
 (def ^:deprecated wl "DEPRECATED - use `eval` instead." eval)
-
-(defn kernel-info!
-  "Fetches info about the Wolfram kernel, such as:
-
-  ```clojure
-  {:wolfram-version 14.0
-   :wolfram-kernel-name \"Wolfram Language 14.0.0 Engine\"
-   :max-license-processes 2} ; how many concurrent kernels (=> Wolframite REPLs/processes) may we run
-  ```
-  Requires [[init!]] to be called first."
-  []
-  (zipmap
-    [:wolfram-version :wolfram-kernel-name :max-license-processes]
-    (eval '[$VersionNumber
-            (SystemInformation "Kernel", "ProductKernelName")
-            (SystemInformation "Kernel", "MaxLicenseProcesses")])))
 
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
 (defn- clj-intern-autoevaled
