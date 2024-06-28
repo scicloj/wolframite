@@ -10,7 +10,7 @@
     [wolframite.impl.wolfram-syms.intern :as intern]
     [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
     [wolframite.runtime.defaults :as defaults])
-  (:import (java.io PushbackReader)))
+  (:import (java.io FileNotFoundException PushbackReader)))
 
 (comment
   (-> (io/resource "wolframite/impl/wolfram_syms/write_ns/includes.clj")
@@ -69,19 +69,31 @@
    (for [{:keys [sym doc]} (sort-by :sym all-syms)]
      (list 'def sym (if (string? doc) doc "") `(intern/wolfram-fn '~sym)))))
 
-(defn write-ns! []
-  (let [{:keys [wolfram-version wolfram-kernel-name]} (core/kernel-info!)]
-    (spit "src/wolframite/wolfram.clj"
-          (str/join "\n"
-                    (concat
-                      (map pr-str wolfram-ns-heading)
-                      ;; Add version info, similar to clojure's *clojure-version*; marked dynamic so
-                      ;; that clj doesn't complain about those *..*
-                      [(format "(def ^:dynamic *wolfram-version* %s)" wolfram-version)]
-                      [(format "(def ^:dynamic *wolfram-kernel-name* \"%s\")" wolfram-kernel-name)]
-                      (map pr-str (make-defs))
-                      (map pr-str wolfram-ns-footer)
-                      [(inclusions-body-str!)])))))
+(defn write-ns!
+  "Load symbols from the running Wolfram kernel and write a namespace file with vars for all of them.
+  Args:
+  - `path` (default: './src/wolframite/wolfram.clj') - where to write the code
+
+  Requires that you've run `wl/init!` first."
+  ([] (write-ns! "src/wolframite/wolfram.clj"))
+  ([path]
+   (let [{:keys [wolfram-version wolfram-kernel-name]} (core/kernel-info!)]
+     (try
+       (spit path
+             (str/join "\n"
+                       (concat
+                         (map pr-str wolfram-ns-heading)
+                         ;; Add version info, similar to clojure's *clojure-version*; marked dynamic so
+                         ;; that clj doesn't complain about those *..*
+                         [(format "(def ^:dynamic *wolfram-version* %s)" wolfram-version)]
+                         [(format "(def ^:dynamic *wolfram-kernel-name* \"%s\")" wolfram-kernel-name)]
+                         (map pr-str (make-defs))
+                         (map pr-str wolfram-ns-footer)
+                         [(inclusions-body-str!)])))
+       (catch FileNotFoundException e
+         (throw (ex-info (format "Could not write to %s - does the parent dir exist?"
+                                 path)
+                         {:path path, :cause (ex-message e)})))))))
 
 
 ;(defmacro make-wolf-defs []
