@@ -148,6 +148,22 @@
 
 (def ^:deprecated wl "DEPRECATED - use `eval` instead." eval)
 
+(defn kernel-info!
+  "Fetches info about the Wolfram kernel, such as:
+
+  ```clojure
+  {:wolfram-version 14.0
+   :wolfram-kernel-name \"Wolfram Language 14.0.0 Engine\"
+   :max-license-processes 2} ; how many concurrent kernels (=> Wolframite REPLs/processes) may we run
+  ```
+  Requires [[init!]] to be called first."
+  []
+  (zipmap
+    [:wolfram-version :wolfram-kernel-name :max-license-processes]
+    (eval '[$VersionNumber
+            (SystemInformation "Kernel", "ProductKernelName")
+            (SystemInformation "Kernel", "MaxLicenseProcesses")])))
+
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
 (defn- clj-intern-autoevaled
   "Intern the given Wolfram symbol into the given `ns-sym` namespace as a function,

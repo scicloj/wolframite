@@ -1,6 +1,7 @@
-(ns wolframite.wolfram "[GENERATED - see `...wolfram-syms.write-ns/write-ns!`]\n      Vars for all Wolfram functions (and their Clojurite aliases, where those exist).\n     These can be composed into expressions and passed to `wl/eval`.\n\n     BEWARE: This is based off a particular version of Wolfram and you may need to refresh it." (:require [wolframite.impl.wolfram-syms.intern]) (:refer-clojure :only [map ns-unmap]))
+(ns wolframite.wolfram "[GENERATED - see `...wolfram-syms.write-ns/write-ns!`]\n           Vars for all Wolfram functions (and their Clojurite aliases, where those exist).\n          These can be composed into expressions and passed to `wl/eval`.\n\n          BEWARE: This is based off a particular version of Wolfram and you may need to refresh it." (:require wolframite.impl.wolfram-syms.intern clojure.walk) (:refer-clojure :only [ns-unmap map let defmacro list]))
 (do (clojure.core/ns-unmap clojure.core/*ns* (quote Byte)) (clojure.core/ns-unmap clojure.core/*ns* (quote Character)) (clojure.core/ns-unmap clojure.core/*ns* (quote Integer)) (clojure.core/ns-unmap clojure.core/*ns* (quote Number)) (clojure.core/ns-unmap clojure.core/*ns* (quote Short)) (clojure.core/ns-unmap clojure.core/*ns* (quote String)) (clojure.core/ns-unmap clojure.core/*ns* (quote Thread)))
 (def ^:dynamic *wolfram-version* 14.0)
+(def ^:dynamic *wolfram-kernel-name* "Wolfram Language 14.0.0 Engine")
 (def $Aborted "$Aborted is a special symbol that is returned as the result from a calculation that has been aborted." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote $Aborted)))
 (def $ActivationKey "$ActivationKey is a string that gives the activation key under which the Wolfram System is being run." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote $ActivationKey)))
 (def $AllowDataUpdates "$AllowDataUpdates controls whether the Wolfram System is allowed to automatically update certain types of content." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote $AllowDataUpdates)))
@@ -6343,3 +6344,11 @@
 (def += AddTo)
 (def == Equal)
 (def -= SubtractFrom)
+(defmacro fn
+  "Creates a Wolfram anonymous function with the given arguments and single expression body.
+  Example usage: `(wl/eval (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))`"
+  [args sexp]
+  ;; If there is any w/ symbol such as w/Plus, replace it just with the fn name, `Plus` -
+  ;; we need the whole body to be pure symbols and primitives only, which Wolfram will understand
+  (let [symbolic-sexp (clojure.walk/prewalk wolframite.impl.wolfram-syms.intern/try->wolf-sym sexp)]
+    `(list (quote ~'Function) (quote ~args) (quote ~symbolic-sexp))))

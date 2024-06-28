@@ -4,24 +4,61 @@
   static code)"
   (:require
     [clojure.string :as str]
+    [clojure.java.io :as io]
+    [clojure.tools.reader.edn :as edn]
     [wolframite.core :as core]
     [wolframite.impl.wolfram-syms.intern :as intern]
     [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
-    [wolframite.runtime.defaults :as defaults]))
+    [wolframite.runtime.defaults :as defaults])
+  (:import (java.io PushbackReader)))
+
+(comment
+  (-> (io/resource "wolframite/impl/wolfram_syms/write_ns/includes.clj")
+      (io/reader)
+      (PushbackReader.)
+      edn/read
+      (->> (some #(and (list? %) (= :require (first %)) (rest %)))))
+
+  ,)
+
+(defn- inclusions-reader! []
+  (io/reader (io/resource "wolframite/impl/wolfram_syms/write_ns/includes.clj")))
+
+(defn- inclusions-ns-info!
+  "Return {:require <requires>, :refer-clojure {:only <syms>}}"
+  []
+ (let [incl-ns (->> (inclusions-reader!)
+                    (PushbackReader.)
+                    edn/read
+                    (keep #(when-let [kw (and (list? %)
+                                              (keyword? (first %))
+                                              (first %))]
+                             [kw (rest %)]))
+                    (into {}))]
+   (update incl-ns :refer-clojure #(apply hash-map %))))
+
+(defn- inclusions-body-str! []
+  (->> (inclusions-reader!)
+       (line-seq)
+       (drop-while #(not (str/starts-with? % ";;--INCLUDE-START--")))
+       next
+       (str/join "\n")))
 
 (def wolfram-ns-heading
-  ['(ns wolframite.wolfram
-      "[GENERATED - see `...wolfram-syms.write-ns/write-ns!`]
-      Vars for all Wolfram functions (and their Clojurite aliases, where those exist).
-     These can be composed into expressions and passed to `wl/eval`.
+  (let [{incl-reqs :require, incl-clj-refs :refer-clojure} (inclusions-ns-info!)]
+   [(list 'ns 'wolframite.wolfram
+          "[GENERATED - see `...wolfram-syms.write-ns/write-ns!`]
+           Vars for all Wolfram functions (and their Clojurite aliases, where those exist).
+          These can be composed into expressions and passed to `wl/eval`.
 
-     BEWARE: This is based off a particular version of Wolfram and you may need to refresh it."
-      (:require [wolframite.impl.wolfram-syms.intern])
-      (:refer-clojure :only [map ns-unmap])) ; def and quote do not need to be listed
-   ;; FIXME Add aliases for +, -, *, /, etc.
-   `(do ~@(map (fn [s] `(ns-unmap *ns* (quote ~s)))
-               '[Byte Character Integer Number Short String Thread]))
-   ,])
+          BEWARE: This is based off a particular version of Wolfram and you may need to refresh it."
+          (apply list :require
+                (into '#{wolframite.impl.wolfram-syms.intern} incl-reqs))
+          (list :refer-clojure :only
+                (vec (into '#{defmacro map ns-unmap}  ; def and quote do not need to be listed
+                           (:only incl-clj-refs)))))
+    `(do ~@(map (fn [s] `(ns-unmap *ns* (quote ~s)))
+                '[Byte Character Integer Number Short String Thread]))]))
 
 (def wolfram-ns-footer
   (mapv (fn [[from to]] `(def ~from ~to)) defaults/base-aliases))
@@ -33,16 +70,18 @@
      (list 'def sym (if (string? doc) doc "") `(intern/wolfram-fn '~sym)))))
 
 (defn write-ns! []
-  (let [wolf-version (core/eval '$VersionNumber)]
-   (spit "src/wolframite/wolfram.clj"
-         (str/join "\n"
-                   (concat
-                     (map pr-str wolfram-ns-heading)
-                     ;; Add version info, similar to clojure's *clojure-version*; marked dynamic so
-                     ;; that clj doesn't complain about those *..*
-                     [(format "(def ^:dynamic *wolfram-version* %s)" wolf-version)]
-                     (map pr-str (make-defs))
-                     (map pr-str wolfram-ns-footer))))))
+  (let [{:keys [wolfram-version wolfram-kernel-name]} (core/kernel-info!)]
+    (spit "src/wolframite/wolfram.clj"
+          (str/join "\n"
+                    (concat
+                      (map pr-str wolfram-ns-heading)
+                      ;; Add version info, similar to clojure's *clojure-version*; marked dynamic so
+                      ;; that clj doesn't complain about those *..*
+                      [(format "(def ^:dynamic *wolfram-version* %s)" wolfram-version)]
+                      [(format "(def ^:dynamic *wolfram-kernel-name* \"%s\")" wolfram-kernel-name)]
+                      (map pr-str (make-defs))
+                      (map pr-str wolfram-ns-footer)
+                      [(inclusions-body-str!)])))))
 
 
 ;(defmacro make-wolf-defs []
