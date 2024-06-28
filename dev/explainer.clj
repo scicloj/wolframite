@@ -47,7 +47,7 @@
 
 (def greetings
   (wl/eval
-   '(Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output.")))) ; FIXME(jakub) w/Function or fn wouldn't work
+   (w/fn [x] (w/StringJoin "Hello, " x "! This is a Mathematica function's output."))))
 
 (greetings, "folks") ; => "Hello, folks! This is a Mathematica function's output."
 
@@ -84,7 +84,8 @@
 (h/help! (w/Take
             (w/Sort
               (w/Map
-                (w/Function ['gene] [(w/GenomeData 'gene "SequenceLength") 'gene])
+                ;(w/Function ['gene] [(w/GenomeData 'gene "SequenceLength") 'gene])
+                (w/fn [gene] [(w/GenomeData gene "SequenceLength") gene])
                 (w/GenomeData)))
             'n)
          :return-links true)

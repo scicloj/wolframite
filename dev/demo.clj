@@ -88,7 +88,7 @@
 
 (def greetings
   (wl/eval
-   '(Function [x] (StringJoin "Hello, " x "! This is a Mathematica function's output."))))
+   (w/fn [x] (w/StringJoin "Hello, " x "! This is a Mathematica function's output."))))
 
 (greetings "Stephen")
 
