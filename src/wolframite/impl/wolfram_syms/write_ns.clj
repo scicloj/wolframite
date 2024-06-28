@@ -5,7 +5,7 @@
   (:require
     [clojure.string :as str]
     [clojure.java.io :as io]
-    [clojure.tools.reader.edn :as edn]
+    [clojure.edn :as edn]
     [wolframite.core :as core]
     [wolframite.impl.wolfram-syms.intern :as intern]
     [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
