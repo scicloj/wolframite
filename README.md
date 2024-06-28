@@ -40,7 +40,7 @@ First of all, you need to initialize a connection to a Wolfram/Mathematica kerne
 ```clojure
 (wolframite.core/init!)
 ```
-This should also find and load the JLink JAR included with your installation. Watch stdout for a message like:
+This should also find and load the JLink JAR included with your installation. Watch stdout for an INFO log message (via clojure.tools.logging) like:
 
 > === Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar ===
 
@@ -118,6 +118,10 @@ user> (ch/clerk-watch! ["dev/notebook"])
 
 * Open dev/notebook/demo.clj, make a change and save.
 * Open `localhost:7777` in the browser
+
+### How does it work?
+
+You compose Wolfram expressions using the convenience functions and vars from `wolframite.wolfram`. These are then turned first into a symbolic representation of themselves and later into a tree of JLink `Expr` objects and sent to a Wolfram kernel subprocess (started by `wl/init!`) for evaluation. The result is translated back from jlink.Expr into a Clojure form. This translation allows for some additional convenience logic, such as supporting `w/*` instead of `Times`.
 
 ## Dependencies
 

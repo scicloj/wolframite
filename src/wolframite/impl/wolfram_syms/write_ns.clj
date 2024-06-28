@@ -62,7 +62,13 @@
                 '[Byte Character Integer Number Short String Thread]))]))
 
 (def wolfram-ns-footer
-  (mapv (fn [[from to]] `(def ~from ~to)) defaults/base-aliases))
+  (mapv (fn [[from to]]
+          `(def ~from
+             ~(if-let [doc (-> to meta :doc)]
+                doc
+                (str "Maps to the Wolfram function " (when (symbol? to) to)))
+             (intern/wolfram-fn '~from))) ; let w.base.convert handle these...
+        (dissoc defaults/base-aliases 'fn))) ; replaced by a macro
 
 (defn- make-defs
   ([] (make-defs (wolfram-syms/fetch-all-wolfram-symbols core/eval)))

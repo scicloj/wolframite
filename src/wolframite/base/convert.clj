@@ -78,10 +78,13 @@
     (convert (apply list 'Association (for [[key value] map] (list 'Rule key value))) opts)
     (convert (seq map) opts)))
 
-(defmethod convert :symbol [sym {:keys [aliases] :as opts}]
+(defmethod convert :symbol [sym {:keys [aliases] ::keys [args] :as opts}]
   (let [all-aliases (merge defaults/all-aliases aliases)]
-    (if-let [alias (all-aliases sym)]
-      (convert alias opts)
+    (if-let [alias-sym-or-fn (all-aliases sym)]
+      (if (defaults/experimental-fn-alias? alias-sym-or-fn)
+        (convert (alias-sym-or-fn args) opts)
+        (convert alias-sym-or-fn opts))
+      ;; Numbered args of shorthand lambdas - Clojure's `#(+ %1 %2)` => Wolfs #1 and #1 = Slot[1] and Slot[2]
       (if-let [[_ ^String n] (re-matches #"%(\d*)" (str sym))]
         (let [n (Long/valueOf (if (= "" n) "1" n))]
           (convert (list 'Slot n) opts))
@@ -98,11 +101,20 @@
                                                            coll))
                                             opts)))
 
-(defmethod convert :expr [cexpr opts]
-  (let [macro (first cexpr)
-        arg   (second cexpr)]
+(defmethod convert :expr [[head & tail :as _cexpr] opts]
+  (let [macro head
+        arg (first tail)]
     (cond (= 'clojure.core/deref macro)    (convert (cexpr-from-prefix-form arg) opts)
           (= 'clojure.core/meta macro)     (convert (cexpr-from-postfix-form arg) opts)
           (= 'var macro)                   (convert (list 'Function arg) opts)
           (= 'quote macro)                 (express/express arg opts)
-          :else                            (expr/expr-from-parts (map #(convert % opts) cexpr)))))
+          :else                            (expr/expr-from-parts
+                                             (cons (convert head
+                                                            (cond-> opts
+                                                                    (symbol? head)
+                                                                    (assoc ::args tail)))
+                                                   (map #(convert % opts) tail))))))
+
+(comment
+  (convert '(- 12 1 2) {})
+  (convert '(Plus 1 2) {}))
