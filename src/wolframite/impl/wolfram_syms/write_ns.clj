@@ -33,12 +33,16 @@
      (list 'def sym (if (string? doc) doc "") `(intern/wolfram-fn '~sym)))))
 
 (defn write-ns! []
-  (spit "src/wolframite/wolfram.clj"
-        (str/join "\n"
-                  (concat
-                    (map pr-str wolfram-ns-heading)
-                    (map pr-str (make-defs))
-                    (map pr-str wolfram-ns-footer)))))
+  (let [wolf-version (core/eval '$VersionNumber)]
+   (spit "src/wolframite/wolfram.clj"
+         (str/join "\n"
+                   (concat
+                     (map pr-str wolfram-ns-heading)
+                     ;; Add version info, similar to clojure's *clojure-version*; marked dynamic so
+                     ;; that clj doesn't complain about those *..*
+                     [(format "(def ^:dynamic *wolfram-version* %s)" wolf-version)]
+                     (map pr-str (make-defs))
+                     (map pr-str wolfram-ns-footer))))))
 
 
 ;(defmacro make-wolf-defs []
