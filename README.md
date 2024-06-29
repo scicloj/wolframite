@@ -35,7 +35,7 @@ First, if you haven't already, install the [Clojure CLI toolchain](https://cloju
 
 Next, obviously, you'll need to ensure that you have Wolfram Engine or Mathematica installed and your license (free for W. E.) registered - make sure you can run these tools on their own _before_ trying Wolframite.
 
-First of all, you need to initialize a connecting to a Wolfram/Mathematica kernel, like this:
+First of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:
 
 ```clojure
 (wolframite.core/init!)
@@ -91,6 +91,21 @@ to generate your own wolfram ns with whatever additional symbols your Wolfram/Ma
 #### Learning Wolframite
 
 Read through and play with [explainer.clj](dev%2Fexplainer.clj) and [demo.clj](dev%2Fdemo.clj), which demonstrate most of Wolframite's features and what you can do with Wolfram.
+
+#### Customizing Wolframite
+
+A big advantage of Wolframite (as opposed to its earlier incarnations) is that we can now individually tailor the user experience at the level of initialization,
+```clojure
+(wl/init! {:aliases '{** Power}})
+(wl/eval '(** 2 5)) ; => 32
+```
+,
+and function call,
+```clojure
+(wl/init!)
+(wl/eval '(** 2 5) {:aliases '{** Power}}) ; => 32
+```
+. Use it how you want to!
 
 ### Clerk Integration
 
