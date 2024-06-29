@@ -11,13 +11,13 @@
   (create-kernel-link [this kernel-link-opts])
   (terminate-kernel! [this])
   (expr
-    [this expr-coll]
+    [this]
+    [this primitive-or-exprs]
     [this type name]
     "Create a JLink Expr
 
-    * [expr-coll] ... from something JLink understands (a symbol corresponding to its things,
-    such as Rational, a Java array, or st. else) followed by other Exprs.
-
+    * [primitive-or-exprs] a primitive value (long, Long, BigDecimal/Int., String) or a sequence
+                           of 1+ jlink Exprs (which is interpreted as a fn call).
     * [type name] where type=:Expr/SYMBOL - create a Wolfram symbol")
   (->expr [this obj] "Turn the given obj into a jlink Expr via the loopback link 🤷")
   (expr? [this x])

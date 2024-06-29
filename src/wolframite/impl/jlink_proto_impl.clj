@@ -29,17 +29,18 @@
                               :cause e}))
              (throw e)))
          (catch Exception e
-           (throw (ex-info (str "Failed to start a Math/Wolfram Kernel process: "
-                                (ex-message e)
-                                " Verify the settings are correct: `" kernel-link-opts "`")
+           (throw (ex-info " Verify the settings are correct: `"
                            {:kernel-opts kernel-link-opts})))))
   (terminate-kernel! [_this]
     (.terminateKernel ^KernelLink @kernel-link-atom)
     (reset! kernel-link-atom nil))
-  (expr [_this expr-coll]
-    (Expr.
-      ^Expr (first expr-coll)
-      ^"[Lcom.wolfram.jlink.Expr;"(into-array Expr (rest expr-coll))))
+  (expr [_this primitive-or-exprs]
+    (if (sequential? primitive-or-exprs)
+      (Expr.
+        ^Expr (first primitive-or-exprs)
+        ^"[Lcom.wolfram.jlink.Expr;" (into-array Expr (rest primitive-or-exprs)))
+      ;; Here, primitive-or-exprs could be an int, a String, long[], or similar
+      (Expr. primitive-or-exprs)))
   (expr [_this type name]
     (Expr. ^int (case type
                   :Expr/SYMBOL  Expr/SYMBOL)
