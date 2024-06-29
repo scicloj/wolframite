@@ -1,18 +1,20 @@
-(ns notebook.demo
-  (:require [wolframite.core :as wl]
-            [wolframite.core :refer [eval] :as w]
-            [wolframite.base.convert :as cv]
-            [wolframite.runtime.jlink :as jlink]
-            [wolframite.lib.helpers :refer [help!]]
-            [wolframite.tools.clerk-helper :refer [view]]
-            [aerial.hanami.common :as hc]
-            [aerial.hanami.templates :as ht]
-            [nextjournal.clerk :as nb]
-            [nextjournal.beholder :as beholder]
-            [nextjournal.clerk.webserver :as webserver]
-            [nextjournal.clerk.viewer :as v]
-            [clojure.string :as str]
-            [clojure.repl :refer [doc find-doc apropos]]))
+(ns ^:deprecated notebook.demo
+  "DEPRECATED - **should** be integrated into kindly-demo ns"
+  (:require
+    [wolframite.core :as wl]
+    [wolframite.wolfram :as w]
+    [wolframite.base.convert :as cv]
+    [wolframite.runtime.jlink :as jlink]
+    [wolframite.lib.helpers :refer [help!]]
+    [wolframite.tools.clerk-helper :refer [view]]
+    [aerial.hanami.common :as hc]
+    [aerial.hanami.templates :as ht]
+    [nextjournal.clerk :as nb]
+    [nextjournal.beholder :as beholder]
+    [nextjournal.clerk.webserver :as webserver]
+    [nextjournal.clerk.viewer :as v]
+    [clojure.string :as str]
+    [clojure.repl :refer [doc find-doc apropos]]))
 
 ;; # Wolfram Language Graphics
 
@@ -20,19 +22,19 @@
 
 ;; ## Numbers
 
-(view '(BarChart (EntityValue (EntityClass "Planet" All) "Radius")))
+(view (w/BarChart (w/EntityValue (w/EntityClass "Planet" w/All) "Radius")))
 
 ;; ## Time
 
-(view '(TimelinePlot
-        [(Entity "HistoricalEvent" "WorldWar1")
-         (Entity "HistoricalEvent" "WorldWar2")
-         (Entity "HistoricalEvent" "VietnamWar")
-         (Entity "HistoricalEvent" "KoreanWarBegins")]))
+(view (w/TimelinePlot
+       [(w/Entity "HistoricalEvent" "WorldWar1")
+        (w/Entity "HistoricalEvent" "WorldWar2")
+        (w/Entity "HistoricalEvent" "VietnamWar")
+        (w/Entity "HistoricalEvent" "KoreanWarBegins")]))
 
 ;; ## Geo
 
-(view '(GeoGraphics))
+(view (w/GeoGraphics))
 
 (view '(GeoImage
         (Entity "City" ["NewYork" "NewYork" "UnitedStates"])))
@@ -93,7 +95,7 @@
 (view '(Animate (Plot (Sin (+ x a)) [x 0 10]) [a 0 5] (-> AnimationRunning true))
       :folded? true)
 
-(w/->clj "Plot[Evaluate[Table[BesselJ[n, x], {n, 4}]], {x, 0, 10},
+(wl/->clj "Plot[Evaluate[Table[BesselJ[n, x], {n, 4}]], {x, 0, 10},
                Filling -> Axis]")
 
 (view '(Plot (Evaluate (Table (BesselJ n x) [n 4]))

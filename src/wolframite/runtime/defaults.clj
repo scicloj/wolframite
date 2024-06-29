@@ -91,7 +91,7 @@
      :clojure-form true ;; FIXME: better name
      :N false})
 
-;; support some better merging with a lib
+  ;; support some better merging with a lib
   ;; top level options spec
   ;; default options
   {:flags {:convert true
@@ -99,7 +99,7 @@
    :aliases {}
    :config {:poll-interval 20}
    ;; runtime opts
-   :kernel/link nil}
+   :jlink-instance nil}
 
   (def expression '(+ -x -x -y -5 -2 (- x 10 5) (** x 2)))
 

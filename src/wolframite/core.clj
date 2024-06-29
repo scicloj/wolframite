@@ -36,20 +36,22 @@
 (ns wolframite.core
   (:refer-clojure :exclude [eval])
   (:require
-   [clojure.string :as str]
-   [clojure.walk :as walk]
-   [wolframite.base.cep :as cep]
-   [wolframite.base.convert :as convert]
-   [wolframite.base.evaluate :as evaluate]
-   [wolframite.base.express :as express]
-   [wolframite.base.parse :as parse]
-   [wolframite.impl.intern :as intern]
-   [wolframite.impl.jlink-instance :as jlink-instance]
-   [wolframite.impl.protocols :as proto]
-   [wolframite.runtime.system :as system]
-   [wolframite.runtime.jlink :as jlink]
-   ;;^ currently necessary import to auto-install jlink
-   [wolframite.runtime.defaults :as defaults]))
+    [clojure.string :as str]
+    [clojure.tools.logging :as log]
+    [clojure.walk :as walk]
+    [wolframite.base.cep :as cep]
+    [wolframite.base.convert :as convert]
+    [wolframite.base.evaluate :as evaluate]
+    [wolframite.base.express :as express]
+    [wolframite.base.parse :as parse]
+    [wolframite.impl.jlink-instance :as jlink-instance]
+    [wolframite.impl.protocols :as proto]
+    [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
+    [wolframite.runtime.system :as system]
+    [wolframite.runtime.jlink :as jlink]
+    ;;^ currently necessary import to auto-install jlink
+    [wolframite.runtime.defaults :as defaults]
+    [wolframite.wolfram :as w]))
 
 (defonce kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
 
@@ -108,6 +110,22 @@
                      form))
                  form))
 
+(declare eval)
+
+(def kernel-info
+  "A promise map holding information about the Wolfram kernel, initialized when
+  connected to the kernel for the first time. Ex.:
+
+  ```clojure
+
+  @kernel-info
+  ; => {:wolfram-version 14.0
+  ;     :wolfram-kernel-name \"Wolfram Language 14.0.0 Engine\"
+  ;     :max-license-processes 2} ; how many concurrent kernels (=> Wolframite REPLs/processes) may we run
+  ```"
+  (promise))
+
+
 (defn init!
   "Initialize Wolframite and the underlying wolfram Kernel - required once before any eval calls."
   ([] (init! defaults/default-options))
@@ -117,8 +135,21 @@
                           (init-jlink! kernel-link-atom opts))]
        (init-kernel! jlink-inst)
        (evaluator-init (merge {:jlink-instance jlink-inst}
-                              opts))))
+                              opts))
+       (let [{:keys [wolfram-version]}
+             (doto (system/kernel-info!)
+               (->> (deliver kernel-info)))]
+         (when (and (number? wolfram-version)
+                    (number? w/*wolfram-version*)
+                    (> wolfram-version w/*wolfram-version*))
+           (log/warnf "You have a newer Wolfram version %s than the %s used to generate wolframite.wolfram
+           and may want to re-create it with (wolframite.impl.wolfram-syms.write-ns/write-ns!)"
+                      wolfram-version w/*wolfram-version*)))
+      (:wolfram-version @kernel-info))
+     nil)
    nil))
+
+(comment (init!))
 
 (defn eval
   "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
@@ -180,7 +211,12 @@
      (ifn? output-fn) output-fn)))
 
 (defn load-all-symbols
-  "Loads all WL global symbols as vars with docstrings into a namespace given by symbol `ns-sym`.
+  "BEWARE: You shouldn't need to use this, as they are already loaded into wolframite.wolfram; use
+  `(wolframite.impl.wolfram-syms.write-ns/write-ns!)` if you want to refresh that file with new
+  functions in your version of Wolfram.
+
+  ### Old docstring
+  Loads all WL global symbols as vars with docstrings into a namespace given by symbol `ns-sym`.
   These vars evaluate into a symbolic form, which can be passed to [[eval]]. You gain docstrings,
   (possibly) autocompletion, and convenient inclusion of vars that you want evaluated before sending the
   form off to Wolfram, without the need for quote - unquote: `(let [x 3] (eval (Plus x 1)))`.
@@ -194,16 +230,7 @@
 
   Alternatively, load the included but likely outdated `resources/wld.wl` with a dump of the data."
   [ns-sym]
-  ;; TODO (jh) support loading symbols from a custom context - use (Names <context name>`*) to get the names -> (Information <context name>`<fn name>) -> get FullName (drop ...`), Usage (no PlaintextUsage there) from the entity
-  ;; IDEA: Provide also (load-symbols <list of symbols or a regexp>), which would load only a subset
-  (doall (->> (eval '(EntityValue (WolframLanguageData) ["Name", "PlaintextUsage"] "EntityPropertyAssociation"))
-              vals ; keys ~ `(Entity "WolframLanguageSymbol" "ImageCorrelate")`
-              (map (fn [{sym "Name", doc "PlaintextUsage"}]
-                     (intern/clj-intern
-                      (symbol sym)
-                      {:intern/ns-sym     ns-sym
-                       :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
-                                                  doc)}}))))))
+  (wolfram-syms/load-all-symbols eval ns-sym))
 
 (comment
   (->

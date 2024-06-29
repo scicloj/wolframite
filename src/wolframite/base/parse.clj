@@ -125,7 +125,7 @@
   "Return a function that invokes the Wolfram expression `expr` (typically just a symbol naming a fn),
   converting any arguments given to it from Clojure to Wolfram and does the opposite conversion on the
   result.
-  Ex.: `((parse/parse-fn 'Plus {:kernel/link @wl/kernel-link-atom}) 1 2) ; => 3`
+  Ex.: `((parse/parse-fn 'Plus {:jlink-instance (jlink-instance/get)}) 1 2) ; => 3`
 
   Beware: Nesting such fns would result in multiple calls to Wolfram, which is inefficient. Prefer wl/eval in such cases."
   [expr opts]

@@ -1,4 +1,4 @@
-(ns wolframite.impl.intern
+(ns wolframite.impl.wolfram-syms.intern
   "Interning of Wolfram symbols as Clojure vars, for convenience."
   (:import (clojure.lang IMeta)))
 
@@ -14,7 +14,15 @@
   (when (instance? IMeta maybe-fn)
     (-> maybe-fn meta ::wolfram-sym)))
 
-(defn- wolfram-fn
+(defn try->wolf-sym
+  "If `x` resolve to a Wolfram fn symbol, return the fn name.
+  Otherwise, return `x` as-is."
+  [x]
+  (or
+    (some-> (when (symbol? x) x) resolve deref interned-var-val->symbol)
+    x))
+
+(defn wolfram-fn
   "Turn the wolfram symbol into a metadata-tagged function, which returns a list with
   the symbol at head, and any arguments as-is. The metadata contains the symbol.
   Used for exposing Wolfram symbols to Clojure code."

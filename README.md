@@ -17,8 +17,9 @@ By linking the two:
 
 * Wolframite lets you **write and evaluate Wolfram/Mathematica code in Clojure** with full **syntactic integration**. Now Clojure programs can take advantage of Wolfram's enormous range of numerical and symbolic mathematics algorithms and fast matrix algebra routines.
 * Wolframite provides the **seamless and transparent translation of native data structures** between Clojure and Wolfram. This includes high-precision numbers, matricies, N-dimensional arrays, and evaluated and unevaluated Mathematica expressions and formulae.
-* Wolframite lets you **call, pass, and store Wolfram functions just as if they were first-class functions in Clojure.** This is high-level functional programming at its finest. You can write a function in whichever language is more suited to the task and never think again about which platform is evaluating calls to that function.
-* Wolframite facilitates **the "Clojurization" of Wolfram's existing parallel-computing capabilities.** Wolfram is not designed for threads or concurrency. It has excellent support for parallel computation, but parallel evaluations are initiated from a single-threaded master kernel which blocks until all parallel evaluations return. By contrast, Wolframite includes a concurrency framework that lets multiple Clojure threads execute Wolfram expressions without blocking others. Now it is easy to run a simulation in Clojure with 1,000 independent threads asynchronously evaluating processor-intensive expressions in Wolfram. The computations will be farmed out adaptively and transparently to however many Wolfram kernels are available on any number of processor cores, either locally or across a cluster, grid, or network.
+* Wolframite lets you **write Wolfram as if it was Clojure** by providing Clojure functions and vars for all Wolfram symbols, including docstrings and autocompletion in your favorite IDE
+* [Tentative] Wolframite facilitates **the "Clojurization" of Wolfram's existing parallel-computing capabilities.** Wolfram is not designed for threads or concurrency. It has excellent support for parallel computation, but parallel evaluations are initiated from a single-threaded master kernel which blocks until all parallel evaluations return. By contrast, Wolframite includes a concurrency framework that lets multiple Clojure threads execute Wolfram expressions without blocking others. Now it is easy to run a simulation in Clojure with 1,000 independent threads asynchronously evaluating processor-intensive expressions in Wolfram. The computations will be farmed out adaptively and transparently to however many Wolfram kernels are available on any number of processor cores, either locally or across a cluster, grid, or network.
+  * Notice that you cannot run more Wolfram kernels than your license allows (see `wolframite.runtime.system/kernel-info!`) 
 
 Wolframite is open-source and targeted at applications in scientific computing, computational economics, finance, and other fields that rely on the combination of parallelized simulation and high-performance number-crunching. Wolframite gives the programmer access to Clojure's most cutting-edge features--easy concurrency and multithreading, immutable persistent data structures, and software transactional memory---alongside Wolfram's easy-to-use algorithms for numerics, symbolic mathematics, optimization, statistics, visualization, and image-processing.
 
@@ -32,9 +33,9 @@ First, if you haven't already, install the [Clojure CLI toolchain](https://cloju
 
 #### Mathematica or Wolfram Engine
 
-Next, obviously, you'll need to ensure that you have Wolfram Engine or Mathematica installed and your license (free for W. E.) registered - make sure you can run these tools on their own before trying Wolframite.
+Next, obviously, you'll need to ensure that you have Wolfram Engine or Mathematica installed and your license (free for W. E.) registered - make sure you can run these tools on their own _before_ trying Wolframite.
 
-First of all, you need to initialize a connecting to a Wolfram/Mathematica kernel, like this:
+First of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:
 
 ```clojure
 (wolframite.core/init!)
@@ -54,37 +55,57 @@ export WOLFRAM_INSTALL_PATH=/opt/mathematica/13.1
 Start a REPL with Wolframite on the classpath, then initialize it:
 
 ```clojure
-(require '[wolframite.core :as wl])
+(require '[wolframite.core :as wl] 
+         '[wolframite.wolfram :as w]) ; Wolfram symbols as Clojure vars / fns
 ;; Initialize
 (wl/init!) ; => nil
-;; Make all Wolfram functions available as symbols in the current ns (takes some seconds!):
-(wl/load-all-symbols (symbol (ns-name *ns*)))
 ;; Use it:
-(wl/eval '(Dot [1 2 3] [4 5 6]))
+(wl/eval (w/Dot [1 2 3] [4 5 6]))
 ;=> 32
 ```
 
 More examples
 
 ```clojure
-(wl/eval '(D (Power 'x 2) 'x))
+(wl/eval (w/D (w/Power 'x 2) 'x))
 ;=> (* 2 x)
-(wl/eval '(ChemicalData "Ethanol" "MolarMass"))
+(wl/eval (w/ChemicalData "Ethanol" "MolarMass"))
 ;=> (Quantity 46.069M (* "Grams" (Power "Moles" -1)))
 
 ;; Accessing WlframAlpha
-(wl/eval '(WolframAlpha "How many licks does it take to get to the center of a Tootsie Pop?"))
+(wl/eval (w/WolframAlpha "How many licks does it take to get to the center of a Tootsie Pop?")) ; BEWARE: must be online
 ;=> [(-> [["Input" 1] "Plaintext"] "How many licks does it take to get to the Tootsie Roll center of a Tootsie Pop?") (-> [["Result" 1] "Plaintext"] "3481\n(according to student researchers at the University of Cambridge)")]
-; FIXME Try this out; when offline, we get just []
 
-(wl/eval '(N Pi 20))
-(N 'Pi 20)
+(wl/eval (w/N w/Pi 20))
 ;=> 3.141592653589793238462643383279502884197169399375105820285M
+
+(wl/eval (w/Map (w/fn [x] (w/Sqrt x)) [4 16]))
+;=> [2 4]
 ```
+
+TIP: Cursive - teach it to resolve `w/fn` as `clojure.core/fn`.
+
+NOTE: The `wolframite.wolfram` (`w`) ns has vars for all Wolfram symbols at the time of the last release. Check `w/*wolfram-kernel-name*` for kernel type/version and run `(wolframite.impl.wolfram-syms.write-ns/write-ns!)`
+to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematice has.
 
 #### Learning Wolframite
 
 Read through and play with [explainer.clj](dev%2Fexplainer.clj) and [demo.clj](dev%2Fdemo.clj), which demonstrate most of Wolframite's features and what you can do with Wolfram.
+
+#### Customizing Wolframite
+
+A big advantage of Wolframite (as opposed to its earlier incarnations) is that we can now individually tailor the user experience at the level of initialization,
+```clojure
+(wl/init! {:aliases '{** Power}})
+(wl/eval '(** 2 5)) ; => 32
+```
+,
+and function call,
+```clojure
+(wl/init!)
+(wl/eval '(** 2 5) {:aliases '{** Power}}) ; => 32
+```
+. Use it how you want to!
 
 ### Clerk Integration
 
@@ -100,7 +121,7 @@ user> (ch/clerk-watch! ["dev/notebook"])
 
 ## Dependencies
 
-Wolframite requires Wolfram's Java integration library JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the `WolframKernel` / `MathKernel` executable is, in order to be able to start the external evaluation kernel process. Normally, `wolframite.jlink` should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.
+Wolframite requires Wolfram's Java integration library JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the `WolframKernel` / `MathKernel` executable is, in order to be able to start the external evaluation kernel process. Normally, `wl/init!` should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.
 
 ## Development
 

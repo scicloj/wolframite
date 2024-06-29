@@ -2,6 +2,7 @@
   "Convert a Clojure expression into a Wolfram JLink expression"
   (:require [wolframite.impl.jlink-instance :as jlink-instance]
             [wolframite.impl.protocols :as proto]
+            [wolframite.impl.wolfram-syms.intern :as intern]
             [wolframite.lib.options :as options]
             [wolframite.base.express :as express]
             [wolframite.base.expr :as expr]
@@ -21,6 +22,7 @@
         (map? obj)           :hash-map
         (symbol? obj)        :symbol
         (nil? obj)           :null
+        (fn? obj)           :fn-obj
         :else                nil))
 
 (defmulti convert (fn [obj _]
@@ -52,6 +54,18 @@
 
 (defmethod convert nil [obj _]
   (proto/->expr (jlink-instance/get) obj))
+
+(defmethod convert :fn-obj [obj opts]
+  ;; This normally means that the expression contained a reference to a var in wolframite.wolfram,
+  ;; which has not been turned into a symbol for some reason, typically b/c it was not a fn call
+  ;; (those do 'symbolify' themselves) => we check and do this here
+  (if-let [fn-name (intern/interned-var-val->symbol obj)]
+    (convert fn-name opts)
+    (throw (IllegalArgumentException.
+             (str "An expression contains a function object, which is not intern/wolfram-fn => "
+                  "don't know how to turn it into a symbol that Wolfram could interpret: "
+                  obj)))))
+
 
 (defmethod convert :null [_ opts]
   (convert 'Null opts))
