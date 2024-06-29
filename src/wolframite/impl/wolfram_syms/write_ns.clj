@@ -9,7 +9,8 @@
     [wolframite.core :as core]
     [wolframite.impl.wolfram-syms.intern :as intern]
     [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
-    [wolframite.runtime.defaults :as defaults])
+    [wolframite.runtime.defaults :as defaults]
+    [wolframite.runtime.system :as system])
   (:import (java.io FileNotFoundException PushbackReader)))
 
 (comment
@@ -77,7 +78,7 @@
   Requires that you've run `wl/init!` first."
   ([] (write-ns! "src/wolframite/wolfram.clj"))
   ([path]
-   (let [{:keys [wolfram-version wolfram-kernel-name]} (core/kernel-info!)]
+   (let [{:keys [wolfram-version wolfram-kernel-name]} (system/kernel-info!)]
      (try
        (spit path
              (str/join "\n"

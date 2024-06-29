@@ -169,6 +169,22 @@
      (throw (ex-info (str "Could not find a Wolfram executable using the given base path. Are you sure that " base-path " exists?")
                      {:paths base-path})))))
 
+(defn kernel-info!
+  "Fetches info about the Wolfram kernel, such as:
+
+  ```clojure
+  {:wolfram-version 14.0
+   :wolfram-kernel-name \"Wolfram Language 14.0.0 Engine\"
+   :max-license-processes 2} ; how many concurrent kernels (=> Wolframite REPLs/processes) may we run
+  ```
+  Requires [[init!]] to be called first."
+  []
+  (zipmap
+    [:wolfram-version :wolfram-kernel-name :max-license-processes]
+    (eval '[$VersionNumber
+            (SystemInformation "Kernel", "ProductKernelName")
+            (SystemInformation "Kernel", "MaxLicenseProcesses")])))
+
 (comment (defn common-path
            "
   The longest parental directory path that is common to both input paths.
