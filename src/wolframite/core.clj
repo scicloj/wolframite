@@ -125,6 +125,22 @@
   ```"
   (promise))
 
+(defn kernel-info!
+  "Fetches info about the Wolfram kernel, such as:
+
+  ```clojure
+  {:wolfram-version 14.0
+   :wolfram-kernel-name \"Wolfram Language 14.0.0 Engine\"
+   :max-license-processes 2} ; how many concurrent kernels (=> Wolframite REPLs/processes) may we run
+  ```
+  Requires [[init!]] to be called first."
+  []
+  (zipmap
+    [:wolfram-version :wolfram-kernel-name :max-license-processes]
+    (eval '[$VersionNumber
+            (SystemInformation "Kernel", "ProductKernelName")
+            (SystemInformation "Kernel", "MaxLicenseProcesses")])))
+
 
 (defn init!
   "Initialize Wolframite and the underlying wolfram Kernel - required once before any eval calls."
@@ -137,7 +153,7 @@
        (evaluator-init (merge {:jlink-instance jlink-inst}
                               opts))
        (let [{:keys [wolfram-version]}
-             (doto (system/kernel-info!)
+             (doto (kernel-info!)
                (->> (deliver kernel-info)))]
          (when (and (number? wolfram-version)
                     (number? w/*wolfram-version*)
