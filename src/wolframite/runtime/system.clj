@@ -179,11 +179,11 @@
   ```
   Requires [[init!]] to be called first."
   []
-  (zipmap
-    [:wolfram-version :wolfram-kernel-name :max-license-processes]
-    (eval '[$VersionNumber
-            (SystemInformation "Kernel", "ProductKernelName")
-            (SystemInformation "Kernel", "MaxLicenseProcesses")])))
+  #_(zipmap
+      [:wolfram-version :wolfram-kernel-name :max-license-processes]
+      (eval '[$VersionNumber
+              (SystemInformation "Kernel", "ProductKernelName")
+              (SystemInformation "Kernel", "MaxLicenseProcesses")])))
 
 (comment (defn common-path
            "

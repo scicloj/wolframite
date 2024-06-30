@@ -125,9 +125,19 @@
   ```"
   (promise))
 
-
+(comment (init!))
 (defn init!
-  "Initialize Wolframite and the underlying wolfram Kernel - required once before any eval calls."
+  "Initialize Wolframite and the underlying wolfram Kernel - required once before any eval calls.
+
+  - `opts` - a map that is passed to `eval` and other functions used in the convert-evaluate-parse
+             cycle, which may contain, among others:
+     - `:aliases` - a map from a custom symbol to a symbol Wolfram understands, such as the built-in
+        `{'* 'Times, ...}` - added to the default aliases from `wolframite.runtime.defaults/all-aliases`
+        and used when converting symbols at _function position_ to Wolfram expressions.
+        You may add your own ones, to be able to use them in your Wolfram expressions and get those
+        translated into Wolfram ones. See Wolframite docs.
+     -  `:flags [kwd ...]` - various on/off toggles for how Wolframite processes inputs/results,
+        passed e.g. to the `custom-parse` multimethod."
   ([] (init! defaults/default-options))
   ([opts]
    (when-not (some-> (jlink-instance/get) (proto/kernel-link?)) ; need both, b/c some tests only init jlink
@@ -154,7 +164,8 @@
 (defn eval
   "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
 
-    The `opts` map may contain `:flags [kwd ...]` and is passed e.g. to the `custom-parse` multimethod.
+   Args:
+   - `opts` - same as those for [[init!]]
 
     Example:
     ```clojure
