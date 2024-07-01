@@ -138,6 +138,14 @@ create a `./symlink-jlink.jar` symlink and then run the tests:
 clojure -X:test-run
 ```
 
+### Deployment
+
+Build the jar with `clojure -T:build jar` then deploy with
+`env CLOJARS_USERNAME=<tbd> CLOJARS_PASSWORD=<clojars-token> clojure -T:build deploy`
+
+Note: You need to log in to Clojars and generate a deployment token. You also need to be added to
+the SciCloj group there by an admin.
+
 ## Authors
 
 The original Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the [Community](http://clojuratica.weebly.com/community.html) page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.
