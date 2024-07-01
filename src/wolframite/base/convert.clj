@@ -12,18 +12,29 @@
 
 ;; * defmulti and dispatch
 
+(defn- primitive?
+  "Is `x` a 'primitive' value that can be directly turned into an Expr?"
+  [x]
+  (or (number? x)
+      (string? x)))
+
+(defn- supported-primitive-array? [xs]
+  ;; See jlink.Expr constructor for the types actually supported
+  (some-> xs .getClass .componentType (#{Byte/TYPE Double/TYPE Integer/TYPE Long/TYPE Short/TYPE})))
+
 (defn- dispatch [obj]
   (cond (and (list? obj)
-             (empty? obj))   :null
-        (seq? obj)           :expr
+             (empty? obj)) :null
+        (seq? obj) :expr
         (or (vector? obj)
-            (list? obj))     :list
-        (ratio? obj)         :rational
-        (map? obj)           :hash-map
-        (symbol? obj)        :symbol
-        (nil? obj)           :null
-        (fn? obj)           :fn-obj
-        :else                nil))
+            (list? obj)) :list
+        (ratio? obj) :rational
+        (primitive? obj) :primitive
+        (map? obj) :hash-map
+        (symbol? obj) :symbol
+        (nil? obj) :null
+        (fn? obj) :fn-obj
+        :else nil))
 
 (defmulti convert (fn [obj _]
                     (dispatch obj)))
@@ -53,7 +64,17 @@
 ;; * Method impls
 
 (defmethod convert nil [obj _]
-  (proto/->expr (jlink-instance/get) obj))
+  ;; A  fall-back implementation, for anything we do not handle directly ourselves elsewhere here.
+  ;; Also triggered for any other unknown/unhandled type, e.g. a :kwd
+  (cond
+    (proto/expr? (jlink-instance/get) obj)
+    obj ; already a jlink Expr
+
+    (supported-primitive-array? obj)
+    (proto/expr (jlink-instance/get) obj)
+
+    :else
+    (proto/->expr (jlink-instance/get) obj)))
 
 (defmethod convert :fn-obj [obj opts]
   ;; This normally means that the expression contained a reference to a var in wolframite.wolfram,
@@ -72,6 +93,9 @@
 
 (defmethod convert :rational [n opts]
   (convert (list 'Rational (.numerator n) (.denominator n)) opts))
+
+(defmethod convert :primitive [primitive _opts]
+  (proto/expr (jlink-instance/get) primitive))
 
 (defmethod convert :hash-map [map {:keys [flags] :as opts}]
   (if (options/flag?' flags :hash-maps)
@@ -94,12 +118,18 @@
             (throw (Exception. (str "Symbols passed to Mathematica must be alphanumeric (apart from forward slashes and dollar signs). Passed: " s)))
             (proto/expr (jlink-instance/get) :Expr/SYMBOL s)))))))
 
+(defn- convert-non-simple-list [elms opts]
+  (let [converted-parts (map #(cond-> % (dispatch %) (convert opts)) elms)]
+    (if (every? (partial proto/expr? (jlink-instance/get)) converted-parts)
+      (proto/expr (jlink-instance/get)
+                  (cons (convert 'List opts)
+                        converted-parts))
+      (convert (to-array converted-parts) opts))))
+
 (defmethod convert :list [coll opts]
   (cond (simple-matrix? coll opts) (convert (to-array-2d coll) opts)
         (simple-vector? coll opts) (convert (to-array coll) opts)
-        :else                      (convert (to-array (map #(if dispatch (convert % opts) %)
-                                                           coll))
-                                            opts)))
+        :else (convert-non-simple-list coll opts)))
 
 (defmethod convert :expr [[head & tail :as _cexpr] opts]
   (let [macro head
