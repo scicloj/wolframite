@@ -28,6 +28,11 @@ jobs:
           distribution: 'zulu'
           java-version: '11'
 
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: zip curl
+          version: 1.4.2
+
       - name: Install clojure tools
         uses: DeLaGuardo/setup-clojure@12.5
         with:
