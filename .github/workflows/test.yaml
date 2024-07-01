@@ -64,10 +64,10 @@ jobs:
           # CreateLicenseEntitlement[<| "StandardKernelLimit" -> 1, "LicenseExpiration" -> Quantity[10, "Minutes"], "EntitlementExpiration" -> Quantity[1, "Years"]|>]
           # and execute w/ Shift-Enter
           WOLFRAMSCRIPT_ENTITLEMENTID: ${{ secrets.WOLFRAM_ONDEMAND_LICENSE_ENTITLEMENT_JAKUB }}
-        #run: "clojure -X:test-run"
         run: |
-          pwd
-          wolframscript -c 'SystemInformation["Kernel","InstallationDirectory"]'
+          #wolframscript -c 'SystemInformation["Kernel","InstallationDirectory"]'
+          ln -s /usr/local/Wolfram/WolframEngine/13.3/SystemFiles/Links/JLink/JLink.jar ./symlink-jlink.jar
+          clojure -X:test-run
 
       - name: Get clj-kondo version
         run: clj-kondo --lint
