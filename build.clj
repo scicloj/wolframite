@@ -23,7 +23,13 @@
                 :lib lib
                 :version version
                 :basis basis
-                :src-dirs ["src"]})
+                :src-dirs ["src"]
+                :pom-data
+                [[:licenses
+                  [:license
+                   [:name "Eclipse Public License 2.0"]
+                   [:url "https://opensource.org/license/epl-2-0/"]]
+                  [:organization "SciCloj"]]]})
   (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
   (b/jar {:class-dir class-dir
