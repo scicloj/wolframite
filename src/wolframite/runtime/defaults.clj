@@ -48,7 +48,11 @@
    '+=   'AddTo
    '-=   'SubtractFrom
    '+    'Plus
-   '-    'Subtract  ;; TODO: deal with Subtract[x] i.e. single argument; Minus[x] works
+   '-    ^{::experimental-fn true, :doc "Maps to Wolfram Minus/Subtract"}
+         (fn [args] (case (count args)
+                      1 'Minus
+                      2 'Subtract
+                      (throw (IllegalArgumentException. "Can't handle more than 2 arguments"))))
    '*    'Times
    '.    'Dot
    '/    'Divide
@@ -57,6 +61,9 @@
    '||   'Or
    '!    'Not
    'fn   'Function})
+
+(defn experimental-fn-alias? "EXPERIMENTAL - DO NOT USE!" [alias]
+  (-> alias meta ::experimental-fn))
 
 (def clojure-scope-aliases
   {#_#_'Function 'ClojurianScopes/Function

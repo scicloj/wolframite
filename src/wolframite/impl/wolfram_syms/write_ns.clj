@@ -9,8 +9,7 @@
     [wolframite.core :as core]
     [wolframite.impl.wolfram-syms.intern :as intern]
     [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
-    [wolframite.runtime.defaults :as defaults]
-    [wolframite.runtime.system :as system])
+    [wolframite.runtime.defaults :as defaults])
   (:import (java.io FileNotFoundException PushbackReader)))
 
 (comment
@@ -62,9 +61,15 @@
                 '[Byte Character Integer Number Short String Thread]))]))
 
 (defn- aliases->defs [aliases]
-  (mapv (fn [[from to]] `(def ~from ~to)) aliases))
+  (mapv (fn [[from to]]
+          `(def ~from
+             ~(if-let [doc (-> to meta :doc)]
+                doc
+                (str "Maps to the Wolfram function " (when (symbol? to) to)))
+             (intern/wolfram-fn '~from))) ; let w.base.convert handle these...
+        aliases))
 
-(def wolfram-ns-footer (aliases->defs defaults/base-aliases))
+(def wolfram-ns-footer (aliases->defs (dissoc defaults/base-aliases 'fn)))  ; fn replaced by a macro
 
 (defn- make-defs
   ([] (make-defs (wolfram-syms/fetch-all-wolfram-symbols core/eval)))
@@ -85,7 +90,7 @@
   ([] (write-ns! "src/wolframite/wolfram.clj"))
   ([path] (write-ns! path nil))
   ([path {:keys [aliases] :as _opts}]
-   (let [{:keys [wolfram-version wolfram-kernel-name]} (system/kernel-info!)]
+   (let [{:keys [wolfram-version wolfram-kernel-name]} (core/kernel-info!)]
      (try
        (spit path
              (str/join "\n"
