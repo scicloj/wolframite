@@ -24,10 +24,11 @@
                (wl/eval (w/- 10 8))
                (wl/eval (w/Subtract 10 8)))
             "- becomes Subtract")
-        ;(is (= -1
-        ;       (wl/eval (w/- 1))
-        ;       (wl/eval (w/Minus 1)))
-        ;    "(- num) Minus[num]") ; FIXME #29
+        (is (= -1
+               (wl/eval '(- 1))
+               (wl/eval (w/- 1))
+               (wl/eval (w/Minus 1)))
+            "(- num) becomes Minus[num] (notice that Subtract requires 2 args")
         (is (= 6
                (wl/eval (w/* 2 3))
                (wl/eval (w/Times 2 3)))
