@@ -29,7 +29,9 @@
                               :cause e}))
              (throw e)))
          (catch Exception e
-           (throw (ex-info " Verify the settings are correct: `"
+           (throw (ex-info (str "Failed to start a Math/Wolfram Kernel process: "
+                                (ex-message e)
+                                " Verify the settings are correct: `" kernel-link-opts "`")
                            {:kernel-opts kernel-link-opts})))))
   (terminate-kernel! [_this]
     (.terminateKernel ^KernelLink @kernel-link-atom)
