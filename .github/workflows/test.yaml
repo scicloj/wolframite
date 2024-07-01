@@ -31,7 +31,7 @@ jobs:
       - name: Install build tools
         run: |
           apt-get -y update
-          apt-get -y install curl zip
+          apt-get -y install curl git zip
 
       - name: Install clojure tools
         uses: DeLaGuardo/setup-clojure@12.5
