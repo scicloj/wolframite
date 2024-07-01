@@ -60,14 +60,16 @@
     `(do ~@(map (fn [s] `(ns-unmap *ns* (quote ~s)))
                 '[Byte Character Integer Number Short String Thread]))]))
 
-(def wolfram-ns-footer
+(defn- aliases->defs [aliases]
   (mapv (fn [[from to]]
           `(def ~from
              ~(if-let [doc (-> to meta :doc)]
                 doc
                 (str "Maps to the Wolfram function " (when (symbol? to) to)))
              (intern/wolfram-fn '~from))) ; let w.base.convert handle these...
-        (dissoc defaults/base-aliases 'fn))) ; replaced by a macro
+        aliases))
+
+(def wolfram-ns-footer (aliases->defs (dissoc defaults/base-aliases 'fn)))  ; fn replaced by a macro
 
 (defn- make-defs
   ([] (make-defs (wolfram-syms/fetch-all-wolfram-symbols core/eval)))
@@ -79,10 +81,15 @@
   "Load symbols from the running Wolfram kernel and write a namespace file with vars for all of them.
   Args:
   - `path` (default: './src/wolframite/wolfram.clj') - where to write the code
+  - `opts` is a map that may contain:
+    - `:aliases` - see `wl/init!` for details; a var will be made for each alias, just as we do for `*`,
+      so that you can uses it just as you do with `(w/* 2 3)`. Beware: You still also need to pass your
+      custom aliases to init! or eval
 
   Requires that you've run `wl/init!` first."
   ([] (write-ns! "src/wolframite/wolfram.clj"))
-  ([path]
+  ([path] (write-ns! path nil))
+  ([path {:keys [aliases] :as _opts}]
    (let [{:keys [wolfram-version wolfram-kernel-name]} (core/kernel-info!)]
      (try
        (spit path
@@ -95,7 +102,8 @@
                          [(format "(def ^:dynamic *wolfram-kernel-name* \"%s\")" wolfram-kernel-name)]
                          (map pr-str (make-defs))
                          (map pr-str wolfram-ns-footer)
-                         [(inclusions-body-str!)])))
+                         [(inclusions-body-str!)]
+                         (some->> aliases aliases->defs (map pr-str)))))
        (catch FileNotFoundException e
          (throw (ex-info (format "Could not write to %s - does the parent dir exist?"
                                  path)
@@ -111,4 +119,8 @@
 
   (load-file "src/wolframite/wolfram.clj")
   (do (time (write-ns!))
-      (load-file "src/wolframite/wolfram.clj")))
+      (load-file "src/wolframite/wolfram.clj"))
+
+  (write-ns!
+    "src/wolframite/wolfram.clj"
+    {:aliases '{I Integrate}}))
