@@ -64,9 +64,10 @@ jobs:
           # CreateLicenseEntitlement[<| "StandardKernelLimit" -> 1, "LicenseExpiration" -> Quantity[10, "Minutes"], "EntitlementExpiration" -> Quantity[1, "Years"]|>]
           # and execute w/ Shift-Enter
           WOLFRAMSCRIPT_ENTITLEMENTID: ${{ secrets.WOLFRAM_ONDEMAND_LICENSE_ENTITLEMENT_JAKUB }}
-        run: "clojure -X:test-run"
-#        run: |
-#          wolframscript -script ./compile.wls
+        #run: "clojure -X:test-run"
+        run: |
+          pwd
+          wolframscript -c 'SystemInformation["Kernel","InstallationDirectory"]'
 
       - name: Get clj-kondo version
         run: clj-kondo --lint
