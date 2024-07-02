@@ -86,7 +86,7 @@ More examples
 TIP: Cursive - teach it to resolve `w/fn` as `clojure.core/fn`.
 
 NOTE: The `wolframite.wolfram` (`w`) ns has vars for all Wolfram symbols at the time of the last release. Check `w/*wolfram-kernel-name*` for kernel type/version and run `(wolframite.impl.wolfram-syms.write-ns/write-ns!)`
-to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematica has.
+to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematice has, and/or with custom "aliases". 
 
 #### Learning Wolframite
 
@@ -106,6 +106,11 @@ and function call,
 (wl/eval '(** 2 5) {:aliases '{** Power}}) ; => 32
 ```
 . Use it how you want to!
+
+TIP: You can also get convenience vars for your aliases in `wolframite.wolfram` by running
+something like
+`(wolframite.impl.wolfram-syms.write-ns/write-ns! <path> {:aliases '{** Power}})`. After you load
+the file, you'll be able to use `(wl/eval (w/** 2 5) {:aliases '{** Power}})`.
 
 ### Clerk Integration
 
