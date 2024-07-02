@@ -162,7 +162,7 @@ The project is now being maintained as part of the [SciCloj](https://github.com/
 
 ## License
 
-Distributed under the Eclipse Public License either version 1.0 or (at
+Distributed under the Eclipse Public License either version 2.0 or (at
 your option) any later version.
 
 ## Legal
