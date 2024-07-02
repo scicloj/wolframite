@@ -25,11 +25,17 @@
                 :basis basis
                 :src-dirs ["src"]
                 :pom-data
-                [[:licenses
+                [[:description "An interface between Clojure and Wolfram Language (the language of Mathematica)"]
+                 [:url "https://github.com/scicloj/wolframite"]
+                 [:licenses
                   [:license
                    [:name "Eclipse Public License 2.0"]
-                   [:url "https://opensource.org/license/epl-2-0/"]]
-                  [:organization "SciCloj"]]]})
+                   [:url "https://opensource.org/license/epl-2-0/"]]]
+                 [:scm
+                  [:url "https://github.com/scicloj/wolframite"]
+                  [:connection "scm:git:https://github.com/scicloj/wolframite.git"]
+                  [:developerConnection "scm:git:ssh:git@github.com:scicloj/wolframite.git"]
+                  [:tag (str "v" version)]]]})
   (b/copy-dir {:src-dirs ["src" "resources"]
                :target-dir class-dir})
   (b/jar {:class-dir class-dir
