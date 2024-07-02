@@ -81,8 +81,8 @@
   - `path` (e.g. './src/wolframite/wolfram.clj') - where to write the code
   - `opts` is a map that may contain:
     - `:aliases` - see `wl/init!` for details; a var will be made for each alias, just as we do for `*`,
-      so that you can uses it just as you do with `(w/* 2 3)`. Beware: You still also need to pass your
-      custom aliases to init! or eval
+      so that you can use it just as you do with `(w/* 2 3)`. Beware: You will still also need to
+      pass your custom aliases to init! or eval.
 
   Requires that you've run `wl/init!` first."
   ([path] (write-ns! path nil))
