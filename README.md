@@ -86,7 +86,7 @@ More examples
 TIP: Cursive - teach it to resolve `w/fn` as `clojure.core/fn`.
 
 NOTE: The `wolframite.wolfram` (`w`) ns has vars for all Wolfram symbols at the time of the last release. Check `w/*wolfram-kernel-name*` for kernel type/version and run `(wolframite.impl.wolfram-syms.write-ns/write-ns!)`
-to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematice has.
+to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematica has.
 
 #### Learning Wolframite
 
