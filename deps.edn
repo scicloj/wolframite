@@ -4,7 +4,9 @@
         org.scicloj/kindly {:mvn/version "4-beta2"}
         babashka/fs {:mvn/version "0.5.20"}}
 
- :aliases {:dev {:extra-paths ["dev" "test"]
+ :aliases {:neil {:project {:name org.scicloj/wolframite
+                            :version "1.0.0-SNAPSHOT"}}
+           :dev {:extra-paths ["dev" "test"]
                  :jvm-opts ["-Djdk.attach.allowAttachSelf"]
                  :extra-deps {com.clojure-goes-fast/clj-memory-meter {:mvn/version "0.1.3"}
                               cider/orchard {:mvn/version "0.7.3"}
@@ -18,8 +20,14 @@
                               org.slf4j/slf4j-simple {:mvn/version "2.0.9"}}}
            :test-run ; run with clj -X:test-run
            {:extra-paths ["test"]
-            :extra-deps  {wolfram/jlink {:local/root "./symlink-jlink.jar"} ; set it for your system
-                          io.github.cognitect-labs/test-runner
-                          {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
-            :main-opts   ["--main" "cognitect.test-runner"]
-            :exec-fn cognitect.test-runner.api/test}}}
+            :extra-deps {wolfram/jlink {:local/root "./symlink-jlink.jar"} ; set it for your system
+                         io.github.cognitect-labs/test-runner
+                         {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
+            :main-opts ["--main" "cognitect.test-runner"]
+            :exec-fn cognitect.test-runner.api/test}
+
+           :build ;; added by neil; 1) build with `clojure -T:build jar` then deploy with
+           ;; `env CLOJARS_USERNAME=<tbd> CLOJARS_PASSWORD=<clojars-token>  clojure -T:build deploy`
+           {:deps {io.github.clojure/tools.build {:git/tag "v0.10.4" :git/sha "31388ff"}
+                   slipset/deps-deploy {:mvn/version "0.2.2"}}
+            :ns-default build}}}

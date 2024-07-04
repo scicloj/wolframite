@@ -1,5 +1,7 @@
 # Wolframite
 
+[![Clojars Project](https://img.shields.io/clojars/v/org.scicloj/wolframite.svg)](https://clojars.org/org.scicloj/wolframite)
+
 An interface between Clojure and the Wolfram Language (Supports [Mathematica](https://www.wolfram.com/mathematica/) and [Wolfram Engine](https://www.wolfram.com/engine/) ).
 
 ## Status
@@ -142,6 +144,14 @@ create a `./symlink-jlink.jar` symlink and then run the tests:
 ```shell
 clojure -X:test-run
 ```
+
+### Deployment
+
+Build the jar with `clojure -T:build jar` then deploy with
+`env CLOJARS_USERNAME=<tbd> CLOJARS_PASSWORD=<clojars-token> clojure -T:build deploy`
+
+Note: You need to log in to Clojars and generate a deployment token. You also need to be added to
+the SciCloj group there by an admin.
 
 ## Authors
 
