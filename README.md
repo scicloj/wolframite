@@ -1,5 +1,7 @@
 # Wolframite
 
+[![Clojars Project](https://img.shields.io/clojars/v/org.scicloj/wolframite.svg)](https://clojars.org/org.scicloj/wolframite)
+
 An interface between Clojure and the Wolfram Language (Supports [Mathematica](https://www.wolfram.com/mathematica/) and [Wolfram Engine](https://www.wolfram.com/engine/) ).
 
 ## Status
@@ -86,7 +88,7 @@ More examples
 TIP: Cursive - teach it to resolve `w/fn` as `clojure.core/fn`.
 
 NOTE: The `wolframite.wolfram` (`w`) ns has vars for all Wolfram symbols at the time of the last release. Check `w/*wolfram-kernel-name*` for kernel type/version and run `(wolframite.impl.wolfram-syms.write-ns/write-ns!)`
-to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematice has.
+to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematice has, and/or with custom "aliases". 
 
 #### Learning Wolframite
 
@@ -106,6 +108,11 @@ and function call,
 (wl/eval '(** 2 5) {:aliases '{** Power}}) ; => 32
 ```
 . Use it how you want to!
+
+TIP: You can also get convenience vars for your aliases in `wolframite.wolfram` by running
+something like
+`(wolframite.impl.wolfram-syms.write-ns/write-ns! <path> {:aliases '{** Power}})`. After you load
+the file, you'll be able to use `(wl/eval (w/** 2 5) {:aliases '{** Power}})`.
 
 ### Clerk Integration
 
@@ -138,6 +145,14 @@ create a `./symlink-jlink.jar` symlink and then run the tests:
 clojure -X:test-run
 ```
 
+### Deployment
+
+Build the jar with `clojure -T:build jar` then deploy with
+`env CLOJARS_USERNAME=<tbd> CLOJARS_PASSWORD=<clojars-token> clojure -T:build deploy`
+
+Note: You need to log in to Clojars and generate a deployment token. You also need to be added to
+the SciCloj group there by an admin.
+
 ## Authors
 
 The original Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the [Community](http://clojuratica.weebly.com/community.html) page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.
@@ -157,7 +172,7 @@ The project is now being maintained as part of the [SciCloj](https://github.com/
 
 ## License
 
-Distributed under the Eclipse Public License either version 1.0 or (at
+Distributed under the Eclipse Public License either version 2.0 or (at
 your option) any later version.
 
 ## Legal
