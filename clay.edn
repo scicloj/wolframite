@@ -2,7 +2,8 @@
                :branch "main"}
  :clean-up-target-dir true
  :base-target-path "docs/generated"
- ;:subdirs-to-sync ["src" "notebooks"] ; default
+ :subdirs-to-sync [#_"src" "notebooks"]
+ ;:source-path ["notebooks"]
  :show false ; do not open automatically in the browser
- :run-quarto false
- #_#_:format [:quarto :html]}
+ :run-quarto true
+ :format [:quarto :html]}

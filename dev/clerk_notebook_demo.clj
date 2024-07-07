@@ -1,5 +1,7 @@
-(ns ^:deprecated notebook.demo
-  "DEPRECATED - **should** be integrated into kindly-demo ns"
+(ns ^:deprecated clerk-notebook-demo
+  "DEPRECATED - **should** be integrated into kindly-demo ns (most likely)"
+  ;; This shows how to render Wolfram output using Clerk and our clerk-helper;
+  ;; we'd rather replace that with the SciCloj official tools such as Kindly and Clerk
   (:require
     [wolframite.core :as wl]
     [wolframite.wolfram :as w]

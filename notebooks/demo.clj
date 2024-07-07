@@ -1,10 +1,9 @@
-;; # Wolframite Kindly demo
+;; # Wolframite Kindly notebook demo
 
-;; This notebook demonstrates basic usage of [Wolframite](https://github.com/scicloj/wolframite/) in a way that would work in visual tools supporting [Kindly](https://scicloj.github.io/kindly-noted/kindly).
+;; This notebook demonstrates basic usage of [Wolframite](https://github.com/scicloj/wolframite/)
+;; in a way that would work in visual tools supporting [Kindly](https://scicloj.github.io/kindly-noted/kindly).
 
-;; It is mostly copied and adapted from [the official Wolframite demo](https://github.com/scicloj/wolframite/blob/main/dev/demo.clj).
-
-(ns kindly-demo
+(ns demo
   (:require
     [wolframite.core :as wl]
     [wolframite.wolfram :as w]
