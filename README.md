@@ -153,6 +153,13 @@ Build the jar with `clojure -T:build jar` then deploy with
 Note: You need to log in to Clojars and generate a deployment token. You also need to be added to
 the SciCloj group there by an admin.
 
+#### Documentation
+
+Documentation is written as literal programming sources in the `notebooks` directory and turned into HTML
+under `docs/generated` using [Clay](https://scicloj.github.io/clay/). 
+
+To do it, require Clay and run `(clay/make! {})`.
+
 ## Authors
 
 The original Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the [Community](http://clojuratica.weebly.com/community.html) page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.
