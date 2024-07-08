@@ -156,7 +156,7 @@ the SciCloj group there by an admin.
 #### Documentation
 
 Documentation is written as literal programming sources in the `notebooks` directory and turned into HTML
-under `docs/generated` using [Clay](https://scicloj.github.io/clay/)
+under `docs` using [Clay](https://scicloj.github.io/clay/)
 and [Quarto](https://quarto.org/).
 
 To render a single namespace/page, require Clay and run `(clay/make! {:source-path "<path to the file>""})`. Tip: You can also do this without quarto - just add `:run-quarto false` to the options.

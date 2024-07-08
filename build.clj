@@ -62,7 +62,7 @@
 
 (defn build-site [opts]
   (let [notebooks (map str (fs/glob "./notebooks" "**.clj"))]
-    (println "Going to build docs/generated from" notebooks)
+    (println "Going to build docs from" notebooks)
     (clay/make! {:clean-up-target-dir true}) ; hack clay to clean up w/o building anything 🦹
     (run! #(clay/make! {:source-path %})
           notebooks)

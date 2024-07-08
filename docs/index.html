@@ -256,7 +256,7 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 <p>Note: You need to log in to Clojars and generate a deployment token. You also need to be added to the SciCloj group there by an admin.</p>
 <section id="documentation" class="level4">
 <h4 class="anchored" data-anchor-id="documentation">Documentation</h4>
-<p>Documentation is written as literal programming sources in the <code>notebooks</code> directory and turned into HTML under <code>docs/generated</code> using <a href="https://scicloj.github.io/clay/">Clay</a> and <a href="https://quarto.org/">Quarto</a>.</p>
+<p>Documentation is written as literal programming sources in the <code>notebooks</code> directory and turned into HTML under <code>docs</code> using <a href="https://scicloj.github.io/clay/">Clay</a> and <a href="https://quarto.org/">Quarto</a>.</p>
 <p>To render a single namespace/page, require Clay and run <code>(clay/make! {:source-path "&lt;path to the file&gt;""})</code>. Tip: You can also do this without quarto - just add <code>:run-quarto false</code> to the options.</p>
 <p>To build the whole site, run <code>clojure -T:build build-site</code>.</p>
 </section>
