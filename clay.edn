@@ -1,6 +1,6 @@
 {:remote-repo {:git-url "https://github.com/scicloj/wolframite"
                :branch "main"}
- :clean-up-target-dir true
+ :clean-up-target-dir false
  :base-target-path "docs/generated"
  :subdirs-to-sync [#_"src" "notebooks"]
  ;:source-path ["notebooks"]

@@ -111,6 +111,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#authors" id="toc-authors" class="nav-link" data-scroll-target="#authors">Authors</a></li>
   <li><a href="#license" id="toc-license" class="nav-link" data-scroll-target="#license">License</a></li>
   <li><a href="#legal" id="toc-legal" class="nav-link" data-scroll-target="#legal">Legal</a></li>
+  <li><a href="#further-documentation" id="toc-further-documentation" class="nav-link" data-scroll-target="#further-documentation">Further documentation</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -255,8 +256,9 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 <p>Note: You need to log in to Clojars and generate a deployment token. You also need to be added to the SciCloj group there by an admin.</p>
 <section id="documentation" class="level4">
 <h4 class="anchored" data-anchor-id="documentation">Documentation</h4>
-<p>Documentation is written as literal programming sources in the <code>notebooks</code> directory and turned into HTML under <code>docs/generated</code> using <a href="https://scicloj.github.io/clay/">Clay</a>.</p>
-<p>To do it, require Clay and run <code>(clay/make! {})</code>.</p>
+<p>Documentation is written as literal programming sources in the <code>notebooks</code> directory and turned into HTML under <code>docs/generated</code> using <a href="https://scicloj.github.io/clay/">Clay</a> and <a href="https://quarto.org/">Quarto</a>.</p>
+<p>To render a single namespace/page, require Clay and run <code>(clay/make! {:source-path "&lt;path to the file&gt;""})</code>. Tip: You can also do this without quarto - just add <code>:run-quarto false</code> to the options.</p>
+<p>To build the whole site, run <code>clojure -T:build build-site</code>.</p>
 </section>
 </section>
 </section>
@@ -279,6 +281,13 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 <section id="legal" class="level2">
 <h2 class="anchored" data-anchor-id="legal">Legal</h2>
 <p>The product names used in this website are for identification purposes only. All trademarks and registered trademarks, including “Wolfram Mathematica,” are the property of their respective owners. Wolframite is not a product of Wolfram Research. The software on this site is provided “as-is,” without any express or implied warranty.</p>
+</section>
+<section id="further-documentation" class="level2">
+<h2 class="anchored" data-anchor-id="further-documentation">Further documentation</h2>
+<ul>
+<li><a href="./demo.html">Demo notebook</a></li>
+<li>more to come…</li>
+</ul>
 <div style="background-color:grey;height:2px;width:100%;"></div>
 <div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/index.clj">notebooks/index.clj</a></small></small></pre></div>
 </section>

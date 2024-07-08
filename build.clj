@@ -1,7 +1,9 @@
 (ns build
   "Project build config as code for clojure's tools.build"
-  (:require [clojure.tools.build.api :as b]
-            [clojure.edn :as edn]))
+  (:require [babashka.fs :as fs]
+            [clojure.tools.build.api :as b]
+            [clojure.edn :as edn]
+            [scicloj.clay.v2.api :as clay]))
 
 (def project (-> (edn/read-string (slurp "deps.edn"))
                  :aliases :neil :project))
@@ -58,3 +60,11 @@
           opts))
   opts)
 
+(defn build-site [opts]
+  (let [notebooks (map str (fs/glob "./notebooks" "**.clj"))]
+    (println "Going to build docs/generated from" notebooks)
+    (clay/make! {:clean-up-target-dir true}) ; hack clay to clean up w/o building anything 🦹
+    (run! #(clay/make! {:source-path %})
+          notebooks)
+    (System/exit 0) ; something keeps the JVM alive and I don't know what so kill it
+    opts))

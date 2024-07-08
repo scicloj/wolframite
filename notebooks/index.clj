@@ -13,3 +13,7 @@
 
 (kindly/hide-code
   (kind/md (slurp-markdown "./README.md")))
+
+;; ## Further documentation
+;; * [Demo notebook](./demo.html)
+;; * more to come...
