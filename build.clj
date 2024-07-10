@@ -64,6 +64,7 @@
   (let [notebooks (map str (fs/glob "./notebooks" "**.clj"))]
     (println "Going to build docs from" notebooks)
     (clay/make! {:clean-up-target-dir true
-                 :source-path notebooks})
+                 :source-path notebooks
+                 :show false})
     (System/exit 0) ; something keeps the JVM alive and I don't know what so kill it
     opts))

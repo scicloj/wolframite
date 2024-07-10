@@ -4,6 +4,6 @@
  :base-target-path "docs" ; this is what GitHub Pages expects
  :subdirs-to-sync [#_"src" "notebooks"]
  ;:source-path ["notebooks"]
- :show false ; do not open automatically in the browser
+ :show true
  :run-quarto true
  :format [:quarto :html]}

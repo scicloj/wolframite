@@ -19,12 +19,12 @@
 (def md
   (comp kindly/hide-code kind/md))
 
-(md "In interactive Clay interaction, the HTML output will be saved under \"temp\",
-as configured in `clay.edn`.
+(md "# Demonstration
 
-To render under \"docs\", you may do the following for HTML and Quarto-based HTML targets, respectively.
+A brief demonstration of Wolframite can do. We suggest reading it, but you can also jump to either of:
 
-Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/docs/get-started/).")
+* [Wolframite for scientists](./for_scientists/index.html)
+* [Wolframite for Clojure developers](./for_developers/index.html)")
 
 (comment
   (require '[scicloj.clay.v2.api :as clay])
@@ -41,7 +41,10 @@ Note that the Quarto-based target requires the [Quarto CLI](https://quarto.org/d
                :subdirs-to-sync []
                :format [:quarto :html]}))
 
-(md "## Init")
+(md "## Init
+
+First, we must initialize Wolframite and connect it to a Wolfram kernel,
+which will perform the computations:")
 
 (wl/init!)
 
