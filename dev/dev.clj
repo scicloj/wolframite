@@ -7,8 +7,6 @@
 
 (println "Initializing Wolframite...")
 (wl/init!)
-(println "Loading Wolfram symbols, this make take a few seconds...")
-(wl/load-all-symbols (symbol (ns-name *ns*)))
 
 (comment ;; Get Started!
 
