@@ -9,7 +9,23 @@
                      {:sym (symbol sym), :doc doc})))))
 
 (defn load-all-symbols
-  ;; Docstring in wolframite.core
+  "BEWARE: You shouldn't need to use this, as they are already loaded into wolframite.wolfram; use
+  `(wolframite.impl.wolfram-syms.write-ns/write-ns!)` if you want to refresh that file with new
+  functions in your version of Wolfram.
+
+  ### Old docstring
+  Loads all WL global symbols as vars with docstrings into a namespace given by symbol `ns-sym`.
+  These vars evaluate into a symbolic form, which can be passed to `wl-eval`. You gain docstrings,
+  (possibly) autocompletion, and convenient inclusion of vars that you want evaluated before sending the
+  form off to Wolfram, without the need for quote - unquote: `(let [x 3] (eval (Plus x 1)))`.
+
+  Beware: May take a couple of seconds.
+  Example:
+  ```clojure
+  (load-all-symbols wolframite.core/eval 'w)
+  (w/Plus 1 2) ; now the same as (wl/eval '(Plus 1 2))
+  ```
+  "
   [wl-eval ns-sym]
   ;; TODO (jh) support loading symbols from a custom context - use (Names <context name>`*) to get the names -> (Information <context name>`<fn name>) -> get FullName (drop ...`), Usage (no PlaintextUsage there) from the entity
   ;; IDEA: Provide also (load-symbols <list of symbols or a regexp>), which would load only a subset

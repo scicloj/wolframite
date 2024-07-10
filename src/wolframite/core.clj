@@ -1,23 +1,15 @@
 ; ***** BEGIN LICENSE BLOCK *****
-; Version: MPL 1.1/GPL 2.0/LGPL 2.1
+; Version: MPL 2.0/GPL 2.0/LGPL 2.1
 ;
-; The contents of this file are subject to the Mozilla Public License Version
-; 1.1 (the "License"); you may not use this file except in compliance with
-; the License. You may obtain a copy of the License at
-; http://www.mozilla.org/MPL/
-;
-; Software distributed under the License is distributed on an "AS IS" basis,
-; WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-; for the specific language governing rights and limitations under the
-; License.
+; This Source Code Form is subject to the terms of the Mozilla Public
+; License, v. 2.0. If a copy of the MPL was not distributed with this
+; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 ;
 ; The Original Code is the Clojure-Mathematica interface library Clojuratica.
 ;
 ; The Initial Developer of the Original Code is Garth Sheldon-Coulson.
 ; Portions created by the Initial Developer are Copyright (C) 2009
 ; the Initial Developer. All Rights Reserved.
-;
-; Contributor(s):
 ;
 ; Alternatively, the contents of this file may be used under the terms of
 ; either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -46,16 +38,14 @@
     [wolframite.base.parse :as parse]
     [wolframite.impl.jlink-instance :as jlink-instance]
     [wolframite.impl.protocols :as proto]
-    [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
-    [wolframite.runtime.system :as system]
     [wolframite.runtime.jlink :as jlink]
-    ;;^ currently necessary import to auto-install jlink
+    [wolframite.runtime.system :as system]
     [wolframite.runtime.defaults :as defaults]
     [wolframite.wolfram :as w]))
 
-(defonce kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
+(defonce ^{:deprecated true, :private true} kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
 
-(defn kernel-link-opts [{:keys [platform mathlink-path]}]
+(defn- kernel-link-opts [{:keys [platform mathlink-path]}]
   ;; See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/MathLinkFactory.html#createKernelLink(java.lang.String%5B%5D)
   ;; and https://reference.wolfram.com/language/tutorial/RunningTheWolframSystemFromWithinAnExternalProgram.html for the options
   ["-linkmode" "launch"
@@ -65,7 +55,7 @@
                (system/path--kernel)
                (throw (IllegalStateException. "mathlink path neither provided nor auto-detected"))))])
 
-(defn evaluator-init [opts]
+(defn- evaluator-init [opts]
   (let [wl-convert #(convert/convert   % opts)
         wl-eval    #(evaluate/evaluate % opts)]
     (wl-eval (wl-convert 'init))
@@ -78,12 +68,9 @@
     (wl-eval (wl-convert '(ParallelNeeds "HashMaps`")))))
 
 (comment
-
   (evaluator-init (merge {:kernel/link @kernel-link-atom} defaults/default-options)))
 
-(defn init-jlink!
-  "DO NOT USE! (internal)"
-  [kernel-link-atom opts]
+(defn- init-jlink! [kernel-link-atom opts]
   (or (jlink-instance/get)
       (do (jlink/add-jlink-to-classpath!)
           (reset! jlink-instance/jlink-instance
@@ -92,7 +79,6 @@
                    kernel-link-atom opts)))))
 
 (defn- init-kernel!
-  "Provide os identifier as one of wolframite.runtime.system/supported-OS"
   ([jlink-impl]
    (init-kernel! jlink-impl {:os (system/detect-os)}))
   ([jlink-impl {:keys [os] :as init-opts}]
@@ -100,10 +86,14 @@
    (->> (kernel-link-opts init-opts)
         (proto/create-kernel-link jlink-impl))))
 
-(defn terminate-kernel! []
+(defn terminate-kernel!
+  "Sends a request to the kernel to shut down.
+
+  See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/KernelLink.html#terminateKernel()"
+  []
   (proto/terminate-kernel! (jlink-instance/get)))
 
-(defn un-qualify [form]
+(defn- un-qualify [form]
   (walk/postwalk (fn [form]
                    (if (qualified-symbol? form)
                      (symbol (name form))
@@ -141,9 +131,8 @@
             (SystemInformation "Kernel", "ProductKernelName")
             (SystemInformation "Kernel", "MaxLicenseProcesses")])))
 
-(comment (init!))
 (defn init!
-  "Initialize Wolframite and the underlying wolfram Kernel - required once before any eval calls.
+  "Initialize Wolframite and the underlying Wolfram Kernel - required once before you make any eval calls.
 
   - `opts` - a map that is passed to `eval` and other functions used in the convert-evaluate-parse
              cycle, which may contain, among others:
@@ -175,8 +164,6 @@
      nil)
    nil))
 
-(comment (init!))
-
 (defn eval
   "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
 
@@ -190,8 +177,6 @@
     (wl/eval '(Plus 1 2))`
     ; => 3
     ```
-
-    See also [[load-all-symbols]], which enable you to make a Wolfram function callable directly.
 
     Tip: Use [[->wl]] to look at the final expression that would be sent to Wolfram for evaluation."
   ([expr] (eval expr {}))
@@ -229,7 +214,7 @@
   (eval (list 'quote s) {:flags [:no-evaluate]}))
 
 (defn ->wl
-  "Convert clojure forms to mathematica Expr.
+  "Convert Clojure forms to instances of Wolfram's Expr class.
   Generally useful, especially for working with graphics - or for troubleshooting
   what will be sent to Wolfram for evaluation."
   ([clj-form] (->wl clj-form {:output-fn str}))
@@ -237,29 +222,8 @@
    (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
      (ifn? output-fn) output-fn)))
 
-(defn load-all-symbols
-  "BEWARE: You shouldn't need to use this, as they are already loaded into wolframite.wolfram; use
-  `(wolframite.impl.wolfram-syms.write-ns/write-ns!)` if you want to refresh that file with new
-  functions in your version of Wolfram.
-
-  ### Old docstring
-  Loads all WL global symbols as vars with docstrings into a namespace given by symbol `ns-sym`.
-  These vars evaluate into a symbolic form, which can be passed to [[eval]]. You gain docstrings,
-  (possibly) autocompletion, and convenient inclusion of vars that you want evaluated before sending the
-  form off to Wolfram, without the need for quote - unquote: `(let [x 3] (eval (Plus x 1)))`.
-
-  Beware: May take a couple of seconds.
-  Example:
-  ```clojure
-  (wl/load-all-symbols 'w)
-  (w/Plus 1 2) ; now the same as (wl/eval '(Plus 1 2))
-  ```
-
-  Alternatively, load the included but likely outdated `resources/wld.wl` with a dump of the data."
-  [ns-sym]
-  (wolfram-syms/load-all-symbols eval ns-sym))
-
 (comment
+  (init!)
   (->
    (eval ('Names "System`*"))
    println)

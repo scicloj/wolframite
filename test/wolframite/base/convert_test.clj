@@ -4,7 +4,7 @@
             [wolframite.base.convert :refer [convert]]))
 
 (deftest test-convert
-  (wl/init-jlink! wl/kernel-link-atom {})
+  (#'wl/init-jlink! (deref #'wl/kernel-link-atom) {}) ; bypass private var via deref #'
   (testing "Basics"
     (testing "primitives"
       (is (= (str (convert "txt" nil)) "\"txt\""))
