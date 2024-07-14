@@ -49,7 +49,6 @@ which will perform the computations:")
 (wl/init!)
 
 (md "## Base example")
-^:note-to-test/skip
 
 (wl/eval '(Dot [1 2 3] [4 5 6]))
 
