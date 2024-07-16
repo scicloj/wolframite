@@ -1,0 +1,13 @@
+format:
+  html: {toc: true, toc-depth: 4, theme: cosmo}
+  revealjs: {theme: solarized, navigation-mode: vertical, transition: slide, background-transition: fade, incremental: true}
+project: {type: book}
+book:
+  chapters:
+  - index.qmd
+  - demo.qmd
+  - part: For Scientists
+    chapters: [for_scientists.index.qmd]
+  - part: For Developers
+    chapters: [for_developers.index.qmd]
+  title: Wolframite Documentation
