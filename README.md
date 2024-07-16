@@ -153,6 +153,16 @@ Build the jar with `clojure -T:build jar` then deploy with
 Note: You need to log in to Clojars and generate a deployment token. You also need to be added to
 the SciCloj group there by an admin.
 
+#### Documentation
+
+Documentation is written as literal programming sources in the `notebooks` directory and turned into HTML
+under `docs` using [Clay](https://scicloj.github.io/clay/)
+and [Quarto](https://quarto.org/).
+
+To render a single namespace/page, require Clay and run `(clay/make! {:source-path "<path to the file>""})`. Tip: You can also do this without quarto - just add `:run-quarto false` to the options.
+
+To build the whole site, run `clojure -T:build build-site`.
+
 ## Authors
 
 The original Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the [Community](http://clojuratica.weebly.com/community.html) page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.
