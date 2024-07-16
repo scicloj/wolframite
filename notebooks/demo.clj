@@ -1,4 +1,4 @@
-;; # Wolframite Kindly notebook demo
+;; # Wolframite demo
 
 ;; This notebook demonstrates basic usage of [Wolframite](https://github.com/scicloj/wolframite/)
 ;; in a way that would work in visual tools supporting [Kindly](https://scicloj.github.io/kindly-noted/kindly).
@@ -21,10 +21,8 @@
 
 (md "# Demonstration
 
-A brief demonstration of Wolframite can do. We suggest reading it, but you can also jump to either of:
-
-* [Wolframite for scientists](./for_scientists/index.html)
-* [Wolframite for Clojure developers](./for_developers/index.html)")
+A brief demonstration of Wolframite can do. We suggest reading it, but you can also jump to either of
+the following chapters.")
 
 (comment
   (require '[scicloj.clay.v2.api :as clay])

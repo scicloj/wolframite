@@ -1,6 +1,7 @@
 (ns build
   "Project build config as code for clojure's tools.build"
-  (:require [babashka.fs :as fs]
+  (:require [build-config]
+            [babashka.fs :as fs]
             [clojure.tools.build.api :as b]
             [clojure.edn :as edn]
             [scicloj.clay.v2.api :as clay]))
@@ -61,10 +62,9 @@
   opts)
 
 (defn build-site [opts]
-  (let [notebooks (map str (fs/glob "./notebooks" "**.clj"))]
-    (println "Going to build docs from" notebooks)
-    (clay/make! {:clean-up-target-dir true
-                 :source-path notebooks
-                 :show false})
-    (System/exit 0) ; something keeps the JVM alive and I don't know what so kill it
-    opts))
+  (println "Going to build docs ...")
+  (clay/make! (assoc build-config/config
+                :clean-up-target-dir true
+                :show false))
+  (System/exit 0) ; something keeps the JVM alive and I don't know what so kill it
+  opts)
