@@ -1,8 +1,7 @@
 ^{:clay {:kindly/options {:kinds-that-hide-code #{:kind/md :kind/hiccup :kind/html :kind/tex}}}}
 (ns for-scientists.cavity-physics
-  "A tutorial namespace that motivates the why and how of Wolframite for scientists and provides an example of how you might present some physics."
+  "An example namespace of how you might present some physics."
   (:require
-   [scicloj.clay.v2.api :as clay]
    [scicloj.kindly.v4.kind :as k]
    [wolframite.impl.wolfram-syms.write-ns :as write]
    [wolframite.core :as wl]
@@ -15,8 +14,10 @@
 ;; - credit authors
 ;; - are clay kinds executed outside of a clay environment, i.e. are they treated like 'comment's under 'normal' circumstances?
 ;; - Move general notes and examples out from the Cavity section
+;; - should probably be split into two (the cavity part can be quite self-contained)
 
-(k/html "<span style='color:red'><b>SPOILER WARNING</b>: This is a work in progress...</span>")
+(k/html "<span style='color:red'><b>SPOILER WARNING</b>: This is a work in progress...</span>
+")
 (k/md "# Wolframite for scientists")
 (k/md "## Abstract
 We introduce you, the motivated scientist (likely the mathematical sort), to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and getting started notes, we then outline a 'real' workflow using the example of optical cavities.")
@@ -50,17 +51,18 @@ Therefore, we enter the following.
 (def aliases
   '{** Power
     ++ Conjugate
-    .->> ReplaceAll
+    .> Replace
+    .>> ReplaceAll
     <-> Expand
     <<->> ExpandAll
     ++<-> ComplexExpand
-    >-< Simplify
-    >>-<< FullSimplify
+    >< Simplify
+    >><< FullSimplify
     ⮾ NonCommutativeMultiply
     √ Sqrt
     ∫ Integrate})
 
-(wl/init! {:aliases aliases})
+(wl/start {:aliases aliases})
 
 (k/md "Here you see than we can define new aliases by simply using the core clojure functions/macros. This works fine, but the downside is that we have just defined symbol replacements and so won't benefit from using these entities in macros or from editor autocompletion. For the best experience therefore, we recommend using 'write-ns!'.")
 (comment
@@ -143,6 +145,7 @@ This will not work because threads are macros and so combining them with unevalu
 (k/md "## FAQ
 - Why Clojure?
 (need some getting started references)
+-- chaining expressions (so much better than in Wolfram)
 - Why Wolfram?
 thinking (and evaluating) at the level of the expression
 - Why not Emmy?
@@ -248,39 +251,38 @@ Substitution and simplification can then also be used to arrive at the transmiss
 
 (def e4 (-> (w/== 'E4 E4)
             (w/Solve 'E4)
-            wl/eval
-            first first))
-(TeX-> e4)
+            w/First w/First))
+(eval-> e4)
 
-(def T (eval-> (w/.->> (w/* E2 't2)
-                       e4)
-               w/>>-<<))
+(def T (-> (w/.>> (w/* E2 't2)
+                  e4)
+           w/>><<))
 (TeX-> T)
 
-(def R (eval-> (w/+ (w/* E4 't1) 'r1)
-               (w/.->> e4)
-               w/>>-<<
-               w/Together))
+(def R (-> (w/+ (w/* E4 't1) 'r1)
+           (w/.>> e4)
+           w/>><<
+           w/Together))
 (TeX-> R)
 
 (k/md "## Observables
  Taking the square of the fields (using the complex conjugate), gives the corresponding observables, i.e. things that can be actually measured, for the case of no loss.")
 
-(def I4 (eval-> (w/.->> 'E4 e4) ||2
-                w/++<->
-                w/>>-<<))
-(TeX-> I4)
+(def I4 (-> (w/.>> 'E4 e4) ||2
+            w/++<->
+            w/>><<))
+(TeX-> (w/== 'I4 (w/** (w/Abs 'E4) 2) I4))
 
-(def Tsq (eval-> T ||2
-                 w/++<->
-                 w/>>-<<))
-(TeX-> Tsq)
+(def Tsq (-> T ||2
+             w/++<->
+             w/>><<))
+(TeX-> (w/== (w/** 'T 2) Tsq))
 
-(def Rsq (eval-> R ||2
-                 w/++<->
-                 w/>>-<<
-                 w/Together))
-(TeX-> Rsq)
+(def Rsq (-> R ||2
+             w/++<->
+             w/>><<
+             w/Together))
+(TeX-> (w/== (w/** 'R 2) Rsq))
 
 (k/md "## Observables with loss
 The above result is a perfectly reasonable, but simple, model. More realistically, we want to be able to understand mirrors that have losses, i.e. that don't just reflect or transmit light, but that actually absorb or 'waste' light.
@@ -289,12 +291,14 @@ This is one of the places that Wolfram really shines. Almost the entire engine i
 ")
 
 (def losses
-  [(w/-> 'r1 '(w/√ (+ 1
-                      (- l1)
-                      (- (** t1 2)))))
-   (w/-> 'r2 '(w/√ (+ 1
-                      (- l2)
-                      (- (** t2 2)))))])
+  [(w/-> (w/** 'r1 2)
+         (w/+ 1
+              (w/- 'l1)
+              (w/- (w/** 't1 2))))
+   (w/-> (w/** 'r2 2)
+         (w/+ 1
+              (w/- 'l2)
+              (w/- (w/** 't2 2))))])
 
 (k/md "and substitute these into the equations. We're going to go a step further however...")
 
@@ -305,21 +309,22 @@ Rather than just substitute the new rule into our expressions, we're going to ta
 (def approximations
   [(w/-> (w/* 'r1 'r2)
          (let [vars [(w/** 't1 2) (w/** 't2 2) 'l1 'l2]]
-           (eval->  (w/.->> (w/* 'r1 'r2) losses)
-                    (w/Series ['t1 0 2]
-                              ['t2 0 2]
-                              ['l1 0 2]
-                              ['l2 0 2])
-                    w/Normal
-                    w/<<->>
-                    (w/.->> (mapv #(w/-> % (w/* 'temp %)) vars))
-                    (w/Series ['temp 0 1])
-                    w/Normal
-                    (w/.->> (w/-> 'temp 1)))))])
+           (->  (w/.>> (w/* (w/√ (w/** 'r1 2))
+                            (w/√ (w/** 'r2 2)))
+                       losses)
+                (w/Series ['t1 0 2]
+                          ['t2 0 2]
+                          ['l1 0 2]
+                          ['l2 0 2])
+                w/Normal
+                w/<<->>
+                (w/.>> (mapv #(w/-> % (w/* 'temp %)) vars))
+                (w/Series ['temp 0 1])
+                w/Normal
+                (w/.>> (w/-> 'temp 1)))))])
 (TeX-> approximations)
 
 (k/md "What's happening here is that we are simplifying the expression for r1*r2 by assuming that the transmission and loss for light going through a mirror is small. So small, that higher powers of these variabes are negligible. And so, we substitute the values into the expression, expand the functions in a power series and neglect any higher powers. The neglect is done by inserting ['big O' notation](https://mathworld.wolfram.com/Big-ONotation.html) and then restricting the series to a single power in that variable. As we want to do this for multiple variables, then we map over each one. This is a complicated mathematical procedure, but Wolframite allows us to do this quite concisely, apart from some necessary Wolfram datatype conversions (e.g. using the w/Normal function).
-
 
 Note that Wolfram can also be used to define quite general approximations, using the 'Pattern' system. For example, let us assume that we want to expand Cos(x) as a polynomial when x is small. First, we need to know what the expansion is. We can find out by using Wolfram similarly to the above, i.e. ")
 
@@ -335,29 +340,18 @@ Note that Wolfram can also be used to define quite general approximations, using
 
 (k/md "The rule can now be named and used for any Cos function with any argument:")
 
-(eval-> (w/.->> (w/Cos 'phi) small-angle))
-(eval-> (w/.->> (w/Cos (w/+ 1 'phi)) small-angle))
+(eval-> (w/.>> (w/Cos 'phi) small-angle))
+(eval-> (w/.>> (w/Cos (w/+ 1 'phi)) small-angle))
 
-;; ## Independent mirrors
-(def I4--loss
-  (eval-> I4
-          (w/.->> approximations)
-          (w/.->> losses)
-          (w/.->> [(w/-> (w/Cos (w/* 2 'phi))
-                         (eval-> '(w/Cos (* 2 phi))
-                                 (w/Series  ['phi 0 2])
-                                 w/Normal))])
-          w/ExpandAll
-          ;; w/FullSimplify
-          ))
-
-(def thing (let [vars ['(** t1 2) '(** t2 2) 'l1 'l2 '(** phi 2)]]
-             (->> (eval-> I4--loss
-                          (w/.->> (mapv #(w/-> % `(* temp ~%)) vars))
-                          w/<->
-                          (w/Series ['temp 0 1])
-                          w/Normal
-                          (w/.->> (w/Rule 'temp 1))
-                          w/>>-<<))))
-(TeX-> thing
-       w/<<->>)
+(k/md "## Independent mirrors
+With these approximations we can formulate our final expression for the optical intensity inside the cavity: ")
+(TeX-> I4
+       (w/.>> (w/-> (w/Cos (w/* 2 'k 'L))
+                    (w/Cos 'phi)))
+       (w/.>> approximations)
+       (w/.>> (w/-> (w/** (w/* 'r1 'r2) 2)
+                    (-> (w/.>> (w/* 'r1 'r2) approximations)
+                        (w/** 2))))
+       (w/.>> (conj losses small-angle))
+       w/><
+       (->> (w/== (w/** (w/Abs 'E4) 2))))
