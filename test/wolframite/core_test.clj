@@ -1,7 +1,8 @@
 (ns wolframite.core-test
-  (:require  [clojure.test :refer [deftest testing is]]
-             [wolframite.core :as wl]
-             [wolframite.wolfram :as w]))
+  (:require [clojure.test :refer [deftest testing is]]
+            [wolframite.core :as wl]
+            [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
+            [wolframite.wolfram :as w]))
 
 ;; * Basic Sanity Checks
 
@@ -9,7 +10,7 @@
 ;;   (testing (is wl/math-evaluate)))
 
 (deftest basic-math
-  (wl/init!)
+  (wl/start)
   (is (= 2 (wl/eval '(Plus 1 1)))
       "A simple expression-as-symbol")
   (is (= 2 (wl/eval "Plus[1,1]"))
@@ -26,13 +27,12 @@
 ;;                                                                          :output-fn str})))))
 
 (deftest load-all-symbols-test
-  ;; NOTE For this test, we need to wrap expression with (clojure.core/eval (quote ...)) so that
-  ;; we can load the file into REPL even before we run the code which creates the w/* vars the
-  ;; code is using.
-  ;; End-users face the same problem: they code works in the REPL when evaluated line by line, but
-  ;; cannot be loaded as a whole (unless they have init! and load-all-symbols at the top level)
+<<<<<<< HEAD
   (wl/init!)
-  (wl/load-all-symbols 'w2)
+=======
+  (wl/start)
+>>>>>>> 9b7f3e918f65f2a6e9bc56222b3015173256ce71
+  (wolfram-syms/load-all-symbols wl/eval 'w2)
   (is (= 3
          (wl/eval (eval '(w2/Plus 1 2))))
       "An interned symbol can be used at a function position")

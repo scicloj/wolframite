@@ -32,8 +32,8 @@
                  [:url "https://github.com/scicloj/wolframite"]
                  [:licenses
                   [:license
-                   [:name "Eclipse Public License 2.0"]
-                   [:url "https://opensource.org/license/epl-2-0/"]]]
+                   [:name "Mozilla Public License 2.0"]
+                   [:url "https://mozilla.org/MPL/2.0/"]]]
                  [:scm
                   [:url "https://github.com/scicloj/wolframite"]
                   [:connection "scm:git:https://github.com/scicloj/wolframite.git"]

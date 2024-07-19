@@ -1,6 +1,8 @@
 (ns wolframite.tools.hiccup
   (:require [wolframite.core :as wl]
-            [scicloj.kindly.v4.kind :as kind]))
+            [scicloj.kindly.v4.kind :as kind]
+            [wolframite.impl.jlink-instance :as jlink-instance]
+            [wolframite.impl.protocols :as proto]))
 
 (defn bytes->b64encodedString
   [bs]
@@ -13,7 +15,7 @@
 
 (defn view* [form folded?]
   (let [wl-str (wl/->wl form {:output-fn str})
-        input-img    (.evaluateToImage @wl/kernel-link-atom wl-str 0 0 0 true)
+        input-img    (.evaluateToImage (proto/kernel-link (jlink-instance/get)) wl-str 0 0 0 true)
         b64img (bytes->b64encodedString input-img)]
     (kind/hiccup
      [:div

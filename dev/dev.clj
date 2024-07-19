@@ -6,9 +6,11 @@
     [wolframite.core :as wl]))
 
 (println "Initializing Wolframite...")
+<<<<<<< HEAD
 (wl/init!)
-(println "Loading Wolfram symbols, this make take a few seconds...")
-(wl/load-all-symbols (symbol (ns-name *ns*)))
+=======
+(wl/start)
+>>>>>>> 9b7f3e918f65f2a6e9bc56222b3015173256ce71
 
 (comment ;; Get Started!
 
