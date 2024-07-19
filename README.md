@@ -142,7 +142,7 @@ To run tests from the command line, you need to add JLink to the classpath (only
 create a `./symlink-jlink.jar` symlink and then run the tests:
 
 ```shell
-clojure -X:test-run
+clojure -X:run-tests
 ```
 
 ### Deployment
