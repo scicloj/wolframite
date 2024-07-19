@@ -93,7 +93,7 @@
   []
   (proto/terminate-kernel! (jlink-instance/get)))
 
-(defn- un-qualify [form]
+(defn- unqualify [form]
   (walk/postwalk (fn [form]
                    (if (qualified-symbol? form)
                      (symbol (name form))
@@ -187,7 +187,7 @@
      (let [with-eval-opts (merge {:jlink-instance jlink-inst}
                                  (:opts jlink-inst)
                                  eval-opts)
-           expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
+           expr' (unqualify (if (string? expr) (express/express expr with-eval-opts) expr))]
        (cep/cep expr' with-eval-opts))
      (throw (IllegalStateException. "Not initialized, call init! first")))))
 
@@ -221,3 +221,8 @@
   ([clj-form {:keys [output-fn] :as opts}]
    (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
      (ifn? output-fn) output-fn)))
+
+(comment
+  (start)
+  (eval (w/Dot [1 2 3] [4 5 6]))
+  (stop))
