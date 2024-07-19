@@ -189,8 +189,6 @@
        (cep/cep expr' with-eval-opts))
      (throw (IllegalStateException. "Not initialized, call init! first")))))
 
-(def ^:deprecated wl "DEPRECATED - use `eval` instead." eval)
-
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
 (defn- clj-intern-autoevaled
   "Intern the given Wolfram symbol into the given `ns-sym` namespace as a function,
