@@ -22,7 +22,7 @@
   )
 
 ;; ### Init Wolframite
-(wl/init!)
+(wl/start)
 
 ;; * Syntax
 

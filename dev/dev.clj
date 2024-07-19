@@ -6,7 +6,7 @@
     [wolframite.core :as wl]))
 
 (println "Initializing Wolframite...")
-(wl/init!)
+(wl/start)
 
 (comment ;; Get Started!
 
