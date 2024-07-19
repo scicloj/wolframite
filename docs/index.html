@@ -305,7 +305,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h4 data-number="1.3.1.2" class="anchored" data-anchor-id="mathematica-or-wolfram-engine"><span class="header-section-number">1.3.1.2</span> Mathematica or Wolfram Engine</h4>
 <p>Next, obviously, you’ll need to ensure that you have Wolfram Engine or Mathematica installed and your license (free for W. E.) registered - make sure you can run these tools on their own <em>before</em> trying Wolframite.</p>
 <p>First of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(wolframite.core/init!)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(wolframite.core/start)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This should also find and load the JLink JAR included with your installation. Watch stdout for an INFO log message (via clojure.tools.logging) like:</p>
 <blockquote class="blockquote">
 <p>=== Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar ===</p>
@@ -320,7 +320,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb3"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">require</span> '[wolframite.core <span class="at">:as</span> wl] </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>         '[wolframite.wolfram <span class="at">:as</span> w]) <span class="co">; Wolfram symbols as Clojure vars / fns</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">;; Initialize</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>(wl/init!) <span class="co">; =&gt; nil</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>(wl/start) <span class="co">; =&gt; nil</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">;; Use it:</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/Dot [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] [<span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span>]))</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; 32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -348,10 +348,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="customizing-wolframite" class="level4" data-number="1.3.2.2">
 <h4 data-number="1.3.2.2" class="anchored" data-anchor-id="customizing-wolframite"><span class="header-section-number">1.3.2.2</span> Customizing Wolframite</h4>
 <p>A big advantage of Wolframite (as opposed to its earlier incarnations) is that we can now individually tailor the user experience at the level of initialization,</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/init! {<span class="at">:aliases</span> '{** Power}})</span>
+<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/start {<span class="at">:aliases</span> '{** Power}})</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>(wl/eval '(** <span class="dv">2</span> <span class="dv">5</span>)) <span class="co">; =&gt; 32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>, and function call,</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(wl/init!)</span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(wl/start)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>(wl/eval '(** <span class="dv">2</span> <span class="dv">5</span>) {<span class="at">:aliases</span> '{** Power}}) <span class="co">; =&gt; 32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>. Use it how you want to!</p>
 <p>TIP: You can also get convenience vars for your aliases in <code>wolframite.wolfram</code> by running something like <code>(wolframite.impl.wolfram-syms.write-ns/write-ns! &lt;path&gt; {:aliases '{** Power}})</code>. After you load the file, you’ll be able to use <code>(wl/eval (w/** 2 5) {:aliases '{** Power}})</code>.</p>
@@ -369,19 +369,19 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 </section>
 <section id="how-does-it-work" class="level3" data-number="1.3.4">
 <h3 data-number="1.3.4" class="anchored" data-anchor-id="how-does-it-work"><span class="header-section-number">1.3.4</span> How does it work?</h3>
-<p>You compose Wolfram expressions using the convenience functions and vars from <code>wolframite.wolfram</code>. These are then turned first into a symbolic representation of themselves and later into a tree of JLink <code>Expr</code> objects and sent to a Wolfram kernel subprocess (started by <code>wl/init!</code>) for evaluation. The result is translated back from jlink.Expr into a Clojure form. This translation allows for some additional convenience logic, such as supporting <code>w/*</code> instead of <code>Times</code>.</p>
+<p>You compose Wolfram expressions using the convenience functions and vars from <code>wolframite.wolfram</code>. These are then turned first into a symbolic representation of themselves and later into a tree of JLink <code>Expr</code> objects and sent to a Wolfram kernel subprocess (started by <code>wl/start</code>) for evaluation. The result is translated back from jlink.Expr into a Clojure form. This translation allows for some additional convenience logic, such as supporting <code>w/*</code> instead of <code>Times</code>.</p>
 </section>
 </section>
 <section id="dependencies" class="level2" data-number="1.4">
 <h2 data-number="1.4" class="anchored" data-anchor-id="dependencies"><span class="header-section-number">1.4</span> Dependencies</h2>
-<p>Wolframite requires Wolfram’s Java integration library JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the <code>WolframKernel</code> / <code>MathKernel</code> executable is, in order to be able to start the external evaluation kernel process. Normally, <code>wl/init!</code> should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.</p>
+<p>Wolframite requires Wolfram’s Java integration library JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the <code>WolframKernel</code> / <code>MathKernel</code> executable is, in order to be able to start the external evaluation kernel process. Normally, <code>wl/start</code> should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.</p>
 </section>
 <section id="development" class="level2" data-number="1.5">
 <h2 data-number="1.5" class="anchored" data-anchor-id="development"><span class="header-section-number">1.5</span> Development</h2>
 <section id="running-tests" class="level3" data-number="1.5.1">
 <h3 data-number="1.5.1" class="anchored" data-anchor-id="running-tests"><span class="header-section-number">1.5.1</span> Running tests</h3>
 <p>To run tests from the command line, you need to add JLink to the classpath (only REPL supports dynamically loading jars) - create a <code>./symlink-jlink.jar</code> symlink and then run the tests:</p>
-<pre class="shell"><code>clojure -X:test-run</code></pre>
+<pre class="shell"><code>clojure -X:run-tests</code></pre>
 </section>
 <section id="deployment" class="level3" data-number="1.5.2">
 <h3 data-number="1.5.2" class="anchored" data-anchor-id="deployment"><span class="header-section-number">1.5.2</span> Deployment</h3>
@@ -409,7 +409,7 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 </section>
 <section id="license" class="level2" data-number="1.7">
 <h2 data-number="1.7" class="anchored" data-anchor-id="license"><span class="header-section-number">1.7</span> License</h2>
-<p>Distributed under the Eclipse Public License either version 2.0 or (at your option) any later version.</p>
+<p>Distributed under the Mozilla Public License either version 2.0 or (at your option) any later version.</p>
 </section>
 <section id="legal" class="level2" data-number="1.8">
 <h2 data-number="1.8" class="anchored" data-anchor-id="legal"><span class="header-section-number">1.8</span> Legal</h2>

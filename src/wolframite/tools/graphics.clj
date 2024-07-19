@@ -21,10 +21,10 @@
 
 (defn make-app! [^Component math-canvas & {:keys [scale-factor]}]
   (.evaluateToInputForm
-    @wl/kernel-link-atom
+    (proto/kernel-link (jlink-instance/get))
     (str "Needs[\"" (proto/jlink-package-name (jlink-instance/get)) "\"]")
     0)
-  (.evaluateToInputForm @wl/kernel-link-atom "ConnectToFrontEnd[]" 0)
+  (.evaluateToInputForm (proto/kernel-link (jlink-instance/get)) "ConnectToFrontEnd[]" 0)
   (let [app (Frame.)]
     (doto app
       (.setLayout nil)
@@ -44,7 +44,7 @@
 
 (comment
 
-  (def canvas (make-math-canvas! wl/kernel-link-atom :scale-factor 1.5))
+  (def canvas (make-math-canvas! (jlink-instance/get) :scale-factor 1.5))
   (def app (make-app! canvas :scale-factor 1.5))
 
   (show! canvas "GeoGraphics[]")
@@ -67,13 +67,13 @@
 
 (comment ;; better quality images
 
-  (.evaluateToImage @wl/kernel-link-atom "GeoGraphics[]" 300 300) ;; this has another arity where you can set `dpi`
+  (.evaluateToImage (proto/kernel-link (jlink-instance/get)) "GeoGraphics[]" 300 300) ;; this has another arity where you can set `dpi`
   ;; then byte array -> java.awt.Image
   ;; and (.setImage canvas)
 
   (let [{:keys [height width]} (bean (.getSize app))]
     (.setImage canvas
-               (ImageIO/read (ByteArrayInputStream. (.evaluateToImage wl/kernel-link-atom "GeoGraphics[]" (int width) (int height) 600 true))))))
+               (ImageIO/read (ByteArrayInputStream. (.evaluateToImage (proto/kernel-link (jlink-instance/get)) "GeoGraphics[]" (int width) (int height) 600 true))))))
 
   ;; doesn't make much difference (maybe a bit), seems like we can go lower dpi, but we already get maximum by default (?)
 

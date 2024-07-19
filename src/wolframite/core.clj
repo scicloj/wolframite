@@ -1,23 +1,15 @@
 ; ***** BEGIN LICENSE BLOCK *****
-; Version: MPL 1.1/GPL 2.0/LGPL 2.1
+; Version: MPL 2.0/GPL 2.0/LGPL 2.1
 ;
-; The contents of this file are subject to the Mozilla Public License Version
-; 1.1 (the "License"); you may not use this file except in compliance with
-; the License. You may obtain a copy of the License at
-; http://www.mozilla.org/MPL/
-;
-; Software distributed under the License is distributed on an "AS IS" basis,
-; WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-; for the specific language governing rights and limitations under the
-; License.
+; This Source Code Form is subject to the terms of the Mozilla Public
+; License, v. 2.0. If a copy of the MPL was not distributed with this
+; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 ;
 ; The Original Code is the Clojure-Mathematica interface library Clojuratica.
 ;
 ; The Initial Developer of the Original Code is Garth Sheldon-Coulson.
 ; Portions created by the Initial Developer are Copyright (C) 2009
 ; the Initial Developer. All Rights Reserved.
-;
-; Contributor(s):
 ;
 ; Alternatively, the contents of this file may be used under the terms of
 ; either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -36,26 +28,24 @@
 (ns wolframite.core
   (:refer-clojure :exclude [eval])
   (:require
-    [clojure.string :as str]
-    [clojure.tools.logging :as log]
-    [clojure.walk :as walk]
-    [wolframite.base.cep :as cep]
-    [wolframite.base.convert :as convert]
-    [wolframite.base.evaluate :as evaluate]
-    [wolframite.base.express :as express]
-    [wolframite.base.parse :as parse]
-    [wolframite.impl.jlink-instance :as jlink-instance]
-    [wolframite.impl.protocols :as proto]
-    [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
-    [wolframite.runtime.system :as system]
-    [wolframite.runtime.jlink :as jlink]
-    ;;^ currently necessary import to auto-install jlink
-    [wolframite.runtime.defaults :as defaults]
-    [wolframite.wolfram :as w]))
+   [clojure.string :as str]
+   [clojure.tools.logging :as log]
+   [clojure.walk :as walk]
+   [wolframite.base.cep :as cep]
+   [wolframite.base.convert :as convert]
+   [wolframite.base.evaluate :as evaluate]
+   [wolframite.base.express :as express]
+   [wolframite.base.parse :as parse]
+   [wolframite.impl.jlink-instance :as jlink-instance]
+   [wolframite.impl.protocols :as proto]
+   [wolframite.runtime.jlink :as jlink]
+   [wolframite.runtime.system :as system]
+   [wolframite.runtime.defaults :as defaults]
+   [wolframite.wolfram :as w]))
 
-(defonce kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
+(defonce ^{:deprecated true, :private true} kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
 
-(defn kernel-link-opts [{:keys [platform mathlink-path]}]
+(defn- kernel-link-opts [{:keys [platform mathlink-path]}]
   ;; See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/MathLinkFactory.html#createKernelLink(java.lang.String%5B%5D)
   ;; and https://reference.wolfram.com/language/tutorial/RunningTheWolframSystemFromWithinAnExternalProgram.html for the options
   ["-linkmode" "launch"
@@ -65,7 +55,7 @@
                (system/path--kernel)
                (throw (IllegalStateException. "mathlink path neither provided nor auto-detected"))))])
 
-(defn evaluator-init [opts]
+(defn- evaluator-init [opts]
   (let [wl-convert #(convert/convert   % opts)
         wl-eval    #(evaluate/evaluate % opts)]
     (wl-eval (wl-convert 'init))
@@ -78,12 +68,9 @@
     (wl-eval (wl-convert '(ParallelNeeds "HashMaps`")))))
 
 (comment
-
   (evaluator-init (merge {:kernel/link @kernel-link-atom} defaults/default-options)))
 
-(defn init-jlink!
-  "DO NOT USE! (internal)"
-  [kernel-link-atom opts]
+(defn- init-jlink! [kernel-link-atom opts]
   (or (jlink-instance/get)
       (do (jlink/add-jlink-to-classpath!)
           (reset! jlink-instance/jlink-instance
@@ -92,7 +79,6 @@
                    kernel-link-atom opts)))))
 
 (defn- init-kernel!
-  "Provide os identifier as one of wolframite.runtime.system/supported-OS"
   ([jlink-impl]
    (init-kernel! jlink-impl {:os (system/detect-os)}))
   ([jlink-impl {:keys [os] :as init-opts}]
@@ -100,10 +86,14 @@
    (->> (kernel-link-opts init-opts)
         (proto/create-kernel-link jlink-impl))))
 
-(defn terminate-kernel! []
+(defn stop
+  "Sends a request to the kernel to shut down.
+
+  See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/KernelLink.html#terminateKernel()"
+  []
   (proto/terminate-kernel! (jlink-instance/get)))
 
-(defn un-qualify [form]
+(defn- unqualify [form]
   (walk/postwalk (fn [form]
                    (if (qualified-symbol? form)
                      (symbol (name form))
@@ -136,14 +126,13 @@
   Requires [[init!]] to be called first."
   []
   (zipmap
-    [:wolfram-version :wolfram-kernel-name :max-license-processes]
-    (eval '[$VersionNumber
-            (SystemInformation "Kernel", "ProductKernelName")
-            (SystemInformation "Kernel", "MaxLicenseProcesses")])))
+   [:wolfram-version :wolfram-kernel-name :max-license-processes]
+   (eval '[$VersionNumber
+           (SystemInformation "Kernel", "ProductKernelName")
+           (SystemInformation "Kernel", "MaxLicenseProcesses")])))
 
-(comment (init!))
-(defn init!
-  "Initialize Wolframite and the underlying wolfram Kernel - required once before any eval calls.
+(defn start
+  "Initialize Wolframite and start the underlying Wolfram Kernel - required once before you make any eval calls.
 
   - `opts` - a map that is passed to `eval` and other functions used in the convert-evaluate-parse
              cycle, which may contain, among others:
@@ -153,8 +142,10 @@
         You may add your own ones, to be able to use them in your Wolfram expressions and get those
         translated into Wolfram ones. See Wolframite docs.
      -  `:flags [kwd ...]` - various on/off toggles for how Wolframite processes inputs/results,
-        passed e.g. to the `custom-parse` multimethod."
-  ([] (init! defaults/default-options))
+        passed e.g. to the `custom-parse` multimethod.
+
+  See also [[stop]]"
+  ([] (start defaults/default-options))
   ([opts]
    (when-not (some-> (jlink-instance/get) (proto/kernel-link?)) ; need both, b/c some tests only init jlink
      (let [jlink-inst (or (jlink-instance/get)
@@ -171,11 +162,9 @@
            (log/warnf "You have a newer Wolfram version %s than the %s used to generate wolframite.wolfram
            and may want to re-create it with (wolframite.impl.wolfram-syms.write-ns/write-ns!)"
                       wolfram-version w/*wolfram-version*)))
-      (:wolfram-version @kernel-info))
+       (:wolfram-version @kernel-info))
      nil)
    nil))
-
-(comment (init!))
 
 (defn eval
   "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
@@ -191,8 +180,6 @@
     ; => 3
     ```
 
-    See also [[load-all-symbols]], which enable you to make a Wolfram function callable directly.
-
     Tip: Use [[->wl]] to look at the final expression that would be sent to Wolfram for evaluation."
   ([expr] (eval expr {}))
   ([expr eval-opts]
@@ -200,11 +187,9 @@
      (let [with-eval-opts (merge {:jlink-instance jlink-inst}
                                  (:opts jlink-inst)
                                  eval-opts)
-           expr' (un-qualify (if (string? expr) (express/express expr with-eval-opts) expr))]
+           expr' (unqualify (if (string? expr) (express/express expr with-eval-opts) expr))]
        (cep/cep expr' with-eval-opts))
      (throw (IllegalStateException. "Not initialized, call init! first")))))
-
-(def ^:deprecated wl "DEPRECATED - use `eval` instead." eval)
 
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
 (defn- clj-intern-autoevaled
@@ -229,7 +214,7 @@
   (eval (list 'quote s) {:flags [:no-evaluate]}))
 
 (defn ->wl
-  "Convert clojure forms to mathematica Expr.
+  "Convert Clojure forms to instances of Wolfram's Expr class.
   Generally useful, especially for working with graphics - or for troubleshooting
   what will be sent to Wolfram for evaluation."
   ([clj-form] (->wl clj-form {:output-fn str}))
@@ -237,55 +222,9 @@
    (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
      (ifn? output-fn) output-fn)))
 
-(defn load-all-symbols
-  "BEWARE: You shouldn't need to use this, as they are already loaded into wolframite.wolfram; use
-  `(wolframite.impl.wolfram-syms.write-ns/write-ns!)` if you want to refresh that file with new
-  functions in your version of Wolfram.
-
-  ### Old docstring
-  Loads all WL global symbols as vars with docstrings into a namespace given by symbol `ns-sym`.
-  These vars evaluate into a symbolic form, which can be passed to [[eval]]. You gain docstrings,
-  (possibly) autocompletion, and convenient inclusion of vars that you want evaluated before sending the
-  form off to Wolfram, without the need for quote - unquote: `(let [x 3] (eval (Plus x 1)))`.
-
-  Beware: May take a couple of seconds.
-  Example:
-  ```clojure
-  (wl/load-all-symbols 'w)
-  (w/Plus 1 2) ; now the same as (wl/eval '(Plus 1 2))
-  ```
-
-  Alternatively, load the included but likely outdated `resources/wld.wl` with a dump of the data."
-  [ns-sym]
-  (wolfram-syms/load-all-symbols eval ns-sym))
-
 (comment
-  (->
-   (eval ('Names "System`*"))
-   println)
-
-  (-> (eval '(Information "System`Plus"))
-      (nth 1))
-
-  (defn is-function?
-    "Guesses whether or not the given symbol is a 'function' in the normal sense.
-
-  NOTE: It turns out that this is pretty difficult because everything in Mathematica is pretty much technically a function...
-  "
-    [symbol]
-    (let [ks ["UpValues" "DefaultValues" "SubValues" "OwnValues" "FormatValues" "DownValues" "NValues"]
-          data (-> (eval `(Information ~symbol)) second)
-          has-values? (->> data
-                           (partial get)
-                           (#(map % ks))
-                           (mapv #(not= 'None %))
-                           (some identity))
-          has-function? (-> data
-                            (get "Attributes")
-                            (->> (map str)
-                                 (mapv #(str/includes? % "Function"))
-                                 (some identity)))]
-
-      (or has-values? has-function?)))
-
-  (->  (is-function? "System`Subtract")))
+  (start {:aliases
+          '{** Power}})
+  (eval '(** 5 2))
+  (eval (w/Dot [1 2 3] [4 5 6]))
+  (stop))

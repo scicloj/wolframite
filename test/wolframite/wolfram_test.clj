@@ -5,7 +5,7 @@
              [wolframite.wolfram :as w]))
 
 (deftest wolfram-ns-tests
-  (wl/init!)
+  (wl/start)
   (testing "The pre-loaded symbols ns works"
 
     (testing "basics"

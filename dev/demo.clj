@@ -16,7 +16,7 @@
 (comment
 
   ;; !!! INIT WOLFRAMITE !!!
-  (wl/init!)
+  (wl/start)
 
   ;; Low-level evaluate of a Wolfram expression (here, `Plus[1,2]`)
   ;; You normally don't want this - just use wl/eval. Notice that all the connection details explicitly specified.
@@ -43,7 +43,6 @@
 ;; (def x "hello")
 
 ;; quoted
-
 'a
 
 ;; - keywords

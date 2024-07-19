@@ -20,7 +20,7 @@
 
 ;; # Wolfram Language Graphics
 
-(wl/init!)
+(wl/start)
 
 ;; ## Numbers
 

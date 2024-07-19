@@ -44,7 +44,7 @@ the following chapters.")
 First, we must initialize Wolframite and connect it to a Wolfram kernel,
 which will perform the computations:")
 
-(wl/init!)
+(wl/start)
 
 (md "## Base example")
 
