@@ -24,8 +24,8 @@
                                   " you are trying to start multiple concurrent connections (from separate REPLs),"
                                   " or there is some other issue and you need to retry, or restart and retry...")
                              {:kernel-link-opts (cond-> kernel-link-opts
-                                                        (array? kernel-link-opts)
-                                                        vec)
+                                                  (array? kernel-link-opts)
+                                                  vec)
                               :cause e}))
              (throw e)))
          (catch Exception e
@@ -38,20 +38,29 @@
     (reset! kernel-link-atom nil))
   (expr [_this primitive-or-exprs]
     (if (sequential? primitive-or-exprs)
-      (Expr.
-        ^Expr (first primitive-or-exprs)
-        ^"[Lcom.wolfram.jlink.Expr;" (into-array Expr (rest primitive-or-exprs)))
+      (try (Expr.
+            ^Expr (first primitive-or-exprs)
+            ^"[Lcom.wolfram.jlink.Expr;" (into-array Expr (rest primitive-or-exprs)))
+           (catch Exception e
+             (throw (ex-info (str "Failed to create an expression from "
+                                  primitive-or-exprs
+                                  "caused by "
+                                  (ex-message e)
+                                  "All elements in the sequence must be instances of the 'Expr' class.")
+                             {:argument primitive-or-exprs
+                              :cause e
+                              :types (map type primitive-or-exprs)}))))
       ;; Here, primitive-or-exprs could be an int, a String, long[], or similar
       (Expr. primitive-or-exprs)))
   (expr [_this type name]
     (Expr. ^int (case type
                   :Expr/SYMBOL  Expr/SYMBOL)
-          ^String (apply str (replace {\/ \`} name))))
+           ^String (apply str (replace {\/ \`} name))))
   (->expr [_this obj]
     (.getExpr
-      (doto (MathLinkFactory/createLoopbackLink)
-        (.put obj)
-        (.endPacket))))
+     (doto (MathLinkFactory/createLoopbackLink)
+       (.put obj)
+       (.endPacket))))
   (expr? [_this x]
     (instance? Expr x))
   (expr-element-type [_this container-type expr]
