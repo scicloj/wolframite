@@ -6351,14 +6351,15 @@
   ;; we need the whole body to be pure symbols and primitives only, which Wolfram will understand
   (let [symbolic-sexp (clojure.walk/prewalk wolframite.impl.wolfram-syms.intern/try->wolf-sym sexp)]
     `(list (quote ~'Function) (quote ~args) (quote ~symbolic-sexp))))
-(def >>-<< "Maps to the Wolfram function FullSimplify" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote >>-<<)))
+(def .>> "Maps to the Wolfram function ReplaceAll" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote .>>)))
 (def <<->> "Maps to the Wolfram function ExpandAll" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote <<->>)))
 (def ++<-> "Maps to the Wolfram function ComplexExpand" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote ++<->)))
 (def ** "Maps to the Wolfram function Power" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote **)))
-(def >-< "Maps to the Wolfram function Simplify" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote >-<)))
-(def .->> "Maps to the Wolfram function ReplaceAll" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote .->>)))
+(def >< "Maps to the Wolfram function Simplify" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote ><)))
+(def .> "Maps to the Wolfram function Replace" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote .>)))
 (def <-> "Maps to the Wolfram function Expand" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote <->)))
 (def ⮾ "Maps to the Wolfram function NonCommutativeMultiply" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote ⮾)))
 (def ∫ "Maps to the Wolfram function Integrate" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote ∫)))
+(def >><< "Maps to the Wolfram function FullSimplify" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote >><<)))
 (def √ "Maps to the Wolfram function Sqrt" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote √)))
 (def ++ "Maps to the Wolfram function Conjugate" (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote ++)))
