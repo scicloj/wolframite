@@ -10,7 +10,7 @@
 ;;   (testing (is wl/math-evaluate)))
 
 (deftest basic-math
-  (wl/init!)
+  (wl/start)
   (is (= 2 (wl/eval '(Plus 1 1)))
       "A simple expression-as-symbol")
   (is (= 2 (wl/eval "Plus[1,1]"))
@@ -27,7 +27,11 @@
 ;;                                                                          :output-fn str})))))
 
 (deftest load-all-symbols-test
+<<<<<<< HEAD
   (wl/init!)
+=======
+  (wl/start)
+>>>>>>> 9b7f3e918f65f2a6e9bc56222b3015173256ce71
   (wolfram-syms/load-all-symbols wl/eval 'w2)
   (is (= 3
          (wl/eval (eval '(w2/Plus 1 2))))

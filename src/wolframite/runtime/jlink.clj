@@ -26,10 +26,10 @@
   NOTE: Returns a string."
   ([info]
    (let [{:keys [user-paths defaults]} info
-         jpaths (keep :JLINK_JAR_PATH user-paths)]
-     (or (first jpaths)
-         (-> defaults
-             :root
+         {:strs [JLINK_JAR_PATH WOLFRAM_INSTALL_PATH]} user-paths]
+     (or JLINK_JAR_PATH
+         (-> (or WOLFRAM_INSTALL_PATH
+                 (:root defaults))
              (fs/path default-jlink-path-under-root)
              str)))))
 

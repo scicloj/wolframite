@@ -40,7 +40,7 @@ Next, obviously, you'll need to ensure that you have Wolfram Engine or Mathemati
 First of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:
 
 ```clojure
-(wolframite.core/init!)
+(wolframite.core/start)
 ```
 This should also find and load the JLink JAR included with your installation. Watch stdout for an INFO log message (via clojure.tools.logging) like:
 
@@ -60,7 +60,7 @@ Start a REPL with Wolframite on the classpath, then initialize it:
 (require '[wolframite.core :as wl] 
          '[wolframite.wolfram :as w]) ; Wolfram symbols as Clojure vars / fns
 ;; Initialize
-(wl/init!) ; => nil
+(wl/start) ; => nil
 ;; Use it:
 (wl/eval (w/Dot [1 2 3] [4 5 6]))
 ;=> 32
@@ -98,13 +98,13 @@ Read through and play with [explainer.clj](dev%2Fexplainer.clj) and [demo.clj](d
 
 A big advantage of Wolframite (as opposed to its earlier incarnations) is that we can now individually tailor the user experience at the level of initialization,
 ```clojure
-(wl/init! {:aliases '{** Power}})
+(wl/start {:aliases '{** Power}})
 (wl/eval '(** 2 5)) ; => 32
 ```
 ,
 and function call,
 ```clojure
-(wl/init!)
+(wl/start)
 (wl/eval '(** 2 5) {:aliases '{** Power}}) ; => 32
 ```
 . Use it how you want to!
@@ -128,11 +128,11 @@ user> (ch/clerk-watch! ["dev/notebook"])
 
 ### How does it work?
 
-You compose Wolfram expressions using the convenience functions and vars from `wolframite.wolfram`. These are then turned first into a symbolic representation of themselves and later into a tree of JLink `Expr` objects and sent to a Wolfram kernel subprocess (started by `wl/init!`) for evaluation. The result is translated back from jlink.Expr into a Clojure form. This translation allows for some additional convenience logic, such as supporting `w/*` instead of `Times`.
+You compose Wolfram expressions using the convenience functions and vars from `wolframite.wolfram`. These are then turned first into a symbolic representation of themselves and later into a tree of JLink `Expr` objects and sent to a Wolfram kernel subprocess (started by `wl/start`) for evaluation. The result is translated back from jlink.Expr into a Clojure form. This translation allows for some additional convenience logic, such as supporting `w/*` instead of `Times`.
 
 ## Dependencies
 
-Wolframite requires Wolfram's Java integration library JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the `WolframKernel` / `MathKernel` executable is, in order to be able to start the external evaluation kernel process. Normally, `wl/init!` should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.
+Wolframite requires Wolfram's Java integration library JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the `WolframKernel` / `MathKernel` executable is, in order to be able to start the external evaluation kernel process. Normally, `wl/start` should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.
 
 ## Development
 
@@ -142,7 +142,7 @@ To run tests from the command line, you need to add JLink to the classpath (only
 create a `./symlink-jlink.jar` symlink and then run the tests:
 
 ```shell
-clojure -X:test-run
+clojure -X:run-tests
 ```
 
 ### Deployment
@@ -152,6 +152,16 @@ Build the jar with `clojure -T:build jar` then deploy with
 
 Note: You need to log in to Clojars and generate a deployment token. You also need to be added to
 the SciCloj group there by an admin.
+
+#### Documentation
+
+Documentation is written as literal programming sources in the `notebooks` directory and turned into HTML
+under `docs` using [Clay](https://scicloj.github.io/clay/)
+and [Quarto](https://quarto.org/).
+
+To render a single namespace/page, require Clay and run `(clay/make! {:source-path "<path to the file>""})`. Tip: You can also do this without quarto - just add `:run-quarto false` to the options.
+
+To build the whole site, run `clojure -T:build build-site`.
 
 ## Authors
 

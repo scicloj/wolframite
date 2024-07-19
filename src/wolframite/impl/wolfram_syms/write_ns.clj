@@ -80,11 +80,11 @@
   Args:
   - `path` (e.g. './src/wolframite/wolfram.clj') - where to write the code
   - `opts` is a map that may contain:
-    - `:aliases` - see `wl/init!` for details; a var will be made for each alias, just as we do for `*`,
+    - `:aliases` - see `wl/start` for details; a var will be made for each alias, just as we do for `*`,
       so that you can use it just as you do with `(w/* 2 3)`. Beware: You will still also need to
       pass your custom aliases to init! or eval.
 
-  Requires that you've run `wl/init!` first."
+  Requires that you've run `wl/start` first."
   ([path] (write-ns! path nil))
   ([path {:keys [aliases] :as _opts}]
    (let [{:keys [wolfram-version wolfram-kernel-name]} (core/kernel-info!)]
@@ -113,7 +113,7 @@
 
 (comment
 
-  (core/init!)
+  (core/start)
   (load-file "src/wolframite/wolfram.clj")
   (do (time (write-ns! "src/wolframite/wolfram.clj"))
       (load-file "src/wolframite/wolfram.clj"))

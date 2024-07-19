@@ -1,7 +1,10 @@
 (ns build
   "Project build config as code for clojure's tools.build"
-  (:require [clojure.tools.build.api :as b]
-            [clojure.edn :as edn]))
+  (:require [build-config]
+            [babashka.fs :as fs]
+            [clojure.tools.build.api :as b]
+            [clojure.edn :as edn]
+            [scicloj.clay.v2.api :as clay]))
 
 (def project (-> (edn/read-string (slurp "deps.edn"))
                  :aliases :neil :project))
@@ -58,3 +61,10 @@
           opts))
   opts)
 
+(defn build-site [opts]
+  (println "Going to build docs ...")
+  (clay/make! (assoc build-config/config
+                :clean-up-target-dir true
+                :show false))
+  (System/exit 0) ; something keeps the JVM alive and I don't know what so kill it
+  opts)

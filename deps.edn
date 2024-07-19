@@ -6,19 +6,18 @@
 
  :aliases {:neil {:project {:name org.scicloj/wolframite
                             :version "1.0.0-SNAPSHOT"}}
-           :dev {:extra-paths ["dev" "test"]
+           :dev {:extra-paths ["dev" "test" "notebooks"]
                  :jvm-opts ["-Djdk.attach.allowAttachSelf"]
                  :extra-deps {com.clojure-goes-fast/clj-memory-meter {:mvn/version "0.1.3"}
-                              cider/orchard {:mvn/version "0.7.3"}
                               djblue/portal {:mvn/version "0.51.1"}
                               reagent/reagent {:mvn/version "1.1.0"}
                               aerial.hanami/aerial.hanami {:mvn/version "0.15.1"}
                               io.github.nextjournal/clerk {:mvn/version "0.3.233"}
-                              org.scicloj/clay {:mvn/version "2-beta7"}
+                              org.scicloj/clay {:mvn/version "2-beta12"}
                               borkdude/edamame {:mvn/version "0.0.19"}
                               clj-http/clj-http {:mvn/version "3.11.0"}
                               org.slf4j/slf4j-simple {:mvn/version "2.0.9"}}}
-           :test-run ; run with clj -X:test-run
+           :run-tests ; run with clj -X:run-tests
            {:extra-paths ["test"]
             :extra-deps {wolfram/jlink {:local/root "./symlink-jlink.jar"} ; set it for your system
                          io.github.cognitect-labs/test-runner
@@ -29,5 +28,12 @@
            :build ;; added by neil; 1) build with `clojure -T:build jar` then deploy with
            ;; `env CLOJARS_USERNAME=<tbd> CLOJARS_PASSWORD=<clojars-token>  clojure -T:build deploy`
            {:deps {io.github.clojure/tools.build {:git/tag "v0.10.4" :git/sha "31388ff"}
-                   slipset/deps-deploy {:mvn/version "0.2.2"}}
+                   slipset/deps-deploy {:mvn/version "0.2.2"}
+                   babashka/fs {:mvn/version "0.5.20"}
+                   org.scicloj/clay {:mvn/version "2-beta12"}
+                   ;; We need wolframite + JLink to render Wolf code in the docs
+                   org.scicloj/wolframite {:local/root "."}
+                   wolfram/jlink {:local/root "./symlink-jlink.jar"}}
+            :extra-paths ["notebooks"]
+            :override-deps {io.github.nextjournal/markdown {:git/sha "6683c48dfdb23404a23057817b6ac3acf0310bca"}} ; see #wolframite/56
             :ns-default build}}}

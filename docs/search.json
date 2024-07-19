@@ -1,0 +1,214 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Wolframite Documentation",
+    "section": "",
+    "text": "1 Wolframite\nAn interface between Clojure and the Wolfram Language (Supports Mathematica and Wolfram Engine ).",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#status",
+    "href": "index.html#status",
+    "title": "Wolframite Documentation",
+    "section": "1.1 Status",
+    "text": "1.1 Status\nWolframite is currently (Q2/2024) under active development again. You can keep track of what is happening in this discussion.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#what-is-wolframite",
+    "href": "index.html#what-is-wolframite",
+    "title": "Wolframite Documentation",
+    "section": "1.2 What is Wolframite?",
+    "text": "1.2 What is Wolframite?\nWolframite (formerly Clojuratica) brings together two of today’s most exciting tools for high-performance, parallel computation.\nClojure is a dynamic functional programming language with a compelling approach to concurrency and state, a strong cast of persistent immutable data structures, and a growing reputation for doing all the right things. Wolfram Mathematica is arguably the world’s most powerful integrated tool for numerical computation, symbolic mathematics, optimization, and visualization and is build on top of its own splendid functional programming language, Wolfram Language.\nBy linking the two:\n\nWolframite lets you write and evaluate Wolfram/Mathematica code in Clojure with full syntactic integration. Now Clojure programs can take advantage of Wolfram’s enormous range of numerical and symbolic mathematics algorithms and fast matrix algebra routines.\nWolframite provides the seamless and transparent translation of native data structures between Clojure and Wolfram. This includes high-precision numbers, matricies, N-dimensional arrays, and evaluated and unevaluated Mathematica expressions and formulae.\nWolframite lets you write Wolfram as if it was Clojure by providing Clojure functions and vars for all Wolfram symbols, including docstrings and autocompletion in your favorite IDE\n[Tentative] Wolframite facilitates the “Clojurization” of Wolfram’s existing parallel-computing capabilities. Wolfram is not designed for threads or concurrency. It has excellent support for parallel computation, but parallel evaluations are initiated from a single-threaded master kernel which blocks until all parallel evaluations return. By contrast, Wolframite includes a concurrency framework that lets multiple Clojure threads execute Wolfram expressions without blocking others. Now it is easy to run a simulation in Clojure with 1,000 independent threads asynchronously evaluating processor-intensive expressions in Wolfram. The computations will be farmed out adaptively and transparently to however many Wolfram kernels are available on any number of processor cores, either locally or across a cluster, grid, or network.\n\nNotice that you cannot run more Wolfram kernels than your license allows (see wolframite/kernel-info!)\n\n\nWolframite is open-source and targeted at applications in scientific computing, computational economics, finance, and other fields that rely on the combination of parallelized simulation and high-performance number-crunching. Wolframite gives the programmer access to Clojure’s most cutting-edge features–easy concurrency and multithreading, immutable persistent data structures, and software transactional memory—alongside Wolfram’s easy-to-use algorithms for numerics, symbolic mathematics, optimization, statistics, visualization, and image-processing.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "Wolframite Documentation",
+    "section": "1.3 Usage",
+    "text": "1.3 Usage\n\n1.3.1 Prerequisites:\n\n1.3.1.1 Clojure\nFirst, if you haven’t already, install the Clojure CLI toolchain (homebrew is a great way to do this if you’re on Mac or Linux, but you can just as easily use the installation scripts if you prefer).\n\n\n1.3.1.2 Mathematica or Wolfram Engine\nNext, obviously, you’ll need to ensure that you have Wolfram Engine or Mathematica installed and your license (free for W. E.) registered - make sure you can run these tools on their own before trying Wolframite.\nFirst of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:\n(wolframite.core/start)\nThis should also find and load the JLink JAR included with your installation. Watch stdout for an INFO log message (via clojure.tools.logging) like:\n\n=== Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar ===\n\nHowever, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the WOLFRAM_INSTALL_PATH environment variable or Java system property (the latter takes priority) to point to the correct location. Example:\nexport WOLFRAM_INSTALL_PATH=/opt/mathematica/13.1\n\n\n\n1.3.2 Getting started\nStart a REPL with Wolframite on the classpath, then initialize it:\n(require '[wolframite.core :as wl] \n         '[wolframite.wolfram :as w]) ; Wolfram symbols as Clojure vars / fns\n;; Initialize\n(wl/start) ; =&gt; nil\n;; Use it:\n(wl/eval (w/Dot [1 2 3] [4 5 6]))\n;=&gt; 32\nMore examples\n(wl/eval (w/D (w/Power 'x 2) 'x))\n;=&gt; (* 2 x)\n(wl/eval (w/ChemicalData \"Ethanol\" \"MolarMass\"))\n;=&gt; (Quantity 46.069M (* \"Grams\" (Power \"Moles\" -1)))\n\n;; Accessing WlframAlpha\n(wl/eval (w/WolframAlpha \"How many licks does it take to get to the center of a Tootsie Pop?\")) ; BEWARE: must be online\n;=&gt; [(-&gt; [[\"Input\" 1] \"Plaintext\"] \"How many licks does it take to get to the Tootsie Roll center of a Tootsie Pop?\") (-&gt; [[\"Result\" 1] \"Plaintext\"] \"3481\\n(according to student researchers at the University of Cambridge)\")]\n\n(wl/eval (w/N w/Pi 20))\n;=&gt; 3.141592653589793238462643383279502884197169399375105820285M\n\n(wl/eval (w/Map (w/fn [x] (w/Sqrt x)) [4 16]))\n;=&gt; [2 4]\nTIP: Cursive - teach it to resolve w/fn as clojure.core/fn.\nNOTE: The wolframite.wolfram (w) ns has vars for all Wolfram symbols at the time of the last release. Check w/*wolfram-kernel-name* for kernel type/version and run (wolframite.impl.wolfram-syms.write-ns/write-ns!) to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematice has, and/or with custom “aliases”.\n\n1.3.2.1 Learning Wolframite\nRead through and play with explainer.clj and demo.clj, which demonstrate most of Wolframite’s features and what you can do with Wolfram.\n\n\n1.3.2.2 Customizing Wolframite\nA big advantage of Wolframite (as opposed to its earlier incarnations) is that we can now individually tailor the user experience at the level of initialization,\n(wl/start {:aliases '{** Power}})\n(wl/eval '(** 2 5)) ; =&gt; 32\n, and function call,\n(wl/start)\n(wl/eval '(** 2 5) {:aliases '{** Power}}) ; =&gt; 32\n. Use it how you want to!\nTIP: You can also get convenience vars for your aliases in wolframite.wolfram by running something like (wolframite.impl.wolfram-syms.write-ns/write-ns! &lt;path&gt; {:aliases '{** Power}}). After you load the file, you’ll be able to use (wl/eval (w/** 2 5) {:aliases '{** Power}}).\n\n\n\n1.3.3 Clerk Integration\nExample usage: (watching for changes in a folder)\nuser&gt; (require '[clojuratica.tools.clerk-helper :as ch])\nuser&gt; (ch/clerk-watch! [\"dev/notebook\"])\n\nOpen dev/notebook/demo.clj, make a change and save.\nOpen localhost:7777 in the browser\n\n\n\n1.3.4 How does it work?\nYou compose Wolfram expressions using the convenience functions and vars from wolframite.wolfram. These are then turned first into a symbolic representation of themselves and later into a tree of JLink Expr objects and sent to a Wolfram kernel subprocess (started by wl/start) for evaluation. The result is translated back from jlink.Expr into a Clojure form. This translation allows for some additional convenience logic, such as supporting w/* instead of Times.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#dependencies",
+    "href": "index.html#dependencies",
+    "title": "Wolframite Documentation",
+    "section": "1.4 Dependencies",
+    "text": "1.4 Dependencies\nWolframite requires Wolfram’s Java integration library JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the WolframKernel / MathKernel executable is, in order to be able to start the external evaluation kernel process. Normally, wl/start should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#development",
+    "href": "index.html#development",
+    "title": "Wolframite Documentation",
+    "section": "1.5 Development",
+    "text": "1.5 Development\n\n1.5.1 Running tests\nTo run tests from the command line, you need to add JLink to the classpath (only REPL supports dynamically loading jars) - create a ./symlink-jlink.jar symlink and then run the tests:\nclojure -X:run-tests\n\n\n1.5.2 Deployment\nBuild the jar with clojure -T:build jar then deploy with env CLOJARS_USERNAME=&lt;tbd&gt; CLOJARS_PASSWORD=&lt;clojars-token&gt; clojure -T:build deploy\nNote: You need to log in to Clojars and generate a deployment token. You also need to be added to the SciCloj group there by an admin.\n\n1.5.2.1 Documentation\nDocumentation is written as literal programming sources in the notebooks directory and turned into HTML under docs using Clay and Quarto.\nTo render a single namespace/page, require Clay and run (clay/make! {:source-path \"&lt;path to the file&gt;\"\"}). Tip: You can also do this without quarto - just add :run-quarto false to the options.\nTo build the whole site, run clojure -T:build build-site.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#authors",
+    "href": "index.html#authors",
+    "title": "Wolframite Documentation",
+    "section": "1.6 Authors",
+    "text": "1.6 Authors\nThe original Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the Community page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.\nOngoing maintenance and development over the years have been thanks to * Steve Chan * Dan Farmer * Norman Richards\nClojuratica has been turned into Wolframite and further maintained by:\n\nPawel Ceranka\nThomas Clark\nJakub Holý\n\nThe project is now being maintained as part of the SciCloj project.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#license",
+    "href": "index.html#license",
+    "title": "Wolframite Documentation",
+    "section": "1.7 License",
+    "text": "1.7 License\nDistributed under the Mozilla Public License either version 2.0 or (at your option) any later version.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#legal",
+    "href": "index.html#legal",
+    "title": "Wolframite Documentation",
+    "section": "1.8 Legal",
+    "text": "1.8 Legal\nThe product names used in this website are for identification purposes only. All trademarks and registered trademarks, including “Wolfram Mathematica,” are the property of their respective owners. Wolframite is not a product of Wolfram Research. The software on this site is provided “as-is,” without any express or implied warranty.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#further-documentation",
+    "href": "index.html#further-documentation",
+    "title": "Wolframite Documentation",
+    "section": "1.9 Further documentation",
+    "text": "1.9 Further documentation\nSee the book content menu on the left side\n\nsource: notebooks/index.clj",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "demo.html",
+    "href": "demo.html",
+    "title": "2  Wolframite demo",
+    "section": "",
+    "text": "3 Demonstration\nA brief demonstration of Wolframite can do. We suggest reading it, but you can also jump to either of the following chapters.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Wolframite demo</span>"
+    ]
+  },
+  {
+    "objectID": "demo.html#init",
+    "href": "demo.html#init",
+    "title": "2  Wolframite demo",
+    "section": "3.1 Init",
+    "text": "3.1 Init\nFirst, we must initialize Wolframite and connect it to a Wolfram kernel, which will perform the computations:\n\n(wl/start)\n\n\nnil",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Wolframite demo</span>"
+    ]
+  },
+  {
+    "objectID": "demo.html#base-example",
+    "href": "demo.html#base-example",
+    "title": "2  Wolframite demo",
+    "section": "3.2 Base example",
+    "text": "3.2 Base example\n\n(wl/eval '(Dot [1 2 3] [4 5 6]))\n\n\n32",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Wolframite demo</span>"
+    ]
+  },
+  {
+    "objectID": "demo.html#strings-of-wl-code",
+    "href": "demo.html#strings-of-wl-code",
+    "title": "2  Wolframite demo",
+    "section": "3.3 Strings of WL code",
+    "text": "3.3 Strings of WL code\n\n(wl/eval \"{1 , 2, 3} . {4, 5, 6}\")\n\n\n32",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Wolframite demo</span>"
+    ]
+  },
+  {
+    "objectID": "demo.html#def-intern-wl-fns-i.e.-effectively-define-wl-fns-as-clojure-fns",
+    "href": "demo.html#def-intern-wl-fns-i.e.-effectively-define-wl-fns-as-clojure-fns",
+    "title": "2  Wolframite demo",
+    "section": "3.4 Def / intern WL fns, i.e. effectively define WL fns as clojure fns:",
+    "text": "3.4 Def / intern WL fns, i.e. effectively define WL fns as clojure fns:\n\n(def W:Plus (parse/parse-fn 'Plus {:jlink-instance (wolframite.impl.jlink-instance/get)}))\n\n\n(W:Plus 1 2 3)\n\n\n6\n\n… and call it\n\n(def greetings\n  (wl/eval\n   (w/fn [x] (w/StringJoin \"Hello, \" x \"! This is a Mathematica function's output.\"))))\n\n\n(greetings \"Stephen\")\n\n\n\"Hello, Stephen! This is a Mathematica function's output.\"",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Wolframite demo</span>"
+    ]
+  },
+  {
+    "objectID": "demo.html#bidirectional-translation",
+    "href": "demo.html#bidirectional-translation",
+    "title": "2  Wolframite demo",
+    "section": "3.5 Bidirectional translation",
+    "text": "3.5 Bidirectional translation\n(Somewhat experimental, especially in the wl-&gt;clj direction)\n\n(wl/-&gt;clj \"GridGraph[{5, 5}]\")\n\n\n(GridGraph [5 5])\n\n\n(wl/-&gt;wl (w/GridGraph [5 5]) {:output-fn str})\n\n\n\"GridGraph[{5, 5}]\"",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Wolframite demo</span>"
+    ]
+  },
+  {
+    "objectID": "demo.html#graphics",
+    "href": "demo.html#graphics",
+    "title": "2  Wolframite demo",
+    "section": "3.6 Graphics",
+    "text": "3.6 Graphics\n\n(view (w/GridGraph [5 5]))\n\nGridGraph[{5, 5}]\n\n(view (w/GridGraph [5 5])\n {:folded? true})\n\nGridGraph[{5, 5}]\n\n(view (w/ChemicalData \"Ethanol\" \"StructureDiagram\"))\n\nChemicalData[\"Ethanol\", \"StructureDiagram\"]",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Wolframite demo</span>"
+    ]
+  },
+  {
+    "objectID": "demo.html#more-working-examples",
+    "href": "demo.html#more-working-examples",
+    "title": "2  Wolframite demo",
+    "section": "3.7 More Working Examples",
+    "text": "3.7 More Working Examples\n\n(wl/eval (w/GeoNearest (w/Entity \"Ocean\") w/Here))\n\n\n[:entity.ocean/adriatic-sea]\n\nTODO: Make this work with view as well.\n\n(view (w/TextStructure \"The cat sat on the mat.\"))\n\nTextStructure[\"The cat sat on the mat.\"]",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Wolframite demo</span>"
+    ]
+  },
+  {
+    "objectID": "demo.html#wolfram-alpha",
+    "href": "demo.html#wolfram-alpha",
+    "title": "2  Wolframite demo",
+    "section": "3.8 Wolfram Alpha",
+    "text": "3.8 Wolfram Alpha\n\n(wl/eval (w/WolframAlpha \"number of moons of Saturn\" \"Result\"))\n\n\n(Quantity 145 (IndependentUnit \"moons\"))\n\n\n(view (w/WolframAlpha \"number of moons of Saturn\" \"Result\"))\n\nWolframAlpha[\"number of moons of Saturn\", \"Result\"]\n\nsource: notebooks/demo.clj",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Wolframite demo</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.index.html",
+    "href": "for_scientists.index.html",
+    "title": "3  Wolframite for scientists",
+    "section": "",
+    "text": "An explanation of Wolframite and why to use it, aimed at scientists dealing with scientific computations and in need of a powerful tool and a good computation pipeline.\nTBD\n\nsource: notebooks/for_scientists/index.clj",
+    "crumbs": [
+      "For Scientists",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Wolframite for scientists</span>"
+    ]
+  },
+  {
+    "objectID": "for_developers.index.html",
+    "href": "for_developers.index.html",
+    "title": "4  Wolframite for Clojure developers",
+    "section": "",
+    "text": "An explanation of Wolframite and why to use it, aimed at Clojure developers.\nTBD\n\nsource: notebooks/for_developers/index.clj",
+    "crumbs": [
+      "For Developers",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Wolframite for Clojure developers</span>"
+    ]
+  }
+]

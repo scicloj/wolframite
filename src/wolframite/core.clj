@@ -28,20 +28,20 @@
 (ns wolframite.core
   (:refer-clojure :exclude [eval])
   (:require
-    [clojure.string :as str]
-    [clojure.tools.logging :as log]
-    [clojure.walk :as walk]
-    [wolframite.base.cep :as cep]
-    [wolframite.base.convert :as convert]
-    [wolframite.base.evaluate :as evaluate]
-    [wolframite.base.express :as express]
-    [wolframite.base.parse :as parse]
-    [wolframite.impl.jlink-instance :as jlink-instance]
-    [wolframite.impl.protocols :as proto]
-    [wolframite.runtime.jlink :as jlink]
-    [wolframite.runtime.system :as system]
-    [wolframite.runtime.defaults :as defaults]
-    [wolframite.wolfram :as w]))
+   [clojure.string :as str]
+   [clojure.tools.logging :as log]
+   [clojure.walk :as walk]
+   [wolframite.base.cep :as cep]
+   [wolframite.base.convert :as convert]
+   [wolframite.base.evaluate :as evaluate]
+   [wolframite.base.express :as express]
+   [wolframite.base.parse :as parse]
+   [wolframite.impl.jlink-instance :as jlink-instance]
+   [wolframite.impl.protocols :as proto]
+   [wolframite.runtime.jlink :as jlink]
+   [wolframite.runtime.system :as system]
+   [wolframite.runtime.defaults :as defaults]
+   [wolframite.wolfram :as w]))
 
 (defonce ^{:deprecated true, :private true} kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
 
@@ -86,7 +86,7 @@
    (->> (kernel-link-opts init-opts)
         (proto/create-kernel-link jlink-impl))))
 
-(defn terminate-kernel!
+(defn stop
   "Sends a request to the kernel to shut down.
 
   See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/KernelLink.html#terminateKernel()"
@@ -126,13 +126,13 @@
   Requires [[init!]] to be called first."
   []
   (zipmap
-    [:wolfram-version :wolfram-kernel-name :max-license-processes]
-    (eval '[$VersionNumber
-            (SystemInformation "Kernel", "ProductKernelName")
-            (SystemInformation "Kernel", "MaxLicenseProcesses")])))
+   [:wolfram-version :wolfram-kernel-name :max-license-processes]
+   (eval '[$VersionNumber
+           (SystemInformation "Kernel", "ProductKernelName")
+           (SystemInformation "Kernel", "MaxLicenseProcesses")])))
 
-(defn init!
-  "Initialize Wolframite and the underlying Wolfram Kernel - required once before you make any eval calls.
+(defn start
+  "Initialize Wolframite and start the underlying Wolfram Kernel - required once before you make any eval calls.
 
   - `opts` - a map that is passed to `eval` and other functions used in the convert-evaluate-parse
              cycle, which may contain, among others:
@@ -142,8 +142,10 @@
         You may add your own ones, to be able to use them in your Wolfram expressions and get those
         translated into Wolfram ones. See Wolframite docs.
      -  `:flags [kwd ...]` - various on/off toggles for how Wolframite processes inputs/results,
-        passed e.g. to the `custom-parse` multimethod."
-  ([] (init! defaults/default-options))
+        passed e.g. to the `custom-parse` multimethod.
+
+  See also [[stop]]"
+  ([] (start defaults/default-options))
   ([opts]
    (when-not (some-> (jlink-instance/get) (proto/kernel-link?)) ; need both, b/c some tests only init jlink
      (let [jlink-inst (or (jlink-instance/get)
@@ -160,7 +162,7 @@
            (log/warnf "You have a newer Wolfram version %s than the %s used to generate wolframite.wolfram
            and may want to re-create it with (wolframite.impl.wolfram-syms.write-ns/write-ns!)"
                       wolfram-version w/*wolfram-version*)))
-      (:wolfram-version @kernel-info))
+       (:wolfram-version @kernel-info))
      nil)
    nil))
 
@@ -219,35 +221,3 @@
   ([clj-form {:keys [output-fn] :as opts}]
    (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
      (ifn? output-fn) output-fn)))
-
-(comment
-  (init!)
-  (->
-   (eval ('Names "System`*"))
-   println)
-
-  (-> (eval '(Information "System`Plus"))
-      (nth 1))
-
-  (defn is-function?
-    "Guesses whether or not the given symbol is a 'function' in the normal sense.
-
-  NOTE: It turns out that this is pretty difficult because everything in Mathematica is pretty much technically a function...
-  "
-    [symbol]
-    (let [ks ["UpValues" "DefaultValues" "SubValues" "OwnValues" "FormatValues" "DownValues" "NValues"]
-          data (-> (eval `(Information ~symbol)) second)
-          has-values? (->> data
-                           (partial get)
-                           (#(map % ks))
-                           (mapv #(not= 'None %))
-                           (some identity))
-          has-function? (-> data
-                            (get "Attributes")
-                            (->> (map str)
-                                 (mapv #(str/includes? % "Function"))
-                                 (some identity)))]
-
-      (or has-values? has-function?)))
-
-  (->  (is-function? "System`Subtract")))
