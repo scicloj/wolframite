@@ -33,6 +33,8 @@
 
 (def base-aliases
   {'<< 'Get
+   '? 'WolframFunctionUsage ;; TODO: (need to add the Wolfram-side part)
+   '?? 'Information
    'do   'CompoundExpression
    '=    'Set
    '..=  'SetDelayed ;; TODO: Document this exception. Presumably not := because of clojure's keywords. It's actually nicer in a way though, because an (almost) ellipsis implies a delay!
