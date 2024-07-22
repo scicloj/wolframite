@@ -1,11 +1,16 @@
 ^{:clay {:kindly/options {:kinds-that-hide-code #{:kind/md :kind/hiccup :kind/html :kind/tex}}}}
 (ns packages
+  "A notebook demonstrating how to import and use Wolfram packages in Wolframite."
   (:require
    [wolframite.core :as wl]
    [wolframite.wolfram :as w]
    [wolframite.base.package :as wp]
 
    [scicloj.kindly.v4.kind :as k]))
+
+^:kindly/hide-code
+(-> (scicloj.kindly-advice.v1.api/add-advisor! (fn [{:keys [value]}] (when (nil? value) [[:kind/hidden]])))
+    :k/hidden)
 
 (k/md "# How to work with packages
 
