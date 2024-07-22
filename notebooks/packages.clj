@@ -1,3 +1,4 @@
+^{:clay {:kindly/options {:kinds-that-hide-code #{:kind/md :kind/hiccup :kind/html :kind/tex}}}}
 (ns packages
   (:require
    [wolframite.core :as wl]
@@ -28,17 +29,14 @@ For example, try loading 'WolframPackage'. There are two functions defined insid
 
 (wl/eval (WolframPackage/tryIt 10))
 (wl/eval (WolframPackage/additional 10))
-(wl/eval  (w/Information WolframPackage/additional "Usage"))
+(wl/eval  (w/Information WolframPackage/tryIt "Usage"))
 
 (k/md "That's it! As you can see, the functions are callable and the documentation is available too.
 
 If you want to change the context name, e.g. to make it shorter, then this is also simple:")
 
 (wp/<< "resources/wolframPackage.wl" "WolframPackage" 'pck)
-(wl/eval  (w/Information pck/tryIt "Usage"))
 (wl/eval (pck/tryIt 10))
+(wl/eval  (w/Information pck/additional "Usage"))
 
-(k/md "And so, you have the whole power of Wolfram packages at your fingertips. And to be honest, this is actually easier to work with than using Wolfram's contexts directly. ")
-
-(comment
-  (require '[scicloj.clay.v2.api :as clay]))
+(k/md "And so, you have the whole power of Wolfram packages at your fingertips. And to be honest, this is actually easier to work with than using Wolfram's contexts directly. Clojure does namespaces well.")
