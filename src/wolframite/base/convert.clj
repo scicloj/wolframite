@@ -117,7 +117,7 @@
           (if (re-find #"[^a-zA-Z0-9$\/]" s)
             (throw (Exception. (str "Symbols passed to Mathematica must be alphanumeric (apart from forward slashes and dollar signs). Passed: "
                                     s
-                                    "Known aliases:" (keys aliases))))
+                                    " Known aliases:" (keys aliases))))
             (proto/expr (jlink-instance/get) :Expr/SYMBOL s)))))))
 
 (defn- convert-non-simple-list [elms opts]
