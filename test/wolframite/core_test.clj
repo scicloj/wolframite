@@ -43,5 +43,12 @@
          (eval '(-> #'w2/Plus meta :doc)))
       "Interned vars have docstrings"))
 
+(deftest bug-fixes
+  (wl/start)
+  (testing "#76 double eval of ->"
+    (is (= '(-> x 5)
+           (wl/eval (wl/eval (w/-> 'x 5))))
+        "Should not throw")))
+
 (comment
   (clojure.test/run-tests 'wolframite.core-test))
