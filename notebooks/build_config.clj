@@ -6,7 +6,8 @@
              :source-path ["index.clj"
                            "demo.clj"
                            {:part "For Scientists"
-                            :chapters ["for_scientists/index.clj"]}
+                            :chapters ["for_scientists/index.clj"
+                                       "for_scientists/cavity_physics.clj"]}
                            {:part "For Developers"
                             :chapters ["for_developers/index.clj"]}]
              :base-target-path "docs"
