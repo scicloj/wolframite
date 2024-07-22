@@ -20,10 +20,10 @@
                             ["FullName" "Usage"]))
                     names)]
 
-     (println [sym--ns docs])
      (doall (map (fn [[name-sym doc]]
-                   (wi/clj-intern (symbol (-> (string/split name-sym #"`") last)) {:intern/ns-sym sym--ns
-                                                                                   :intern/extra-meta {:doc doc}}))
+                   (wi/clj-intern (symbol (-> (string/split name-sym #"`") last))
+                                  {:intern/ns-sym sym--ns
+                                   :intern/extra-meta {:doc doc}}))
                  docs)))))
 
 (defn <<
@@ -35,7 +35,6 @@
 
   ([fname context sym]
    (wl/eval (w/Get fname))
-   (wl/eval (w/Names "WolframPackage`*"))
    (load-symbols context sym)))
 
 (comment
