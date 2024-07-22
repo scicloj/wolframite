@@ -1,7 +1,6 @@
 (ns wolframite.base.package
   "The place to be for loading and manipulating Wolfram packages.
-
-  TODO: Consider automatic namespacing based on the context?"
+"
   (:require
    [clojure.string :as string]
    [wolframite.core :as wl]
@@ -28,7 +27,7 @@
                  docs)))))
 
 (defn <<
-  "Get a Wolfram package and (optionally) add the constants/functions etc. under a clojure-accessible symbol: either the given one or the name of the context by default.
+  "Get a Wolfram package and adds the constants/functions etc. under a clojure-accessible symbol: either the given one or the name of the context by default.
 
   TODO: Should check that the symbol isn't already being used."
   ([fname context]
@@ -43,18 +42,9 @@
   (wl/start)
 
   (<< "resources/wolframPackage.wl" "WolframPackage" 'wp)
+  (<< "resources/wolframPackage.wl" "WolframPackage")
 
-  (wl/eval  (w/Information "tryIt" "Usage"))
-
-  (wl/eval (w/Needs "WolframPackage`" "resources/wolframPackage.wl"))
-  (wi/clj-intern 'tryIt {:intern/ns-sym 'WolframPackage
-                         :intern/extra-meta {:doc "things"}})
-  (wl/eval (WolframPackage/tryIt 1))
-
-  (wl/eval "WolframPackage`tryIt[5]")
-  (WolframPackage/tryIt 5)
-
-  (wl/eval (w/Get "resources/wolframPackage.wl"))
-  (wl/eval (w/Get "resources/SEIT.wl"))
-  (wl/eval (w/Information "SEIT" "Usage"))
-  (wl/eval (w/Names "WolframPackage`*")))
+  (wl/eval  (w/Information wp/tryIt "Usage"))
+  (wl/eval (wp/tryIt 10))
+  (wl/eval  (w/Information WolframPackage/additional "Usage"))
+  (wl/eval (WolframPackage/additional 10)))

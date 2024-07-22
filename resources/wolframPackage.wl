@@ -2,7 +2,7 @@
 
   BeginPackage[ "WolframPackage`"]
 
-  tryIt::usage = "Used for testing cloratica."
+  tryIt::usage = "Used for testing Wolframite."
   additional::usage = "Another function in the test package."
 
   Begin[ "`Private`"]
