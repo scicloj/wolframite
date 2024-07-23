@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-  BeginPackage[ "WolframPackage`"]
+  BeginPackage[ "DemoWolframPackage`"]
 
   tryIt::usage = "Used for testing Wolframite."
   additional::usage = "Another function in the test package."
