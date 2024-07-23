@@ -8,10 +8,6 @@
 
    [scicloj.kindly.v4.kind :as k]))
 
-^:kindly/hide-code
-(-> (scicloj.kindly-advice.v1.api/add-advisor! (fn [{:keys [value]}] (when (nil? value) [[:kind/hidden]])))
-    :k/hidden)
-
 (k/md "# How to work with packages
 
 Working with packages has never been easier! Following the Wolfram symbol convention, we introduce Wolframite's version of '<<', a.k.a 'Get', to both load the given context into the working kernel and to attach the Wolfram context's symbols (including functions) onto a clojure namespace: either using the context name as a symbol or the clojure symbol provided.

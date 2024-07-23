@@ -36,7 +36,6 @@
    [wolframite.base.evaluate :as evaluate]
    [wolframite.base.express :as express]
    [wolframite.base.parse :as parse]
-   [wolframite.base.package :as wp]
    [wolframite.impl.jlink-instance :as jlink-instance]
    [wolframite.impl.protocols :as proto]
    [wolframite.runtime

@@ -8,12 +8,6 @@
    [wolframite.impl.wolfram-syms.intern :as wi]
    [wolframite.wolfram :as w]))
 
-(defn- convert-eval [x]
-
-  (let [wl-convert #(convert/convert   % {})
-        wl-eval    #(evaluate/evaluate % {})]
-    (wl-eval (wl-convert x))))
-
 (defn intern-context!
   "Finds all of the public symbols in the given context and interns them to a clojure-accesible namespace. This is put under the given symbol or the context by default.
 
@@ -56,7 +50,7 @@
 
 (def <<!
   "A Wolfram-like alias to load-package! Gets a Wolfram package and adds the constants/functions etc. under a clojure-accessible symbol: either the given one or the name of the context by default."
-  wp/load-package!)
+  load-package!)
 
 (comment
   (wl/start)
