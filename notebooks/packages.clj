@@ -18,7 +18,7 @@ Working with packages has never been easier! Following the Wolfram symbol conven
 
 The functions inside the  Wolfram package can then be used just like any other Wolfram functions.
 
-For example, try loading 'WolframPackage'. There are two functions defined inside:
+For example, try loading 'WolframPackageDemo'. There are two functions defined inside:
 ```wolfram
   tryIt[x_] :=
     Module[{y},
@@ -30,17 +30,17 @@ For example, try loading 'WolframPackage'. There are two functions defined insid
 ")
 
 (wl/start)
-(wp/<< "resources/wolframPackage.wl" "WolframPackage")
+(wp/<< "resources/WolframPackageDemo.wl" "WolframPackageDemo")
 
-(wl/eval (WolframPackage/tryIt 10))
-(wl/eval (WolframPackage/additional 10))
-(wl/eval  (w/Information WolframPackage/tryIt "Usage"))
+(wl/eval (WolframPackageDemo/tryIt 10))
+(wl/eval (WolframPackageDemo/additional 10))
+(wl/eval  (w/Information WolframPackageDemo/tryIt "Usage"))
 
 (k/md "That's it! As you can see, the functions are callable and the documentation is available too.
 
 If you want to change the context name, e.g. to make it shorter, then this is also simple:")
 
-(wp/<< "resources/wolframPackage.wl" "WolframPackage" 'pck)
+(wp/<< "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'pck)
 (wl/eval (pck/tryIt 10))
 (wl/eval  (w/Information pck/additional "Usage"))
 
