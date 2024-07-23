@@ -6,4 +6,5 @@
  ;:source-path ["notebooks"]
  :show true
  :run-quarto true
- :format [:quarto :html]}
+ :format [:quarto :html]
+ :kindly/options {:kinds-that-hide-code #{:kind/md :kind/hiccup :kind/html :kind/tex}}}
