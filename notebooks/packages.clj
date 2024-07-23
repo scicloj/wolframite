@@ -26,7 +26,7 @@ For example, try loading 'WolframPackageDemo'. There are two functions defined i
 ")
 
 (wl/start)
-(wp/<< "resources/WolframPackageDemo.wl" "WolframPackageDemo")
+(wp/<<! "resources/WolframPackageDemo.wl" "WolframPackageDemo")
 
 (wl/eval (WolframPackageDemo/tryIt 10))
 (wl/eval (WolframPackageDemo/additional 10))
@@ -36,7 +36,7 @@ For example, try loading 'WolframPackageDemo'. There are two functions defined i
 
 If you want to change the context name, e.g. to make it shorter, then this is also simple:")
 
-(wp/<< "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'pck)
+(wp/<<! "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'pck)
 (wl/eval (pck/tryIt 10))
 (wl/eval  (w/Information pck/additional "Usage"))
 
