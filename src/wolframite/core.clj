@@ -228,6 +228,4 @@
           '{** Power}})
   (eval '(** 5 2))
   (eval (w/Dot [1 2 3] [4 5 6]))
-  (stop)
-
-  (load-package! "resources/WolframPackageDemo.wl"))
+  (stop))
