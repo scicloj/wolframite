@@ -176,6 +176,10 @@
        (cep/cep expr' with-eval-opts))
      (throw (IllegalStateException. "Not initialized, call init! first")))))
 
+(def !
+  "A concise alias for wolframite.core/eval."
+  eval)
+
 (def ^:deprecated wl "DEPRECATED - use `eval` instead." eval)
 
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
