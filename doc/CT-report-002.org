@@ -1,0 +1,151 @@
+#+title: Report 002
+
+* Overview
+In a nutshell, our proposal was about reawakening and increasing the ease of Wolfram interop with Clojure. In this second part of the project we continued to fix some minor bugs across the board (quelle surprise), as well as some bigger ones that had crept in with respect to jlink setup and initialization. The main focus however, was on user experience, particularly in regards to customizability: we don't just want access to Wolfram, but to a user-configurable Wolfram! In this regard, we fundamentally changed the initialization system, such that the user can now pass options to the library at runtime: particularly in regard to user-defined function and symbol aliasing. In a similar vein of explicitness, we remodelled the evaluation system such that expressions are only computed on command. This, as described below, should not only make computations more efficient to run, but also expressions more efficient to write. Last, but certainly not least, we put effort into the otherwise Sisyphean task of documentation. Aside from the usual docs, we put particular effort into revamping demo namespaces as well as adding long-form tutorials. On top of this we made sure to make an up-to-date website and a script for uploading up-to-date clojars packages. In fact, it's time to introduce Wolframite 1.0!
+
+
+
+
+* Initialization
+The initialization system has been rebuilt to avoid implicit background loading on namespace imports. Making this wholly explicit adds an extra line to a user's program, but clarifies that the operation is side-affecting, while givng the user control over how and when the Wolfram kernels are started and stopped. Most importantly, introducing a start function (with an options map) gives the user access to the internals of the bridge, such that user preferences can be delivered at runtime, on a document by document basis.
+
+We hope that this will be increasingly useful in the future, but already allows the user to define their own aliases to Wolfram functions: greatly shortening and improving the readability of long expressions. Below, we can see what this looks like in practice. More than just giving the user the chance to rename symbols to their liking, the alias system (thanks to unicode support in clojure) allows the user to use real mathematical symbols in their analysis, rather than reverting to awkward function naming. Remember, Wolfram only allows lower- and upper-case latin and numbers!
+
+#+begin_src clojure
+(def aliases
+  '{** Power
+    ++ Conjugate
+    ++<-> ComplexExpand
+    >< Simplify
+    >><< FullSimplify
+    ⮾ NonCommutativeMultiply
+    √ Sqrt
+    ∫ Integrate})
+
+(wl/start {:aliases aliases})
+
+(w/>><< (w/∫ (w/++<-> (w/+ (w/** 'x 4)
+                           (w/√ (w/++ 'x))
+                           (w/* 3 'x)))))
+#+end_src
+
+
+* New evaluation model
+A big part of this work has been rebuilding the evaluation model. It was not an easy decision, but was motivated by several factors. First of all, Wolfram expressions can be long and yet, previously, all loaded symbols became executable functions. This meant that every nested s-expression led to a separate call to the underlying kernel, which did not seem efficient. Similarly to the case of initialization, part of the solution was to drop auto-evaluation entirely and to require an explicit 'eval' call. This adds a small step for the user, but gives back control. It also allows you to pass runtime options and preferences to the evaluation, such as last-minute aliasing.
+
+Another problem was the ergonomics of mixing Clojure and Wolfram expressions. Previously, familiar numerical clojure operators were reused as Wolfram operators and so the first line below would run fine when evaluated with Wolfram. Unfortunately however, it was very easy to write the second line, which would fail. Also, when relying on the quoting of symbols, you quickly run into trouble with standard macros (third line). In general therefore, we want to separate Clojure and Wolfram functions and have as little raw symbol manipulation as possible (even though it's still useful to fall back on).
+ #+begin_src clojure
+'(+ 2 (Plus 3 4))
+
+(+ 2 '(Plus 3 4))
+
+(-> 'x
+    '(Integrate x)
+    wl/eval) ;; fails with error!
+ #+end_src
+
+A previous solution to these problems was to load Wolfram functions at runtime under a clojure symbol, this helped alleviate some of the problems but as it wasn't a 'real' namespace then the functions could not be required and therefore not consistently used in a library: what if someone picked a different symbol next time? Instead, Wolframite comes with a pre-generated Wolfram symbol namespace that can then be updated and extended by the user using the provided function, as demonstrated below.
+
+#+begin_src clojure
+(comment (write/write-ns! "src/wolframite/wolfram.clj"
+                          {:aliases '{** Power
+                                      badger Subtract}}))
+(ns physics.cavity.simple-PRs
+  (:require [wolframite.core :as wl]
+            [wolframite.impl.wolfram-syms.write-ns :as write]
+            [wolframite.wolfram :as w]))
+#+end_src
+This system is slightly brittle at the moment, but so far provides a best of both worlds approach. Wolfram symbols are now loaded (not as executable functions) as a real namespace and this leads to more composable expressions:
+ #+begin_src clojure
+(-> 'x
+    (w/Integrate 'x)
+    wl/eval) ;; (* 1/2 (Power x 2))
+ #+end_src
+In general, it also removes the need to overload Clojure operators as Wolfram ones (different namespaces), allows you to treat aliases exactly the same as Wolfram functions and maintains editor autocompletion.
+
+
+* Documentation / packaging / runtime
+- API docstrings and readme
+- example namespaces (updating the old) and building some new
+- scicloj wolframite site
+- doc cleanup (not finished!)
+- docs and naming improvements (removed some !s etc.)
+- GH action added to build site
+- licence
+- added build script to deploy to clojars
+- removed obsolete dependencies
+- docs generation with clay
+- integration with the zulip data science community
+- commited to ongoing maintenance
+
+- better TeX support (of the Knuth; rather than the IT variety)
+- delays meant that we didn't get much community feedback
+  - but happy to work with Daniel Slutsky
+- UX was a big theme
+
+
+* bug fixes
+- TextStructure works now
+- Subtract and Minus work as expected (no more (- 0 'E4))
+  - more complicated aliasing
+ 
+* explicit review of goals
+
+* What should we have done?
+- [X] merge recent work
+- [X] create comprehensive inline documentation
+- [X] create, big-picture, example namespaces: including onboarding tutorial and real-world examples (publically available in visible places like the sci-cloj website)
+- [ ] ensure easy kernel parallelism (i.e. validate and clearly document the package's original claim: "...lets multiple Clojure threads execute Mathematica expressions without blocking others.")
+- [X] document how to use external wolfram packages as normal clojure namespaces
+- [X] streamline setup so that wolfram symbols are loaded much faster, such that wolfram functions can be used almost as easily as library functions
+- [ ] start building the foundations for closely integrating wolfram with the emmy symbolic clojure system (https://github.com/mentat-collective/emmy)
+
+* future
+- emmy integration
+- more tests
+* personal todos
+** TODO integrate EIT work as another demo
+** TODO cavity plots
+** TODO check parallelism?
+** TODO add experimental UX namespace (wx)
+
+* Issues :noexport:
+- initialization made explicit
+  - advantage of adding user-based options
+- significant refactor of jlink
+- eval made explicit (symbols loaded but not now executable functions)
+  - efficiency (fewer calls to the kernel)
+  - nested symbols were a problem
+- composable expressions (from named parts)
+  - Don't use operators that are also Clojure fns
+- Fewer macros!!
+- Editor autocompletion again
+- API docstrings and readme
+- TextStructure works now
+- Subtract and Minus work as expected (no more (- 0 'E4))
+  - more complicated aliasing
+- user-defined aliasing
+  - not just having access to Wolfram but a customizable Wolfram!
+- Rudimentary alphanumerical aliasing
+- consistent way of quoting
+- scicloj wolframite site
+- doc cleanup (not finished!)
+ 
+* PRs :noexport:
+- load-all-symbols's vars are just symbols
+  - Fix: Drop auto-evaluation and require manual wl/eval call. Ensure that all interned symbols resolve into symbols at value position, and functions that return a list of symbols at fn position.
+- docs and naming improvements (removed some !s etc.)
+- jlink restructure
+- initialization more explicit
+- generate wolfram.clj with vars
+- GH action added to build site
+- subtract to minus etc.
+- created LICENSE
+- custom aliases in generated Wolfram ns
+- added build script to deploy to clojars
+- convert directly into expression instead of using Loopback link
+- removed obsolete dependencies
+- docs generation with clay
+- jlink env var fix
+
+  Some things took less time than expected (packages); other things took more.
