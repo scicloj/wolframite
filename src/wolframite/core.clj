@@ -86,13 +86,6 @@
    (->> (kernel-link-opts init-opts)
         (proto/create-kernel-link jlink-impl))))
 
-(defn stop
-  "Sends a request to the kernel to shut down.
-
-  See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/KernelLink.html#terminateKernel()"
-  []
-  (proto/terminate-kernel! (jlink-instance/get)))
-
 (defn- unqualify [form]
   (walk/postwalk (fn [form]
                    (if (qualified-symbol? form)
@@ -165,6 +158,20 @@
        (:wolfram-version @kernel-info))
      nil)
    nil))
+
+(defn stop
+  "Sends a request to the kernel to shut down.
+
+  See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/KernelLink.html#terminateKernel()"
+  []
+  (some-> (jlink-instance/get) (proto/terminate-kernel!))
+  (jlink-instance/reset!)
+  (reset! kernel-link-atom nil))
+
+(defn restart
+  "Same as calling [[stop]] then [[start]]"
+  ([] (stop) (start))
+  ([opts] (stop) (start opts)))
 
 (defn eval
   "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
