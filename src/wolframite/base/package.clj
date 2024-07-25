@@ -10,12 +10,14 @@
    [clojure.repl :as repl]))
 
 (defn intern-context!
-  "Finds all of the public symbols in the given context and interns them to a clojure-accesible namespace. This is put under the given symbol or the context by default.
+  "Finds all of the public symbols in the given Wolfram `context` (a string) and interns them to a Clojure namespace named by the given`alias` (a symbol; default: the context's name). The namespace is created
+  if it does not yet exist.
 
   N.B. context does not contain the trailing '`'"
   ([context]
    (intern-context! context (symbol context)))
   ([context alias]
+    {:pre [(string? context) (symbol? alias)]}
    (let [names (wl/eval (w/Names (str context "`*")))
          docs (for [name names]
                 (mapv #(wl/eval (w/Information name %))
@@ -28,16 +30,16 @@
            docs))))
 
 (defn load-package!
-  "An extended version of Wolfram's 'Get'. Gets a Wolfram package and adds the constants/functions etc. under a clojure-accessible symbol: either the given one or the name of the context by default.
+  "An extended version of Wolfram's 'Get'. Gets a Wolfram package and makes the constants/functions etc. accessible via a Clojure namespace (the given `alias`, by default same as `context`).
 
-  e.g. (<<! \"resources/WolframPackageDemo.wl\" \"WolframPackageDemo\" 'wp)
+  Example:  `(<<! \"./resources/WolframPackageDemo.wl\" \"WolframPackageDemo\" 'wp)`
 
-  path - string pointing to the package file
-  context - string for Wolfram context (essentially Wolfram's version of a namespace)
-  alias - clojure symbol to be used for accessing the Wolfram context. This will effectively be used like a clojure namespace, but where the clojure namespace need not exist.
-
-
-  TODO: Should check that the symbol isn't already being used."
+ - `path` - string pointing to the package file
+ - `context` - string for Wolfram context (essentially Wolfram's version of a namespace)
+ - `alias` - Clojure symbol to be used for accessing the Wolfram context. This will effectively become a Clojure namespace
+ 
+See [[intern-context!]] for details of turning the Wolfram context into a Clojure namespace."
+;; TODO: Should check that the symbol isn't already being used.
   ([path]
    (let [context (-> path fs/file-name fs/strip-ext)]
      (load-package! path context (symbol context))))
