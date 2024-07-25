@@ -9,7 +9,8 @@
    [wolframite.wolfram :as w]))
 
 (defn intern-context!
-  "Finds all of the public symbols in the given context and interns them to a clojure-accesible namespace. This is put under the given symbol or the context by default.
+  "Finds all of the public symbols in the given Wolfram `context` (a string) and interns them to a Clojure namespace named by the given`alias` (a symbol; default: the context's name). The namespace is created
+  if it does not yet exist.
 
   N.B. context does not contain the trailing '`'"
   ([context]
