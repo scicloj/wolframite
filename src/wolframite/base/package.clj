@@ -16,6 +16,7 @@
   ([context]
    (intern-context! context (symbol context)))
   ([context alias]
+    {:pre [(string? context) (symbol? alias)]}
    (let [names (wl/eval (w/Names (str context "`*")))
          docs (for [name names]
                 (mapv #(wl/eval (w/Information name %))
