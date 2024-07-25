@@ -13,8 +13,9 @@
   os - keyword
   "
   (:require
-   [babashka.fs :as fs]
-   clojure.repl.deps ; cemerick.pomegranate
+    [babashka.fs :as fs]
+    [clojure.tools.logging :as log]
+   ;clojure.repl.deps ; required dynamically, for a better error on old clj
    [wolframite.runtime.system :as system]))
 
 (def ^:private default-jlink-path-under-root "SystemFiles/Links/JLink/JLink.jar")
@@ -25,10 +26,10 @@
   NOTE: Returns a string."
   ([info]
    (let [{:keys [user-paths defaults]} info
-         jpaths (keep :JLINK_JAR_PATH user-paths)]
-     (or (first jpaths)
-         (-> defaults
-             :root
+         {:strs [JLINK_JAR_PATH WOLFRAM_INSTALL_PATH]} user-paths]
+     (or JLINK_JAR_PATH
+         (-> (or WOLFRAM_INSTALL_PATH
+                 (:root defaults))
              (fs/path default-jlink-path-under-root)
              str)))))
 
@@ -48,19 +49,19 @@
    (let [info (system/info)
          path (path--jlink info)
          add-path (fn [p]
-                    (if *repl*
-                      (do (println (str "=== Adding path to classpath: " p " ==="))
-                          (clojure.repl.deps/add-lib 'w/w {:local/root p})) ; BEWARE: only works in REPL => not when running from CLI, e.g. via a test runner
-                     (when-not (try (Class/forName "com.wolfram.jlink.Expr") (catch ClassNotFoundException _))
-                       (throw (IllegalStateException. "JLink jar not on the classpath and can't be loaded because we are not in a dynamic context, such as REPL"))))
-                    ;(cemerick.pomegranate/add-classpath p)
-                    true)]
-     (if (fs/exists? path)
-       (add-path path)
-       (or
-        (throw (ex-info (str "Unable to find JLink jar at the expected path " path
-                             " Consider setting one of the supported environment variables;"
-                             " currently: " (into [] (:user-paths info)) ".")
-                        {:os (get-in info [:defaults :os])
-                         :path path
-                         :env (:user-paths info)})))))))
+                    (when (neg? (compare ((juxt :major :minor) *clojure-version*) [1 12]))
+                      (throw (UnsupportedOperationException. "Adding Wolfram's JLink lib to the REPL dynamically requires Clojure 1.12 or later. Alternatively, ensure it is already on the classpath")))
+                    (when-not @(requiring-resolve 'clojure.core/*repl*)
+                      (throw (throw (UnsupportedOperationException. "JLink jar not on the classpath and can't be loaded because we are not in a dynamic context, such as REPL"))))
+                    (log/info "=== Adding path to classpath: " p " ===")
+                    ((requiring-resolve 'clojure.repl.deps/add-lib) 'w/w {:local/root p}) ; dyn require so we can give good error on older clj
+                    nil)]
+     (cond
+       (try (Class/forName "com.wolfram.jlink.Expr") (catch ClassNotFoundException _)) false ; skip, already loaded
+       (fs/exists? path) (do (add-path path) true)
+       :else (throw (ex-info (str "Unable to find JLink jar at the expected path " path
+                                  " Consider setting one of the supported environment variables;"
+                                  " currently: " (into [] (:user-paths info)) ".")
+                             {:os (get-in info [:defaults :os])
+                              :path path
+                              :env (:user-paths info)}))))))

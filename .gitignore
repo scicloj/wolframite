@@ -24,4 +24,6 @@ temp
 *.qmd
 
 dev/*_scratchpad.clj
-./symlink-jlink.jar
+symlink-jlink.jar
+.env.keys
+.env

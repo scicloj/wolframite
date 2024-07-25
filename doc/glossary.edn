@@ -1,5 +1,7 @@
-;; Making a glossary in the form of a clojure map for the possibility of integrating it with tooltips etc.
+;; Making a glossary in the form of a clojure map for the possibility of integrating it programmatically.
 
 {"J/Link" "Integrates the Wolfram Language and Java."
 
- "MathLink" "The communication protocol binary that allows external programs to call Mathematica and vice versa."}
+ "MathLink" "The communication protocol binary that allows external programs to call Mathematica and vice versa."
+
+ "LoopbackLink" "A special type of link that has both ends connected to the same program. Used for temporarily holding expressions that are being moved between links. Much of the utility of LoopbackLinks to users of the MathLink API is redundant when compared to J/Link's Expr class. ( https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/LoopbackLink.html ) "}

@@ -3,7 +3,7 @@
   cannot be loaded/required until JLink is on the classpath."
   (:require [clojure.string :as str]
             [wolframite.impl.protocols :as proto])
-  (:import [com.wolfram.jlink Expr KernelLink MathCanvas MathLinkFactory]))
+  (:import [com.wolfram.jlink Expr KernelLink MathCanvas MathLinkException MathLinkFactory]))
 
 (defn- array? [x]
   (-> x class str (str/starts-with? "class [L")))
@@ -11,10 +11,14 @@
 (defrecord JLinkImpl [opts kernel-link-atom]
   proto/JLink
   (create-kernel-link [_this kernel-link-opts]
-    (try (->> (doto (com.wolfram.jlink.MathLinkFactory/createKernelLink kernel-link-opts)
-                (.discardAnswer))
-              (reset! kernel-link-atom))
-         (catch com.wolfram.jlink.MathLinkException e
+    (try (let [opts-array (into-array String kernel-link-opts)
+               kernel-link
+               (->> (doto (MathLinkFactory/createKernelLink ^"[Ljava.lang.String;" opts-array)
+                      (.discardAnswer))
+                    (reset! kernel-link-atom))]
+           ;(.getError kernel-link) (.getErrorMessage kernel-link)
+           kernel-link)
+         (catch MathLinkException e
            (if (= (ex-message e) "MathLink connection was lost.")
              (throw (ex-info (str "MathLink connection was lost. Perhaps you need to activate Mathematica first,"
                                   " you are trying to start multiple concurrent connections (from separate REPLs),"
@@ -30,23 +34,26 @@
                                 " Verify the settings are correct: `" kernel-link-opts "`")
                            {:kernel-opts kernel-link-opts})))))
   (terminate-kernel! [_this]
-    (.terminateKernel ^com.wolfram.jlink.KernelLink @kernel-link-atom)
+    (.terminateKernel ^KernelLink @kernel-link-atom)
     (reset! kernel-link-atom nil))
-  (expr [_this expr-coll]
-    (com.wolfram.jlink.Expr.
-      (first expr-coll)
-      (into-array com.wolfram.jlink.Expr (rest expr-coll))))
+  (expr [_this primitive-or-exprs]
+    (if (sequential? primitive-or-exprs)
+      (Expr.
+        ^Expr (first primitive-or-exprs)
+        ^"[Lcom.wolfram.jlink.Expr;" (into-array Expr (rest primitive-or-exprs)))
+      ;; Here, primitive-or-exprs could be an int, a String, long[], or similar
+      (Expr. primitive-or-exprs)))
   (expr [_this type name]
-    (-> (case type
-          :Expr/SYMBOL Expr/SYMBOL)
-        (Expr. (apply str (replace {\/ \`} name)))))
+    (Expr. ^int (case type
+                  :Expr/SYMBOL  Expr/SYMBOL)
+          ^String (apply str (replace {\/ \`} name))))
   (->expr [_this obj]
     (.getExpr
       (doto (MathLinkFactory/createLoopbackLink)
         (.put obj)
         (.endPacket))))
   (expr? [_this x]
-    (instance? com.wolfram.jlink.Expr x))
+    (instance? Expr x))
   (expr-element-type [_this container-type expr]
     (case container-type
       :vector
@@ -75,11 +82,13 @@
       :Expr/BIGDECIMAL Expr/BIGDECIMAL
       :Expr/STRING Expr/STRING
       :Expr/RATIONAL Expr/RATIONAL
-      :Expr/SYMBOL Expr/SYMBOL
-      ))
+      :Expr/SYMBOL Expr/SYMBOL))
+
   (kernel-link [_this] @kernel-link-atom)
   (kernel-link? [_this]
-    (some->> @kernel-link-atom (instance? com.wolfram.jlink.KernelLink)))
+    (some->> @kernel-link-atom (instance? KernelLink)))
+  (make-math-canvas! [this]
+    (proto/make-math-canvas! this (proto/kernel-link this)))
   (make-math-canvas! [_this kernel-link]
     (doto (MathCanvas. kernel-link)
       (.setUsesFE true)

@@ -4,8 +4,21 @@
             [wolframite.base.convert :refer [convert]]))
 
 (deftest test-convert
-  (wl/init-jlink! wl/kernel-link-atom {})
+  (#'wl/init-jlink! (deref #'wl/kernel-link-atom) {}) ; bypass private var via deref #'
   (testing "Basics"
+    (testing "primitives"
+      (is (= (str (convert "txt" nil)) "\"txt\""))
+      (is (= (str (convert Long/MAX_VALUE nil)) (str Long/MAX_VALUE)))
+      (is (= (str (convert 3.333 nil)) "3.333"))
+      (is (= (str (convert (.add (BigDecimal. Long/MAX_VALUE)
+                                 (BigDecimal. Long/MAX_VALUE)) nil))
+             "18446744073709551614"))
+      (is (= (str (convert BigInteger/ONE nil)) "1")))
+    (testing "primitive arrays"
+      (is (= (str (convert (int-array [1 2]) nil)) "{1,2}"))
+      (is (= (str (convert (long-array [1 2]) nil)) "{1,2}"))
+      (is (= (str (convert (double-array [1.1 2.2]) nil)) "{1.1,2.2}")))
+
     (testing "List is invocation"
       (is (= (str (convert '() nil)) "Null")
           "Empty list = Wolfram Null")

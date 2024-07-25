@@ -31,6 +31,7 @@
 
 (defn evaluate [expr {:keys [jlink-instance]
                       :as   opts}]
+  {:pre [jlink-instance]}
   (assert (proto/expr? jlink-instance expr))
   (assert (proto/kernel-link? jlink-instance))
   (let [link (proto/kernel-link jlink-instance)]
@@ -38,6 +39,7 @@
      (io!
        (locking link
          (doto link (.evaluate expr) (.waitForAnswer))
+         ; When eval failed b/c it needs internet but offline, still (.error link) = 0, (.errorMessage link) = "No ... problem..."
          (.getExpr link)))
      (let [opts' (update opts :flags conj :serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
            pid-expr (evaluate (convert/convert

@@ -1,3 +1,9 @@
 {:remote-repo {:git-url "https://github.com/scicloj/wolframite"
                :branch "main"}
- :base-target-path "temp"}
+ :clean-up-target-dir false
+ :base-target-path "docs" ; this is what GitHub Pages expects
+ :subdirs-to-sync [#_"src" "notebooks"]
+ ;:source-path ["notebooks"]
+ :show true
+ :run-quarto true
+ :format [:quarto :html]}

@@ -11,13 +11,13 @@
   (create-kernel-link [this kernel-link-opts])
   (terminate-kernel! [this])
   (expr
-    [this expr-coll]
+    [this]
+    [this primitive-or-exprs]
     [this type name]
     "Create a JLink Expr
 
-    * [expr-coll] ... from something JLink understands (a symbol corresponding to its things,
-    such as Rational, a Java array, or st. else) followed by other Exprs.
-
+    * [primitive-or-exprs] a primitive value (long, Long, BigDecimal/Int., String) or a sequence
+                           of 1+ jlink Exprs (which is interpreted as a fn call).
     * [type name] where type=:Expr/SYMBOL - create a Wolfram symbol")
   (->expr [this obj] "Turn the given obj into a jlink Expr via the loopback link 🤷")
   (expr? [this x])
@@ -25,7 +25,9 @@
   (->expr-type [this type-kw])
   (kernel-link [_this])
   (kernel-link? [_this])
-  (^Component make-math-canvas! [this kernel-link])
+  (^Component make-math-canvas!
+    [this]
+    [this kernel-link])
   (jlink-package-name [this]))
 
 (extend-protocol JLink
@@ -50,7 +52,9 @@
     (throw (IllegalStateException. "JLink not loaded!")))
   (kernel-link? [_this]
     (throw (IllegalStateException. "JLink not loaded!")))
+  (^Component make-math-canvas! [this]
+    (throw (IllegalStateException. "JLink not loaded!")))
   (^Component make-math-canvas! [this kernel-link]
     (throw (IllegalStateException. "JLink not loaded!")))
   (jlink-package-name [this]
-    (throw (IllegalStateException. "JLink not loaded!"))))
+      (throw (IllegalStateException. "JLink not loaded!"))))
