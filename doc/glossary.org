@@ -9,4 +9,4 @@ LoopbackLink - A special type of link that has both ends connected to the same p
 
 Context - The Wolfram equivalent of a namespace.
 
-Package - A Wolfram file (extension .m or .wl) that defines/contains a namespace and the interface to said namespace.
+Package - A Wolfram file (extension .m or .wl) that defines/contains a Context and the interface to said context.
