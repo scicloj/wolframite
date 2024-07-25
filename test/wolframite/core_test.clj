@@ -27,11 +27,7 @@
 ;;                                                                          :output-fn str})))))
 
 (deftest load-all-symbols-test
-<<<<<<< HEAD
-  (wl/init!)
-=======
   (wl/start)
->>>>>>> 9b7f3e918f65f2a6e9bc56222b3015173256ce71
   (wolfram-syms/load-all-symbols wl/eval 'w2)
   (is (= 3
          (wl/eval (eval '(w2/Plus 1 2))))
@@ -46,6 +42,13 @@
   (is (= "x+y+z represents a sum of terms."
          (eval '(-> #'w2/Plus meta :doc)))
       "Interned vars have docstrings"))
+
+(deftest bug-fixes
+  (wl/start)
+  (testing "#76 double eval of ->"
+    (is (= '(-> x 5)
+           (wl/eval (wl/eval (w/-> 'x 5))))
+        "Should not throw")))
 
 (comment
   (clojure.test/run-tests 'wolframite.core-test))
