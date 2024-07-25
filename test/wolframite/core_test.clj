@@ -2,7 +2,8 @@
   (:require [clojure.test :refer [deftest testing is]]
             [wolframite.core :as wl]
             [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
-            [wolframite.wolfram :as w]))
+            [wolframite.wolfram :as w])
+  (:import (clojure.lang ExceptionInfo)))
 
 ;; * Basic Sanity Checks
 
@@ -27,11 +28,7 @@
 ;;                                                                          :output-fn str})))))
 
 (deftest load-all-symbols-test
-<<<<<<< HEAD
-  (wl/init!)
-=======
   (wl/start)
->>>>>>> 9b7f3e918f65f2a6e9bc56222b3015173256ce71
   (wolfram-syms/load-all-symbols wl/eval 'w2)
   (is (= 3
          (wl/eval (eval '(w2/Plus 1 2))))
@@ -46,6 +43,29 @@
   (is (= "x+y+z represents a sum of terms."
          (eval '(-> #'w2/Plus meta :doc)))
       "Interned vars have docstrings"))
+
+(deftest restart
+  (testing "first set of aliases"
+    (wl/restart {:aliases '{** Power}})
+    (is (= 8
+           (wl/eval '(** 2 3)))
+        "** is an alias for Power (and 2^3 is 8)"))
+  (testing "restart & another aliases"
+    (wl/restart {:aliases '{pow Power}})
+    (is (thrown-with-msg? ExceptionInfo
+                          #"Unsupported symbol / unknown alias"
+                          (wl/eval '(** 2 3)))
+        "** is not known anymore")
+    (is (= 8
+           (wl/eval '(pow 2 3)))
+        "Now, `pow` is an alias for Power (and 2^3 is 8)")))
+
+(deftest bug-fixes
+  (wl/start)
+  (testing "#76 double eval of ->"
+    (is (= '(-> x 5)
+           (wl/eval (wl/eval (w/-> 'x 5))))
+        "Should not throw")))
 
 (comment
   (clojure.test/run-tests 'wolframite.core-test))

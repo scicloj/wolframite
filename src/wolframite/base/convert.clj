@@ -83,10 +83,9 @@
   (if-let [fn-name (intern/interned-var-val->symbol obj)]
     (convert fn-name opts)
     (throw (IllegalArgumentException.
-             (str "An expression contains a function object, which is not intern/wolfram-fn => "
-                  "don't know how to turn it into a symbol that Wolfram could interpret: "
-                  obj)))))
-
+            (str "An expression contains a function object, which is not intern/wolfram-fn => "
+                 "don't know how to turn it into a symbol that Wolfram could interpret: "
+                 obj)))))
 
 (defmethod convert :null [_ opts]
   (convert 'Null opts))
@@ -115,9 +114,13 @@
         ;(let [s (str-utils/replace (str sym) #"\|(.*?)\|" #(str "\\\\[" (second %) "]"))]   )
         (let [s (str sym)]
           (if (re-find #"[^a-zA-Z0-9$\/]" s)
-            (throw (Exception. (str "Symbols passed to Mathematica must be alphanumeric (apart from forward slashes and dollar signs). Passed: "
-                                    s
-                                    " Known aliases:" (keys aliases))))
+            (throw (ex-info (str "Unsupported symbol / unknown alias: Symbols passed to Mathematica must be alphanumeric"
+                                 " (apart from forward slashes and dollar signs). Other symbols may"
+                                 " only be used if there is defined a Wolframite alias for them."
+                                 " Passed: " s
+                                 " Known aliases: " (or (-> aliases keys sort seq) "N/A"))
+                            {:unknown-symbol s
+                             :known-symbols (keys aliases)}))
             (proto/expr (jlink-instance/get) :Expr/SYMBOL s)))))))
 
 (defn- convert-non-simple-list [elms opts]
@@ -141,11 +144,11 @@
           (= 'var macro)                   (convert (list 'Function arg) opts)
           (= 'quote macro)                 (express/express arg opts)
           :else                            (expr/expr-from-parts
-                                             (cons (convert head
-                                                            (cond-> opts
-                                                                    (symbol? head)
-                                                                    (assoc ::args tail)))
-                                                   (map #(convert % opts) tail))))))
+                                            (cons (convert head
+                                                           (cond-> opts
+                                                             (symbol? head)
+                                                             (assoc ::args tail)))
+                                                  (map #(convert % opts) tail))))))
 
 (comment
   (convert '(- 12 1 2) {})
