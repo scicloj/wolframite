@@ -174,7 +174,7 @@
   (reset! kernel-link-atom nil))
 
 (defn restart
-  "Same as calling [[stop]] then [[start]]"
+  "Same as calling [[stop]] and then [[start]]."
   ([] (stop) (start))
   ([opts] (stop) (start opts)))
 

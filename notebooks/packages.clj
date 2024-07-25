@@ -24,7 +24,7 @@ For example, try loading 'WolframPackageDemo'. There are two functions defined i
 ```
 ")
 
-(wl/start)
+(wl/restart)
 (wp/<<! "resources/WolframPackageDemo.wl" "WolframPackageDemo")
 
 (wl/eval (WolframPackageDemo/tryIt 10))
