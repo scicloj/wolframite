@@ -243,7 +243,7 @@
  - `context` - string for Wolfram context (essentially Wolfram's version of a namespace)
  - `alias` - Clojure symbol to be used for accessing the Wolfram context. This will effectively become a Clojure namespace
 
-See [[intern-context!]] for details of turning the Wolfram context into a Clojure namespace."
+See `package/intern-context!` for details of turning the Wolfram context into a Clojure namespace."
 ;; TODO: Should check that the symbol isn't already being used.
   ([path]
    (let [context (-> path fs/file-name fs/strip-ext)]
