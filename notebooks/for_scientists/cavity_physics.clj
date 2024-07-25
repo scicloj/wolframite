@@ -62,7 +62,7 @@ Therefore, we enter the following.
     √ Sqrt
     ∫ Integrate})
 
-(wl/start {:aliases aliases})
+(wl/restart {:aliases aliases})
 
 (k/md "Here you see than we can define new aliases by simply using the core clojure functions/macros. This works fine, but the downside is that we have just defined symbol replacements and so won't benefit from using these entities in macros or from editor autocompletion. For the best experience therefore, we recommend using 'write-ns!'.")
 (comment
