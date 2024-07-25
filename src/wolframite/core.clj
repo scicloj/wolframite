@@ -38,10 +38,9 @@
    [wolframite.base.parse :as parse]
    [wolframite.impl.jlink-instance :as jlink-instance]
    [wolframite.impl.protocols :as proto]
-   [wolframite.runtime
-    [jlink :as jlink]
-    [system :as system]
-    [defaults :as defaults]]
+   [wolframite.runtime.jlink :as jlink]
+   [wolframite.runtime.system :as system]
+   [wolframite.runtime.defaults :as defaults]
    [wolframite.wolfram :as w]))
 
 (defonce ^{:deprecated true, :private true} kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead

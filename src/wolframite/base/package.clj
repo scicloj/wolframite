@@ -2,11 +2,12 @@
   "The place to be for loading and manipulating Wolfram packages.
 "
   (:require
-   [clojure.string :as str]
    [babashka.fs :as fs]
+   [clojure.string :as str]
    [wolframite.core :as wl]
    [wolframite.impl.wolfram-syms.intern :as wi]
-   [wolframite.wolfram :as w]))
+   [wolframite.wolfram :as w]
+   [clojure.repl :as repl]))
 
 (defn intern-context!
   "Finds all of the public symbols in the given context and interns them to a clojure-accesible namespace. This is put under the given symbol or the context by default.
