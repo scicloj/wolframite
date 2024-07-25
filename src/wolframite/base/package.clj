@@ -17,7 +17,7 @@
   ([context]
    (intern-context! context (symbol context)))
   ([context alias]
-    {:pre [(string? context) (symbol? alias)]}
+   {:pre [(string? context) (symbol? alias)]}
    (let [names (wl/eval (w/Names (str context "`*")))
          docs (for [name names]
                 (mapv #(wl/eval (w/Information name %))
@@ -30,7 +30,7 @@
            docs))))
 
 (defn load-package!
-  "An extended version of Wolfram's 'Get'. Gets a Wolfram package and makes the constants/functions etc. accessible via a Clojure namespace (the given `alias`, by default same as `context`).
+  "An extended version of Wolfram's 'Get'. Gets a Wolfram package and makes the constants/functions etc. accessible via a Clojure namespace (the given `alias`, by default the same as `context`).
 
   Example:  `(<<! \"./resources/WolframPackageDemo.wl\" \"WolframPackageDemo\" 'wp)`
 

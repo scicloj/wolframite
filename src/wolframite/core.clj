@@ -28,7 +28,6 @@
 (ns wolframite.core
   (:refer-clojure :exclude [eval])
   (:require
-   [clojure.string :as str]
    [clojure.tools.logging :as log]
    [clojure.walk :as walk]
    [wolframite.base.cep :as cep]
@@ -221,6 +220,9 @@
   ([clj-form {:keys [output-fn] :as opts}]
    (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
      (ifn? output-fn) output-fn)))
+
+(defn <<!
+  "A Wolfram-like alias to load-package!. An extended version of Wolfram's 'Get'. Gets a Wolfram package and makes the constants/functions etc. accessible via a Clojure namespace (the given `alias`, by default the same as `context`).")
 
 (comment
   (start {:aliases
