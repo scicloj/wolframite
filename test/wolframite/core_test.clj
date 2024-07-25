@@ -9,6 +9,17 @@
 ;; (deftest wl-evalute-initialized
 ;;   (testing (is wl/math-evaluate)))
 
+(deftest conversions
+  (wl/start)
+  (is (= '(+ 1 1 1 1)
+         (wl/->clj "Plus[1,1,1,1]")))
+  (is (= '(- 5 4)
+         (wl/->clj "Subtract[5, 4]")))
+  (is (= '(- 5)
+         (wl/->clj "Minus[5]"))))
+
+(w/Subtract 5 4)
+
 (deftest basic-math
   (wl/start)
   (is (= 2 (wl/eval '(Plus 1 1)))
@@ -42,6 +53,11 @@
   (is (= "x+y+z represents a sum of terms."
          (eval '(-> #'w2/Plus meta :doc)))
       "Interned vars have docstrings"))
+
+(deftest aliases
+  (wl/start)
+  (is (= 4 (wl/! (w/Plus 1 1 2))))
+  (is (= 4 (wl/! '(Plus 1 1 2)))))
 
 (comment
   (clojure.test/run-tests 'wolframite.core-test))

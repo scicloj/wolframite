@@ -37,7 +37,7 @@
    '?? 'Information
    'do   'CompoundExpression
    '=    'Set
-   '..=  'SetDelayed ;; TODO: Document this exception. Presumably not := because of clojure's keywords. It's actually nicer in a way though, because an (almost) ellipsis implies a delay!
+   '..=  'SetDelayed
    '=.   'Unset
    '->   'Rule
    '..>  'RuleDelayed
@@ -53,14 +53,16 @@
    '-=   'SubtractFrom
    '+    'Plus
    '-    ^{::experimental-fn true, :doc "Maps to Wolfram Minus/Subtract"}
-         (fn [args] (case (count args)
-                      1 'Minus
-                      2 'Subtract
-                      (throw (IllegalArgumentException. "Can't handle more than 2 arguments"))))
+   (fn [args] (case (count args)
+                1 'Minus
+                2 'Subtract
+                (throw (IllegalArgumentException. "Can't handle more than 2 arguments"))))
    '*    'Times
    '** 'Power
+   '++ 'Conjugate
    '⮾ 'NonCommutativeMultiply
    '√ 'Sqrt
+   '∫ 'Integrate
    '.    'Dot
    '/    'Divide
    '<>   'StringJoin
@@ -68,7 +70,13 @@
    '||   'Or
    '!    'Not
    'fn   'Function
-   '<-> 'ReplaceAll})
+   '.> 'Replace
+   '.>> 'ReplaceAll
+   '<-> 'Expand
+   '<<->> 'ExpandAll
+   '++<-> 'ComplexExpand
+   '>< 'Simplify
+   '>><< 'FullSimplify})
 
 (defn experimental-fn-alias? "EXPERIMENTAL - DO NOT USE!" [alias]
   (-> alias meta ::experimental-fn))
