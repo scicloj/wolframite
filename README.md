@@ -180,6 +180,9 @@ Clojuratica has been turned into Wolframite and further maintained by:
 
 The project is now being maintained as part of the [SciCloj](https://github.com/scicloj) project.
 
+## Contact
+If you would like to contact the maintainers or otherwise seek help from the community then please drop a message into our [zulip channel](https://clojurians.zulipchat.com/#narrow/stream/313853-wolfram-clojure-bridge) or contact the team at [SciCloj](https://github.com/scicloj).
+
 ## License
 
 Distributed under the Mozilla Public License either version 2.0 or (at

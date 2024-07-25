@@ -91,13 +91,6 @@
    (->> (kernel-link-opts init-opts)
         (proto/create-kernel-link jlink-impl))))
 
-(defn stop
-  "Sends a request to the kernel to shut down.
-
-  See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/KernelLink.html#terminateKernel()"
-  []
-  (proto/terminate-kernel! (jlink-instance/get)))
-
 (defn- unqualify [form]
   (walk/postwalk (fn [form]
                    (if (qualified-symbol? form)
@@ -128,7 +121,7 @@
    :wolfram-kernel-name \"Wolfram Language 14.0.0 Engine\"
    :max-license-processes 2} ; how many concurrent kernels (=> Wolframite REPLs/processes) may we run
   ```
-  Requires [[init!]] to be called first."
+  Requires [[start]] to be called first."
   []
   (zipmap
    [:wolfram-version :wolfram-kernel-name :max-license-processes]
@@ -171,11 +164,25 @@
      nil)
    nil))
 
+(defn stop
+  "Sends a request to the kernel to shut down.
+
+  See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/KernelLink.html#terminateKernel()"
+  []
+  (some-> (jlink-instance/get) (proto/terminate-kernel!))
+  (jlink-instance/reset!)
+  (reset! kernel-link-atom nil))
+
+(defn restart
+  "Same as calling [[stop]] then [[start]]"
+  ([] (stop) (start))
+  ([opts] (stop) (start opts)))
+
 (defn eval
   "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
 
    Args:
-   - `opts` - same as those for [[init!]]
+   - `opts` - same as those for [[start]]
 
     Example:
     ```clojure
@@ -194,7 +201,7 @@
                                  eval-opts)
            expr' (unqualify (if (string? expr) (express/express expr with-eval-opts) expr))]
        (cep/cep expr' with-eval-opts))
-     (throw (IllegalStateException. "Not initialized, call init! first")))))
+     (throw (IllegalStateException. "Not initialized, call start first")))))
 
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
 (defn- clj-intern-autoevaled

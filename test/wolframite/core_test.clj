@@ -2,7 +2,8 @@
   (:require [clojure.test :refer [deftest testing is]]
             [wolframite.core :as wl]
             [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
-            [wolframite.wolfram :as w]))
+            [wolframite.wolfram :as w])
+  (:import (clojure.lang ExceptionInfo)))
 
 ;; * Basic Sanity Checks
 
@@ -60,6 +61,29 @@
          (wl/eval  (w/Information WolframPackageDemo/additional "Usage"))))
   (is (= 30
          (wl/eval (WolframPackageDemo/additional 10)))))
+
+(deftest restart
+  (testing "first set of aliases"
+    (wl/restart {:aliases '{** Power}})
+    (is (= 8
+           (wl/eval '(** 2 3)))
+        "** is an alias for Power (and 2^3 is 8)"))
+  (testing "restart & another aliases"
+    (wl/restart {:aliases '{pow Power}})
+    (is (thrown-with-msg? ExceptionInfo
+                          #"Unsupported symbol / unknown alias"
+                          (wl/eval '(** 2 3)))
+        "** is not known anymore")
+    (is (= 8
+           (wl/eval '(pow 2 3)))
+        "Now, `pow` is an alias for Power (and 2^3 is 8)")))
+
+(deftest bug-fixes
+  (wl/start)
+  (testing "#76 double eval of ->"
+    (is (= '(-> x 5)
+           (wl/eval (wl/eval (w/-> 'x 5))))
+        "Should not throw")))
 
 (comment
   (clojure.test/run-tests 'wolframite.core-test))
