@@ -1,9 +1,7 @@
 #+title: Report 002
 
-* Overview
+* Overview (TL;DR)
 In a nutshell, our proposal was about reawakening and increasing the ease of Wolfram interop with Clojure. In this second part of the project we continued to fix some minor bugs across the board (quelle surprise), as well as some bigger ones that had crept in with respect to jlink setup and initialization. The main focus however, was on user experience, particularly in regards to customizability: we don't just want access to Wolfram, but to a user-configurable Wolfram! In this regard, we fundamentally changed the initialization system, such that the user can now pass options to the library at runtime: particularly in regard to user-defined function and symbol aliasing. In a similar vein of explicitness, we remodelled the evaluation system such that expressions are only computed on command. This, as described below, should not only make computations more efficient to run, but also expressions more efficient to write. Last, but certainly not least, we put effort into the otherwise Sisyphean task of documentation. Aside from the usual docs, we put particular effort into revamping demo namespaces as well as adding long-form tutorials. On top of this we made sure to make an up-to-date website and a script for uploading up-to-date clojars packages. In fact, it's time to introduce Wolframite 1.0!
-
-
 
 
 * Initialization
@@ -63,35 +61,14 @@ This system is slightly brittle at the moment, but so far provides a best of bot
  #+end_src
 In general, it also removes the need to overload Clojure operators as Wolfram ones (different namespaces), allows you to treat aliases exactly the same as Wolfram functions and maintains editor autocompletion.
 
+* Documentation, packaging and literate programming
+With usability in mind, another big part of this project was documentation and code hygiene. We're still far from Knuth's idea that /Programs are meant to be read by humans and only incidentally for computers to execute./, but we're happy to have taken a few steps in this direction. We moved the dial on API docstrings and the readme; laid out a couple of substantial real-world physics examples and incorporated these into a website, along with updated versions of the introductory demos. We also, with thanks to Daniel Slutsky, made Knuth happier by introducing a reliable method of displaying Wolfram expressions using TeX: particularly in the context of literate namespaces. Unfortunately, we have not yet got much feedback from the wider community (because we were late in launching and publicizing), but we have made a tentative start on integrating the library and maintainers with the data science community on [[https://clojurians.zulipchat.com/#narrow/stream/151924-data-science][zulip]]. We realize however, that there is still much to do in this space. And so it is worth mentioning that we are strongly commited to the development of this library in the medium term, with ongoing tech. support (of the IT, rather than Knuth variety).
 
-* Documentation / packaging / runtime
-- API docstrings and readme
-- example namespaces (updating the old) and building some new
-- scicloj wolframite site
-- doc cleanup (not finished!)
-- docs and naming improvements (removed some !s etc.)
-- GH action added to build site
-- licence
-- added build script to deploy to clojars
-- removed obsolete dependencies
-- docs generation with clay
-- integration with the zulip data science community
-- commited to ongoing maintenance
-
-- better TeX support (of the Knuth; rather than the IT variety)
-- delays meant that we didn't get much community feedback
-  - but happy to work with Daniel Slutsky
-- UX was a big theme
+* Future outlook
+ Some things took less time than expected (making a convenient package system); other things took more (the unexpected new evaluation model). Such is the case, there are a couple of outlying goals that need more work. One of these is more explicit work on the underlying kernel parallelism. In principle, this hasn't been affected by our work but we are currently still missing the promised documentation. The other goal that was approached more implicitly was the laying of foundations for integration with [[https://github.com/mentat-collective/emmy][emmy]]. The actual integration with emmy will take a lot of work, but the fundamentals are now here, with the advanced aliasing system now allowing for functional transforms, rather than simply 1-1 symbol replacements. The best parts of this project therefore, we hope, are still to come.
 
 
-* bug fixes
-- TextStructure works now
-- Subtract and Minus work as expected (no more (- 0 'E4))
-  - more complicated aliasing
- 
-* explicit review of goals
-
-* What should we have done?
+* What should we have done? :noexport:
 - [X] merge recent work
 - [X] create comprehensive inline documentation
 - [X] create, big-picture, example namespaces: including onboarding tutorial and real-world examples (publically available in visible places like the sci-cloj website)
@@ -100,12 +77,9 @@ In general, it also removes the need to overload Clojure operators as Wolfram on
 - [X] streamline setup so that wolfram symbols are loaded much faster, such that wolfram functions can be used almost as easily as library functions
 - [ ] start building the foundations for closely integrating wolfram with the emmy symbolic clojure system (https://github.com/mentat-collective/emmy)
 
-* future
-- emmy integration
-- more tests
-* personal todos
-** TODO integrate EIT work as another demo
+* personal todos :noexport:
 ** TODO cavity plots
+** TODO integrate EIT work as another demo
 ** TODO check parallelism?
 ** TODO add experimental UX namespace (wx)
 
