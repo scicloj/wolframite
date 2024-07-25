@@ -213,7 +213,7 @@ For demo purposes, our question is then 'how can we model this?' and 'how does t
 ## Setup
 Assuming a simple two-mirror setup, with independent reflectivities and
 transmission, the system can be described as a ray oscillating between four key interfaces, as illustrated in the figure.")
-(k/hiccup [:img {:src "src/physics/cavity/graphics/Cavity-MirrorScatteringLoss.png"}])
+(k/hiccup [:img {:src "notebooks/for_scientists/Cavity-MirrorScatteringLoss.png"}])
 (k/md "
 We must therefore consider the electric field at each interface, before solving for the intensity both inside and outside.
 
