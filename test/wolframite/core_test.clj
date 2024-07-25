@@ -43,5 +43,23 @@
          (eval '(-> #'w2/Plus meta :doc)))
       "Interned vars have docstrings"))
 
+(deftest package-test
+  (wl/start)
+  (is (= nil
+         (wl/<<! "resources/WolframPackageDemo.wl")))
+  (is (= nil
+         (wl/load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo")))
+  (is (= nil
+         (wl/load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'wd)))
+
+  (is (= "Used for testing Wolframite."
+         (wl/eval  (w/Information wd/tryIt "Usage"))))
+  (is (= 1000
+         (wl/eval (wd/tryIt 10))))
+  (is (= "Another function in the test package."
+         (wl/eval  (w/Information WolframPackageDemo/additional "Usage"))))
+  (is (= 30
+         (wl/eval (WolframPackageDemo/additional 10)))))
+
 (comment
   (clojure.test/run-tests 'wolframite.core-test))

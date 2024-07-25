@@ -271,6 +271,5 @@ See [[intern-context!]] for details of turning the Wolfram context into a Clojur
 
   (eval  (w/Information wd/tryIt "Usage"))
   (eval (wd/tryIt 10))
-
   (eval  (w/Information WolframPackageDemo/additional "Usage"))
   (eval (WolframPackageDemo/additional 10)))
