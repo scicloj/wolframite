@@ -26,20 +26,26 @@
 ; ***** END LICENSE BLOCK *****
 
 (ns wolframite.core
+  "The main user-facing namespace of Wolframite (in conjunction with wolframite.wolfram).
+
+  Public functions start and stop the kernel, load packages and perform conversions to and from the Wolfram language.
+  "
   (:refer-clojure :exclude [eval])
   (:require
+   [babashka.fs :as fs]
    [clojure.tools.logging :as log]
    [clojure.walk :as walk]
    [wolframite.base.cep :as cep]
    [wolframite.base.convert :as convert]
    [wolframite.base.evaluate :as evaluate]
    [wolframite.base.express :as express]
+   [wolframite.base.package :as package]
    [wolframite.base.parse :as parse]
    [wolframite.impl.jlink-instance :as jlink-instance]
    [wolframite.impl.protocols :as proto]
+   [wolframite.runtime.defaults :as defaults]
    [wolframite.runtime.jlink :as jlink]
    [wolframite.runtime.system :as system]
-   [wolframite.runtime.defaults :as defaults]
    [wolframite.wolfram :as w]))
 
 (defonce ^{:deprecated true, :private true} kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
@@ -221,12 +227,50 @@
    (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
      (ifn? output-fn) output-fn)))
 
-(defn <<!
-  "A Wolfram-like alias to load-package!. An extended version of Wolfram's 'Get'. Gets a Wolfram package and makes the constants/functions etc. accessible via a Clojure namespace (the given `alias`, by default the same as `context`).")
+(defn load-package!
+  "An extended version of Wolfram's 'Get'. Gets a Wolfram package and makes the constants/functions etc. accessible via a Clojure namespace (the given `alias`, by default the same as `context`).
+
+  Example:  `(<<! \"./resources/WolframPackageDemo.wl\" \"WolframPackageDemo\" 'wp)`
+
+ - `path` - string pointing to the package file
+ - `context` - string for Wolfram context (essentially Wolfram's version of a namespace)
+ - `alias` - Clojure symbol to be used for accessing the Wolfram context. This will effectively become a Clojure namespace
+
+See [[intern-context!]] for details of turning the Wolfram context into a Clojure namespace."
+;; TODO: Should check that the symbol isn't already being used.
+  ([path]
+   (let [context (-> path fs/file-name fs/strip-ext)]
+     (package/load! eval path context (symbol context))))
+
+  ([path context]
+   (package/load! eval path context (symbol context)))
+
+  ([path context alias]
+   (eval (w/Get path))
+   (package/intern-context! eval context alias)))
+
+(def <<!
+  "A Wolfram-like alias to load-package!. An extended version of Wolfram's 'Get'. Gets a Wolfram package and makes the constants/functions etc. accessible via a Clojure namespace (the given `alias`, by default the same as `context`)."
+  load-package!)
 
 (comment
+  ;; Initialization/alias test
   (start {:aliases
           '{** Power}})
   (eval '(** 5 2))
   (eval (w/Dot [1 2 3] [4 5 6]))
   (stop))
+
+(comment
+  ;; Package test
+  (start)
+
+  (<<! "resources/WolframPackageDemo.wl")
+  (load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo")
+  (load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'wd)
+
+  (eval  (w/Information wd/tryIt "Usage"))
+  (eval (wd/tryIt 10))
+
+  (eval  (w/Information WolframPackageDemo/additional "Usage"))
+  (eval (WolframPackageDemo/additional 10)))

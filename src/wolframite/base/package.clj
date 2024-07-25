@@ -4,7 +4,6 @@
   (:require
    [babashka.fs :as fs]
    [clojure.string :as str]
-   [wolframite.core :as wl]
    [wolframite.impl.wolfram-syms.intern :as wi]
    [wolframite.wolfram :as w]
    [clojure.repl :as repl]))
@@ -14,13 +13,13 @@
   if it does not yet exist.
 
   N.B. context does not contain the trailing '`'"
-  ([context]
+  ([wl-eval context]
    (intern-context! context (symbol context)))
-  ([context alias]
+  ([wl-eval context alias]
    {:pre [(string? context) (symbol? alias)]}
-   (let [names (wl/eval (w/Names (str context "`*")))
+   (let [names (wl-eval  (w/Names (str context "`*")))
          docs (for [name names]
-                (mapv #(wl/eval (w/Information name %))
+                (mapv #(wl-eval  (w/Information name %))
                       ["FullName" "Usage"]))]
 
      (run! (fn [[fname doc]]
@@ -29,7 +28,7 @@
                              :intern/extra-meta {:doc doc}}))
            docs))))
 
-(defn load-package!
+(defn load!
   "An extended version of Wolfram's 'Get'. Gets a Wolfram package and makes the constants/functions etc. accessible via a Clojure namespace (the given `alias`, by default the same as `context`).
 
   Example:  `(<<! \"./resources/WolframPackageDemo.wl\" \"WolframPackageDemo\" 'wp)`
@@ -40,30 +39,13 @@
  
 See [[intern-context!]] for details of turning the Wolfram context into a Clojure namespace."
 ;; TODO: Should check that the symbol isn't already being used.
-  ([path]
+  ([wl-eval path]
    (let [context (-> path fs/file-name fs/strip-ext)]
-     (load-package! path context (symbol context))))
+     (load! wl-eval path context (symbol context))))
 
-  ([path context]
-   (load-package! path context (symbol context)))
+  ([wl-eval path context]
+   (load! wl-eval path context (symbol context)))
 
-  ([path context alias]
-   (wl/eval (w/Get path))
-   (intern-context! context alias)))
-
-(def <<!
-  "A Wolfram-like alias to load-package! Gets a Wolfram package and adds the constants/functions etc. under a clojure-accessible symbol: either the given one or the name of the context by default."
-  load-package!)
-
-(comment
-  (wl/start)
-
-  (<<! "resources/WolframPackageDemo.wl")
-  (load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo")
-  (load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'wp)
-
-  (wl/eval  (w/Information wp/tryIt "Usage"))
-  (wl/eval (wp/tryIt 10))
-
-  (wl/eval  (w/Information WolframPackageDemo/additional "Usage"))
-  (wl/eval (WolframPackageDemo/additional 10)))
+  ([wl-eval path context alias]
+   (wl-eval (w/Get path))
+   (intern-context! wl-eval context alias)))
