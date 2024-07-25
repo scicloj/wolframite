@@ -16,5 +16,3 @@
   EndPackage[]
   "it works"
 
-
-
