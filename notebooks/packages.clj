@@ -1,4 +1,3 @@
-;; ^{:clay {:kindly/options {:kinds-that-hide-code #{:kind/md :kind/hiccup :kind/html :kind/tex}}}}
 (ns packages
   "A notebook demonstrating how to import and use Wolfram packages in Wolframite."
   (:require
