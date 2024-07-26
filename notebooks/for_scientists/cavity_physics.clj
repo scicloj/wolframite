@@ -355,3 +355,7 @@ With these approximations we can formulate our final expression for the optical 
        (w/.>> (conj losses small-angle))
        w/><
        (->> (w/== (w/** (w/Abs 'E4) 2))))
+
+^:kindly/hide-code
+(comment
+  ((requiring-resolve 'scicloj.clay.v2.api/make!) {:source-path "notebooks/for_scientists/cavity_physics.clj"}))
