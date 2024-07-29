@@ -1,4 +1,3 @@
-^{:clay {:kindly/options {:kinds-that-hide-code #{:kind/md :kind/hiccup :kind/html :kind/tex}}}}
 (ns for-scientists.index
   "An example namespace of how you might present some physics."
   (:require
@@ -7,14 +6,15 @@
    [wolframite.core :as wl]
    [wolframite.wolfram-extended :as w]))
 
-;; TODO:
-;; - contents page
-;; - automatically hide nils
-;; - how do/can I reference sections within a clay document?
-;; - credit authors
-;; - are clay kinds executed outside of a clay environment, i.e. are they treated like 'comment's under 'normal' circumstances?
-;; - Move general notes and examples out from the Cavity section
-;; - should probably be split into two (the cavity part can be quite self-contained)
+^:kindly/hide-code
+(comment
+  ;; ## TODO: ##
+  ;; - how do/can I reference sections within a clay document?
+  ;; - credit authors
+  ;; - are clay kinds executed outside of a clay environment, i.e. are they treated like 'comment's under 'normal' circumstances?
+  ;; - Move general notes and examples out from the Cavity section
+  ;; - should probably be split into two (the cavity part can be quite self-contained)
+  ,)
 
 (k/html "<span style='color:red'>_<b>SPOILER WARNING</b>: This is a work in progress...</span>
 ")
@@ -361,4 +361,7 @@ With these approximations we can formulate our final expression for the optical 
 
 ^:kindly/hide-code
 (comment
-  ((requiring-resolve 'scicloj.clay.v2.api/make!) {:source-path "notebooks/for_scientists/index.clj"}))
+  (require '[scicloj.clay.v2.api :as clay])
+  (clay/browse!)
+  ((requiring-resolve 'scicloj.clay.v2.api/make!) {:source-path "notebooks/for_scientists/index.clj"
+                                                   :format [#_:quarto :html]}))
