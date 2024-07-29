@@ -16,7 +16,7 @@
 ;; - Move general notes and examples out from the Cavity section
 ;; - should probably be split into two (the cavity part can be quite self-contained)
 
-(k/html "<span style='color:red'><b>SPOILER WARNING</b>: This is a work in progress...</span>
+(k/html "<span style='color:red'>_<b>SPOILER WARNING</b>: This is a work in progress...</span>
 ")
 (k/md "# Wolframite for scientists")
 (k/md "## Abstract
@@ -51,13 +51,13 @@ Therefore, we enter the following.
 (def aliases
   '{** Power
     ++ Conjugate
-    .> Replace
-    .>> ReplaceAll
-    <-> Expand
-    <<->> ExpandAll
-    ++<-> ComplexExpand
-    >< Simplify
-    >><< FullSimplify
+    _> Replace
+    _>> ReplaceAll
+    <_> Expand
+    <<_>> ExpandAll
+    ++<_> ComplexExpand
+    >_< Simplify
+    >>_<< FullSimplify
     ⮾ NonCommutativeMultiply
     √ Sqrt
     ∫ Integrate})
@@ -122,7 +122,7 @@ f[x_]:=x^2 becomes
 (square 'x)
 
 (k/md "If you want to define functions inside the Wolfram kernel and attach them to arbitrary symbols, then you can write")
-(wl/eval (w/..= 'f (w/fn [x] (w/Power x 2))))
+(wl/eval (w/_= 'f (w/fn [x] (w/Power x 2))))
 (wl/eval '(f 5))
 
 (k/md "Rather than a direct alias, w/fn is a special form that allows you to define Wolfram functions in a convenient way. Note that 'f' is a new symbol and therefore cannot be expected to be part of wolframite.wolfram or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.")
@@ -133,8 +133,10 @@ Once you can define your own aliases and create arbitrary expressions and functi
 ### Gotchas...
 This brings us to some of the 'gotchas' in this library. Although we try to avoid such things, sometimes, when you're fighting the host language, it's just not practical. Here we will try to keep an up-to-date list of surprises that are not easy to 'fix'.
 
-- := (SetDelayed) is actually '..=' in Wolframite. This is because ':' is a reserved character in Clojure for creating keywords. It's worth noting though that this is actually nicer, in a way, because '..' looks like an ellipsis, which implies a delay!
-- :> (RuleDelayed) similarly, is '..>'
+- := (SetDelayed) is actually '_=' in Wolframite. This is because ':' is a reserved character in Clojure for creating keywords. It's worth noting though that this is possibly nicer, in a way, because '_' looks like a placeholder, which implies a delay...
+- :> (RuleDelayed) similarly, is '_>'
+- . (Dot) has been changed to '<*>', in the spirit of the inner product, because '.' is a key character in Clojure and most object-oriented systems for namespacing.
+- /. (ReplaceAll) similarly, has been changed to 'x>>' (and 'Replace' to 'x>' for consistency).
 - Symbols within threading macros. After spending so much time playing with symbols, be careful of slipping into things like
 (-> 'x
     '(Power 1))
@@ -198,8 +200,10 @@ The next step up from making our symbols more readable, is to make our code more
   [& xs]
   `(->> ~@xs TeX wl/eval k/tex))
 
-(k/md "Now we can implicitly chain operations together and still get a nice result in the browser.")
-(TeX-> 'x ||2 (w/+ 'y))
+(k/md "Now we can implicitly chain operations together and still get a nice result in the browser:")
+^{:kindly/hide-code false} (TeX-> 'x
+                                  ||2
+                                  (w/+ 'y))
 
 (k/md "
 # Cavity Maths (A physics example)
@@ -254,33 +258,33 @@ Substitution and simplification can then also be used to arrive at the transmiss
             w/First w/First))
 (eval-> e4)
 
-(def T (-> (w/.>> (w/* E2 't2)
+(def T (-> (w/_>> (w/* E2 't2)
                   e4)
-           w/>><<))
+           w/>>_<<))
 (TeX-> T)
 
 (def R (-> (w/+ (w/* E4 't1) 'r1)
-           (w/.>> e4)
-           w/>><<
+           (w/_>> e4)
+           w/>>_<<
            w/Together))
 (TeX-> R)
 
 (k/md "## Observables
  Taking the square of the fields (using the complex conjugate), gives the corresponding observables, i.e. things that can be actually measured, for the case of no loss.")
 
-(def I4 (-> (w/.>> 'E4 e4) ||2
-            w/++<->
-            w/>><<))
+(def I4 (-> (w/_>> 'E4 e4) ||2
+            w/++<_>
+            w/>>_<<))
 (TeX-> (w/== 'I4 (w/** (w/Abs 'E4) 2) I4))
 
 (def Tsq (-> T ||2
-             w/++<->
-             w/>><<))
+             w/++<_>
+             w/>>_<<))
 (TeX-> (w/== (w/** 'T 2) Tsq))
 
 (def Rsq (-> R ||2
-             w/++<->
-             w/>><<
+             w/++<_>
+             w/>>_<<
              w/Together))
 (TeX-> (w/== (w/** 'R 2) Rsq))
 
@@ -309,7 +313,7 @@ Rather than just substitute the new rule into our expressions, we're going to ta
 (def approximations
   [(w/-> (w/* 'r1 'r2)
          (let [vars [(w/** 't1 2) (w/** 't2 2) 'l1 'l2]]
-           (->  (w/.>> (w/* (w/√ (w/** 'r1 2))
+           (->  (w/_>> (w/* (w/√ (w/** 'r1 2))
                             (w/√ (w/** 'r2 2)))
                        losses)
                 (w/Series ['t1 0 2]
@@ -317,11 +321,11 @@ Rather than just substitute the new rule into our expressions, we're going to ta
                           ['l1 0 2]
                           ['l2 0 2])
                 w/Normal
-                w/<<->>
-                (w/.>> (mapv #(w/-> % (w/* 'temp %)) vars))
+                w/<<_>>
+                (w/_>> (mapv #(w/-> % (w/* 'temp %)) vars))
                 (w/Series ['temp 0 1])
                 w/Normal
-                (w/.>> (w/-> 'temp 1)))))])
+                (w/_>> (w/-> 'temp 1)))))])
 (TeX-> approximations)
 
 (k/md "What's happening here is that we are simplifying the expression for r1*r2 by assuming that the transmission and loss for light going through a mirror is small. So small, that higher powers of these variabes are negligible. And so, we substitute the values into the expression, expand the functions in a power series and neglect any higher powers. The neglect is done by inserting ['big O' notation](https://mathworld.wolfram.com/Big-ONotation.html) and then restricting the series to a single power in that variable. As we want to do this for multiple variables, then we map over each one. This is a complicated mathematical procedure, but Wolframite allows us to do this quite concisely, apart from some necessary Wolfram datatype conversions (e.g. using the w/Normal function).
@@ -335,25 +339,25 @@ Note that Wolfram can also be used to define quite general approximations, using
 (k/md "Now that we know (or have remembered!) the form, we can create a general rule that is not limited to specific symbol definitions.")
 
 (def small-angle
-  (w/..> (w/Cos (w/Pattern 'x (w/Blank)))
-         (w/+ 1 (w/* -1/2 (w/** 'x 2)))))
+  (w/_> (w/Cos (w/Pattern 'x (w/Blank)))
+        (w/+ 1 (w/* -1/2 (w/** 'x 2)))))
 
 (k/md "The rule can now be named and used for any Cos function with any argument:")
 
-(eval-> (w/.>> (w/Cos 'phi) small-angle))
-(eval-> (w/.>> (w/Cos (w/+ 1 'phi)) small-angle))
+(eval-> (w/_>> (w/Cos 'phi) small-angle))
+(eval-> (w/_>> (w/Cos (w/+ 1 'phi)) small-angle))
 
 (k/md "## Independent mirrors
 With these approximations we can formulate our final expression for the optical intensity inside the cavity: ")
 (TeX-> I4
-       (w/.>> (w/-> (w/Cos (w/* 2 'k 'L))
+       (w/_>> (w/-> (w/Cos (w/* 2 'k 'L))
                     (w/Cos 'phi)))
-       (w/.>> approximations)
-       (w/.>> (w/-> (w/** (w/* 'r1 'r2) 2)
-                    (-> (w/.>> (w/* 'r1 'r2) approximations)
+       (w/_>> approximations)
+       (w/_>> (w/-> (w/** (w/* 'r1 'r2) 2)
+                    (-> (w/_>> (w/* 'r1 'r2) approximations)
                         (w/** 2))))
-       (w/.>> (conj losses small-angle))
-       w/><
+       (w/_>> (conj losses small-angle))
+       w/>_<
        (->> (w/== (w/** (w/Abs 'E4) 2))))
 
 ^:kindly/hide-code
