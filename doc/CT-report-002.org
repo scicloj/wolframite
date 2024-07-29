@@ -78,11 +78,11 @@ With usability in mind, another big part of this project was documentation and c
 - [ ] start building the foundations for closely integrating wolfram with the emmy symbolic clojure system (https://github.com/mentat-collective/emmy)
 
 * personal todos :noexport:
+** TODO mention feedback from wolfram developers
 ** TODO cavity plots
 ** TODO integrate EIT work as another demo
 ** TODO check parallelism?
 ** TODO add experimental UX namespace (wx)
-
 * Issues :noexport:
 - initialization made explicit
   - advantage of adding user-based options
