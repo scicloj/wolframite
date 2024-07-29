@@ -122,8 +122,6 @@ f[x_]:=x^2 becomes
 (square 'x)
 
 (k/md "If you want to define functions inside the Wolfram kernel and attach them to arbitrary symbols, then you can write")
-(wl/eval (w/_= 'f (w/fn [x] (w/Power x 2))))
-(wl/eval '(f 5))
 
 (k/md "Rather than a direct alias, w/fn is a special form that allows you to define Wolfram functions in a convenient way. Note that 'f' is a new symbol and therefore cannot be expected to be part of wolframite.wolfram or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.")
 
@@ -137,6 +135,7 @@ This brings us to some of the 'gotchas' in this library. Although we try to avoi
 - :> (RuleDelayed) similarly, is '_>'
 - . (Dot) has been changed to '<*>', in the spirit of the inner product, because '.' is a key character in Clojure and most object-oriented systems for namespacing.
 - /. (ReplaceAll) similarly, has been changed to 'x>>' (and 'Replace' to 'x>' for consistency).
+- =. (Unset) has also been changed to '=!'.
 - Symbols within threading macros. After spending so much time playing with symbols, be careful of slipping into things like
 (-> 'x
     '(Power 1))
@@ -201,9 +200,9 @@ The next step up from making our symbols more readable, is to make our code more
   `(->> ~@xs TeX wl/eval k/tex))
 
 (k/md "Now we can implicitly chain operations together and still get a nice result in the browser:")
-^{:kindly/hide-code false} (TeX-> 'x
-                                  ||2
-                                  (w/+ 'y))
+(TeX-> 'x
+       ||2
+       (w/+ 'y))
 
 (k/md "
 # Cavity Maths (A physics example)
