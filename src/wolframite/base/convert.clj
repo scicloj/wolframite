@@ -83,10 +83,9 @@
   (if-let [fn-name (intern/interned-var-val->symbol obj)]
     (convert fn-name opts)
     (throw (IllegalArgumentException.
-             (str "An expression contains a function object, which is not intern/wolfram-fn => "
-                  "don't know how to turn it into a symbol that Wolfram could interpret: "
-                  obj)))))
-
+            (str "An expression contains a function object, which is not intern/wolfram-fn => "
+                 "don't know how to turn it into a symbol that Wolfram could interpret: "
+                 obj)))))
 
 (defmethod convert :null [_ opts]
   (convert 'Null opts))
@@ -145,11 +144,11 @@
           (= 'var macro)                   (convert (list 'Function arg) opts)
           (= 'quote macro)                 (express/express arg opts)
           :else                            (expr/expr-from-parts
-                                             (cons (convert head
-                                                            (cond-> opts
-                                                                    (symbol? head)
-                                                                    (assoc ::args tail)))
-                                                   (map #(convert % opts) tail))))))
+                                            (cons (convert head
+                                                           (cond-> opts
+                                                             (symbol? head)
+                                                             (assoc ::args tail)))
+                                                  (map #(convert % opts) tail))))))
 
 (comment
   (convert '(- 12 1 2) {})

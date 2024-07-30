@@ -35,10 +35,10 @@
 (def base-aliases
   {'do   'CompoundExpression
    '=    'Set
-   '..=  'SetDelayed ;; TODO: Document this exception. Presumably not := because of clojure's keywords. It's actually nicer in a way though, because an (almost) ellipsis implies a delay!
-   '=.   'Unset
+   '_=  'SetDelayed
+   '=!   'Unset
    '->   'Rule
-   '..>  'RuleDelayed
+   '_>  'RuleDelayed
    '==   'Equal
    '===  'SameQ
    '<    'Less
@@ -49,12 +49,12 @@
    '-=   'SubtractFrom
    '+    'Plus
    '-    ^{::experimental-fn true, :doc "Maps to Wolfram Minus/Subtract"}
-         (fn [args] (case (count args)
-                      1 'Minus
-                      2 'Subtract
-                      (throw (IllegalArgumentException. "Can't handle more than 2 arguments"))))
+   (fn [args] (case (count args)
+                1 'Minus
+                2 'Subtract
+                (throw (IllegalArgumentException. "Can't handle more than 2 arguments"))))
    '*    'Times
-   '.    'Dot
+   '<*>    'Dot
    '/    'Divide
    '<>   'StringJoin
    '&&   'And

@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -68,8 +102,36 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<link rel="icon" href="data:,">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -158,8 +220,43 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract"><span class="header-section-number">3.1</span> Abstract</a></li>
+  <li><a href="#motivation---why-on-earth" id="toc-motivation---why-on-earth" class="nav-link" data-scroll-target="#motivation---why-on-earth"><span class="header-section-number">3.2</span> Motivation - Why on earth?</a></li>
+  <li><a href="#getting-started-for-scientists" id="toc-getting-started-for-scientists" class="nav-link" data-scroll-target="#getting-started-for-scientists"><span class="header-section-number">3.3</span> Getting Started (for scientists)</a>
+  <ul>
+  <li><a href="#clojure" id="toc-clojure" class="nav-link" data-scroll-target="#clojure"><span class="header-section-number">3.3.1</span> Clojure</a>
+  <ul class="collapse">
+  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation"><span class="header-section-number">3.3.1.1</span> Notation</a></li>
+  </ul></li>
+  <li><a href="#data-science" id="toc-data-science" class="nav-link" data-scroll-target="#data-science"><span class="header-section-number">3.3.2</span> Data science</a></li>
+  </ul></li>
+  <li><a href="#wolfram-basics" id="toc-wolfram-basics" class="nav-link" data-scroll-target="#wolfram-basics"><span class="header-section-number">3.4</span> Wolfram basics</a>
+  <ul>
+  <li><a href="#lets-define-our-terms" id="toc-lets-define-our-terms" class="nav-link" data-scroll-target="#lets-define-our-terms"><span class="header-section-number">3.4.1</span> Let’s define our terms!</a></li>
+  <li><a href="#access-to-knowledge" id="toc-access-to-knowledge" class="nav-link" data-scroll-target="#access-to-knowledge"><span class="header-section-number">3.4.2</span> Access to knowledge</a></li>
+  <li><a href="#defining-expressions" id="toc-defining-expressions" class="nav-link" data-scroll-target="#defining-expressions"><span class="header-section-number">3.4.3</span> Defining expressions</a></li>
+  <li><a href="#defining-functions" id="toc-defining-functions" class="nav-link" data-scroll-target="#defining-functions"><span class="header-section-number">3.4.4</span> Defining functions</a></li>
+  <li><a href="#gotchas" id="toc-gotchas" class="nav-link" data-scroll-target="#gotchas"><span class="header-section-number">3.4.5</span> Gotchas…</a></li>
+  </ul></li>
+  <li><a href="#faq" id="toc-faq" class="nav-link" data-scroll-target="#faq"><span class="header-section-number">3.5</span> FAQ</a></li>
+  <li><a href="#function-shortcuts" id="toc-function-shortcuts" class="nav-link" data-scroll-target="#function-shortcuts"><span class="header-section-number">3.6</span> Function shortcuts</a></li>
+  <li><a href="#cavity-maths-a-physics-example" id="toc-cavity-maths-a-physics-example" class="nav-link" data-scroll-target="#cavity-maths-a-physics-example"><span class="header-section-number">4</span> Cavity Maths (A physics example)</a>
+  <ul>
+  <li><a href="#cavities" id="toc-cavities" class="nav-link" data-scroll-target="#cavities"><span class="header-section-number">4.1</span> Cavities?</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup"><span class="header-section-number">4.2</span> Setup</a></li>
+  <li><a href="#interfaces" id="toc-interfaces" class="nav-link" data-scroll-target="#interfaces"><span class="header-section-number">4.3</span> Interfaces</a></li>
+  <li><a href="#observables" id="toc-observables" class="nav-link" data-scroll-target="#observables"><span class="header-section-number">4.4</span> Observables</a></li>
+  <li><a href="#observables-with-loss" id="toc-observables-with-loss" class="nav-link" data-scroll-target="#observables-with-loss"><span class="header-section-number">4.5</span> Observables with loss</a></li>
+  <li><a href="#approximations" id="toc-approximations" class="nav-link" data-scroll-target="#approximations"><span class="header-section-number">4.6</span> Approximations</a></li>
+  <li><a href="#independent-mirrors" id="toc-independent-mirrors" class="nav-link" data-scroll-target="#independent-mirrors"><span class="header-section-number">4.7</span> Independent mirrors</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -190,15 +287,510 @@ ul.task-list li input[type="checkbox"] {
 }
 </style>
 <style>.clay-limit-image-width .clay-image {max-width: 100%}
+.clay-side-by-side .sourceCode {margin: 0}
+.clay-side-by-side {margin: 1em 0}
 </style>
 <script src="for_scientists.index_files/md-default0.js" type="text/javascript"></script>
 <script src="for_scientists.index_files/md-default1.js" type="text/javascript"></script>
-<p>An explanation of Wolframite and why to use it, aimed at scientists dealing with scientific computations and in need of a powerful tool and a good computation pipeline.</p>
-<p>TBD</p>
+<script src="for_scientists.index_files/katex2.js" type="text/javascript"></script>
+<p><link href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" rel="stylesheet" type="text/css"></p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">ns</span> for-scientists.<span class="kw">index</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"An example namespace of how you might present some physics."</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  (<span class="at">:require</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>   [scicloj.kindly.v4.kind <span class="at">:as</span> k]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>   [wolframite.impl.wolfram-syms.write-ns <span class="at">:as</span> write]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   [wolframite.core <span class="at">:as</span> wl]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>   [wolframite.wolfram-extended <span class="at">:as</span> w]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<span style="color:red">_<b>SPOILER WARNING</b>: This is a work in progress...</span>
+
+<section id="abstract" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="abstract"><span class="header-section-number">3.1</span> Abstract</h2>
+<p>We introduce you, the motivated scientist (likely the mathematical sort), to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and getting started notes, we then outline a ‘real’ workflow using the example of optical cavities.</p>
+</section>
+<section id="motivation---why-on-earth" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="motivation---why-on-earth"><span class="header-section-number">3.2</span> Motivation - Why on earth?</h2>
+<p>The Wolfram programming language is ‘best-in-class’ for certain specialist tasks, like manipulating equations, but would you really want to use a language with 6000 functions in a single global namespace to do a normal project, like building a website? Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don’t we call Wolfram from Clojure? It seems like the atypical best of both worlds.</p>
+</section>
+<section id="getting-started-for-scientists" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="getting-started-for-scientists"><span class="header-section-number">3.3</span> Getting Started (for scientists)</h2>
+<p>This tutorial aims to be as comprehensive as possible for the average user and, as such, is not concise. There are other quick-fire instructions available at (REF). If you still insist on working through this document, you can always search through the text for the relevant advice or examples. We won’t judge you!</p>
+<section id="clojure" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="clojure"><span class="header-section-number">3.3.1</span> Clojure</h3>
+<p>There are many useful online tools for getting started with Clojure. For an overview of the language itself, see REF. If you’d like to try it out in practice then jump in with the <a href="http://clojurescriptkoans.com/">koans</a>. If you’d like to see why a physicist might be interested in Clojure then have a look <a href="https://www.youtube.com/watch?v=SE5Ge4QP4oY">here</a>.</p>
+<section id="notation" class="level4" data-number="3.3.1.1">
+<h4 data-number="3.3.1.1" class="anchored" data-anchor-id="notation"><span class="header-section-number">3.3.1.1</span> Notation</h4>
+<p>For those who are still fairly new to clojure, the first thing to get used to is the style of notation. It might seem strange at first, but a functional LisP can be more efficient (symbolically) than a lot of object-oriented languages and even standard mathematical notation. For example, why write 1+1+1+2 and not (+ 1 1 1 2)? Theoretically, they have the same number of characters and yet even here it’s arguable that the signal to noise ratio is higher for the second one. Where the second form really shines however, is in it’s scalability. As soon as you add another operator, e.g.&nbsp;1+1+1+2/3, we have a problem. Okay so you made it through primary school and know that 1+1+1+2/3 is really 1+1+1+(2/3) and not (1+1+1+2)/3, but the mental complexity is still there, you’re just used to it. If we introduce another operator, e.g.&nbsp;1+1+1+2✝3, now what do you do? The truth is that if we stick to one simple rule, i.e.&nbsp;use brackets, then we completely solve a whole range of problems in advance, with the ‘cost’ of having to write two characters. In fact, although it might not be obvious, the Wolfram language is actually inspired by/built on the LisP syntax (underneath). The outer layer is just to make it look more like the inefficient notation that mathematicians already know and love…</p>
+<p>In summary, BODMAS is six rules and incomplete. (function argument …) is a single rule and complete. Be kind to yourself, just write (+ 1 1 1 (/ 2 3)) :). If you’re still unconvinced about the benefits of a simple syntax then consider how easy it is in LisP to generate/generalize your source code with <a href="http://lists.warhead.org.uk/pipermail/iwe/2005-July/000130.html">macros</a>.</p>
+</section>
+</section>
+<section id="data-science" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="data-science"><span class="header-section-number">3.3.2</span> Data science</h3>
+<p>If you’re sold on Clojure and interested in problems close to data science then an overview of some of the key analysis libraries can be found here (REF). If you’re ready to use Wolfram, then read on!</p>
+</section>
+</section>
+<section id="wolfram-basics" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="wolfram-basics"><span class="header-section-number">3.4</span> Wolfram basics</h2>
+<section id="lets-define-our-terms" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="lets-define-our-terms"><span class="header-section-number">3.4.1</span> Let’s define our terms!</h3>
+<p>One of the really nice things about using Wolfram as a library is that our middle man can simplify verbose terms like (w/Power ’x 2) to (w/**2 ’x), for readability. What’s even nicer however, is that we can make our own symbolic shortcuts: the setup is your own!</p>
+<p>We mention this here because the best time to define your terms is at the beginning. We define some aliases below, where the first few give you an insight into how I’d have changed some of the wolfram symbols for symbolic expressiveness and ease of use. The last two go a step furter. Here, we make use of Clojure’s modernity and all round good decision to support the full unicode character set. Depending on your editor, it can be just as easy to enter these unicode characters as typing the long function name, but the real win is in the readability. Remember, we read our documents far more often than we write them (even if it’s just peer review…).</p>
+<p>Therefore, we enter the following.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb2"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> aliases</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  '{** Power</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    ++ Conjugate</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    _&gt; Replace</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    _&gt;&gt; ReplaceAll</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    &lt;_&gt; Expand</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    &lt;&lt;_&gt;&gt; ExpandAll</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    ++&lt;_&gt; ComplexExpand</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    &gt;_&lt; Simplify</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    &gt;&gt;_&lt;&lt; FullSimplify</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    ⮾ NonCommutativeMultiply</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    √ Sqrt</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    ∫ Integrate})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb3"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(wl/restart {<span class="at">:aliases</span> aliases})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here you see than we can define new aliases by simply using the core clojure functions/macros. This works fine, but the downside is that we have just defined symbol replacements and so won’t benefit from using these entities in macros or from editor autocompletion. For the best experience therefore, we recommend using ‘write-ns!’.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">comment</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  (write/write-ns! <span class="st">"src/wolframite/wolfram_extended.clj"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                   {<span class="at">:aliases</span> aliases}))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>By using this command, we can automatically create a namespace at the given location and so refer to the new symbol aliases more directly. The command appears here in a comment block to avoid unnecessary recomputation. See the ‘Literate programming’ section for an explanation.</p>
+<span style="color:red">The next section should probably be moved later.</span>
+</section>
+<section id="access-to-knowledge" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="access-to-knowledge"><span class="header-section-number">3.4.2</span> Access to knowledge</h3>
+<p>With the recent emergence of ChatGPT and similar AI systems, direct access to knowledge from free-form linguistic input is in demand. Wolfram was an early pioneer of this, launching its product, Wolfram|Alpha, in 2009. Wolfram occupies a different space however, focusing mainly on what it describes as ‘computational knowledge’. Rather than strictly using an LLM, it combines its knowledge databases with the ability to perform Wolfram operations on the retrieved data before returning the result.</p>
+<p>For example, we can make both knowledge-based requests and perform complicated calculations (requires internet access).</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/WolframAlpha <span class="st">"What is the mass of 5 rubidium atoms?"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>[(<span class="kw">-&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"Input"</span> <span class="dv">1</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"convert 5 atoms of rubidium (chemical element) to mass"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span> [[<span class="st">"Result"</span> <span class="dv">1</span>] <span class="st">"Plaintext"</span>] <span class="st">"709.613 yg (yoctograms)"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span> [[<span class="st">"UnitConversion"</span> <span class="dv">1</span>] <span class="st">"Plaintext"</span>] <span class="st">"7.09613×10^-22 grams"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"UnitConversion"</span> <span class="dv">2</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"7.09613×10^-25 kg (kilograms)"</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"UnitConversion"</span> <span class="dv">3</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"427.339 u (unified atomic mass units)"</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span> [[<span class="st">"Interpretation"</span> <span class="dv">1</span>] <span class="st">"Plaintext"</span>] <span class="st">"mass"</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"CorrespondingQuantity"</span> <span class="dv">1</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Relativistic energy E from E = mc^2:</span><span class="sc">\n</span><span class="st"> | 0.064 μJ (microjoules)</span><span class="sc">\n</span><span class="st"> | 398 GeV (gigaelectronvolts)"</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"CorrespondingQuantity"</span> <span class="dv">2</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Characteristic length L from L = h/(mc):</span><span class="sc">\n</span><span class="st"> | 3.1 am (attometers)</span><span class="sc">\n</span><span class="st"> | 3.1×10^-18 meters"</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"CorrespondingQuantity"</span> <span class="dv">3</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Thermal de Broglie wavelength at 100 K from λ = h/(2πmkT)^(1/2):</span><span class="sc">\n</span><span class="st"> | 8.4 pm (picometers)"</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"CorrespondingQuantity"</span> <span class="dv">4</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Characteristic time T from T = h/(mc^2):</span><span class="sc">\n</span><span class="st"> | 1×10^-26 seconds"</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"CorrespondingQuantity"</span> <span class="dv">5</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Thermodynamic temperature T from kT = mc^2:</span><span class="sc">\n</span><span class="st"> | 4.619×10^15 K (kelvins)"</span>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"CorrespondingQuantity"</span> <span class="dv">6</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Compton frequency ν from ν = mc^2/h:</span><span class="sc">\n</span><span class="st"> | 9.625×10^25 Hz (hertz)"</span>)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"Input"</span> <span class="dv">1</span>] <span class="st">"Input"</span>]</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  (HoldComplete</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>   (ChemicalConvert</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    (ChemicalInstance <span class="at">:entity.element/rubidium</span> (Quantity <span class="dv">5</span> <span class="st">"Atoms"</span>))</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    (QuantityVariable <span class="st">"Mass"</span>))))]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb7"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/WolframAlpha <span class="st">"What is the relativistic momentum of a 0.8c electron?"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb8"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>[(<span class="kw">-&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"Input"</span> <span class="dv">1</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"relativistic momentum | </span><span class="sc">\n</span><span class="st">velocity | 0.8 c (speed of light)</span><span class="sc">\n</span><span class="st">mass | e^- (electron) (mass): 510.9989461 keV/c^2"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"Result"</span> <span class="dv">1</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"momentum | 681.3 keV/c</span><span class="sc">\n</span><span class="st">= 3.641×10^-22 J s/m (joule seconds per meter)</span><span class="sc">\n</span><span class="st">= 3.641×10^-22 kg m/s (kilogram meters per second)"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"Equation"</span> <span class="dv">1</span>] <span class="st">"Plaintext"</span>]</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"p = (m v)/sqrt(1 - v^2/c^2) | </span><span class="sc">\n</span><span class="st">p | momentum</span><span class="sc">\n</span><span class="st">v | velocity</span><span class="sc">\n</span><span class="st">m | mass</span><span class="sc">\n</span><span class="st">c | speed of light (≈ 2.998×10^8 m/s)"</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"Input"</span> <span class="dv">1</span>] <span class="st">"Input"</span>]</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  (HoldComplete</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>   (FormulaData</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"MomentumRelativistic"</span> <span class="st">"Velocity"</span>]</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    [(<span class="kw">-&gt;</span> <span class="st">"v"</span> (Quantity <span class="fl">0.8</span> <span class="st">"SpeedOfLight"</span>))</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>     (<span class="kw">-&gt;</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">"m"</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>      (<span class="at">:entity.particle/electron</span> <span class="at">:entity-property.particle/mass</span>))])))</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"Result"</span> <span class="dv">1</span>] <span class="st">"Input"</span>]</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  (HoldComplete</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>   (FormulaData</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"MomentumRelativistic"</span> <span class="st">"Velocity"</span>]</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    [(<span class="kw">-&gt;</span> <span class="st">"v"</span> (Quantity <span class="fl">0.8</span> <span class="st">"SpeedOfLight"</span>))</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>     (<span class="kw">-&gt;</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>      <span class="st">"m"</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>      (Quantity</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>       <span class="fl">510.9989461</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>       (<span class="kw">*</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Kiloelectronvolts"</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>        (Power (Power <span class="st">"SpeedOfLight"</span> <span class="dv">2</span>) -<span class="dv">1</span>))))])))</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a> (<span class="kw">-&gt;</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"Equation"</span> <span class="dv">1</span>] <span class="st">"Input"</span>]</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  (HoldComplete</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>   (Column</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    [(FormulaData</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>      [<span class="st">"MomentumRelativistic"</span> <span class="st">"Velocity"</span>]</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>      [(<span class="kw">-&gt;</span> <span class="st">"v"</span> (Quantity <span class="fl">0.8</span> <span class="st">"SpeedOfLight"</span>))</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>       (<span class="kw">-&gt;</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>        <span class="st">"m"</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>        (Quantity</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>         <span class="fl">510.9989461</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>         (<span class="kw">*</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Kiloelectronvolts"</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>          (Power (Power <span class="st">"SpeedOfLight"</span> <span class="dv">2</span>) -<span class="dv">1</span>))))])</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>     (FormulaData</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>      [<span class="st">"MomentumRelativistic"</span> <span class="st">"Velocity"</span>]</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>      <span class="st">"QuantityVariableTable"</span>)])))]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In each case, Wolfram does not just provide the answer, but returns the data in different formats and units in an attempt to anticipate different usecases. This verbosity might seem frustrating, but of course adds flexibility: leaving the user free to filter or present the results in any way that they wish.</p>
+</section>
+<section id="defining-expressions" class="level3" data-number="3.4.3">
+<h3 data-number="3.4.3" class="anchored" data-anchor-id="defining-expressions"><span class="header-section-number">3.4.3</span> Defining expressions</h3>
+<p>Rather than just querying the Wolfram servers however, the vast majority of people who use this library will want to write their own programs.</p>
+<p>For those coming from Mathematica (the official, graphical front-end for the Wolfram language), a good place to start is defining expressions.</p>
+<p>This is where the main cost of ‘Wolfram as a library’ lies. In a Wolfram environment, then all non-language characters are treated as global symbols by default. This works well for symbol and expression manipulation (Mathematica’s assumed raison d’être), but not for any other purpose. To successfully embed Wolfram expressions into a general purpose programming language we must make choices.</p>
+<p>In this library, there are two approaches. For all official functions, the cleanest way of referring to them is to import the base symbol namespace, i.e.&nbsp;wolframite.wolfram or, as in this example, a customized one: wolframite.wolfram-extended. This allows the user to manipulate expressions like other clojure functions (and to access the associated Wolfram documentation from your editor) e.g.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb9"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">-&gt;</span> <span class="dv">2</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    (w/Power <span class="dv">1</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    (w/Subtract <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb10"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>(Subtract (Power <span class="dv">2</span> <span class="dv">1</span>) <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To calculate/retrieve the result we then simply add ‘eval’ from the Wolframite core namespace:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb11"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">-&gt;</span> <span class="dv">2</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    (w/Power <span class="dv">1</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    (w/Subtract <span class="dv">2</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    wl/eval)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb12"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note, separating expression chains from automatic eval was done for efficiency. Previously, all Wolfram expressions were individually evaluated and this was considered a performance problem.</p>
+<p>To deal with general symbols, we return to one of LisPs’ strengths: controlled evaluation. Historically necessitated by LisPs’ ‘code-as-data’ paradigm, all LisPs can deal with general symbols by simply not evaluating them. This makes it easy to create and manipulate arbitrary Wolfram expressions, as we can simply treat them as unevaluated symbols.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb13"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">-&gt;</span> <span class="at">'x</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    (w/** <span class="dv">1</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    (w/- <span class="at">'5</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    wl/eval)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb14"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">+</span> -<span class="dv">5</span> x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This comes at the cost of having to ‘mark’ symbols, lists and functions manually, but it’s a choice between being unevaluated by default (e.g.&nbsp;Wolfram, Maple), unevaluated when marked (LisPs) or no easy to work with symbols (the vast majority of programming languages). It also comes at the cost of some ‘gotchas’ (see below), but these are avoided for the most part by using a wolframite.wolfram namespace (and ‘write-ns!’ function), as introduced in the beginning.</p>
+</section>
+<section id="defining-functions" class="level3" data-number="3.4.4">
+<h3 data-number="3.4.4" class="anchored" data-anchor-id="defining-functions"><span class="header-section-number">3.4.4</span> Defining functions</h3>
+<p>Functions are slightly more complicated. Functions can be defined in many different ways. The easiest way is to keep functions, where appropritae, as standard Clojure expressions.</p>
+<p>If you’re used to using Wolfram/Mathematica, then f[x_]:=x^2 becomes</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb15"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> square </span>[x] (wl/eval (w/Power x <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb16"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(square <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb17"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb18"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(square <span class="at">'x</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb19"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>(Power x <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If you want to define functions inside the Wolfram kernel and attach them to arbitrary symbols, then you can write</p>
+<p>Rather than a direct alias, w/fn is a special form that allows you to define Wolfram functions in a convenient way. Note that ‘f’ is a new symbol and therefore cannot be expected to be part of wolframite.wolfram or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.</p>
+<p>Once you can define your own aliases and create arbitrary expressions and functions, then you’re basically good to go. You might have noticed however, that the above function assignment used an unfamiliar symbol…</p>
+</section>
+<section id="gotchas" class="level3" data-number="3.4.5">
+<h3 data-number="3.4.5" class="anchored" data-anchor-id="gotchas"><span class="header-section-number">3.4.5</span> Gotchas…</h3>
+<p>This brings us to some of the ‘gotchas’ in this library. Although we try to avoid such things, sometimes, when you’re fighting the host language, it’s just not practical. Here we will try to keep an up-to-date list of surprises that are not easy to ‘fix’.</p>
+<ul>
+<li>:= (SetDelayed) is actually ‘<em>=’ in Wolframite. This is because ’:’ is a reserved character in Clojure for creating keywords. It’s worth noting though that this is possibly nicer, in a way, because ’</em>’ looks like a placeholder, which implies a delay…</li>
+<li>:&gt; (RuleDelayed) similarly, is ’_&gt;’</li>
+<li>. (Dot) has been changed to ’&lt;*&gt;‘, in the spirit of the inner product, because’.’ is a key character in Clojure and most object-oriented systems for namespacing.</li>
+<li>/. (ReplaceAll) similarly, has been changed to ‘x&gt;&gt;’ (and ‘Replace’ to ‘x&gt;’ for consistency).</li>
+<li>=. (Unset) has also been changed to ‘=!’.</li>
+<li>Symbols within threading macros. After spending so much time playing with symbols, be careful of slipping into things like (-&gt; ‘x’(Power 1)) This will not work because threads are macros and so combining them with unevaluated functions will lead to unexpected errors.</li>
+<li>Symbols passed to Mathematica must be alphanumeric, i.e.&nbsp;r_2 is not allowed.</li>
+</ul>
+</section>
+</section>
+<section id="faq" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="faq"><span class="header-section-number">3.5</span> FAQ</h2>
+<ul>
+<li>Why Clojure? (need some getting started references) – chaining expressions (so much better than in Wolfram)</li>
+<li>Why Wolfram? thinking (and evaluating) at the level of the expression</li>
+<li>Why not Emmy?</li>
+<li>Why literate programming?
+<ul>
+<li>clay, clerk</li>
+<li>why not notebooks?</li>
+</ul></li>
+<li>How do I translate Mathematica’s syntax sugar?
+<ul>
+<li>Since Mathematica hides its internals by default it can sometimes be difficult to work out what functions are being called. If you’re in Mathematica, you can use ‘FullForm@Unevaluated[…]’ to get a more understandable (if less concise) expression. Of course, you can also use Wolframite, i.e.&nbsp;(wl/-&gt;) !</li>
+</ul></li>
+</ul>
+</section>
+<section id="function-shortcuts" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="function-shortcuts"><span class="header-section-number">3.6</span> Function shortcuts</h2>
+<p>The next step up from making our symbols more readable, is to make our code more readable: let’s see how some UX conveniences are built.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb20"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> </span>||<span class="dv">2</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The intensity: the value times the conjugate of the value or, equivalently, the absolute value squared."</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  [x]</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  (w/* x (w/++ x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb21"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (||<span class="dv">2</span> (w/+ <span class="dv">5</span> (w/* <span class="dv">3</span> w/I))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb22"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="dv">34</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb23"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defmacro</span><span class="fu"> eval-&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Extends the threading macro to automatically pass the result to wolframite eval.</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="st">  TODO: Should we automatically quote everything inside this?"</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  [&amp; xs]</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  `(<span class="kw">-&gt;</span> <span class="at">~@xs</span> wl/eval))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb24"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defmacro</span><span class="fu"> eval-&gt;&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Extends the threading macro to automatically pass the result to wolframite eval.</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="st">  TODO: Should we automatically quote everything inside this?"</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  [&amp; xs]</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  `(<span class="kw">-&gt;&gt;</span> <span class="at">~@xs</span> wl/eval))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb25"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> TeX</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">" UX fix. Passes the Wolfram expression to ToString[TeXForm[...]] as the unsuspecting traveller might not realise that 'ToString' is necessary.</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="st">  "</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  [tex-form]</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  (w/ToString (w/TeXForm tex-form)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb26"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defmacro</span><span class="fu"> TeX-&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Extends the threading macro to automatically pass the result to wolframite eval."</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  [&amp; xs]</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  `(<span class="kw">-&gt;</span> <span class="at">~@xs</span> TeX wl/eval k/tex))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb27"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defmacro</span><span class="fu"> TeX-&gt;&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Extends the threading macro to automatically pass the result to wolframite eval.</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="st">  "</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  [&amp; xs]</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  `(<span class="kw">-&gt;&gt;</span> <span class="at">~@xs</span> TeX wl/eval k/tex))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we can implicitly chain operations together and still get a nice result in the browser:</p>
+<p><span class="math display">\[x x^*+y\]</span></p>
+</section>
+<section id="cavity-maths-a-physics-example" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Cavity Maths (A physics example)</h1>
+<p>Okay, so that was a lot of introduction. If you read all of that in one sitting then remember to take a break. Put the kettle on; do some press-ups and then sit-down for a worked example.</p>
+<section id="cavities" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="cavities"><span class="header-section-number">4.1</span> Cavities?</h2>
+<p>Outside of the operating room, the most common notion of cavities is, what we might otherwise call, an optical resonator. One way of looking at it, although quantum mechanics makes this more difficult, is that an optical cavity is simply just a light trap, such that once light gets in, then it bounces around for a while before it leaves.</p>
+<p>For demo purposes, our question is then ‘how can we model this?’ and ‘how does the light intensity, inside and outside of the cavity, depend on some experimental variables’?</p>
+</section>
+<section id="setup" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="setup"><span class="header-section-number">4.2</span> Setup</h2>
+<p>Assuming a simple two-mirror setup, with independent reflectivities and transmission, the system can be described as a ray oscillating between four key interfaces, as illustrated in the figure.</p>
+<img src="notebooks/for_scientists/Cavity-MirrorScatteringLoss.png">
+<p>We must therefore consider the electric field at each interface, before solving for the intensity both inside and outside.</p>
+</section>
+<section id="interfaces" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="interfaces"><span class="header-section-number">4.3</span> Interfaces</h2>
+<p>Setting the incoming field amplitude to unity, then the value of the field at position one, after one round trip, is the sum of the transmission coefficient and the field travelling in the opposing direction e.g.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb28"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> E1</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  (w/+ <span class="at">'t1</span> (w/* <span class="at">'r1</span> (w/- <span class="at">'E4</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>At position two, the same field has travelled the full length of the cavity, L, and so has picked up a change in phase,</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb29"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> phi</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  (w/* <span class="at">'k</span> <span class="at">'L</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>, where k is the field wavenumber:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb30"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> E2</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  (w/* E1 (w/Exp (w/* w/I phi))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>At position three, the field undergoes reflection and so now carries an additional reflection coefficient as well as an extra π phase change.</p>
+<p>Note how we are able to seamlessly mix Clojure and Wolfram expressions in these expressions.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb31"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> E3</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  (w/* (w/- <span class="at">'r2</span>) E2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>By position four, the field has travelled a further distance L and so is now equal to</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb32"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> E4</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  (w/* E3 (w/Exp (w/* w/I phi))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span class="math display">\[\text{r2} \left(-e^{2 i k L}\right) (\text{t1}-\text{E4} \text{r1})\]</span></p>
+<p>## Fields Using these expressions, we can now calculate the inner, transmitted and reflected fields of the cavity (with some subtle phase assumptions). Note how easy it is to, first of all, form an equation from a symbol ’E4 and the clojure variable E4, and, second of all, to rearrange the equation for a solution.</p>
+<p>Substitution and simplification can then also be used to arrive at the transmission and reflection, respectively.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb33"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> e4 </span>(<span class="kw">-&gt;</span> (w/== <span class="at">'E4</span> E4)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>            (w/Solve <span class="at">'E4</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>            w/First w/First))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb34"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>(eval-&gt; e4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb35"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">-&gt;</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a> E4</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a> (<span class="kw">*</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  (Power E (<span class="kw">*</span> (Complex <span class="dv">0</span> <span class="dv">2</span>) k L))</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  r2</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  (Power (<span class="kw">+</span> -<span class="dv">1</span> (<span class="kw">*</span> (Power E (<span class="kw">*</span> (Complex <span class="dv">0</span> <span class="dv">2</span>) k L)) r1 r2)) -<span class="dv">1</span>)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  t1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb36"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> T </span>(<span class="kw">-&gt;</span> (w/_&gt;&gt; (w/* E2 <span class="at">'t2</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>                  e4)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>           w/&gt;&gt;_&lt;&lt;))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span class="math display">\[\frac{\text{t1} \text{t2} e^{i k L}}{1-\text{r1} \text{r2} e^{2 i k L}}\]</span></p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb37"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> R </span>(<span class="kw">-&gt;</span> (w/+ (w/* E4 <span class="at">'t1</span>) <span class="at">'r1</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>           (w/_&gt;&gt; e4)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>           w/&gt;&gt;_&lt;&lt;</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>           w/Together))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span class="math display">\[\frac{\text{r1}^2 \text{r2} e^{2 i k L}+\text{r2} \text{t1}^2 e^{2 i k L}-\text{r1}}{-1+\text{r1} \text{r2} e^{2 i k L}}\]</span></p>
+</section>
+<section id="observables" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="observables"><span class="header-section-number">4.4</span> Observables</h2>
+<p>Taking the square of the fields (using the complex conjugate), gives the corresponding observables, i.e.&nbsp;things that can be actually measured, for the case of no loss.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb38"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> I4 </span>(<span class="kw">-&gt;</span> (w/_&gt;&gt; <span class="at">'E4</span> e4) ||<span class="dv">2</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>            w/++&lt;_&gt;</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>            w/&gt;&gt;_&lt;&lt;))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span class="math display">\[\text{I4}=| \text{E4}| ^2=\frac{\text{r2}^2 \text{t1}^2}{-2 \text{r1} \text{r2} \cos (2 k L)+\text{r1}^2 \text{r2}^2+1}\]</span></p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb39"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> Tsq </span>(<span class="kw">-&gt;</span> T ||<span class="dv">2</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>             w/++&lt;_&gt;</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>             w/&gt;&gt;_&lt;&lt;))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span class="math display">\[T^2=\frac{\text{t1}^2 \text{t2}^2}{-2 \text{r1} \text{r2} \cos (2 k L)+\text{r1}^2 \text{r2}^2+1}\]</span></p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb40"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> Rsq </span>(<span class="kw">-&gt;</span> R ||<span class="dv">2</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>             w/++&lt;_&gt;</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>             w/&gt;&gt;_&lt;&lt;</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>             w/Together))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span class="math display">\[R^2=\frac{-2 \text{r1}^3 \text{r2} \cos (2 k L)-2 \text{r1} \text{r2} \text{t1}^2 \cos (2 k L)+\text{r1}^4 \text{r2}^2+2 \text{r1}^2 \text{r2}^2 \text{t1}^2+\text{r1}^2+\text{r2}^2 \text{t1}^4}{-2 \text{r1} \text{r2} \cos (2 k L)+\text{r1}^2 \text{r2}^2+1}\]</span></p>
+</section>
+<section id="observables-with-loss" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="observables-with-loss"><span class="header-section-number">4.5</span> Observables with loss</h2>
+<p>The above result is a perfectly reasonable, but simple, model. More realistically, we want to be able to understand mirrors that have losses, i.e.&nbsp;that don’t just reflect or transmit light, but that actually absorb or ‘waste’ light.</p>
+<p>This is one of the places that Wolfram really shines. Almost the entire engine is designed around replacement rules. And so we just have to define a substitution, which says that reflection + transmission + loss is equal to 1:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb41"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> losses</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  [(w/-&gt; (w/** <span class="at">'r1</span> <span class="dv">2</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>         (w/+ <span class="dv">1</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>              (w/- <span class="at">'l1</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>              (w/- (w/** <span class="at">'t1</span> <span class="dv">2</span>))))</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>   (w/-&gt; (w/** <span class="at">'r2</span> <span class="dv">2</span>)</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>         (w/+ <span class="dv">1</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>              (w/- <span class="at">'l2</span>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>              (w/- (w/** <span class="at">'t2</span> <span class="dv">2</span>))))])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>and substitute these into the equations. We’re going to go a step further however…</p>
+</section>
+<section id="approximations" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="approximations"><span class="header-section-number">4.6</span> Approximations</h2>
+<p>Rather than just substitute the new rule into our expressions, we’re going to take this opportunity to define some other replacement rules. Now so far, we’ve been fairly mathematically pure, but a lot of physics is about knowing when (and being able) to make good approximations.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb42"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> approximations</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  [(w/-&gt; (w/* <span class="at">'r1</span> <span class="at">'r2</span>)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>         (<span class="kw">let</span> [vars [(w/** <span class="at">'t1</span> <span class="dv">2</span>) (w/** <span class="at">'t2</span> <span class="dv">2</span>) <span class="at">'l1</span> <span class="at">'l2</span>]]</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>           (<span class="kw">-&gt;</span>  (w/_&gt;&gt; (w/* (w/√ (w/** <span class="at">'r1</span> <span class="dv">2</span>))</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                            (w/√ (w/** <span class="at">'r2</span> <span class="dv">2</span>)))</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                       losses)</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>                (w/Series [<span class="at">'t1</span> <span class="dv">0</span> <span class="dv">2</span>]</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>                          [<span class="at">'t2</span> <span class="dv">0</span> <span class="dv">2</span>]</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>                          [<span class="at">'l1</span> <span class="dv">0</span> <span class="dv">2</span>]</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>                          [<span class="at">'l2</span> <span class="dv">0</span> <span class="dv">2</span>])</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>                w/Normal</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>                w/&lt;&lt;_&gt;&gt;</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>                (w/_&gt;&gt; (<span class="kw">mapv</span> #(w/-&gt; <span class="va">%</span> (w/* <span class="at">'temp</span> <span class="va">%</span>)) vars))</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>                (w/Series [<span class="at">'temp</span> <span class="dv">0</span> <span class="dv">1</span>])</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>                w/Normal</span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>                (w/_&gt;&gt; (w/-&gt; <span class="at">'temp</span> <span class="dv">1</span>)))))])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span class="math display">\[\left\{\text{r1} \text{r2}\to \frac{1}{2} \left(-\text{l1}-\text{l2}-\text{t1}^2-\text{t2}^2\right)+1\right\}\]</span></p>
+<p>What’s happening here is that we are simplifying the expression for r1*r2 by assuming that the transmission and loss for light going through a mirror is small. So small, that higher powers of these variabes are negligible. And so, we substitute the values into the expression, expand the functions in a power series and neglect any higher powers. The neglect is done by inserting <a href="https://mathworld.wolfram.com/Big-ONotation.html">‘big O’ notation</a> and then restricting the series to a single power in that variable. As we want to do this for multiple variables, then we map over each one. This is a complicated mathematical procedure, but Wolframite allows us to do this quite concisely, apart from some necessary Wolfram datatype conversions (e.g.&nbsp;using the w/Normal function).</p>
+<p>Note that Wolfram can also be used to define quite general approximations, using the ‘Pattern’ system. For example, let us assume that we want to expand Cos(x) as a polynomial when x is small. First, we need to know what the expansion is. We can find out by using Wolfram similarly to the above, i.e.&nbsp;</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb43"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>(eval-&gt; (w/Series (w/Cos <span class="at">'x</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>                  [<span class="at">'x</span> <span class="dv">0</span> <span class="dv">2</span>])</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>        w/Normal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb44"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">+</span> <span class="dv">1</span> (<span class="kw">*</span> -<span class="fl">1/2</span> (Power x <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that we know (or have remembered!) the form, we can create a general rule that is not limited to specific symbol definitions.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb45"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> small-angle</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  (w/_&gt; (w/Cos (w/Pattern <span class="at">'x</span> (w/Blank)))</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>        (w/+ <span class="dv">1</span> (w/* -<span class="fl">1/2</span> (w/** <span class="at">'x</span> <span class="dv">2</span>)))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The rule can now be named and used for any Cos function with any argument:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb46"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>(eval-&gt; (w/_&gt;&gt; (w/Cos <span class="at">'phi</span>) small-angle))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb47"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>(ReplaceAll</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a> (Cos phi)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a> (Replace (Cos (Pattern x (Blank))) (<span class="kw">+</span> <span class="dv">1</span> (<span class="kw">*</span> -<span class="fl">1/2</span> (Power x <span class="dv">2</span>)))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb48"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>(eval-&gt; (w/_&gt;&gt; (w/Cos (w/+ <span class="dv">1</span> <span class="at">'phi</span>)) small-angle))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb49"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>(ReplaceAll</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a> (Cos (<span class="kw">+</span> <span class="dv">1</span> phi))</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a> (Replace (Cos (Pattern x (Blank))) (<span class="kw">+</span> <span class="dv">1</span> (<span class="kw">*</span> -<span class="fl">1/2</span> (Power x <span class="dv">2</span>)))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="independent-mirrors" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="independent-mirrors"><span class="header-section-number">4.7</span> Independent mirrors</h2>
+<p>With these approximations we can formulate our final expression for the optical intensity inside the cavity:</p>
+<p><span class="math display">\[| \text{E4}| ^2=\left(\frac{\text{r2}^2 \text{t1}^2}{\cos (\phi ) \left(\text{l1}+\text{l2}+\text{t1}^2+\text{t2}^2\right)+\frac{1}{4} \left(\text{l1}+\text{l2}+\text{t1}^2+\text{t2}^2-2\right)^2-2 \cos (\phi )+1}\text{/.}\, \left\{\text{r1}^2\to -\text{l1}-\text{t1}^2+1,\text{r2}^2\to -\text{l2}-\text{t2}^2+1,\text{Replace}\left[\cos (\text{x$\_$}),1-\frac{x^2}{2}\right]\right\}\right)\]</span></p>
 <div style="background-color:grey;height:2px;width:100%;"></div>
 <div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/for_scientists/index.clj">notebooks/for_scientists/index.clj</a></small></small></pre></div>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
