@@ -2,8 +2,9 @@
   "An example namespace of how you might present some physics."
   (:require
    [scicloj.kindly.v4.kind :as k]
-   [wolframite.impl.wolfram-syms.write-ns :as write]
    [wolframite.core :as wl]
+   [wolframite.impl.wolfram-syms.write-ns :as write]
+   [wolframite.tools.hiccup :as wh]
    [wolframite.wolfram :as w]))
 
 ^:kindly/hide-code
@@ -14,34 +15,48 @@
   ;; - how do/can I reference sections within a clay document?
   )
 
-(k/html "<span style='color:red'>_<b>SPOILER WARNING</b>: This is a work in progress...</span>
-")
 (k/md "# Wolframite for scientists")
 (k/md "## Abstract
 We introduce you, the motivated scientist (likely the mathematical sort), to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and getting started notes, we then outline a 'real' workflow using the example of optical cavities.")
 (k/md "## Motivation - Why on earth?
-The Wolfram programming language is 'best-in-class' for certain specialist tasks, like manipulating equations, but would you really want to use a language with 6000 functions in a single global namespace to do a normal project, like building a website? Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don't we call Wolfram from Clojure? It seems like the atypical 'best of both worlds'. ")
+The Wolfram programming language is 'best-in-class' for certain specialist tasks, like manipulating equations, but, as Randall Munroe might have said,
+> Wolfram combines the flexibility and power of abstract mathematics with the intuitive clarity of abstract mathematics.
+
+Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don't we call Wolfram from Clojure? It seems like the atypical 'best of both worlds'. ")
 
 (k/md "## Getting Started (for scientists)
-This tutorial aims to be as comprehensive as possible for the average user and, as such, is not concise. There are other quick-fire instructions available at (REF). If you still insist on working through this document, you can always search through the text for the relevant advice or examples. We won't judge you!
+This tutorial aims to be as comprehensive a reference as possible for the average scientist and, as such, is not concise (and will probably only get longer). For a quick-fire introduction, see the 'demo' page. If the demo is too short and this is too long however, you can always run a 'search' on the text for the relevant examples. We won't judge you!
 
 ### Clojure
-There are many useful online tools for getting started with Clojure. For an overview of the language itself, see REF. If you'd like to try it out in practice then jump in with the [koans](http://clojurescriptkoans.com/). If you'd like to see why a physicist might be interested in Clojure then have a look [here](https://www.youtube.com/watch?v=SE5Ge4QP4oY).
 
-#### Notation
-For those who are still fairly new to clojure, the first thing to get used to is the style of notation. It might seem strange at first, but a functional LisP can be more efficient (symbolically) than a lot of object-oriented languages and even standard mathematical notation. For example, why write 1+1+1+2 and not (+ 1 1 1 2)? Theoretically, they have the same number of characters and yet even here it's arguable that the signal to noise ratio is higher for the second one. Where the second form really shines however, is in it's scalability. As soon as you add another operator, e.g. 1+1+1+2/3, we have a problem. Okay so you made it through primary school and know that 1+1+1+2/3 is really 1+1+1+(2/3) and not (1+1+1+2)/3, but the mental complexity is still there, you're just used to it. If we introduce another operator, e.g. 1+1+1+2✝3, now what do you do? The truth is that if we stick to one simple rule, i.e. use brackets, then we completely solve a whole range of problems in advance, with the 'cost' of having to write two characters. In fact, although it might not be obvious, the Wolfram language is actually inspired by/built on the LisP syntax (underneath). The outer layer is just to make it look more like the inefficient notation that mathematicians already know and love...
+There are many useful online tools for getting started with Clojure. For an overview of the language itself, have a look at [Eric Normand's materials](https://ericnormand.me/). If you'd like to jump straight-in with interactive examples then try the [koans](http://clojurescriptkoans.com/).
 
-In summary, BODMAS is six rules and incomplete. (function argument ...) is a single rule and complete. Be kind to yourself, just write (+ 1 1 1 (/ 2 3)) :). If you're still unconvinced about the benefits of a simple syntax then consider how easy it is in LisP to generate/generalize your source code with [macros](http://lists.warhead.org.uk/pipermail/iwe/2005-July/000130.html).
+#### Clojure physics
+
+If you'd like to see why a physicist might be interested in Clojure then have a look at the video below.
+")
+(k/video {:youtube-id  "SE5Ge4QP4oY"})
+
+(k/md "#### Clojure notation
+
+For those who are still fairly new to clojure, the first thing to get used to is the style of notation. It might seem strange at first, but a functional LisP can be more efficient (symbolically) than a lot of object-oriented languages and even standard mathematical notation. For example, why write 1+1+1+2 and not (+ 1 1 1 2)? They have around the same number of characters and yet even here it's arguable that the signal to noise ratio is higher for the second one. Where the second form really shines however, is in it's scalability. As soon as you add another operator, e.g. 1+1+1+2/3, we have a problem. Okay so you made it through primary school and know that 1+1+1+2/3 is really 1+1+1+(2/3) and not (1+1+1+2)/3, but the mental complexity is still there, you're just used to it. If we introduce another operator, e.g. 1+1+1+2✝3, now what do you do? The truth is that if we stick to one simple rule, i.e. use brackets, then we completely solve a whole range of problems in advance, with the 'cost' of having to write two characters. In fact, although it might not be obvious, the Wolfram language is actually inspired by/built on the LisP syntax (underneath). The outer layer is just to make it look more like the inefficient notation that mathematicians already know and love...
+
+In summary, BODMAS is six rules and incomplete. (function argument ...) is a single rule and complete. Be kind to yourself, just write (+ 1 1 1 (/ 2 3)) :).
+
+ If you're still unconvinced about the benefits of a simple syntax then remember that LisP is a programmable programming language: and its the syntax that delivers [macros](http://lists.warhead.org.uk/pipermail/iwe/2005-July/000130.html).
 
 
 ### Data science
-If you're sold on Clojure and interested in problems close to data science then an overview of some of the key analysis libraries can be found here (REF). If you're ready to use Wolfram, then read on!")
+If you're sold on Clojure and interested in problems close to data science then an overview of some of the key analysis libraries can be found here.")
+(k/video {:youtube-id "MguatDl5u2Q"})
 
-(k/md "## Wolfram basics")
+(k/md "If you're really ready to use Wolfram though, then read on!
+
+## Wolfram basics")
 (k/md "### Let's define our terms!
- One of the really nice things about using Wolfram as a library is that our middle man can simplify verbose terms like (w/Power 'x 2) to (w/**2 'x), for readability. What's even nicer however, is that we can make our own symbolic shortcuts: the setup is your own!
+ One of the really nice things about using Wolfram as a library is that our middle man (Wolframite) can provide default substitutions to  simplify verbose terms, e.g. '(Power x 2) can become '(** x 2) or even '(**2 x), for readability. What's even nicer however, is that we can make our own aliases at runtime: the choice is ours!
 
-We mention this here because the best time to define your terms is at the beginning. We define some aliases below, where the first few give you an insight into how I'd have changed some of the wolfram symbols for symbolic expressiveness and ease of use. The last two go a step furter. Here, we make use of Clojure's modernity and all round good decision to support the full unicode character set. Depending on your editor, it can be just as easy to enter these unicode characters as typing the long function name, but the real win is in the readability. Remember, we read our documents far more often than we write them (even if it's just peer review...).
+We mention this now because the best time to define our terms is before we start. The first few aliases give us an insight into how I would have designed Wolfram. The last two go a step further. Here, we make use of Clojure's modernity and decision to support a much wider character set than Wolfram. Depending on your editor, it can be just as easy to enter these unicode characters as typing the long function name, but the real win is in the readability. Remember, we read our documents far more often than we write them (even if it's just peer review...).
 
 Therefore, we enter the following.
 ")
@@ -49,6 +64,7 @@ Therefore, we enter the following.
 (def aliases
   '{** Power
     ++ Conjugate
+
     x> Replace
     x>> ReplaceAll
     <_> Expand
@@ -56,29 +72,29 @@ Therefore, we enter the following.
     ++<_> ComplexExpand
     >_< Simplify
     >>_<< FullSimplify
+
     ⮾ NonCommutativeMultiply
     √ Sqrt
     ∫ Integrate})
 
 (wl/restart {:aliases aliases})
 
-(k/md "Here you see than we can define new aliases by simply using the core clojure functions/macros. This works fine, but the downside is that we have just defined symbol replacements and so won't benefit from using these entities in macros or from editor autocompletion. For the best experience therefore, we recommend using 'write-ns!'.")
+(k/md "We can define new aliases by simply using the core clojure functions/macros. This works fine, but these are only symbol replacements and so we can't benefit from using these entities in macros or from editor autocompletion. For the best experience therefore, we recommend using 'write-ns!'.")
 (comment
   (write/write-ns! "src/wolframite/wolfram.clj"
                    {:aliases aliases}))
 
-(k/md "By using this command, we can automatically create a namespace at the given location and so refer to the new symbol aliases more directly. The command appears here in a comment block to avoid unnecessary recomputation. See the 'Literate programming' section for an explanation.")
+(k/md "Using this command, we can generate a full namespace at the given location and so refer to the new symbol aliases more directly. The command appears here in a comment block to avoid unnecessary recomputation. See the 'Literate programming' section for an explanation.")
 
-(k/html "<span style='color:red'>The next section should probably be moved later.</span>")
 (k/md "### Access to knowledge
-With the recent emergence of ChatGPT and similar AI systems, direct access to knowledge from free-form linguistic input is in demand. Wolfram was an early pioneer of this, launching its product, Wolfram|Alpha, in 2009. Wolfram occupies a different space however, focusing mainly on what it describes as 'computational knowledge'. Rather than strictly using an LLM, it combines its knowledge databases with the ability to perform Wolfram operations on the retrieved data before returning the result.
+With the recent emergence of ChatGPT and similar AI systems, direct access to knowledge from free-form linguistic input is in demand. Wolfram was an early pioneer of this, launching its product, Wolfram|Alpha, in 2009. Wolfram occupies a different space however, focusing mainly on what it describes as 'computational knowledge'. Rather than strictly using an LLM, it combines its knowledge databases with the ability to perform Wolfram operations on the retrieved data, before returning the result.
 
-For example, we can make both knowledge-based requests and perform complicated calculations (requires internet access).")
+For example, we can make both knowledge-based requests and perform complicated calculations on demand (requires internet access).")
 
-(wl/eval (w/WolframAlpha "What is the mass of 5 rubidium atoms?"))
-(wl/eval (w/WolframAlpha "What is the relativistic momentum of a 0.8c electron?"))
+(wh/view (w/WolframAlpha "What is the mass of 5 rubidium atoms?" "Result"))
+(wh/view (w/WolframAlpha "What is the relativistic momentum of a 0.8c electron?" "Result"))
 
-(k/md "In each case, Wolfram does not just provide the answer, but returns the data in different formats and units in an attempt to anticipate different usecases. This verbosity might seem frustrating, but of course adds flexibility: leaving the user free to filter or present the results in any way that they wish.")
+(k/md "In each case, Wolfram does not just provide the answer, but returns the data in different formats and units in an attempt to anticipate different usecases. This verbosity might seem frustrating, but of course adds flexibility: leaving the user free to filter or present the results in any way that they wish. Here, we have used the last argument to simply display the core 'Result'.")
 
 (k/md "### Defining expressions
 Rather than just querying the Wolfram servers however, the vast majority of people who use this library will want to write their own programs.
@@ -141,6 +157,7 @@ This brings us to some of the 'gotchas' in this library. Although we try to avoi
     '(Power 1))
 This will not work because threads are macros and so combining them with unevaluated functions will lead to unexpected errors.
 - Symbols passed to Mathematica must be alphanumeric, i.e. r_2 is not allowed.
+- Vectors vs lists. Lists are used to represent functions and so when combining clojure and Wolfram expressions, make sure that data literals are vectors. For example, (wh/view (w/ListLinePlot (range 10))) will fail strangely, but (wh/view (w/ListLinePlot (into [] (range 10)))) will give you what you expect.
 ")
 
 (k/md "## FAQ

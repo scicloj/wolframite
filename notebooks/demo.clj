@@ -11,8 +11,9 @@
    [wolframite.tools.hiccup :refer [view]]
    [wolframite.base.parse :as parse]
    [scicloj.kindly.v4.kind :as k])
-  (:import (java.awt Color Frame)
-           (java.awt.event WindowAdapter ActionEvent)))
+  ;; (:import (java.awt Color Frame)
+  ;;          (java.awt.event WindowAdapter ActionEvent))
+  )
 
 (k/md "# Quickstart
 
@@ -129,6 +130,7 @@ In particular, the flagship product of Wolfram, the one you've probably heard of
 ^:kindly/hide-code
 (comment
   ;; TODO: Don't hide code that generates TeX?
+  ;; TODO: Do we need the java imports?
   ;; TODO: not sure that this comment is needed anymore?
   (require '[scicloj.clay.v2.api :as clay])
   ;; Make HTML:
