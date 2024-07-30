@@ -165,20 +165,21 @@ To build the whole site, run `clojure -T:build build-site`.
 
 ## Authors
 
-The original Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the [Community](http://clojuratica.weebly.com/community.html) page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.
+The original [Clojuratica](http://clojuratica.weebly.com/) was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School.
 
 Ongoing maintenance and development over the years have been thanks to
-* [Steve Chan](https://github.com/chanshunli)
-* [Dan Farmer](https://github.com/dfarmer)
+* [Steve Chan](https://github.com/chanshunli),
+* [Dan Farmer](https://github.com/dfarmer),
 * [Norman Richards](https://github.com/orb)
+and others.
 
-Clojuratica has been turned into Wolframite and further maintained by:
+Most recently, Clojuratica has been transformed into *Wolframite* by
 
-* Pawel Ceranka
-* Thomas Clark
-* [Jakub Holý](https://holyjak.cz)
+* Pawel Ceranka,
+* Thomas Clark and
+* [Jakub Holý](https://holyjak.cz);
 
-The project is now being maintained as part of the [SciCloj](https://github.com/scicloj) project.
+and is now being maintained as part of the [SciCloj](https://github.com/scicloj) project.
 
 ## Contact
 If you would like to contact the maintainers or otherwise seek help from the community then please drop a message into our [zulip channel](https://clojurians.zulipchat.com/#narrow/stream/313853-wolfram-clojure-bridge) or contact the team at [SciCloj](https://github.com/scicloj).
