@@ -14,7 +14,7 @@
   ;; - are clay kinds executed outside of a clay environment, i.e. are they treated like 'comment's under 'normal' circumstances?
   ;; - Move general notes and examples out from the Cavity section
   ;; - should probably be split into two (the cavity part can be quite self-contained)
-  )
+  ,)
 
 (k/html "<span style='color:red'>_<b>SPOILER WARNING</b>: This is a work in progress...</span>
 ")
