@@ -8,7 +8,7 @@
               (map (fn [{sym "Name", doc "PlaintextUsage"}]
                      {:sym (symbol sym), :doc doc})))))
 
-(defn load-all-symbols
+(defn ^:deprecated load-all-symbols
   "BEWARE: You shouldn't need to use this, as they are already loaded into wolframite.wolfram; use
   `(wolframite.impl.wolfram-syms.write-ns/write-ns!)` if you want to refresh that file with new
   functions in your version of Wolfram.
@@ -32,7 +32,7 @@
   (doall (->> (fetch-all-wolfram-symbols wl-eval)
               (map (fn [{:keys [sym doc]}]
                      (intern/clj-intern
-                       sym
-                       {:intern/ns-sym     ns-sym
-                        :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
-                                                   doc)}}))))))
+                      sym
+                      {:intern/ns-sym     ns-sym
+                       :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
+                                                  doc)}}))))))

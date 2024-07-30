@@ -2,8 +2,10 @@
                :branch "main"}
  :clean-up-target-dir false
  :base-target-path "docs" ; this is what GitHub Pages expects
- :subdirs-to-sync [#_"src" "notebooks"]
- ;:source-path ["notebooks"]
+ :subdirs-to-sync [#_"src" "notebooks"] ; copy other files from here into the output (images, ...)
+ ;:source-path ["notebooks"] ; defaults
  :show true
  :run-quarto true
- :format [:quarto :html]}
+ :format [:quarto :html]
+ :hide-nils true
+ :kindly/options {:kinds-that-hide-code #{:kind/md :kind/hiccup :kind/html :kind/tex}}}

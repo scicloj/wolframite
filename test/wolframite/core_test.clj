@@ -2,7 +2,8 @@
   (:require [clojure.test :refer [deftest testing is]]
             [wolframite.core :as wl]
             [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
-            [wolframite.wolfram :as w]))
+            [wolframite.wolfram :as w])
+  (:import (clojure.lang ExceptionInfo)))
 
 ;; * Basic Sanity Checks
 
@@ -42,6 +43,40 @@
   (is (= "x+y+z represents a sum of terms."
          (eval '(-> #'w2/Plus meta :doc)))
       "Interned vars have docstrings"))
+
+(deftest package-test
+  (wl/start)
+  (is (= nil
+         (wl/<<! "resources/WolframPackageDemo.wl")))
+  (is (= nil
+         (wl/load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo")))
+  (is (= nil
+         (wl/load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'wd)))
+
+  (is (= "Used for testing Wolframite."
+         (wl/eval  (w/Information wd/tryIt "Usage"))))
+  (is (= 1000
+         (wl/eval (wd/tryIt 10))))
+  (is (= "Another function in the test package."
+         (wl/eval  (w/Information WolframPackageDemo/additional "Usage"))))
+  (is (= 30
+         (wl/eval (WolframPackageDemo/additional 10)))))
+
+(deftest restart
+  (testing "first set of aliases"
+    (wl/restart {:aliases '{** Power}})
+    (is (= 8
+           (wl/eval '(** 2 3)))
+        "** is an alias for Power (and 2^3 is 8)"))
+  (testing "restart & another aliases"
+    (wl/restart {:aliases '{pow Power}})
+    (is (thrown-with-msg? ExceptionInfo
+                          #"Unsupported symbol / unknown alias"
+                          (wl/eval '(** 2 3)))
+        "** is not known anymore")
+    (is (= 8
+           (wl/eval '(pow 2 3)))
+        "Now, `pow` is an alias for Power (and 2^3 is 8)")))
 
 (deftest bug-fixes
   (wl/start)

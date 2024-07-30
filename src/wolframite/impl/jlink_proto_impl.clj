@@ -11,12 +11,11 @@
 
 (defn- make-expr [primitive-or-exprs]
   (try
-
     (cond
       (sequential? primitive-or-exprs)
       (Expr.
-        ^Expr (first primitive-or-exprs)
-        ^"[Lcom.wolfram.jlink.Expr;" (into-array Expr (rest primitive-or-exprs)))
+       ^Expr (first primitive-or-exprs)
+       ^"[Lcom.wolfram.jlink.Expr;" (into-array Expr (rest primitive-or-exprs)))
       ;; Here, primitive-or-exprs could be an int, a String, long[], or similar
 
       (array? primitive-or-exprs)
@@ -57,42 +56,55 @@
 (defrecord JLinkImpl [opts kernel-link-atom]
   proto/JLink
   (create-kernel-link [_this kernel-link-opts]
-    (try (let [opts-array (into-array String kernel-link-opts)
-               kernel-link
-               (->> (doto (MathLinkFactory/createKernelLink ^"[Ljava.lang.String;" opts-array)
-                      (.discardAnswer))
-                    (reset! kernel-link-atom))]
-           ;(.getError kernel-link) (.getErrorMessage kernel-link)
-           kernel-link)
-         (catch MathLinkException e
-           (if (= (ex-message e) "MathLink connection was lost.")
-             (throw (ex-info (str "MathLink connection was lost. Perhaps you need to activate Mathematica first,"
-                                  " you are trying to start multiple concurrent connections (from separate REPLs),"
-                                  " or there is some other issue and you need to retry, or restart and retry...")
-                             {:kernel-link-opts (cond-> kernel-link-opts
-                                                        (array? kernel-link-opts)
-                                                        vec)
-                              :cause e}))
-             (throw e)))
-         (catch Exception e
-           (throw (ex-info (str "Failed to start a Math/Wolfram Kernel process: "
-                                (ex-message e)
-                                " Verify the settings are correct: `" kernel-link-opts "`")
-                           {:kernel-opts kernel-link-opts})))))
+    (loop [attempts 3, wait-ms 10, orig-err nil]
+      ;; Sometimes, starting a link may fail b/c the previous one
+      ;; has not been shut down properly
+      (let [res
+            (try (let [opts-array (into-array String kernel-link-opts)
+                       kernel-link
+                       (->> (doto (MathLinkFactory/createKernelLink ^"[Ljava.lang.String;" opts-array)
+                              (.discardAnswer))
+                            (reset! kernel-link-atom))]
+                   ;(.getError kernel-link) (.getErrorMessage kernel-link)
+                   kernel-link)
+                 (catch MathLinkException e
+                   (if (= (ex-message e) "MathLink connection was lost.")
+                     (throw (ex-info (str "MathLink connection was lost. Perhaps you need to activate Mathematica first,"
+                                          " you are trying to start multiple concurrent connections (from separate REPLs),"
+                                          " or there is some other issue and you need to retry, or restart and retry...")
+                                     {:kernel-link-opts (cond-> kernel-link-opts
+                                                          (array? kernel-link-opts)
+                                                          vec)
+                                      :cause e}))
+                     (throw e)))
+                 (catch Exception e
+                   (throw (ex-info (str "Failed to start a Math/Wolfram Kernel process: "
+                                        (ex-message e)
+                                        " Verify the settings are correct: `" kernel-link-opts "`")
+                                   {:kernel-opts kernel-link-opts}))))]
+        (if (instance? Exception res)
+          (if (pos? attempts)
+            (do (Thread/sleep wait-ms)
+                (recur (dec attempts) (* 3 wait-ms) (or orig-err res)))
+            (throw orig-err))
+          res))))
   (terminate-kernel! [_this]
-    (.terminateKernel ^KernelLink @kernel-link-atom)
+    ;; BEWARE: it is not absolutely guaranteed that the kernel will die immediately
+    (doto ^KernelLink @kernel-link-atom
+      (.terminateKernel)
+      (.close))
     (reset! kernel-link-atom nil))
   (expr [_this primitive-or-exprs]
     (make-expr primitive-or-exprs))
   (expr [_this type name]
     (Expr. ^int (case type
                   :Expr/SYMBOL  Expr/SYMBOL)
-          ^String (apply str (replace {\/ \`} name))))
+           ^String (apply str (replace {\/ \`} name))))
   (->expr [_this obj]
     (.getExpr
-      (doto (MathLinkFactory/createLoopbackLink)
-        (.put obj)
-        (.endPacket))))
+     (doto (MathLinkFactory/createLoopbackLink)
+       (.put obj)
+       (.endPacket))))
   (expr? [_this x]
     (instance? Expr x))
   (expr-element-type [_this container-type expr]
