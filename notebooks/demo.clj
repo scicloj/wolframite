@@ -5,13 +5,13 @@
 
 (ns demo
   (:require
-    [wolframite.core :as wl]
-    [wolframite.wolfram :as w]
-    [wolframite.impl.jlink-instance :as jlink-instance]
-    [wolframite.tools.hiccup :refer [view]]
-    [wolframite.base.parse :as parse]
-    [scicloj.kindly.v4.kind :as kind]
-    [scicloj.kindly.v4.api :as kindly])
+   [wolframite.core :as wl]
+   [wolframite.wolfram :as w]
+   [wolframite.impl.jlink-instance :as jlink-instance]
+   [wolframite.tools.hiccup :refer [view]]
+   [wolframite.base.parse :as parse]
+   [scicloj.kindly.v4.kind :as kind]
+   [scicloj.kindly.v4.api :as kindly])
   (:import (java.awt Color Frame)
            (java.awt.event WindowAdapter ActionEvent)))
 
@@ -47,8 +47,13 @@ which will perform the computations:")
 (wl/start)
 
 (md "## Base example")
-
 (wl/eval '(Dot [1 2 3] [4 5 6]))
+
+(md "This works fine, but if you don't want to deal with raw symbols, then you can also write")
+(wl/eval (w/Dot [1 2 3] [4 5 6]))
+(md "or, using our fancy aliases,")
+(wl/eval (w/<*> [1 2 3] [4 5 6]))
+(md ".")
 
 (md "## Strings of WL code")
 
@@ -77,7 +82,7 @@ which will perform the computations:")
 (view (w/GridGraph [5 5]))
 
 (view (w/GridGraph [5 5])
- {:folded? true})
+      {:folded? true})
 
 (view (w/ChemicalData "Ethanol" "StructureDiagram"))
 
