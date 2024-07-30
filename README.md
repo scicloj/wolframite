@@ -161,7 +161,7 @@ and [Quarto](https://quarto.org/).
 
 To render a single namespace/page, require Clay and run `(clay/make! {:source-path "<path to the file>""})`. Tip: You can also do this without quarto - just add `:run-quarto false` to the options.
 
-To build the whole site, run `clojure -T:build build-site`.
+To build the whole site, run `clojure -T:build build-site` (remembering to ensure that you have a ./symlink-jlink.jar symlink).
 
 ## Authors
 
