@@ -183,45 +183,42 @@ The next step up from making our symbols more readable, is to make our code more
   [x]
   (w/* x (w/++ x)))
 
-(wl/eval (||2 (w/+ 5 (w/* 3 w/I))))
+(wl/eval (-> (w/* 3 w/I)
+             (w/+ 5)
+             ||2))
 
 (defmacro eval->
-  "Extends the threading macro to automatically pass the result to wolframite eval.
-
-  TODO: Should we automatically quote everything inside this?"
+  "Extends the threading macro to automatically pass the result to wolframite eval."
   [& xs]
   `(-> ~@xs wl/eval))
 
 (defmacro eval->>
-  "Extends the threading macro to automatically pass the result to wolframite eval.
-
-  TODO: Should we automatically quote everything inside this?"
+  "Extends the threading macro to automatically pass the result to wolframite eval."
   [& xs]
   `(->> ~@xs wl/eval))
 
 (defn TeX
-  " UX fix. Passes the Wolfram expression to ToString[TeXForm[...]] as the unsuspecting traveller might not realise that 'ToString' is necessary.
-  "
+  " UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might not realise that 'ToString' is necessary."
   [tex-form]
   (w/ToString (w/TeXForm tex-form)))
 
 (defmacro TeX->
-  "Extends the threading macro to automatically pass the result to wolframite eval."
+  "Extends the thread-first macro to automatically eval and prepare the expression for TeX display."
   [& xs]
   `(-> ~@xs TeX wl/eval k/tex))
 
 (defmacro TeX->>
-  "Extends the threading macro to automatically pass the result to wolframite eval.
-  "
+  "Extends the thread-last macro to automatically eval and prepare the expression for TeX display."
   [& xs]
   `(->> ~@xs TeX wl/eval k/tex))
 
 (k/md "Now we can implicitly chain operations together and still get a nice result in the browser:")
-(TeX-> 'x
-       ||2
-       (w/+ 'y))
+(TeX-> (w/* 'x w/I)
+       (w/+ 'y)
+       ||2)
 
 (k/md "
+TODO: Move this to 'part two'?
 # Cavity Maths (A physics example)
 Okay, so that was a lot of introduction. If you read all of that in one sitting then remember to take a break. Put the kettle on; do some press-ups and then sit-down for a worked example.
 
