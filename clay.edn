@@ -8,4 +8,4 @@
  :run-quarto true
  :format [:quarto :html]
  :hide-nils true
- :kindly/options {:kinds-that-hide-code #{:kind/md :kind/hiccup :kind/html :kind/tex :kind/video}}}
+ :kindly/options {:kinds-that-hide-code #{:kind/md :kind/hiccup :kind/html :kind/video}}}

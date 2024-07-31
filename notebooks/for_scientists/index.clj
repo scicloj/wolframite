@@ -1,5 +1,5 @@
 (ns for-scientists.index
-  "An example namespace of how you might present some physics."
+  "An introduction to the library, that might even be suitable for physicists."
   (:require
    [scicloj.kindly.v4.kind :as k]
    [wolframite.core :as wl]
@@ -10,7 +10,11 @@
 ^:kindly/hide-code
 (comment
   ;; ## TODO: ##
+  ;; - check that displaying tex source by default doesn't cause any problems
   ;; - Move general notes and examples out from the Cavity section
+  ;; - check that the gotchas are viewable
+  ;; - check that the packages namespace is visible
+  ;; - how to access the docs
   ;; - should probably be split into two (the cavity part can be quite self-contained)
   ;; - how do/can I reference sections within a clay document?
   )
@@ -101,9 +105,9 @@ Rather than just querying the Wolfram servers however, the vast majority of peop
 
 For those coming from Mathematica (the official, graphical front-end for the Wolfram language), a good place to start is defining expressions.
 
-This is where the main cost of 'Wolfram as a library' lies. In a Wolfram environment, then all non-language characters are treated as global symbols by default. This works well for symbol and expression manipulation (Mathematica's assumed raison d'être), but not for any other purpose. To successfully embed Wolfram expressions into a general purpose programming language we must make choices.
+This is where the main cost of 'Wolfram as a library' lies. In a Wolfram environment, all non-language characters are treated as global symbols by default. This works well for symbol and expression manipulation (Mathematica's assumed raison d'être), but not for any other purpose. To successfully embed Wolfram expressions into a general purpose programming language we must make choices.
 
-In this library, there are two approaches. For all official functions, the cleanest way of referring to them is to import the base symbol namespace, i.e. wolframite.wolfram or, as in this example, a customized one: wolframite.wolfram-extended. This allows the user to manipulate expressions like other clojure functions (and to access the associated Wolfram documentation from your editor) e.g.
+In this library, there are two approaches. For all official functions, the cleanest way of referring to them is to import the base symbol namespace, i.e. wolframite.wolfram, or a customized one, e.g. 'wolframite.wolfram-extended'. This allows the user to manipulate expressions like other clojure functions (and to access the associated Wolfram documentation from your editor) e.g.
 ")
 (-> 2
     (w/Power 1)
@@ -114,68 +118,45 @@ In this library, there are two approaches. For all official functions, the clean
     (w/Power 1)
     (w/Subtract 2)
     wl/eval)
-(k/md "Note, separating expression chains from automatic eval was done for efficiency. Previously, all Wolfram expressions were individually evaluated and this was considered a performance problem.
+(k/md "Note, separating expression chains from automatic eval was done for efficiency. Previously, all Wolfram expressions were individually evaluated with separate kernel calls and this was considered a performance problem.
 
 
-To deal with general symbols, we return to one of LisPs' strengths: controlled evaluation. Historically necessitated by LisPs' 'code-as-data' paradigm, all LisPs can deal with general symbols by simply not evaluating them. This makes it easy to create and manipulate arbitrary Wolfram expressions, as we can simply treat them as unevaluated symbols.")
+To deal with general symbols, we return to one of LisPs' strengths: controlled evaluation. Historically necessitated by LisPs' 'code-as-data' paradigm, all LisPs can deal with general symbols by simply not evaluating them. This makes it easy to create and manipulate arbitrary Wolfram expressions, as we can simply treat them as unevaluated symbols (note our use of the new aliases too). ")
 (-> 'x
     (w/** 1)
     (w/- '5)
     wl/eval)
 
-(k/md "This comes at the cost of having to 'mark' symbols, lists and functions manually, but it's a choice between being unevaluated by default (e.g. Wolfram, Maple), unevaluated when marked (LisPs) or no easy to work with symbols (the vast majority of programming languages). It also comes at the cost of some 'gotchas' (see below), but these are avoided for the most part by using a wolframite.wolfram namespace (and 'write-ns!' function), as introduced in the beginning.")
+(k/md "This comes at the cost of having to 'mark' symbols, lists and functions manually, but it's a choice between being unevaluated by default (e.g. Wolfram, Maple), unevaluated when marked (LisPs) or no easy way to work with symbols (the vast majority of programming languages). It also comes at the cost of some 'gotchas' (listed elsewhere in the docs), but these are avoided for the most part by using a wolframite.wolfram namespace (and 'write-ns!' function), as introduced in the beginning.")
 
 (k/md "### Defining functions
-Functions are slightly more complicated. Functions can be defined in many different ways. The easiest way is to keep functions, where appropritae, as standard Clojure expressions.
+Functions are slightly more complicated. Functions can be defined in many different ways. The easiest way is to keep functions, where appropriate, as standard Clojure expressions.
 
-If you're used to using Wolfram/Mathematica, then
-f[x_]:=x^2 becomes
+If you're used to using Wolfram/Mathematica, then f[x_]:=x^2 is simply
 ")
-(defn square [x] (wl/eval (w/Power x 2)))
-(square 2)
-(square 'x)
+(defn f [x] (wl/eval (w/Power x 2)))
+(f 2)
+(f 'x)
 
-(k/md "If you want to define functions inside the Wolfram kernel and attach them to arbitrary symbols, then you can write")
-(wl/eval (w/_= 'f (w/fn [x] (w/Power x 2))))
+(k/md ". If instead you want to define functions inside the Wolfram kernel, and attach them to arbitrary symbols, then the most ergonomic way is")
+(wl/eval (w/_= 'f (w/fn [x] (w/** x 2))))
 (wl/eval '(f 5))
+(k/md ", where '_=' is the Wolframite version of ':=' (SetDelayed). See the 'Gotchas' section for why. Rather than a direct alias, w/fn is a special form that allows you to define Wolfram functions in a convenient way. Note that 'f' is a new symbol and therefore cannot be expected to be part of wolframite.wolfram or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.
 
-(k/md "Rather than a direct alias, w/fn is a special form that allows you to define Wolfram functions in a convenient way. Note that 'f' is a new symbol and therefore cannot be expected to be part of wolframite.wolfram or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.")
+In my opinion, this mixes the best of Wolfram and Clojure: and scales well. The most explicitly Wolfram way of doing it however, is to write")
+(wl/eval (w/Clear 'f))
+(wl/eval '(_= (f (Pattern x (Blank))) (Power x 2)))
+(wl/eval '(f 5))
+(k/md ", where we first removed all definitions from 'f' before reassigning the function.
 
-(k/md "
-Once you can define your own aliases and create arbitrary expressions and functions, then you're basically good to go. You might have noticed however, that the above function assignment used an unfamiliar symbol...
 
-### Gotchas...
-This brings us to some of the 'gotchas' in this library. Although we try to avoid such things, sometimes, when you're fighting the host language, it's just not practical. Here we will try to keep an up-to-date list of surprises that are not easy to 'fix'.
+Once you can define your own aliases and create arbitrary expressions and functions, then you're basically good to go.")
 
-- := (SetDelayed) is actually '_=' in Wolframite. This is because ':' is a reserved character in Clojure for creating keywords. It's worth noting though that this is possibly nicer, in a way, because '_' looks like a placeholder, which implies a delay...
-- :> (RuleDelayed) similarly, is '_>'
-- . (Dot) has been changed to '<*>', in the spirit of the inner product, because '.' is a key character in Clojure and most object-oriented systems for namespacing.
-- /. (ReplaceAll) similarly, has been changed to 'x>>' (and 'Replace' to 'x>' for consistency).
-- =. (Unset) has also been changed to '=!', be careful not to confuse this with '!='.
-- Symbols within threading macros. After spending so much time playing with symbols, be careful of slipping into things like
-(-> 'x
-    '(Power 1))
-This will not work because threads are macros and so combining them with unevaluated functions will lead to unexpected errors.
-- Symbols passed to Mathematica must be alphanumeric, i.e. r_2 is not allowed.
-- Vectors vs lists. Lists are used to represent functions and so when combining clojure and Wolfram expressions, make sure that data literals are vectors. For example, (wh/view (w/ListLinePlot (range 10))) will fail strangely, but (wh/view (w/ListLinePlot (into [] (range 10)))) will give you what you expect.
-")
+(k/md "## Mixing functions
 
-(k/md "## FAQ
-- Why Clojure?
-(need some getting started references)
--- chaining expressions (so much better than in Wolfram)
-- Why Wolfram?
-thinking (and evaluating) at the level of the expression
-- Why not Emmy?
-- Why literate programming?
-  - clay, clerk
-  - why not notebooks?
-- How do I translate Mathematica's syntax sugar?
-   - Since Mathematica hides its internals by default it can sometimes be difficult to work out what functions are being called. If you're in Mathematica, you can use 'FullForm@Unevaluated[...]' to get a more understandable (if less concise) expression. Of course, you can also use Wolframite, i.e. (wl/->) !
-")
+Wolframite is not just a different way to typeset Wolfram functions. Indeed, there would be very little point in building an entire library around this. Instead, Wolframite wants to help the user bring Wolfram's functions into a general Clojure workflow, i.e. to mix Clojure and Wolfram together, such that there is another, potentially better way, to do science.
 
-(k/md "## Function shortcuts
-The next step up from making our symbols more readable, is to make our code more readable: let's see how some UX conveniences are built.
+Such is the case, we can demonstrate a new workflow. As noted above, it is straightforward to define functions in Wolframite, as in Wolfram/Mathematica.
 ")
 
 (defn ||2
@@ -183,22 +164,25 @@ The next step up from making our symbols more readable, is to make our code more
   [x]
   (w/* x (w/++ x)))
 
-(wl/eval (-> (w/* 3 w/I)
-             (w/+ 5)
-             ||2))
+(-> (w/* 3 w/I)
+    (w/+ 5)
+    ||2
+    wl/eval)
+
+(k/md "Here we make a shorthand, the absolute value squared. Defined as a clojure function, it simply abstracts two Wolfram operations, which can then be used alongside others.
+
+And yet there are there are two meaningful improvements already. First of all, we can, [currently](https://ask.clojure.org/index.php/11627/the-pipe-char-considered-valid-symbol-constituent-character), use more mathematical characters in Clojure, such that even the raw code can approach familiar symbolic maths.
+Second of all, we can exploit Clojure's 'threading' features. In my view, chaining Wolfram function calls together with threading macros is actually a big usability improvement. Wolfram expressions can get pretty involved (it's common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, '@', to help with function composition, e.g. f@g@h. Unfortunately however, this doesn't work with multiple arguments. It is possible to do things like f@@args, and even things like f@@@{{a, b}, {c, d}}, but the readability quickly becomes dire. On the other hand, Clojure's threading is simple, clear and scalable.
+
+In fact, a little Clojure goes a long way. Look how easily we can add substantial UX conveniences to our workflow.")
 
 (defmacro eval->
   "Extends the threading macro to automatically pass the result to wolframite eval."
   [& xs]
   `(-> ~@xs wl/eval))
 
-(defmacro eval->>
-  "Extends the threading macro to automatically pass the result to wolframite eval."
-  [& xs]
-  `(->> ~@xs wl/eval))
-
 (defn TeX
-  " UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might not realise that 'ToString' is necessary."
+  "UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might not realise that 'ToString' is necessary."
   [tex-form]
   (w/ToString (w/TeXForm tex-form)))
 
@@ -207,172 +191,38 @@ The next step up from making our symbols more readable, is to make our code more
   [& xs]
   `(-> ~@xs TeX wl/eval k/tex))
 
-(defmacro TeX->>
-  "Extends the thread-last macro to automatically eval and prepare the expression for TeX display."
-  [& xs]
-  `(->> ~@xs TeX wl/eval k/tex))
-
-(k/md "Now we can implicitly chain operations together and still get a nice result in the browser:")
+(k/md "Now we can implicitly chain operations together, evaluate the result and get a nice TeX display in the browser.")
 (TeX-> (w/* 'x w/I)
        (w/+ 'y)
        ||2)
 
-(k/md "
-TODO: Move this to 'part two'?
-# Cavity Maths (A physics example)
-Okay, so that was a lot of introduction. If you read all of that in one sitting then remember to take a break. Put the kettle on; do some press-ups and then sit-down for a worked example.
+(k/md "It's just a small example, but LisP is designed for metaprogramming and so the sky's the limit when it comes to building more features around Wolfram functions. A sceptical reader may point out that eval and display are solved problems within the Mathematica system, but in my opinion there are solid reasons for not wanting to be confined to a specific IDE. Have a look at 'Why literate programming?' in the FAQs for more details.
 
-## Cavities?
-Outside of the operating room, the most common notion of cavities is, what we might otherwise call, an optical resonator. One way of looking at it, although quantum mechanics makes this more difficult, is that an optical cavity is simply just a light trap, such that once light gets in, then it bounces around for a while before it leaves.
+Before we finish this part of the tutorial, let's consider a (slightly) more realistic example.
 
-For demo purposes, our question is then 'how can we model this?' and 'how does the light intensity, inside and outside of the cavity, depend on some experimental variables'?
-
-## Setup
-Assuming a simple two-mirror setup, with independent reflectivities and
-transmission, the system can be described as a ray oscillating between four key interfaces, as illustrated in the figure.")
-(k/hiccup [:img {:src "notebooks/for_scientists/Cavity-MirrorScatteringLoss.png"}])
-
-(k/md "
-We must therefore consider the electric field at each interface, before solving for the intensity both inside and outside.
-
-## Interfaces
-Setting the incoming field amplitude to unity, then the value of the field at position one, after one round trip, is the sum of the transmission coefficient and the field travelling in the opposing direction e.g.
-")
-
-(def E1
-  (w/+ 't1 (w/* 'r1 (w/- 'E4))))
-
-(k/md "At position two, the same field has travelled the full length of the cavity, L, and so has picked up a change in phase,")
-(def phi
-  (w/* 'k 'L))
-(k/md ", where k is the field wavenumber:")
-
-(def E2
-  (w/* E1 (w/Exp (w/* w/I phi))))
-
-(k/md "At position three, the field undergoes reflection and so now carries an additional reflection coefficient as well as an extra π phase change.
-
-Note how we are able to seamlessly mix Clojure and Wolfram expressions in these expressions.")
-
-(def E3
-  (w/* (w/- 'r2) E2))
-(k/md "By position four, the field has travelled a further distance L and so is now equal to ")
-(def E4
-  (w/* E3 (w/Exp (w/* w/I phi))))
-(TeX-> E4)
-
-(k/md " ## Fields
- Using these expressions, we can now calculate the inner, transmitted and reflected fields of the cavity (with some subtle phase assumptions). Note how easy it is to, first of all, form an equation from a symbol 'E4 and the clojure variable E4, and, second of all, to rearrange the equation for a solution.
-
-Substitution and simplification can then also be used to arrive at the transmission and reflection, respectively.
-")
-
-(def e4 (-> (w/== 'E4 E4)
-            (w/Solve 'E4)
-            w/First w/First))
-(eval-> e4)
-
-(def T (-> (w/x>> (w/* E2 't2)
-                  e4)
-           w/>>_<<))
-(TeX-> T)
-
-(def R (-> (w/+ (w/* E4 't1) 'r1)
-           (w/x>> e4)
-           w/>>_<<
-           w/Together))
-(TeX-> R)
-
-(k/md "## Observables
- Taking the square of the fields (using the complex conjugate), gives the corresponding observables, i.e. things that can be actually measured, for the case of no loss.")
-
-(def I4 (-> (w/x>> 'E4 e4) ||2
-            w/++<_>
-            w/>>_<<))
-(TeX-> (w/== 'I4 (w/** (w/Abs 'E4) 2) I4))
-
-(def Tsq (-> T ||2
-             w/++<_>
-             w/>>_<<))
-(TeX-> (w/== (w/** 'T 2) Tsq))
-
-(def Rsq (-> R ||2
-             w/++<_>
-             w/>>_<<
-             w/Together))
-(TeX-> (w/== (w/** 'R 2) Rsq))
-
-(k/md "## Observables with loss
-The above result is a perfectly reasonable, but simple, model. More realistically, we want to be able to understand mirrors that have losses, i.e. that don't just reflect or transmit light, but that actually absorb or 'waste' light.
-
-This is one of the places that Wolfram really shines. Almost the entire engine is designed around replacement rules. And so we just have to define a substitution, which says that reflection + transmission + loss is equal to 1:
-")
-
-(def losses
-  [(w/-> (w/** 'r1 2)
-         (w/+ 1
-              (w/- 'l1)
-              (w/- (w/** 't1 2))))
-   (w/-> (w/** 'r2 2)
-         (w/+ 1
-              (w/- 'l2)
-              (w/- (w/** 't2 2))))])
-
-(k/md "and substitute these into the equations. We're going to go a step further however...")
-
-(k/md "## Approximations
-Rather than just substitute the new rule into our expressions, we're going to take this opportunity to define some other replacement rules. Now so far, we've been fairly mathematically pure, but a lot of physics is about knowing when (and being able) to make good approximations.
-")
-
-(def approximations
-  [(w/-> (w/* 'r1 'r2)
-         (let [vars [(w/** 't1 2) (w/** 't2 2) 'l1 'l2]]
-           (->  (w/x>> (w/* (w/√ (w/** 'r1 2))
-                            (w/√ (w/** 'r2 2)))
-                       losses)
-                (w/Series ['t1 0 2]
-                          ['t2 0 2]
-                          ['l1 0 2]
-                          ['l2 0 2])
-                w/Normal
-                w/<<_>>
-                (w/x>> (mapv #(w/-> % (w/* 'temp %)) vars))
-                (w/Series ['temp 0 1])
-                w/Normal
-                (w/x>> (w/-> 'temp 1)))))])
-(TeX-> approximations)
-
-(k/md "What's happening here is that we are simplifying the expression for r1*r2 by assuming that the transmission and loss for light going through a mirror is small. So small, that higher powers of these variabes are negligible. And so, we substitute the values into the expression, expand the functions in a power series and neglect any higher powers. The neglect is done by inserting ['big O' notation](https://mathworld.wolfram.com/Big-ONotation.html) and then restricting the series to a single power in that variable. As we want to do this for multiple variables, then we map over each one. This is a complicated mathematical procedure, but Wolframite allows us to do this quite concisely, apart from some necessary Wolfram datatype conversions (e.g. using the w/Normal function).
-
-Note that Wolfram can also be used to define quite general approximations, using the 'Pattern' system. For example, let us assume that we want to expand Cos(x) as a polynomial when x is small. First, we need to know what the expansion is. We can find out by using Wolfram similarly to the above, i.e. ")
+Wolfram can be used to define quite general approximations, using the 'Pattern' system. For example, let us assume that we want to expand Cos(x) as a polynomial when x is small. First, we need to know what the expansion is. We can actually find out by using Wolfram! i.e. ")
 
 (eval-> (w/Series (w/Cos 'x)
                   ['x 0 2])
         w/Normal)
 
-(k/md "Now that we know (or have remembered!) the form, we can create a general rule that is not limited to specific symbol definitions.")
+(k/md "Now that we know (or have remembered!) the form, we can create a general rule that is not limited to specific symbol definitions:")
 
 (def small-angle
   (w/_> (w/Cos (w/Pattern 'x (w/Blank)))
         (w/+ 1 (w/* -1/2 (w/** 'x 2)))))
 
-(k/md "The rule can now be named and used for any Cos function with any argument:")
+(k/md ", where we have made use of Clojure's native support for ratios. The rule can now be named and used for any Cos function with any argument. Which of course looks much nicer using TeX.")
 
-(eval-> (w/x>> (w/Cos 'phi) small-angle))
-(eval-> (w/x>> (w/Cos (w/+ 1 'phi)) small-angle))
+(TeX-> (w/x>> (w/Cos 'phi)
+              small-angle))
+(TeX-> (w/x>> (w/Cos (w/+ 1 'phi))
+              small-angle))
 
-(k/md "## Independent mirrors
-With these approximations we can formulate our final expression for the optical intensity inside the cavity: ")
-(TeX-> I4
-       (w/x>> (w/-> (w/Cos (w/* 2 'k 'L))
-                    (w/Cos 'phi)))
-       (w/x>> approximations)
-       (w/x>> (w/-> (w/** (w/* 'r1 'r2) 2)
-                    (-> (w/x>> (w/* 'r1 'r2) approximations)
-                        (w/** 2))))
-       (w/x>> (conj losses small-angle))
-       w/>_<
-       (->> (w/== (w/** (w/Abs 'E4) 2))))
+(k/md "# What's next?
+
+Okay, so that was a lot of introduction. If you read all of that in one sitting then remember to take a break. Put the kettle on; do some press-ups and then sit-down for a worked example (Cavity Physics).
+")
 
 (k/md "# References
 This tutorial was made by Thomas Clark, Jakub Holý and Daniel Slutsky. The cavity field derivation followed in the footsteps of one Francis 'Tito' Williams.")
