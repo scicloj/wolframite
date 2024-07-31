@@ -31,11 +31,10 @@
            ;; `env CLOJARS_USERNAME=<tbd> CLOJARS_PASSWORD=<clojars-token>  clojure -T:build deploy`
            {:deps {io.github.clojure/tools.build {:git/tag "v0.10.4" :git/sha "31388ff"}
                    slipset/deps-deploy {:mvn/version "0.2.2"}
-                   babashka/fs {:mvn/version "0.5.20"}
                    org.scicloj/clay {:mvn/version "2-beta15"}
                    ;; We need wolframite + JLink to render Wolf code in the docs
                    org.scicloj/wolframite {:local/root "."}
-                   wolfram/jlink {:local/root "./symlink-jlink.jar"}}
+                   wolfram/jlink {:local/root "./symlink-jlink.jar"}} ; FYI jlink only needed for build-site
             :extra-paths ["notebooks"]
             :override-deps {io.github.nextjournal/markdown {:git/sha "6683c48dfdb23404a23057817b6ac3acf0310bca"}} ; see #wolframite/56
             :ns-default build}}}
