@@ -225,7 +225,7 @@ Okay, so that was a lot of introduction. If you read all of that in one sitting 
 ")
 
 (k/md "# References
-This tutorial was made by Thomas Clark, Jakub Holý and Daniel Slutsky. The cavity field derivation followed in the footsteps of one Francis 'Tito' Williams.")
+This tutorial was made by Thomas Clark, Jakub Holý and Daniel Slutsky.")
 
 ^:kindly/hide-code
 (comment
