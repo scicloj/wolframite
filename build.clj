@@ -1,10 +1,9 @@
 (ns build
   "Project build config as code for clojure's tools.build"
   (:require [build-config]
-            [babashka.fs :as fs]
             [clojure.tools.build.api :as b]
-            [clojure.edn :as edn]
-            [scicloj.clay.v2.api :as clay]))
+            ;[scicloj.clay.v2.api :as clay] -> dynamic require, due to https://github.com/scicloj/clay/issues/98
+            [clojure.edn :as edn]))
 
 (def project (-> (edn/read-string (slurp "deps.edn"))
                  :aliases :neil :project))
@@ -63,8 +62,9 @@
 
 (defn build-site [opts]
   (println "Going to build docs ...")
-  (clay/make! (assoc build-config/config
+  ((requiring-resolve 'scicloj.clay.v2.api/make!)
+   (assoc build-config/config
                 :clean-up-target-dir true
                 :show false))
-  (System/exit 0) ; something keeps the JVM alive and I don't know what so kill it
+  ((requiring-resolve 'portal.runtime.jvm.launcher/stop))
   opts)
