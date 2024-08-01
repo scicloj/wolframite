@@ -24,7 +24,7 @@ The Wolfram programming language is 'best-in-class' for certain specialist tasks
 Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don't we call Wolfram from Clojure? It seems like the atypical 'best of both worlds'. ")
 
 (k/md "## Getting Started (for scientists)
-This tutorial aims to be as comprehensive a reference as possible for the average scientist and, as such, is not concise (and will probably only get longer). For a quick-fire introduction, see the 'demo' page. If the demo is too short and this is too long however, you can always run a 'search' on the text for the relevant examples. We won't judge you!
+This tutorial aims to be as comprehensive a reference as possible for the average scientist and, as such, is not concise (and will probably only get longer). For a quick-fire introduction, see the 'Quickstart' page. If the demo is too short and this is too long however, you can always run a 'search' on the text for the relevant examples. We won't judge you!
 
 ### Clojure
 
