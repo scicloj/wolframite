@@ -9,12 +9,10 @@
 ^:kindly/hide-code
 (comment
   ;; ## TODO: ##
-  ;; - how do/can I reference sections within a clay document?
-  ;; - credit authors
-  ;; - are clay kinds executed outside of a clay environment, i.e. are they treated like 'comment's under 'normal' circumstances?
   ;; - Move general notes and examples out from the Cavity section
   ;; - should probably be split into two (the cavity part can be quite self-contained)
-  ,)
+  ;; - how do/can I reference sections within a clay document?
+  )
 
 (k/html "<span style='color:red'>_<b>SPOILER WARNING</b>: This is a work in progress...</span>
 ")
@@ -22,7 +20,7 @@
 (k/md "## Abstract
 We introduce you, the motivated scientist (likely the mathematical sort), to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and getting started notes, we then outline a 'real' workflow using the example of optical cavities.")
 (k/md "## Motivation - Why on earth?
-The Wolfram programming language is 'best-in-class' for certain specialist tasks, like manipulating equations, but would you really want to use a language with 6000 functions in a single global namespace to do a normal project, like building a website? Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don't we call Wolfram from Clojure? It seems like the atypical best of both worlds. ")
+The Wolfram programming language is 'best-in-class' for certain specialist tasks, like manipulating equations, but would you really want to use a language with 6000 functions in a single global namespace to do a normal project, like building a website? Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don't we call Wolfram from Clojure? It seems like the atypical 'best of both worlds'. ")
 
 (k/md "## Getting Started (for scientists)
 This tutorial aims to be as comprehensive as possible for the average user and, as such, is not concise. There are other quick-fire instructions available at (REF). If you still insist on working through this document, you can always search through the text for the relevant advice or examples. We won't judge you!
@@ -219,6 +217,7 @@ For demo purposes, our question is then 'how can we model this?' and 'how does t
 Assuming a simple two-mirror setup, with independent reflectivities and
 transmission, the system can be described as a ray oscillating between four key interfaces, as illustrated in the figure.")
 (k/hiccup [:img {:src "notebooks/for_scientists/Cavity-MirrorScatteringLoss.png"}])
+
 (k/md "
 We must therefore consider the electric field at each interface, before solving for the intensity both inside and outside.
 
@@ -360,6 +359,9 @@ With these approximations we can formulate our final expression for the optical 
        (w/x>> (conj losses small-angle))
        w/>_<
        (->> (w/== (w/** (w/Abs 'E4) 2))))
+
+(k/md "# References
+This tutorial was made by Thomas Clark, Jakub Holý and Daniel Slutsky. The cavity field derivation followed in the footsteps of one Francis 'Tito' Williams.")
 
 ^:kindly/hide-code
 (comment
