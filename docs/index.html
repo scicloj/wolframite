@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.54">
+<meta name="generator" content="quarto-1.5.55">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -148,13 +148,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./demo.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Wolframite demo</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quickstart</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gotcha.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Gotchas…</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./packages.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Packages</span></span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">For Scientists</span></a>
+ <span class="menu-text">Tutorials for scientists</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -163,7 +175,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./for_scientists.index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Wolframite for scientists</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Wolframite for scientists I (Introduction)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./for_scientists.cavity_physics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Wolframite for scientists II (Cavity physics)</span></span></a>
   </div>
 </li>
       </ul>
@@ -171,7 +189,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">For Developers</span></a>
+ <span class="menu-text">Tutorials for developers</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -180,11 +198,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./for_developers.index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Wolframite for Clojure developers</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Wolframite for developers</span></span></a>
   </div>
 </li>
       </ul>
   </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./faq.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -393,21 +417,21 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 <h4 data-number="1.5.2.1" class="anchored" data-anchor-id="documentation"><span class="header-section-number">1.5.2.1</span> Documentation</h4>
 <p>Documentation is written as literal programming sources in the <code>notebooks</code> directory and turned into HTML under <code>docs</code> using <a href="https://scicloj.github.io/clay/">Clay</a> and <a href="https://quarto.org/">Quarto</a>.</p>
 <p>To render a single namespace/page, require Clay and run <code>(clay/make! {:source-path "&lt;path to the file&gt;""})</code>. Tip: You can also do this without quarto - just add <code>:run-quarto false</code> to the options.</p>
-<p>To build the whole site, run <code>clojure -T:build build-site</code>.</p>
+<p>To build the whole site, run <code>clojure -T:build build-site</code> (remembering to ensure that you have a ./symlink-jlink.jar symlink).</p>
 </section>
 </section>
 </section>
 <section id="authors" class="level2" data-number="1.6">
 <h2 data-number="1.6" class="anchored" data-anchor-id="authors"><span class="header-section-number">1.6</span> Authors</h2>
-<p>The original Clojuratica was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School. See the <a href="http://clojuratica.weebly.com/community.html">Community</a> page to find out how to contribute to Clojuratica, suggest features, report bugs, or ask general questions.</p>
-<p>Ongoing maintenance and development over the years have been thanks to * <a href="https://github.com/chanshunli">Steve Chan</a> * <a href="https://github.com/dfarmer">Dan Farmer</a> * <a href="https://github.com/orb">Norman Richards</a></p>
-<p>Clojuratica has been turned into Wolframite and further maintained by:</p>
+<p>The original <a href="http://clojuratica.weebly.com/">Clojuratica</a> was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School.</p>
+<p>Ongoing maintenance and development over the years have been thanks to * <a href="https://github.com/chanshunli">Steve Chan</a>, * <a href="https://github.com/dfarmer">Dan Farmer</a>, * <a href="https://github.com/orb">Norman Richards</a> and others.</p>
+<p>Most recently, Clojuratica has been transformed into <em>Wolframite</em> by</p>
 <ul>
-<li>Pawel Ceranka</li>
-<li>Thomas Clark</li>
-<li><a href="https://holyjak.cz">Jakub Holý</a></li>
+<li>Pawel Ceranka,</li>
+<li>Thomas Clark and</li>
+<li><a href="https://holyjak.cz">Jakub Holý</a>;</li>
 </ul>
-<p>The project is now being maintained as part of the <a href="https://github.com/scicloj">SciCloj</a> project.</p>
+<p>and is now being maintained as part of the <a href="https://github.com/scicloj">SciCloj</a> project.</p>
 </section>
 <section id="contact" class="level2" data-number="1.7">
 <h2 data-number="1.7" class="anchored" data-anchor-id="contact"><span class="header-section-number">1.7</span> Contact</h2>
@@ -856,8 +880,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./demo.html" class="pagination-link" aria-label="Wolframite demo">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Wolframite demo</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./demo.html" class="pagination-link" aria-label="Quickstart">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quickstart</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

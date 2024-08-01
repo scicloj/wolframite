@@ -7,10 +7,10 @@
                            "demo.clj"
                            "gotcha.clj"
                            "packages.clj"
-                           {:part "For Scientists"
+                           {:part "Tutorials for scientists"
                             :chapters ["for_scientists/index.clj"
                                        "for_scientists/cavity_physics.clj"]}
-                           {:part "For Developers"
+                           {:part "Tutorials for developers"
                             :chapters ["for_developers/index.clj"]}
                            "faq.clj"]
              :base-target-path "docs"
