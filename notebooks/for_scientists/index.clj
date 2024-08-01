@@ -18,6 +18,7 @@
 We introduce you, the motivated scientist (likely the mathematical sort), to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and getting started notes, we then outline a 'real' workflow using the example of optical cavities.")
 (k/md "## Motivation - Why on earth?
 The Wolfram programming language is 'best-in-class' for certain specialist tasks, like manipulating equations, but, as Randall Munroe might have said,
+
 > Wolfram combines the flexibility and power of abstract mathematics with the intuitive clarity of abstract mathematics.
 
 Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don't we call Wolfram from Clojure? It seems like the atypical 'best of both worlds'. ")
