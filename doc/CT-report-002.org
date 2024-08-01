@@ -79,47 +79,4 @@ With usability in mind, another big part of this project was documentation and c
 
 * personal todos :noexport:
 ** TODO mention feedback from wolfram developers
-** TODO cavity plots
-** TODO integrate EIT work as another demo
-** TODO check parallelism?
 ** TODO add experimental UX namespace (wx)
-* Issues :noexport:
-- initialization made explicit
-  - advantage of adding user-based options
-- significant refactor of jlink
-- eval made explicit (symbols loaded but not now executable functions)
-  - efficiency (fewer calls to the kernel)
-  - nested symbols were a problem
-- composable expressions (from named parts)
-  - Don't use operators that are also Clojure fns
-- Fewer macros!!
-- Editor autocompletion again
-- API docstrings and readme
-- TextStructure works now
-- Subtract and Minus work as expected (no more (- 0 'E4))
-  - more complicated aliasing
-- user-defined aliasing
-  - not just having access to Wolfram but a customizable Wolfram!
-- Rudimentary alphanumerical aliasing
-- consistent way of quoting
-- scicloj wolframite site
-- doc cleanup (not finished!)
- 
-* PRs :noexport:
-- load-all-symbols's vars are just symbols
-  - Fix: Drop auto-evaluation and require manual wl/eval call. Ensure that all interned symbols resolve into symbols at value position, and functions that return a list of symbols at fn position.
-- docs and naming improvements (removed some !s etc.)
-- jlink restructure
-- initialization more explicit
-- generate wolfram.clj with vars
-- GH action added to build site
-- subtract to minus etc.
-- created LICENSE
-- custom aliases in generated Wolfram ns
-- added build script to deploy to clojars
-- convert directly into expression instead of using Loopback link
-- removed obsolete dependencies
-- docs generation with clay
-- jlink env var fix
-
-  Some things took less time than expected (packages); other things took more.
