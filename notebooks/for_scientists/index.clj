@@ -10,16 +10,10 @@
 ^:kindly/hide-code
 (comment
   ;; ## TODO: ##
-  ;; - check that displaying tex source by default doesn't cause any problems
-  ;; - Move general notes and examples out from the Cavity section
-  ;; - check that the gotchas are viewable
-  ;; - check that the packages namespace is visible
-  ;; - how to access the docs
-  ;; - should probably be split into two (the cavity part can be quite self-contained)
   ;; - how do/can I reference sections within a clay document?
   )
 
-(k/md "# Wolframite for scientists")
+(k/md "# Wolframite for scientists I (Introduction)")
 (k/md "## Abstract
 We introduce you, the motivated scientist (likely the mathematical sort), to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and getting started notes, we then outline a 'real' workflow using the example of optical cavities.")
 (k/md "## Motivation - Why on earth?

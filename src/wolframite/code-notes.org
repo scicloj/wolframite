@@ -6,7 +6,11 @@ Platform - general operating system, e.g. macos, linux or windows
 * Code structure
 ** Ordering
 Where possible, constants and functions should be declared within the namespace according to def^private def, defn-, defn, comment. Furthermore, host-language-specific code should be isolated as much as possible and collected at the top of the namespace. It may seem unlikely now, but we might want to use wolfram with another host.
+
 ** Naming
 Prefer full names rather than abbreviations or acronyms. Code is read more than written!
+
+In general, try to use the Wolfram naming conventions (to avoid confusion). For example, a package as an external file and a context is the Wolfram equivalent of a namespace. 'Wolfram' is also to be preferred when talking about the target language and root company. 'Mathematica' is to be used when considering the IDE product.
+
 ** Labeling
 Entry points should be clearly marked and, where possible, should be the final entry in the code, except for comments.

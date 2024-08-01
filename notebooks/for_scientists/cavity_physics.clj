@@ -8,7 +8,7 @@
    [wolframite.tools.hiccup :as wh]
    [wolframite.wolfram :as w]))
 
-(k/md "# Cavity Physics (Wolframite for scientists II)
+(k/md "# Wolframite for scientists II (Cavity physics)
 
 Congratulations if you made it here from part I. In this part, rather than introducing Wolframite, *per se*, we're going to solve a physics problem, such that Wolframite is simply a tool to get the job done.
 

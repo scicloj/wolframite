@@ -1,8 +1,3 @@
-;; # Wolframite demo
-
-;; This notebook demonstrates basic usage of [Wolframite](https://github.com/scicloj/wolframite/)
-;; in a way that would work in visual tools supporting [Kindly](https://scicloj.github.io/kindly-noted/kindly).
-
 (ns demo
   (:require
    [wolframite.core :as wl]
@@ -10,14 +5,14 @@
    [wolframite.impl.jlink-instance :as jlink-instance]
    [wolframite.tools.hiccup :refer [view]]
    [wolframite.base.parse :as parse]
-   [scicloj.kindly.v4.kind :as k])
-  ;; (:import (java.awt Color Frame)
-  ;;          (java.awt.event WindowAdapter ActionEvent))
-  )
+   [scicloj.kindly.v4.kind :as k]))
 
 (k/md "# Quickstart
 
-A brief demonstration of what Wolframite can do. It's a quick read, but you can also jump to any section of interest.")
+A brief demonstration of what Wolframite can do. It's a quick read, but you can also jump to any section of interest.
+
+To be extra 'meta', this page is itself a demonstration of a literate programming workflow and, as such, is simply a Clojure namespace annotated using the [Kindly](https://scicloj.github.io/kindly-noted/kindly) system. Currently, this is the most supported way of using Wolframite. To use this system, simply look at the relevant  [source](https://github.com/scicloj/wolframite/).
+")
 
 (k/md "## Init
 
