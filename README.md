@@ -179,7 +179,7 @@ Most recently, Clojuratica has been transformed into *Wolframite* by
 * Thomas Clark and
 * [Jakub Holý](https://holyjak.cz);
 
-and is now being maintained as part of the [SciCloj](https://github.com/scicloj) project. Wolframite is free, open-source software, but if you would like to support our work then please cite us in any relevant work.
+and is now being maintained as part of the [SciCloj](https://github.com/scicloj) project. Wolframite is free, open-source software, but if you would like to support our work then please cite us.
 
 ``` bibtex
 @software{Holý_2024},
