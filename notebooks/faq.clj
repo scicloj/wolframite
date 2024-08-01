@@ -1,7 +1,8 @@
 (ns faq
   "Anticipated and, potentially literally, frequently asked questions."
   (:require
-   [scicloj.kindly.v4.kind :as k]))
+   [scicloj.kindly.v4.kind :as k]
+   [wolframite.core :as wl]))
 
 (k/md "## FAQ
 **Why Wolfram?** - From the horse's [mouth](https://www.wolfram.com/language/):
@@ -58,5 +59,5 @@ You *should* use [Emmy](https://github.com/mentat-collective/emmy)! Emmy is a fu
 
 **How do I translate Mathematica's syntax sugar?**
 
-Since *Mathematica* hides the internals of the *Wolfram Language* by default, it can sometimes be difficult to work out what functions are being called. If you're in Mathematica, you can use `FullForm@Unevaluated[...]` to get a more understandable (if less concise) expression. Of course, you can also use Wolframite, *i.e.* `(wl/-> ...)` !
+Since *Mathematica* hides the internals of the *Wolfram Language* by default, it can sometimes be difficult to work out what functions are being called. If you're in Mathematica, you can use `FullForm@Unevaluated[...]` to get a more understandable (if less concise) expression. Of course, you can also use Wolframite, *i.e.* `(wl/->clj ...)` !
 ")

@@ -11,7 +11,7 @@
 
 A brief demonstration of what Wolframite can do. It's a quick read, but you can also jump to any section of interest.
 
-To be extra 'meta', this page is itself a demonstration of a literate programming workflow and, as such, is simply a Clojure namespace annotated using the [Kindly](https://scicloj.github.io/kindly-noted/kindly) system. Currently, this is the most supported way of using Wolframite. To use this system, simply look at the relevant  [source](https://github.com/scicloj/wolframite/).
+To be extra 'meta', this page is itself a demonstration of a literate programming workflow and, as such, is simply a Clojure namespace annotated using the [Kindly](https://scicloj.github.io/kindly-noted/kindly) system. Currently, this is the recommended way of using Wolframite: for the ability to clearly display equations and plots. To use this system, simply look at the relevant  [source](https://github.com/scicloj/wolframite/). It is not necessary however; it is still possible, and productive, to use the REPL directly.
 ")
 
 (k/md "## Init

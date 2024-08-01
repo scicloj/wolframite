@@ -52,7 +52,7 @@ If you're sold on Clojure and interested in problems close to data science then 
 
 ## Wolfram basics")
 (k/md "### Let's define our terms!
- One of the really nice things about using Wolfram as a library is that our middle man (Wolframite) can provide default substitutions to  simplify verbose terms, e.g. '(Power x 2) can become '(** x 2) or even '(**2 x), for readability. What's even nicer however, is that we can make our own aliases at runtime: the choice is ours!
+ One of the really nice things about using Wolfram as a library is that our middle man (Wolframite) can provide default substitutions to  simplify verbose terms, e.g. `'(Power x 2)` can become `'(** x 2)` or even `'(**2 x)`, for readability. What's even nicer however, is that we can make our own aliases at runtime: the choice is ours!
 
 We mention this now because the best time to define our terms is before we start. The first few aliases give us an insight into how I would have designed Wolfram. The last two go a step further. Here, we make use of Clojure's modernity and decision to support a much wider character set than Wolfram. Depending on your editor, it can be just as easy to enter these unicode characters as typing the long function name, but the real win is in the readability. Remember, we read our documents far more often than we write them (even if it's just peer review...).
 
