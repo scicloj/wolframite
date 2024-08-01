@@ -42,6 +42,7 @@ Secondly, by using a LisP, you are automatically thinking (and evaluating) at th
 One of the key motivations of Wolframite is to integrate the power of Wolfram within a more general, more ergonomic programming environment. When it comes to solving complex problems however, it is also important to be able to document and visualise the process. In fact, this is a core part of the academic sciences and consumes a lot of time. Largely however, solving problems and documenting the results have been considered orthogonal processes: duplicating huge amounts of work
 
 In contrast, what if
+
 > Programs are meant to be read by humans and only incidentally for computers to execute. [*D. Knuth*]?
 
 This is the heart of *literate programming*.
