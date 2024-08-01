@@ -34,7 +34,7 @@ To check that the kernel is working, try the following command:")
 (wl/eval (w/<*> [1 2 3] [4 5 6]))
 (k/md ", which may be more familiar to the Mathematically inclined.
 
-Here, the 'w' namespace is a preconfigured, but configurable, intermediary to Wolfram's built-in symbols. This allows you to manipulate Wolfram functions just like any other clojure symbol (and get reliable editor autocompletion).")
+Here, the `w` namespace is a preconfigured, but configurable, intermediary to Wolfram's built-in symbols. This allows you to manipulate Wolfram functions just like any other Clojure symbol (and get reliable editor autocompletion).")
 
 (k/md "## Code strings
 
