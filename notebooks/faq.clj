@@ -9,7 +9,7 @@
 
 > Wolfram Language is a symbolic language, deliberately designed with the breadth and unity needed to develop powerful programs quickly. By integrating high-level forms—like Image, GeoPolygon or Molecule—along with advanced superfunctions—such as ImageIdentify or ApplyReaction—Wolfram Language makes it possible to quickly express complex ideas in computational form.
 
-More concretely, the Wolfram language, and associated ecosystem, is a powerful way of getting stuff done. As a high-level functional programming language, with more than 6000 functions from across mathematics and data processing, it is sometimes the only practical way of of getting things done. Particularly in explicitly scientific fields. What makes it potentially unique is its place in the Venn diagram of symbolic manipulation, built-in factual and computational knowledge and niche, fully implemented algorithms.
+More concretely, the Wolfram language, and associated ecosystem, is a powerful way of getting stuff done. As a high-level functional programming language, with [more than 6000 functions from across mathematics and data processing](https://reference.wolfram.com/language/), it is sometimes the only practical way of of getting things done. Particularly in explicitly scientific fields. What makes it potentially unique is its place in the Venn diagram of symbolic manipulation, built-in factual and computational knowledge and niche, fully implemented algorithms.
 
 Check out the [Wolfram Language Code Gallery](https://www.wolfram.com/language/gallery/) for some amazing examples of what you can achieve with Wolfram much more easily than with any other programming language under the sun.
 
