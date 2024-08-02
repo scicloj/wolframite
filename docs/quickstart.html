@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.54">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>2&nbsp; Quickstart – Wolframite Documentation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./gotchas.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./quickstart.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quickstart</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Wolframite Documentation</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Wolframite</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quickstart.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quickstart</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gotchas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Gotchas…</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./packages.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Packages</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tutorials for scientists</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./for_scientists.index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Wolframite for scientists I (Introduction)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./for_scientists.cavity_physics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Wolframite for scientists II (Cavity physics)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Tutorials for developers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./for_developers.index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Wolframite for developers</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./faq.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#init" id="toc-init" class="nav-link active" data-scroll-target="#init"><span class="header-section-number">2.1</span> Init</a></li>
+  <li><a href="#first-things-first" id="toc-first-things-first" class="nav-link" data-scroll-target="#first-things-first"><span class="header-section-number">2.2</span> First things first</a></li>
+  <li><a href="#code-strings" id="toc-code-strings" class="nav-link" data-scroll-target="#code-strings"><span class="header-section-number">2.3</span> Code strings</a></li>
+  <li><a href="#bidirectional-translation-experimental" id="toc-bidirectional-translation-experimental" class="nav-link" data-scroll-target="#bidirectional-translation-experimental"><span class="header-section-number">2.4</span> Bidirectional translation (experimental)</a></li>
+  <li><a href="#graphics" id="toc-graphics" class="nav-link" data-scroll-target="#graphics"><span class="header-section-number">2.5</span> Graphics</a></li>
+  <li><a href="#computational-knowledge" id="toc-computational-knowledge" class="nav-link" data-scroll-target="#computational-knowledge"><span class="header-section-number">2.6</span> Computational knowledge</a></li>
+  <li><a href="#mathematics-and-beyond" id="toc-mathematics-and-beyond" class="nav-link" data-scroll-target="#mathematics-and-beyond"><span class="header-section-number">2.7</span> Mathematics and beyond</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-quickstart" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Quickstart</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<style></style>
+<style>.printedClojure .sourceCode {
+  background-color: transparent;
+  border-style: none;
+}
+</style>
+<style>.clay-limit-image-width .clay-image {max-width: 100%}
+.clay-side-by-side .sourceCode {margin: 0}
+.clay-side-by-side {margin: 1em 0}
+</style>
+<script src="quickstart_files/md-default0.js" type="text/javascript"></script>
+<script src="quickstart_files/md-default1.js" type="text/javascript"></script>
+<script src="quickstart_files/katex2.js" type="text/javascript"></script>
+<p><link href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" rel="stylesheet" type="text/css"></p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">ns</span> quickstart</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  (<span class="at">:require</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   [wolframite.core <span class="at">:as</span> wl]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>   [wolframite.wolfram <span class="at">:as</span> w]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>   [wolframite.impl.jlink-instance <span class="at">:as</span> jlink-instance]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   [wolframite.tools.hiccup <span class="at">:as</span> wh]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>   [wolframite.base.parse <span class="at">:as</span> parse]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>   [scicloj.kindly.v4.kind <span class="at">:as</span> k]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A brief demonstration of what Wolframite can do. It’s a quick read, but you can also jump to any section of interest.</p>
+<p>To be extra ‘meta’, this page is itself a demonstration of a literate programming workflow and, as such, is simply a Clojure namespace annotated using the <a href="https://scicloj.github.io/kindly-noted/kindly">Kindly</a> system. Currently, this is the recommended way of using Wolframite: for the ability to clearly display equations and plots. To use this system, simply look at the relevant <a href="https://github.com/scicloj/wolframite/">source</a>. It is not necessary however; it is still possible, and productive, to use the REPL directly.</p>
+<section id="init" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="init"><span class="header-section-number">2.1</span> Init</h2>
+<p>First, we must initialize Wolframite and connect it to a Wolfram kernel, which will perform the computations.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb2"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(wl/start)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If you get an error then please refer to the <a href="https://github.com/scicloj/wolframite/blob/main/README.md">Wolframite README</a> for further instructions. Your Wolfram installation is probably just in an unusual place and so you will have to provide the correct path.</p>
+</section>
+<section id="first-things-first" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="first-things-first"><span class="header-section-number">2.2</span> First things first</h2>
+<p>To check that the kernel is working, try the following command:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb3"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(wl/eval '(Dot [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] [<span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dv">32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As you can see, we can treat Wolfram commands similarly to unevaluated Clojure source code, with some predictable syntax adaptations. This works fine as a starting point, but dealing with long chains of raw symbols doesn’t always scale well. Instead, you can also write</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/Dot [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] [<span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dv">32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>or, using one of our fancy aliases,</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb7"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/&lt;*&gt; [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] [<span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb8"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dv">32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>, which may be more familiar to the Mathematically inclined. If you’re interested in adding your own aliases, then have a look at <a href="for_scientists.index.html#sec-wolfram-basics" class="quarto-xref"><span>Section 5.4</span></a>.</p>
+<p>Here, the <code>w</code> namespace is a preconfigured, but configurable, intermediary to Wolfram’s built-in symbols. This allows you to manipulate Wolfram functions just like any other Clojure symbol (and get reliable editor autocompletion).</p>
+</section>
+<section id="code-strings" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="code-strings"><span class="header-section-number">2.3</span> Code strings</h2>
+<p>The above examples are the preferred ways for Clojure and Wolfram to interoperate. You can however, use Wolfram command strings directly, e.g.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb9"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>(wl/eval <span class="st">"{1 , 2, 3} . {4, 5, 6}"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb10"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dv">32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="bidirectional-translation-experimental" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="bidirectional-translation-experimental"><span class="header-section-number">2.4</span> Bidirectional translation (experimental)</h2>
+<p>Code translation in both directions is more difficult and is still somewhat fragile (especially in the wl-&gt;clj direction), but the basics work as expected, e.g.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb11"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>(wl/-&gt;clj <span class="st">"GridGraph[{5, 5}]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb12"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>(GridGraph [<span class="dv">5</span> <span class="dv">5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb13"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>(wl/-&gt;wl (w/GridGraph [<span class="dv">5</span> <span class="dv">5</span>]) {<span class="at">:output-fn</span> <span class="kw">str</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb14"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="st">"GridGraph[{5, 5}]"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Both these functions may be helpful when writing and troubleshooting your Wolframite code.</p>
+</section>
+<section id="graphics" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="graphics"><span class="header-section-number">2.5</span> Graphics</h2>
+<p>The above code however, within Mathematica, actually produces graphics. Does Wolframite support this?</p>
+<p>Yes!</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb15"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>(wh/view (w/GridGraph [<span class="dv">5</span> <span class="dv">5</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div><details open="open"><summary><h5 style="cursor:pointer;display:inline;padding:0.5rem 1rem 0 1rem;" class="anchored">GridGraph[{5, 5}]</h5></summary><div class="wl-results"><hr><img src="data:image/jpeg;base64,R0lGODlh0ALOAvdhAFZZXEdISXiElmFlayMrNUVKUi02QzM4PjtCTExQVi80PFNWWlxhaVBUWD9FTlRXWkpOVUZLUzlAS1pcXj5BRGZpbmBodUBDRk1RV3BydEZLUnuQsWiBptrg6SsxOXyHmUtQVVhaXXR1dh8nMklOVDY6QFheZ0RGSKGwyD9GT5WjunZ3eMbP3aamplJVWYqXqy81PDg8QYaUqFxeXzY6Pzg/STQ5PiUsNk1NTWNjYzw/QygyQScuN2JqdpCQkLy8vEdMU0NJUTk9QjA1PHp6ejI3PUFHT46hvUJER0ZISU5SV1FZYz9CRW54h6KjpDU5PyowOElKS01VYTM7R2p0hWBhYlRbZdPT0zE2PTo+Ql5fYCEpMy0zO+np6W5wc6OzzFxlc////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////yH/C05FVFNDQVBFMi4wAwEAAAAh+QQECgD/ACwAAAAA0ALOAgAI/wDDCBxIsKDBgwgTKlzIsKHDhxAjSpxIsaLFixgzatzIsaPHjyBDihxJsqTJkyhTqlzJsqXLlzBjypxJs6bNmzhz6tzJs6fPn0CDCh1KtKjR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" style="margin-top:1rem;"></div></details></div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb16"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(wh/view (w/ChemicalData <span class="st">"Ethanol"</span> <span class="st">"StructureDiagram"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div><details open="open"><summary><h5 style="cursor:pointer;display:inline;padding:0.5rem 1rem 0 1rem;" class="anchored">ChemicalData["Ethanol", "StructureDiagram"]</h5></summary><div class="wl-results"><hr><img src="data:image/jpeg;base64,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" style="margin-top:1rem;"></div></details></div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb17"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>(wh/view (w/TextStructure <span class="st">"The cat sat on the mat."</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div><details open="open"><summary><h5 style="cursor:pointer;display:inline;padding:0.5rem 1rem 0 1rem;" class="anchored">TextStructure["The cat sat on the mat."]</h5></summary><div class="wl-results"><hr><img src="data:image/jpeg;base64,R0lGODlhpgLyAPfkAK2trZycnLe3t6qqqpWVlZ6enrm5uYyMjN/f30FBQcLCwsbGxlNTU6urqzg4OOLi4isrKxYWFpGRkZmZmTc3Nzw8PICAgMzMzCUlJeHh4dzc3Pr6+jo6OhwcHJqammBgYI2NjT4+PtLS0kxMTLS0tNbW1i0tLYWFhezs7H9/f2JiYkRERJKSkl9fX4ODg0pKSqSkpFhYWFZWVj8/P1paWiYmJl1dXcDAwK+vrzAwMOPj4+/v79PT09DQ0B4eHoqKiiwsLAsLC1tbW9nZ2UBAQOXl5U1NTXx8fMXFxXBwcKKiorq6uubm5ufn59HR0QoKCk9PT2RkZPPz8+7u7gwMDJ+fn6CgoDIyMj09PS4uLuDg4HZ2dvDw8G9vb5CQkGlpaQMDA0dHR729vby8vOTk5CAgIPj4+LGxsXR0dPf395aWlicnJ0tLS9ra2hsbG+vr666urhgYGKenp3h4eP39/bi4uAUFBVdXV/Hx8RkZGbW1tTk5Oenp6d7e3hoaGrOzs5OTkwgICENDQ2tra6ysrKGhoQcHB3d3d/b29lRUVA8PDxAQEEJCQtXV1UZGRh0dHSkpKc/PzwICAlJSUgkJCY+PjzQ0NJSUlPv7++rq6sjIyCEhIQ0NDSoqKv7+/hcXF05OTtjY2Ht7eyMjIygoKF5eXsTExPLy8s3NzREREe3t7TMzM5iYmA4ODgYGBnp6eklJScrKyqioqFxcXIGBgZeXlwAAANfX18fHx/z8/KWlpfn5+cvLy2hoaLCwsPX19aOjoxISEujo6ISEhNTU1Jubm2NjY93d3Y6Ojqampn19fdvb21lZWcHBwRQUFAQEBDY2NiIiIvT09L6+vkhISIaGhrKysp2dncnJyQEBAYKCgru7u2pqas7Ozra2ti8vL8PDwxMTE6mpqb+/v////////////////////////////////////////////////////////////////////////////////////////////////////////////////yH/C05FVFNDQVBFMi4wAwEAAAAh+QQECgD/ACwAAAAApgLyAAAI/wDJCRxIsKDBgwgTKlzIsKHDhxAjSpxIsaLFixgzatzIsaPHjyBDihxJsqTJkyhTqlzJsqXLlzBjypxJs6bNmzhz6tzJs6fPn0CDCh1KtKjR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" style="margin-top:1rem;"></div></details></div>
+<p>The above graphics were created using the <code>view</code> function from <code>wolframite.tools.hiccup</code>, as required above, and assumes that graphics are to be displayed in a browser.</p>
+</section>
+<section id="computational-knowledge" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="computational-knowledge"><span class="header-section-number">2.6</span> Computational knowledge</h2>
+<p>Wolfram is also known for its dynamic or ‘computational knowledge’ engine.</p>
+<p>This can be accessed by many functions directly,</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb18"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(wh/view (w/GeoNearest (w/Entity <span class="st">"Ocean"</span>) w/Here))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div><details open="open"><summary><h5 style="cursor:pointer;display:inline;padding:0.5rem 1rem 0 1rem;" class="anchored">GeoNearest[Entity["Ocean"], Here]</h5></summary><div class="wl-results"><hr><img src="data:image/jpeg;base64,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" style="margin-top:1rem;"></div></details></div>
+<p>, or by posting a request to its online platform, Wolfram Alpha.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb19"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/WolframAlpha <span class="st">"number of moons of Saturn"</span> <span class="st">"Result"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb20"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(Quantity <span class="dv">145</span> (IndependentUnit <span class="st">"moons"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb21"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>(wh/view (w/WolframAlpha <span class="st">"number of moons of Saturn"</span> <span class="st">"Result"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div><details open="open"><summary><h5 style="cursor:pointer;display:inline;padding:0.5rem 1rem 0 1rem;" class="anchored">WolframAlpha["number of moons of Saturn", "Result"]</h5></summary><div class="wl-results"><hr><img src="data:image/jpeg;base64,R0lGODlhjgA6APfHAMrCuKOUhO7r6K6hk7KmmJ2NfKmcjZ6Pfuvo5PX08qOVhKWXh8e/tY17Zq+jlezp5tnTzLKmmZeGdK+ilNTNxuHc16KUg9XPyKaYiOLe2cS7sPj39tzX0YNvWcO5r/Tz8cW8sbCjldHKwZyMepWEcbSpm7CklpOCbse+tPn499rVzt/b1ZiIdpOCb6ibi5+Qfufj35B+arOnmern5I17Z+Tg24x6Zr+1qv7+/q6ik8W8stDJwc7HvpaGc56OfcO6r4d0X62gkop4Y/Lx7rarnt7Z0+rn4+Pf2t3Y0szEu7aqnZaFcop3Yruxpbyypvj49pGAbIl2YYJvWNnUzfr5+IVyXOzs7Id0XoBsVdzW0Ovr65iIdYZzXvHv7auej+7s6YRwWqCRgIRxW4VxXMjAttvW0KqcjZSDcKWXhsG4rYh2YJeHdIx6ZbGll7muopKBbpKBbcS7sefk4LitoYBsVoFtVr60qOnm4uTg3KqdjuDb1ujl4fDu639rVIt5ZNvb29HKwoFtV458aPn5+PHv7INwWr2zp62gkezq5snBt9bPyNbQye/t6trUzvf29It4ZOjk4Pz8/Pb19PTy8NPNxfX19d/a1PLy8tra2vLw7tPMxKyfkebj3vDu7MrCuZyNe4JuWObi3resn8vDudjSzPr6+eXh3Pf29c3Gve3r6NjSy/v7+vv6+v39/b+1qeLd2NLLw4h1YNfRyrWpnMi/teTk5Il3Yvb187itoNTOxvz8+72yp5uLeYZzXfXz8pB/a/39/JqKeNnZ2aSVheXh3aKTguDg4P///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////yH/C05FVFNDQVBFMi4wAwEAAAAh+QQECgD/ACwAAAAAjgA6AAAI/wCPCRxIsKDBgwgTKlzIsKHDhxAjSpxIsaLFixgzatzIsaPHjyBDihxJsqTJkyhTqlzJsqXLlzBjypypMJIWY5iE6dzJs6fPn0CDCh3qE5MxLZFoJrz0h6jTp1CjAv1zSanBSzprVWplVWKrSrV0Vu16LFJTK2QtWhH2J2lXLcJqpb0YVgtZY8IqzbVYSZgxsjm57qXYShgmsjoHW0zclbHiiY6VRn4McfJMy5QbYh7YShcwh5114TAYSZfp06bdHtycWSFmKnpK9OrTpiGrYH36yDLIJrdv32ISsm6N0DKZQL9rMyTge3fBDr9/By8ujHjl6gVdRVeuENVv5wNL5f8ugaS8eUvCsVvXrH4gDmDwoXNHaAr6p9zgBXbJLeK6QF23sHIMJ5rcItAtlBShy0GTZCECMQImpAsksEzRBUKSODJQJ7A0wkhCXegByyKICGbQcIXQppAvgvThBx74FXRHbhz4d0wQfcyxRW6gFBEHKLm9oNoxe+DmWyBuUEFaGin6dsYrBZXRxxjHAHLCb0E8URAkYUQHRhtfnNieQSnOV1ArxfRRhyUPxEiQHrlBYqMX0fXBBRa/UTKQJkD2gcUVvr1h4EC3+VYFcn6SQRApuYmSGx10+IYLQYT4kVsUwUARaR+B8FEQiioi5ERuKBzTpm4FyZKbGWswIUgYuwz/Sp1AdPYRBiNK5CYEHhfkRoRAQwDRBx0/aImID7nlQFATufUgxzGlJAGdFDMMxGhusfCwii47QAfGIAPpkNsNbpXiiQ2iiKlQmQip2schAp2a3zE81JkbFzXOegydY3RyjCm5XXAMDlz0kYdAbeRGC0GRSJBbDQJ9UUcfNIA7UC65DWNtbr98OJAMud3xcW7EFATMaJ+OWRC7Bj1QsARKmurmQEc8ooYdSMCwSJd92HLhatjRecaBuU0i0BJ9uCBQC30IsiBBqpAqECW5jWIQC31csXEfKhQES25dC0TBpT94nN66oRKUAgl9xBJmvDMPlELMAzHXBwj6Ci2QJLl9/yBQD0lDG+nBBTmSWwgCjdpHtQU52oenx1yb70BI5LYIQbj8xosHRuiLEMsEzZJbHcWUXswauUlQzCYLbYAn60DT2sfQx/Ddh9/HAK50JrmZKRAYtgoUQW6nGKRBbnoIJHlBllheUAYYQOebBRWomxDoA6Fhb3Q0MGTpCHnPvnfffwfOysRmGGS7CQLtklvnBRGRm7+R08i88waloIgJaowOQcpo8x0pyEDAApLBEL0jQy4WYrg+OCB8tLMd7nQnkDP0oQERGogicsMAgWCsD4koCA4AF4utTU4gzevD5RJChRsECYDXS9tC5EWQUywADwYZXh+sFrt9ia925Mtd4P+OAbI+/IAgpbBgH0IhED4AyQ8aGsgOcoMBE95PhQNZwRQOAoc+xACGA0mFKcZoCin0QQFkRIBCaDiQEHCKCJDAQSvuUCtB+AKC47td+ZR2jA/YIjdN6EIkaoC1PkSAIC7sAxQssYpJaGBiYEiFFQmSwhV2IhZ9OEAWcFeKOOTGC2AUiAG2lxsgrDFuWehfbgJhxtyAAWJ4BKIehcjHY6gCeLnBU27WsAGC6IJnfjoSKhZlP0ri7wEF+E0U4CCGS6mRIJOZACn70ItTooogCXCDDX5ThwHQT18D6EMwBDKIQNShl8e4j7IGIoAAbMpOaRiSQHAAgD/m8hNyIoiU+pCqgSuuUCBZCIA9R+cFkYVSJDh4ABJUsYdVMGQ4DCkFHvAgAIZ0whRHSMFGJqEHPMyAbge9jMrW4znJjJSk1rMKRFF6jJWyxKUkhalKZGodmqIkMCxNSGEO0xW86CWnB+nLX94SF6AepC5kMYsw0GLUgaylLWnBSly2ktOvhEUYY4lqU6TC1a56dSdUUYxNcPLVspq1KEeRZ1PXyta2uvWtcI2rXOdK17puJCAAOw==" style="margin-top:1rem;"></div></details></div>
+<p>Here, we’ve shown a response with and without the view function, for reference.</p>
+</section>
+<section id="mathematics-and-beyond" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="mathematics-and-beyond"><span class="header-section-number">2.7</span> Mathematics and beyond</h2>
+<p>In a nutshell, this is how Wolframite is normally used, but, of course, this barely scratches the surface.</p>
+<p>In particular, the flagship product of Wolfram, the one you’ve probably heard of, is Mathematica. And, as the name suggests, this entire system was built around the performance of abstract calculation and the manipulation of equations, e.g.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb22"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">-&gt;</span> (w/== <span class="at">'E</span> (w/* <span class="at">'m</span> (w/Power <span class="at">'c</span> <span class="dv">2</span>)))</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    w/TeXForm</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    w/ToString</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    wl/eval</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    k/tex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span class="math display">\[e=c^2 m\]</span></p>
+<p>originally answered the question ‘what is mass?’</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb23"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">-&gt;</span> (w/== <span class="at">'E</span> (w/* <span class="at">'m</span> (w/Power <span class="at">'c</span> <span class="dv">2</span>)))</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    (w/Solve <span class="at">'m</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    w/First w/First</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    w/TeXForm</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    w/ToString</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    wl/eval</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    k/tex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span class="math display">\[m\to \frac{e}{c^2}\]</span></p>
+<p>This is where Wolfram, and so Wolframite, really shines. And if you’re interested in exploring this further, have a look at one of our longer tutorials.</p>
+<div style="background-color:grey;height:2px;width:100%;"></div>
+<div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/quickstart.clj">notebooks/quickstart.clj</a></small></small></pre></div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link" aria-label="Wolframite">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Wolframite</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./gotchas.html" class="pagination-link" aria-label="Gotchas...">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Gotchas…</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
