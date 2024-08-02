@@ -18,12 +18,13 @@ Check out the [Wolfram Language Code Gallery](https://www.wolfram.com/language/g
 
 'Why Wolframite?' is really just the combination of 'Why Wolfram?' (above) and '[Why Clojure?](https://clojure.org/about/rationale)'.
 
-In a nutshell, the Wolfram programming language is 'best-in-class' for certain specialist tasks, like manipulating equations, but, to paraphrase (Randall Munroe)[https://xkcd.com/1270/],
+In a nutshell, the Wolfram programming language is 'best-in-class' for certain specialist tasks, like manipulating equations, but, to paraphrase [Randall Munroe](https://xkcd.com/1270/),
 > Wolfram combines the flexibility and power of abstract mathematics with the intuitive clarity of abstract mathematics.
 
 Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don't we call Wolfram from Clojure? It seems like the atypical 'best of both worlds'.
 
-To put it another way, Wolfram is *a powerful tool in need of a toolbox*. And so what language is best placed to be that 'box'? Well, Wolfram is, underneath, built on LisP and so will naturally gel more with a similar design philosophy (and way of thinking) than, say, with an object-oriented or scripting language. Furthermore, somewhat ironically, it has a very good 'link' to the Java ecosystem. In [fact](https://reference.wolfram.com/language/JLink/tutorial/Introduction.html#25629),
+To put it another way, Wolfram is *a powerful tool in need of a toolbox*. And so what language is best placed to be that 'box'? Well, Wolfram is, underneath, built on LisP and so will naturally work better with a similar design philosophy (and way of thinking) than, say, with an object-oriented or scripting language. Furthermore, somewhat ironically, it has a very good 'link' to the Java ecosystem. In [fact](https://reference.wolfram.com/language/JLink/tutorial/Introduction.html#25629),
+
 >  For all types of WSTP programs, J/Link provides a higher-level layer of functionality than the traditional C WSTP programming interface. This makes Java the easiest and most convenient language for writing programs to interact with the Wolfram Language.
 
 Even at a fundamental level therefore, our toolbox language should be a LisP with strong Java interop: mmm...!
