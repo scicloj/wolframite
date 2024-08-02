@@ -42,27 +42,14 @@ The above examples are the preferred ways to interop. You can however, use Wolfr
 
 (wl/eval "{1 , 2, 3} . {4, 5, 6}")
 
-(k/md "## Explicit interning
-
-Although it shouldn't normally be necessary, we can also intern Wolfram functions more directly i.e. to effectively define Wolfram functions as clojure functions.
-
-The standard way of doing this is something like")
-(def greetings
-  (wl/eval
-   (w/fn [x] (w/StringJoin "Hello, " x "! This is a Mathematica function's output."))))
-(greetings "Stephen")
-
-(k/md "But this can also be done at a lower level, e.g.")
-(def W:Plus
-  (parse/parse-fn 'Plus {:jlink-instance (wolframite.impl.jlink-instance/get)}))
-(W:Plus 1 2 3)
-
 (k/md "## Bidirectional translation (experimental)
 
-Code translation in both directions is more difficult and is still somewhat experimental (especially in the wl->clj direction), but the basics work as expected, e.g.")
+Code translation in both directions is more difficult and is still somewhat fragile (especially in the wl->clj direction), but the basics work as expected, e.g.")
 
 (wl/->clj "GridGraph[{5, 5}]")
 (wl/->wl (w/GridGraph [5 5]) {:output-fn str})
+
+(k/md "Both these functions may be helpful when writing and troubleshooting your Wolframite code.")
 
 (k/md "## Graphics
 
@@ -77,10 +64,7 @@ Yes!
 
 (view (w/TextStructure "The cat sat on the mat."))
 
-(k/md "The above graphics were created using the")
-^:kindly/hide-code
-(k/code "view")
-(k/md "function, as required above, and assumes that graphics are to be displayed in a browser.")
+(k/md "The above graphics were created using the `view` function from `wolframite.tools.hiccup`, as required above, and assumes that graphics are to be displayed in a browser.")
 
 (k/md "## Computational knowledge
 
@@ -120,7 +104,7 @@ In particular, the flagship product of Wolfram, the one you've probably heard of
     wl/eval
     k/tex)
 
-(k/md "This is where Wolfram, and so Wolframite, really shines. And if you're interested in exploring this further, have a gander at one of our longer tutorials.")
+(k/md "This is where Wolfram, and so Wolframite, really shines. And if you're interested in exploring this further, have a look at one of our longer tutorials.")
 
 ^:kindly/hide-code
 (comment
