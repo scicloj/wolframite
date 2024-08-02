@@ -266,7 +266,7 @@ For this, we will define a few utility functions, that also demonstrate Wolfram'
                (w/-> w/AxesLabel
                      ["Mirror transmission" "Phase" "Intracavity intensity"])))
 
-(k/md "And there you have it! It turns out that if you get the phase right and you buy high quality mirrors then you can massively amplify the laser light. In fact, light amplification by the stimulated emission of radiation has a catchier name: it's called a *Laser*!")
+(k/md "And there you have it! It turns out that if you get the phase right and you buy high quality mirrors then you can massively amplify the laser light. In fact, if you add a 'gain' material in the middle then such light amplification by the stimulated emission of radiation has a catchier name: it's called a *Laser*!")
 
-(k/md "# References
-This tutorial was made by Thomas Clark, Jakub Holý and Daniel Slutsky. The cavity field derivation, itself, followed in the footsteps of one Francis 'Tito' Williams.")
+(k/md "# Acknowledgements
+This tutorial was made with the help of Thomas Clark, Jakub Holý and Daniel Slutsky. The cavity field derivation, itself, followed in the footsteps of one Francis 'Tito' Williams.")

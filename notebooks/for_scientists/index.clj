@@ -169,7 +169,6 @@ In fact, a little Clojure goes a long way. Look how easily we can add UX conveni
   "Extends the threading macro to automatically pass the result to wolframite eval."
   [& xs]
   `(-> ~@xs wl/eval))
-(k/md "N.B. `&` introduces the [rest](https://clojure.org/reference/special_forms) parameter. This collects together all of the arguments given to the function after this point into a list called `xs`, *i.e.* all of the arguments in this case.  `~@xs` is what [splices](https://clojuredocs.org/clojure.core/unquote-splicing) the arguments into the symbol expression.")
 
 (defn TeX
   "UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might not realise that 'ToString' is necessary."
@@ -181,14 +180,17 @@ In fact, a little Clojure goes a long way. Look how easily we can add UX conveni
   [& xs]
   `(-> ~@xs TeX wl/eval k/tex))
 
-(k/md "Now we can rewrite the following nested expression:")
+(k/md "N.B. for those who're still new, `&` introduces the [rest](https://clojure.org/reference/special_forms) parameter. This collects together all of the arguments given to the function after this point into a list called `xs`, *i.e.* all of the arguments in these cases. Another special form is `~@xs`. This is what [splices](https://clojuredocs.org/clojure.core/unquote-splicing) the arguments into the symbol expression.
 
-(TeX (||2 (w/+ (w/* 'x w/I) 'y)))
+With our new code, suddenly Wolfram-like nesting, *e.g.*")
+(k/tex (wl/eval (TeX (||2 (w/+ (w/* 'x w/I) 'y)))))
 
-(k/md "in a more readable way that chains the operations, evaluates the result and renders TeX:")
+(k/md "becomes")
+
 (TeX-> (w/* 'x w/I)
        (w/+ 'y)
        ||2)
+(k/md ". Can you spot the difference :)? The result is the same, but the operation chaining is much cleaner and the Wolfram evaluation and preparation for TeX rendering has been swept under the carpet. Of course, function composition and abstraction is well supported in Wolfram, but here simple macros have allowed us to make changes at the level of the language.")
 
 (k/md "It's just a small example, but LisP is designed for metaprogramming and so the sky's the limit when it comes to building more features around Wolfram functions. A sceptical reader may point out that eval and display are solved problems within the Mathematica system, but in my opinion there are solid reasons for not wanting to be confined to a specific IDE. Have a look at 'Why literate programming?' in the FAQs for more details.
 
