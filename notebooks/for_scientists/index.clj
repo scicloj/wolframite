@@ -181,7 +181,11 @@ In fact, a little Clojure goes a long way. Look how easily we can add UX conveni
   [& xs]
   `(-> ~@xs TeX wl/eval k/tex))
 
-(k/md "Now we can implicitly chain operations together, evaluate the result and get a nice TeX display in the browser.")
+(k/md "Now we can rewrite the following nested expression:")
+
+(TeX (||2 (w/+ (w/* 'x w/I) 'y)))
+
+(k/md "in a more readable way that chains the operations, evaluates the result and renders TeX:")
 (TeX-> (w/* 'x w/I)
        (w/+ 'y)
        ||2)
