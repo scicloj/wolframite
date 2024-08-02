@@ -6,8 +6,11 @@ book:
   chapters:
   - index.qmd
   - demo.qmd
-  - part: For Scientists
-    chapters: [for_scientists.index.qmd]
-  - part: For Developers
+  - gotcha.qmd
+  - packages.qmd
+  - part: Tutorials for scientists
+    chapters: [for_scientists.index.qmd, for_scientists.cavity_physics.qmd]
+  - part: Tutorials for developers
     chapters: [for_developers.index.qmd]
+  - faq.qmd
   title: Wolframite Documentation

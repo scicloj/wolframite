@@ -92,7 +92,7 @@ to generate your own wolfram ns with whatever additional symbols your Wolfram/Ma
 
 #### Learning Wolframite
 
-Read through and play with [explainer.clj](dev%2Fexplainer.clj) and [demo.clj](dev%2Fdemo.clj), which demonstrate most of Wolframite's features and what you can do with Wolfram.
+Read through and play with [explainer.clj](dev%2Fexplainer.clj) and [quickstart.clj](dev%2Fquickstart.clj), which demonstrate most of Wolframite's features and what you can do with Wolfram.
 
 #### Customizing Wolframite
 
@@ -123,7 +123,7 @@ user> (require '[clojuratica.tools.clerk-helper :as ch])
 user> (ch/clerk-watch! ["dev/notebook"])
 ```
 
-* Open dev/notebook/demo.clj, make a change and save.
+* Open dev/notebook/quickstart.clj, make a change and save.
 * Open `localhost:7777` in the browser
 
 ### How does it work?
