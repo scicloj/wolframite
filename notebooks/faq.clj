@@ -2,7 +2,8 @@
   "Anticipated and, potentially literally, frequently asked questions."
   (:require
    [scicloj.kindly.v4.kind :as k]
-   [wolframite.core :as wl]))
+   [wolframite.core :as wl]
+   [wolframite.wolfram :as w]))
 
 (k/md "## FAQ
 **Why Wolfram?** - From the horse's [mouth](https://www.wolfram.com/language/):
@@ -28,13 +29,20 @@ To put it another way, Wolfram is *a powerful tool in need of a toolbox*. And so
 Even at a fundamental level therefore, our toolbox language should be a LisP with strong Java interop: mmm...!
 
 At the *usability* layer, Clojure is a well-designed, ergonomic language that leaves its users [happy](https://www.computerworld.com/article/1379902/clojure-developers-are-the-happiest-developers.html)! When it comes to working with mathematical expressions specifically, there are a few key features. First of all, for many people, Clojure was the first language to introduce ergonomic chaining of function expressions, *e.g.*
-```clojure
-(TeX->
-   (w/* 'x w/I)
-   (w/+ 'y)
-   ||2)
-```
-. In my view, chaining Wolfram function calls together with threading macros is actually a big usability improvement. Wolfram expressions can get pretty involved (it's common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read and manipulate these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, `@`, to help with function composition, *e.g.* `f@g@h`. Unfortunately however, this doesn't work with multiple arguments. It is possible to do things like `f@@args`, and even things like `f@@@{{a, b}, {c, d}}`, but the readability quickly becomes dire. On the other hand, Clojure's threading is simple, clear and scalable.
+")
+
+(-> (w/* 'x w/I)
+    (w/+ 'y)
+    w/Abs
+    (w/Power 2)
+    w/ComplexExpand
+
+    w/TeXForm
+    w/ToString
+    wl/eval
+    k/tex)
+
+(k/md ". In my view, chaining Wolfram function calls together with [threading macros](https://clojure.org/guides/threading_macros) (*e.g.* `->` and `->>` etc.) is actually a big usability improvement. Wolfram expressions can get pretty involved (it's common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read and manipulate these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, `@`, to help with function composition, *e.g.* `f@g@h`. Unfortunately however, this doesn't work with multiple arguments. It is possible to do things like `f@@args`, and even things like `f@@@{{a, b}, {c, d}}`, but the readability quickly becomes dire. On the other hand, Clojure's threading is simple, clear and scalable.
 Secondly, by using a LisP, you are automatically thinking (and evaluating) at the level of the *symbolic expression* (a.k.a. s-expression). This is in contrast to thinking at the level of 'files', lines or 'cells' of a notebook. This maps very well to the exploration of *mathematical* expressions. In fact, it's almost surprising that Wolfram had such a big influence on the idea of *notebook*-style programming, considering that, at heart, it's all LisP. In our view, Wolframite brings Wolfram back to a more fundamental form of **literate programming**.
 
 

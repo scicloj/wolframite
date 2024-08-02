@@ -15,7 +15,7 @@ The Wolfram programming language is 'best-in-class' for certain specialist tasks
 
 > Wolfram combines the flexibility and power of abstract mathematics with the intuitive clarity of abstract mathematics.
 
-Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don't we call Wolfram from Clojure? It seems like the atypical 'best of both worlds'. ")
+Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core functions and dynamical, functional, paradigm are well suited to data exploration and manipulation. So why don't we call Wolfram from Clojure? It seems like the atypical 'best of both worlds'. ")
 
 (k/md "## Getting Started (for scientists)
 This tutorial aims to be as comprehensive a reference as possible for the average scientist and, as such, is not concise (and will probably only get longer). For a quick-fire introduction, see the 'Quickstart' page. If the demo is too short and this is too long however, you can always run a 'search' on the text for the relevant examples. We won't judge you!
@@ -25,6 +25,7 @@ This tutorial aims to be as comprehensive a reference as possible for the averag
 There are many useful online tools for getting started with Clojure. If you'd like to jump straight-in with interactive examples then try the [koans](http://clojurescriptkoans.com/).
 
 For an overview of the language itself, have a look at some of these references:
+
 - [Eric Normand's materials](https://ericnormand.me/) (Guides and video courses for the uninitiated)
 - [Clojure is in fact a trinity...](https://blog.jakubholy.net/2022/trinity-of-clojure/) (A short blog post where Jakub argues that to really get Clojure, you have to learn and embrace interactive (REPL-driven) development and structural editing)
 - [Getting started...](https://blog.jakubholy.net/clojure-for-beginners/#_getting_started) (More blog posts from Jakub!)
