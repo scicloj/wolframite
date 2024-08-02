@@ -77,7 +77,7 @@ Therefore, we enter the following.
   (write/write-ns! "src/wolframite/wolfram.clj"
                    {:aliases aliases}))
 
-(k/md "Using this command, we can generate a full namespace at the given location and so refer to the new symbol aliases more directly. The command appears here in a comment block to avoid unnecessary recomputation. See the 'Literate programming' section for an explanation.")
+(k/md "Using this command, we can generate a full namespace at the given location in your project (shadowing the one from Wolframite) and so refer to the new symbol aliases more directly. The command appears here in a comment block to avoid unnecessary recomputation. See the 'Literate programming' section for an explanation.")
 
 (k/md "### Access to knowledge
 With the recent emergence of ChatGPT and similar AI systems, direct access to knowledge from free-form linguistic input is in demand. Wolfram was an early pioneer of this, launching its product, Wolfram|Alpha, in 2009. Wolfram occupies a different space however, focusing mainly on what it describes as 'computational knowledge'. Rather than strictly using an LLM, it combines its knowledge databases with the ability to perform Wolfram operations on the retrieved data, before returning the result.
@@ -107,7 +107,6 @@ In this library, there are two approaches. For all official functions, the clean
     (w/Power 1)
     (w/Subtract 2)
     wl/eval)
-(k/md "Note, separating expression chains from automatic eval was done for efficiency. Previously, all Wolfram expressions were individually evaluated with separate kernel calls and this was considered a performance problem.
 
 
 To deal with general symbols, we return to one of LisPs' strengths: controlled evaluation. Historically necessitated by LisPs' 'code-as-data' paradigm, all LisPs can deal with general symbols by simply not evaluating them. This makes it easy to create and manipulate arbitrary Wolfram expressions, as we can simply treat them as unevaluated symbols (note our use of the new aliases too). ")
