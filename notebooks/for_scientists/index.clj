@@ -22,7 +22,16 @@ This tutorial aims to be as comprehensive a reference as possible for the averag
 
 ### Clojure
 
-There are many useful online tools for getting started with Clojure. For an overview of the language itself, have a look at [Eric Normand's materials](https://ericnormand.me/). If you'd like to jump straight-in with interactive examples then try the [koans](http://clojurescriptkoans.com/).
+There are many useful online tools for getting started with Clojure. If you'd like to jump straight-in with interactive examples then try the [koans](http://clojurescriptkoans.com/).
+
+For an overview of the language itself, have a look at some of these references:
+- [Eric Normand's materials](https://ericnormand.me/) (guides and video courses for the uninitiated)
+- [Clojure is in fact a trinity...](https://blog.jakubholy.net/2022/trinity-of-clojure/) (a short blog post where Jakub argues that to really get Clojure, you have to learn and embrace interactive (REPL-driven) development and structural editing)
+- [Getting started...](https://blog.jakubholy.net/clojure-for-beginners/#_getting_started) (More blog posts from Jakub!)
+- [Clojure for the Brave and True](https://www.braveclojure.com/introduction/) (an excellent free online (or paid paper) book for learning Clojure)
+- [Grokking Simplicity: Taming complex software with functional thinking](https://www.amazon.com/Grokking-Simplicity-software-functional-thinking/dp/1617296201) (makes no mention of Clojure but is an excellent tool to master functional thinking, which is essential for writing Clojure)
+
+
 
 #### Clojure physics
 
@@ -36,11 +45,11 @@ For those who are still fairly new to clojure, the first thing to get used to is
 
 In summary, [BODMAS](https://en.wikipedia.org/wiki/Order_of_operations#Mnemonics) is six rules and incomplete. (function argument ...) is a single rule and complete. Be kind to yourself, just write (+ 1 1 1 (/ 2 3)) :).
 
- If you're still unconvinced about the benefits of a simple syntax then remember that LisP is a programmable programming language: and its the syntax that delivers [macros](http://lists.warhead.org.uk/pipermail/iwe/2005-July/000130.html).
+ If you're still unconvinced about the benefits of a simple syntax then remember that LisP is a programmable programming language: and it's the syntax that delivers [macros](http://lists.warhead.org.uk/pipermail/iwe/2005-July/000130.html).
 
 
 ### Data science
-If you're sold on Clojure and interested in problems close to data science then an overview of some of the key analysis libraries can be found here.")
+If you're sold on Clojure and interested in problems close to data science then an overview of some of the key analysis libraries can be found here. Be careful though, this is a rapidly evolving area! For up-to-date recommendations, consider the [scicloj website](https://scicloj.github.io/) and the data science [zulip channel](https://clojurians.zulipchat.com/#narrow/stream/151924-data-science). ")
 (k/video {:youtube-id "MguatDl5u2Q"})
 
 (k/md "If you're really ready to use Wolfram though, then read on!
@@ -72,7 +81,9 @@ Therefore, we enter the following.
 
 (wl/restart {:aliases aliases})
 
-(k/md "We can define new aliases by simply using the core clojure functions/macros. This works fine, but these are only symbol replacements and so we can't benefit from using these entities in macros or from editor autocompletion. For the best experience therefore, we recommend using 'write-ns!'.")
+(k/md "We can define new aliases by simply listing any Clojure-allowed symbol in the above map, with a corresponding symbol that represents a Wofram value (function or constant). This works fine, but these are only symbol replacements and so you would need to *use* them as symbols, *e.g.* `'(** 2 3)`. Here, `'x` is simpler syntax for `(quote x)`, which simply creates and uses a 'literal' symbol `x`, *i.e.* `'x` is not evaluated to anything else.
+
+In this case however, we can't benefit from using these entities in threading macros (*e.g.* `(-> 'x '(Power 2))` would fail) or from editor autocompletion. In general, we would rather have dedicated Clojure functions for these symbols (*c.f.* `(-> 'x (w/Power 2))`). For the best experience therefore, we recommend using `write-ns!`, which helps us to more deeply *Clojure-ize* these Wolfram functions.")
 (comment
   (write/write-ns! "src/wolframite/wolfram.clj"
                    {:aliases aliases}))
@@ -108,8 +119,7 @@ In this library, there are two approaches. For all official functions, the clean
     (w/Subtract 2)
     wl/eval)
 
-
-To deal with general symbols, we return to one of LisPs' strengths: controlled evaluation. Historically necessitated by LisPs' 'code-as-data' paradigm, all LisPs can deal with general symbols by simply not evaluating them. This makes it easy to create and manipulate arbitrary Wolfram expressions, as we can simply treat them as unevaluated symbols (note our use of the new aliases too). ")
+(k/md "To deal with general symbols, we return to one of LisPs' strengths: controlled evaluation. Historically necessitated by LisPs' 'code-as-data' paradigm, all LisPs can deal with general symbols by simply not evaluating them. This makes it easy to create and manipulate arbitrary Wolfram expressions, as we can simply treat them as unevaluated symbols (note our use of the new aliases too). ")
 (-> 'x
     (w/** 1)
     (w/- '5)
