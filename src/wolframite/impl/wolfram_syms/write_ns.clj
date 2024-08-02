@@ -105,7 +105,7 @@
                         (map pr-str (make-defs all-syms))
                         (map pr-str (make-wolfram-ns-footer all-syms))
                         [(inclusions-body-str!)]
-                        (some-> aliases (aliases->defs nil) (->> (map pr-str))))))
+                        (some-> aliases (aliases->defs all-syms) (->> (map pr-str))))))
        (catch FileNotFoundException e
          (throw (ex-info (format "Could not write to %s - does the parent dir exist?"
                                  path)
