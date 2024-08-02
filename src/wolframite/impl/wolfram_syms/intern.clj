@@ -46,6 +46,11 @@
   (clj-intern 'Plus {})
   (wl/eval (Plus 1 2))
   ; => 3
+
+  (require '[wolframite.wolfram :as w])
+  (clj-intern '** {:intern/ns-sym 'wolframite.wolfram})
+  (wl/eval (w/** 2 2) {:aliases '{** Power}})
+  ; => 4
   ```
 
   See also [[load-all-symbols]]."
