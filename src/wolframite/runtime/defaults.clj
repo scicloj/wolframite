@@ -60,7 +60,20 @@
    '&&   'And
    '||   'Or
    '!    'Not
-   'fn   'Function})
+   'fn   'Function
+   ;; The "new" aliases, added for v1:
+   '** 'Power
+   '++ 'Conjugate
+   'x> 'Replace
+   'x>> 'ReplaceAll
+   '<_> 'Expand
+   '<<_>> 'ExpandAll
+   '++<_> 'ComplexExpand
+   '>_< 'Simplify
+   '>>_<< 'FullSimplify
+   '⮾ 'NonCommutativeMultiply
+   '√ 'Sqrt
+   '∫ 'Integrate})
 
 (defn experimental-fn-alias? "EXPERIMENTAL - DO NOT USE!" [alias]
   (-> alias meta ::experimental-fn))

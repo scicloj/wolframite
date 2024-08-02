@@ -65,7 +65,7 @@ We mention this now because the best time to define our terms is before we start
 Therefore, we enter the following.
 ")
 
-(def aliases
+(def aliases ; NOTE: These aliases are already included by default
   '{** Power
     ++ Conjugate
 

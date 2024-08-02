@@ -68,7 +68,7 @@
                   doc
                   (str "Maps to the Wolfram function " (when (symbol? to) to)))
                (intern/wolfram-fn '~from))) ; let w.base.convert handle these...
-          aliases)))
+          (into (sorted-map) aliases))))
 
 (defn make-wolfram-ns-footer [all-syms]
   (aliases->defs (dissoc defaults/base-aliases 'fn) all-syms))  ; fn replaced by a macro
@@ -119,6 +119,7 @@
 (comment
 
   (core/start)
+  (core/stop)
   (load-file "src/wolframite/wolfram.clj")
   (do (time (write-ns! "src/wolframite/wolfram.clj"))
       (load-file "src/wolframite/wolfram.clj"))

@@ -4,7 +4,6 @@
    [clojure.math :as math]
    [scicloj.kindly.v4.kind :as k]
    [wolframite.core :as wl]
-   [wolframite.impl.wolfram-syms.write-ns :as write]
    [wolframite.tools.hiccup :as wh]
    [wolframite.wolfram :as w]))
 
@@ -15,7 +14,7 @@ Congratulations if you made it here from part I. In this part, rather than intro
 First of all, we redefine the shortcuts that we used in the previous part, before introducing the problem at hand.
  ")
 
-(def aliases
+(def aliases ; NOTE: These aliases are already included by default
   '{** Power
     ++ Conjugate
 
