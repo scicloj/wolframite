@@ -122,21 +122,3 @@ In particular, the flagship product of Wolfram, the one you've probably heard of
 
 (k/md "This is where Wolfram, and so Wolframite, really shines. And if you're interested in exploring this further, have a gander at one of our longer tutorials.")
 
-^:kindly/hide-code
-(comment
-  ;; TODO: Don't hide code that generates TeX?
-  ;; TODO: Do we need the java imports?
-  ;; TODO: not sure that this comment is needed anymore?
-  (require '[scicloj.clay.v2.api :as clay])
-  ;; Make HTML:
-  (clay/make! {:source-path "dev/kindly_demo.clj"
-               :base-target-path "docs/generated"
-               :clean-up-target-dir true
-               :subdirs-to-sync []})
-  ;; Make Quarto-based HTML
-  ;; (requires the Quarto CLI installed):
-  (clay/make! {:source-path "dev/kindly_demo.clj"
-               :base-target-path "docs/generated"
-               :clean-up-target-dir true
-               :subdirs-to-sync []
-               :format [:quarto :html]}))
