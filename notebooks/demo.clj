@@ -38,7 +38,7 @@ Here, the `w` namespace is a preconfigured, but configurable, intermediary to Wo
 
 (k/md "## Code strings
 
-The above examples are the preferred ways to interop. You can however, use Wolfram command strings directly, e.g.")
+The above examples are the preferred ways for Clojure and Wolfram to interoperate. You can however, use Wolfram command strings directly, e.g.")
 
 (wl/eval "{1 , 2, 3} . {4, 5, 6}")
 
