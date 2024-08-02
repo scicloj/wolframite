@@ -7,7 +7,7 @@
    [wolframite.tools.hiccup :as wh]
    [wolframite.wolfram :as w]))
 
-(k/md "# Wolframite for scientists I (Introduction)")
+(k/md "# Wolframite for scientists I (Introduction) {#sec-scientists}")
 (k/md "## Abstract
 We introduce you, the motivated scientist (likely the mathematical sort), to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and getting started notes, we then outline a 'real' workflow using the example of optical cavities.")
 (k/md "## Motivation - Why on earth?
@@ -18,7 +18,7 @@ The Wolfram programming language is 'best-in-class' for certain specialist tasks
 Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core functions and dynamical, functional, paradigm are well suited to data exploration and manipulation. So why don't we call Wolfram from Clojure? It seems like the atypical 'best of both worlds'. ")
 
 (k/md "## Getting Started (for scientists)
-This tutorial aims to be as comprehensive a reference as possible for the average scientist and, as such, is not concise (and will probably only get longer). For a quick-fire introduction, see the 'Quickstart' page. If the demo is too short and this is too long however, you can always run a 'search' on the text for the relevant examples. We won't judge you!
+This tutorial aims to be as comprehensive a reference as possible for the average scientist and, as such, is not concise (and will probably only get longer). For a quick-fire introduction, see @sec-quickstart. If the demo is too short and this is too long however, you can always run a 'search' on the text for the relevant examples. We won't judge you!
 
 ### Clojure
 
@@ -56,7 +56,7 @@ If you're sold on Clojure and interested in problems close to data science then 
 
 (k/md "If you're really ready to use Wolfram though, then read on!
 
-## Wolfram basics")
+## Wolfram basics {#sec-wolfram-basics}")
 (k/md "### Let's define our terms!
  One of the really nice things about using Wolfram as a library is that our middle man (Wolframite) can provide default substitutions to  simplify verbose terms, e.g. `'(Power x 2)` can become `'(** x 2)` or even `'(**2 x)`, for readability. What's even nicer however, is that we can make our own aliases at runtime: the choice is ours!
 
@@ -141,7 +141,7 @@ If you're used to using Wolfram/Mathematica, then f[x_]:=x^2 is simply
 (k/md ". If instead you want to define functions inside the Wolfram kernel, and attach them to arbitrary symbols, then the most ergonomic way is")
 (wl/eval (w/_= 'f (w/fn [x] (w/** x 2))))
 (wl/eval '(f 5))
-(k/md ", where '_=' is the Wolframite version of ':=' (SetDelayed). See the 'Gotchas' section for why. Rather than a direct alias, w/fn is a special form that allows you to define Wolfram functions in a convenient way. Note that 'f' is a new symbol and therefore cannot be expected to be part of wolframite.wolfram or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.
+(k/md ", where '_=' is the Wolframite version of ':=' (SetDelayed). See the 'Gotchas' section (@sec-gotchas) for why. Rather than a direct alias, w/fn is a special form that allows you to define Wolfram functions in a convenient way. Note that 'f' is a new symbol and therefore cannot be expected to be part of wolframite.wolfram or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.
 
 In my opinion, this mixes the best of Wolfram and Clojure: and scales well. The most explicitly Wolfram way of doing it however, is to write")
 (wl/eval (w/Clear 'f))
@@ -203,7 +203,7 @@ With our new code, suddenly Wolfram-like nesting, *e.g.*")
        ||2)
 (k/md ". Can you spot the difference :)? The result is the same, but the operation chaining is much cleaner and the Wolfram evaluation and preparation for TeX rendering has been swept under the carpet. Of course, function composition and abstraction is well supported in Wolfram, but here simple macros have allowed us to make changes at the level of the language.")
 
-(k/md "It's just a small example, but LisP is designed for metaprogramming and so the sky's the limit when it comes to building more features around Wolfram functions. A sceptical reader may point out that eval and display are solved problems within the Mathematica system, but in my opinion there are solid reasons for not wanting to be confined to a specific IDE. Have a look at 'Why literate programming?' in the FAQs for more details.
+(k/md "It's just a small example, but LisP is designed for metaprogramming and so the sky's the limit when it comes to building more features around Wolfram functions. A sceptical reader may point out that eval and display are solved problems within the Mathematica system, but in my opinion there are solid reasons for not wanting to be confined to a specific IDE. Have a look at 'Why literate programming?' in the FAQs (@sec-FAQ) for more details.
 
 Before we finish this part of the tutorial, let's consider a (slightly) more realistic example.
 

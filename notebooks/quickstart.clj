@@ -7,7 +7,7 @@
    [wolframite.base.parse :as parse]
    [scicloj.kindly.v4.kind :as k]))
 
-(k/md "# Quickstart
+(k/md "# Quickstart {#sec-quickstart}
 
 A brief demonstration of what Wolframite can do. It's a quick read, but you can also jump to any section of interest.
 
@@ -32,7 +32,7 @@ To check that the kernel is working, try the following command:")
 (wl/eval (w/Dot [1 2 3] [4 5 6]))
 (k/md "or, using one of our fancy aliases,")
 (wl/eval (w/<*> [1 2 3] [4 5 6]))
-(k/md ", which may be more familiar to the Mathematically inclined.
+(k/md ", which may be more familiar to the Mathematically inclined. If you're interested in adding your own aliases, then have a look at @sec-wolfram-basics.
 
 Here, the `w` namespace is a preconfigured, but configurable, intermediary to Wolfram's built-in symbols. This allows you to manipulate Wolfram functions just like any other Clojure symbol (and get reliable editor autocompletion).")
 

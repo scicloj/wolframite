@@ -5,7 +5,7 @@
    [wolframite.core :as wl]
    [wolframite.wolfram :as w]))
 
-(k/md "## FAQ
+(k/md "# FAQ {#sec-FAQ}
 **Why Wolfram?** - From the horse's [mouth](https://www.wolfram.com/language/):
 
 > Wolfram Language is a symbolic language, deliberately designed with the breadth and unity needed to develop powerful programs quickly. By integrating high-level forms—like Image, GeoPolygon or Molecule—along with advanced superfunctions—such as ImageIdentify or ApplyReaction—Wolfram Language makes it possible to quickly express complex ideas in computational form.
