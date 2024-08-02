@@ -11,7 +11,7 @@
 
 A brief demonstration of what Wolframite can do. It's a quick read, but you can also jump to any section of interest.
 
-To be extra 'meta', this page is itself a demonstration of a literate programming workflow and, as such, is simply a Clojure namespace annotated using the [Kindly](https://scicloj.github.io/kindly-noted/kindly) system. Currently, this is the most supported way of using Wolframite. To use this system, simply look at the relevant  [source](https://github.com/scicloj/wolframite/).
+To be extra 'meta', this page is itself a demonstration of a literate programming workflow and, as such, is simply a Clojure namespace annotated using the [Kindly](https://scicloj.github.io/kindly-noted/kindly) system. Currently, this is the recommended way of using Wolframite: for the ability to clearly display equations and plots. To use this system, simply look at the relevant  [source](https://github.com/scicloj/wolframite/). It is not necessary however; it is still possible, and productive, to use the REPL directly.
 ")
 
 (k/md "## Init
@@ -21,7 +21,7 @@ which will perform the computations.")
 
 (wl/start)
 
-(k/md "If you get an error then please refer to the home README for further instructions. Your Wolfram installation is probably just in an unusual place and so you will have to provide the correct path.")
+(k/md "If you get an error then please refer to the [Wolframite README](https://github.com/scicloj/wolframite/blob/main/README.md) for further instructions. Your Wolfram installation is probably just in an unusual place and so you will have to provide the correct path.")
 
 (k/md "## First things first
 
@@ -34,11 +34,11 @@ To check that the kernel is working, try the following command:")
 (wl/eval (w/<*> [1 2 3] [4 5 6]))
 (k/md ", which may be more familiar to the Mathematically inclined.
 
-Here, the 'w' namespace is a preconfigured, but configurable, intermediary to Wolfram's built-in symbols. This allows you to manipulate Wolfram functions just like any other clojure symbol (and get reliable editor autocompletion).")
+Here, the `w` namespace is a preconfigured, but configurable, intermediary to Wolfram's built-in symbols. This allows you to manipulate Wolfram functions just like any other Clojure symbol (and get reliable editor autocompletion).")
 
 (k/md "## Code strings
 
-The above examples are the preferred ways to interop. You can however, use Wolfram command strings directly, e.g.")
+The above examples are the preferred ways for Clojure and Wolfram to interoperate. You can however, use Wolfram command strings directly, e.g.")
 
 (wl/eval "{1 , 2, 3} . {4, 5, 6}")
 
@@ -106,21 +106,3 @@ In particular, the flagship product of Wolfram, the one you've probably heard of
 
 (k/md "This is where Wolfram, and so Wolframite, really shines. And if you're interested in exploring this further, have a look at one of our longer tutorials.")
 
-^:kindly/hide-code
-(comment
-  ;; TODO: Don't hide code that generates TeX?
-  ;; TODO: Do we need the java imports?
-  ;; TODO: not sure that this comment is needed anymore?
-  (require '[scicloj.clay.v2.api :as clay])
-  ;; Make HTML:
-  (clay/make! {:source-path "dev/kindly_demo.clj"
-               :base-target-path "docs/generated"
-               :clean-up-target-dir true
-               :subdirs-to-sync []})
-  ;; Make Quarto-based HTML
-  ;; (requires the Quarto CLI installed):
-  (clay/make! {:source-path "dev/kindly_demo.clj"
-               :base-target-path "docs/generated"
-               :clean-up-target-dir true
-               :subdirs-to-sync []
-               :format [:quarto :html]}))

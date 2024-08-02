@@ -7,7 +7,7 @@
 
 (k/md "# Packages
 
-Working with packages has never been easier! Following the Wolfram symbol convention, we introduce Wolframite's version of `<<`, *a.k.a.* `Get`, to both load the given file (`*.wl` or `*.m`) into the working kernel and to attach the Wolfram context's symbols (including functions) to a Clojure namespace. This either uses the context's name or the characters provided as a Clojure symbol.
+Working with packages has never been easier! Following the Wolfram symbol convention, we introduce Wolframite's version of `<<`, *a.k.a.* `Get`, to both load the given file (`*.wl` or `*.m`) into the working kernel and to attach the Wolfram context's symbols (including functions) to a Clojure namespace. The name of the namespace defaults to the context's name, but you can also define a custom name, passed in as a Clojure symbol.
 
 The functions inside the  Wolfram package can then be used just like any other Wolfram functions.
 
