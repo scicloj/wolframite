@@ -18,12 +18,13 @@
 We introduce you, the motivated scientist (likely the mathematical sort), to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and getting started notes, we then outline a 'real' workflow using the example of optical cavities.")
 (k/md "## Motivation - Why on earth?
 The Wolfram programming language is 'best-in-class' for certain specialist tasks, like manipulating equations, but, as Randall Munroe might have said,
+
 > Wolfram combines the flexibility and power of abstract mathematics with the intuitive clarity of abstract mathematics.
 
 Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don't we call Wolfram from Clojure? It seems like the atypical 'best of both worlds'. ")
 
 (k/md "## Getting Started (for scientists)
-This tutorial aims to be as comprehensive a reference as possible for the average scientist and, as such, is not concise (and will probably only get longer). For a quick-fire introduction, see the 'demo' page. If the demo is too short and this is too long however, you can always run a 'search' on the text for the relevant examples. We won't judge you!
+This tutorial aims to be as comprehensive a reference as possible for the average scientist and, as such, is not concise (and will probably only get longer). For a quick-fire introduction, see the 'Quickstart' page. If the demo is too short and this is too long however, you can always run a 'search' on the text for the relevant examples. We won't judge you!
 
 ### Clojure
 
@@ -39,7 +40,7 @@ If you'd like to see why a physicist might be interested in Clojure then have a 
 
 For those who are still fairly new to clojure, the first thing to get used to is the style of notation. It might seem strange at first, but a functional LisP can be more efficient (symbolically) than a lot of object-oriented languages and even standard mathematical notation. For example, why write 1+1+1+2 and not (+ 1 1 1 2)? They have around the same number of characters and yet even here it's arguable that the signal to noise ratio is higher for the second one. Where the second form really shines however, is in it's scalability. As soon as you add another operator, e.g. 1+1+1+2/3, we have a problem. Okay so you made it through primary school and know that 1+1+1+2/3 is really 1+1+1+(2/3) and not (1+1+1+2)/3, but the mental complexity is still there, you're just used to it. If we introduce another operator, e.g. 1+1+1+2✝3, now what do you do? The truth is that if we stick to one simple rule, i.e. use brackets, then we completely solve a whole range of problems in advance, with the 'cost' of having to write two characters. In fact, although it might not be obvious, the Wolfram language is actually inspired by/built on the LisP syntax (underneath). The outer layer is just to make it look more like the inefficient notation that mathematicians already know and love...
 
-In summary, BODMAS is six rules and incomplete. (function argument ...) is a single rule and complete. Be kind to yourself, just write (+ 1 1 1 (/ 2 3)) :).
+In summary, [BODMAS](https://en.wikipedia.org/wiki/Order_of_operations#Mnemonics) is six rules and incomplete. (function argument ...) is a single rule and complete. Be kind to yourself, just write (+ 1 1 1 (/ 2 3)) :).
 
  If you're still unconvinced about the benefits of a simple syntax then remember that LisP is a programmable programming language: and its the syntax that delivers [macros](http://lists.warhead.org.uk/pipermail/iwe/2005-July/000130.html).
 

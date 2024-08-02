@@ -11,6 +11,8 @@
 
 More concretely, the Wolfram language, and associated ecosystem, is a powerful way of getting stuff done. As a high-level functional programming language, with more than 6000 functions from across mathematics and data processing, it is sometimes the only practical way of of getting things done. Particularly in explicitly scientific fields. What makes it potentially unique is its place in the Venn diagram of symbolic manipulation, built-in factual and computational knowledge and niche, fully implemented algorithms.
 
+Check out the [Wolfram Language Code Gallery](https://www.wolfram.com/language/gallery/) for some amazing examples of what you can achieve with Wolfram much more easily than with any other programming language under the sun.
+
 **Why Wolframite?**
 
 'Why Wolframite?' is really just the combination of 'Why Wolfram?' (above) and '[Why Clojure?](https://clojure.org/about/rationale)'.
@@ -33,7 +35,7 @@ At the *usability* layer, Clojure is a well-designed, ergonomic language that le
    ||2)
 ```
 . In my view, chaining Wolfram function calls together with threading macros is actually a big usability improvement. Wolfram expressions can get pretty involved (it's common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read and manipulate these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, `@`, to help with function composition, *e.g.* `f@g@h`. Unfortunately however, this doesn't work with multiple arguments. It is possible to do things like `f@@args`, and even things like `f@@@{{a, b}, {c, d}}`, but the readability quickly becomes dire. On the other hand, Clojure's threading is simple, clear and scalable.
-Secondly, by using a LisP, you are automatically thinking (and evaluating) at the level of the *s-expression*. This is in contrast to thinking at the level of 'files', lines or 'cells' of a notebook. This maps very well to the exploration of *mathematical* expressions. In fact, it's almost surprising that Wolfram had such a big influence on the idea of *notebook*-style programming, considering that, at heart, it's all LisP. In our view, Wolframite brings Wolfram back to a more fundamental form of **literate programming**.
+Secondly, by using a LisP, you are automatically thinking (and evaluating) at the level of the *symbolic expression* (a.k.a. s-expression). This is in contrast to thinking at the level of 'files', lines or 'cells' of a notebook. This maps very well to the exploration of *mathematical* expressions. In fact, it's almost surprising that Wolfram had such a big influence on the idea of *notebook*-style programming, considering that, at heart, it's all LisP. In our view, Wolframite brings Wolfram back to a more fundamental form of **literate programming**.
 
 
 **Why literate programming?**
@@ -41,6 +43,7 @@ Secondly, by using a LisP, you are automatically thinking (and evaluating) at th
 One of the key motivations of Wolframite is to integrate the power of Wolfram within a more general, more ergonomic programming environment. When it comes to solving complex problems however, it is also important to be able to document and visualise the process. In fact, this is a core part of the academic sciences and consumes a lot of time. Largely however, solving problems and documenting the results have been considered orthogonal processes: duplicating huge amounts of work
 
 In contrast, what if
+
 > Programs are meant to be read by humans and only incidentally for computers to execute. [*D. Knuth*]?
 
 This is the heart of *literate programming*.

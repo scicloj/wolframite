@@ -21,7 +21,7 @@ Symbols within threading macros. - After spending so much time playing with symb
 `(-> 'x '(Power 1))`
 This will not work because threads are macros and so combining them with unevaluated functions will lead to errors.
 
-*Symbols passed to Wolfram must be alphanumeric* - In the end, when they get passed to the Wolfram kernel, symbols must be strictly alphanumeric (apart from forward slashes and dollar signs), *i.e.* `r_2` is currently not allowed. This is due to underlying limitations of the Wolfram language. Much like with Mathematica however, we can get around this is general by using Wolframite's aliasing system (see the relevant tutorials).
+*Symbols passed to Wolfram must be alphanumeric* - In the end, when they get passed to the Wolfram kernel, symbols must be strictly alphanumeric (apart from forward slashes and dollar signs), *i.e.* `r_2` is currently not allowed. This is due to underlying limitations of the Wolfram language. Much like with Mathematica however, we can get around this in general by using Wolframite's aliasing system (see the relevant tutorials).
 
 *Vectors, `[]`, vs lists, `()`.* - Lists are used to represent functions and so when combining Clojure and Wolfram expressions, make sure that data literals are vectors. For example, `(wh/view (w/ListLinePlot (range 10)))` will fail (otherwise unexpectedly), but `(wh/view (w/ListLinePlot (into [] (range 10))))` will give you what you expect.
 ")
