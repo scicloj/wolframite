@@ -107,7 +107,6 @@ In this library, there are two approaches. For all official functions, the clean
     (w/Power 1)
     (w/Subtract 2)
     wl/eval)
-(k/md "Note, separating expression chains from automatic eval was done for efficiency. Previously, all Wolfram expressions were individually evaluated with separate kernel calls and this was considered a performance problem.
 
 
 To deal with general symbols, we return to one of LisPs' strengths: controlled evaluation. Historically necessitated by LisPs' 'code-as-data' paradigm, all LisPs can deal with general symbols by simply not evaluating them. This makes it easy to create and manipulate arbitrary Wolfram expressions, as we can simply treat them as unevaluated symbols (note our use of the new aliases too). ")
