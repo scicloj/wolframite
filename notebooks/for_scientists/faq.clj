@@ -1,1 +1,0 @@
-(ns for-scientists.faq)

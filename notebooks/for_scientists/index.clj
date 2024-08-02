@@ -7,12 +7,6 @@
    [wolframite.tools.hiccup :as wh]
    [wolframite.wolfram :as w]))
 
-^:kindly/hide-code
-(comment
-  ;; ## TODO: ##
-  ;; - how do/can I reference sections within a clay document?
-  )
-
 (k/md "# Wolframite for scientists I (Introduction)")
 (k/md "## Abstract
 We introduce you, the motivated scientist (likely the mathematical sort), to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and getting started notes, we then outline a 'real' workflow using the example of optical cavities.")
@@ -169,12 +163,13 @@ Such is the case, we can demonstrate a new workflow. As noted above, it is strai
 And yet there are there are two meaningful improvements already. First of all, we can, [currently](https://ask.clojure.org/index.php/11627/the-pipe-char-considered-valid-symbol-constituent-character), use more mathematical characters in Clojure, such that even the raw code can approach familiar symbolic maths.
 Second of all, we can exploit Clojure's 'threading' features. In my view, chaining Wolfram function calls together with threading macros is actually a big usability improvement. Wolfram expressions can get pretty involved (it's common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, '@', to help with function composition, e.g. f@g@h. Unfortunately however, this doesn't work with multiple arguments. It is possible to do things like f@@args, and even things like f@@@{{a, b}, {c, d}}, but the readability quickly becomes dire. On the other hand, Clojure's threading is simple, clear and scalable.
 
-In fact, a little Clojure goes a long way. Look how easily we can add substantial UX conveniences to our workflow.")
+In fact, a little Clojure goes a long way. Look how easily we can add UX conveniences to our workflow.")
 
 (defmacro eval->
   "Extends the threading macro to automatically pass the result to wolframite eval."
   [& xs]
   `(-> ~@xs wl/eval))
+(k/md "N.B. `&` introduces the [rest](https://clojure.org/reference/special_forms) parameter. This collects together all of the arguments given to the function after this point into a list called `xs`, *i.e.* all of the arguments in this case.  `~@xs` is what [splices](https://clojuredocs.org/clojure.core/unquote-splicing) the arguments into the symbol expression.")
 
 (defn TeX
   "UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might not realise that 'ToString' is necessary."
@@ -219,8 +214,8 @@ Wolfram can be used to define quite general approximations, using the 'Pattern' 
 Okay, so that was a lot of introduction. If you read all of that in one sitting then remember to take a break. Put the kettle on; do some press-ups and then sit-down for a worked example (Cavity Physics).
 ")
 
-(k/md "# References
-This tutorial was made by Thomas Clark, Jakub Holý and Daniel Slutsky.")
+(k/md "# Acknowledgements
+This tutorial was made with the help of Thomas Clark, Jakub Holý and Daniel Slutsky.")
 
 ^:kindly/hide-code
 (comment

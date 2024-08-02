@@ -1,11 +1,11 @@
-(ns gotcha
+(ns gotchas
   [:require
    [scicloj.kindly.v4.kind :as k]])
 
 (k/md "# Gotchas...
-Although we try to avoid such things, sometimes, when you're fighting the host language, it's just not practical to carry over the original conventions. Here we will try to keep an up-to-date list of possible surprises (that are not easy to 'fix').
+Although we try to avoid such things, sometimes, when you're fighting the host language, it's just not practical to carry over the original conventions. Here we will try to keep an up-to-date list of possible surprises, when coming from Wolfram to Wolframite (that are not easy to 'fix').
 
-**^** (`Power`) - Despite allowing a wider range of characters, we cannot use `^` in Wolframite because it is reserved for adding metadata to virtually all Clojure symbols. `(^ x 2)` will probably not do what you expect!
+**^** (`Power`) - Despite allowing a wider range of characters, we cannot use `^` in Wolframite because it is reserved for adding metadata to virtually all Clojure symbols. `(^ x 2)` will probably not do what you expect! Better to use `(w/Power 'x 2)` or a legal alias.
 
 **:=** (`SetDelayed`) - Is actually `_=` in Wolframite. This is because `:` is usually a reserved in Clojure for creating keywords. It's worth noting though that this is possibly nicer, in a way, because `_` looks like a placeholder, and defining a placeholder for the expression is what it does. It also sort of implies a delay...
 
@@ -19,7 +19,7 @@ Although we try to avoid such things, sometimes, when you're fighting the host l
 
 Symbols within threading macros. - After spending so much time playing with symbols, be careful of slipping into things like
 `(-> 'x '(Power 1))`
-This will not work because threads are macros and so combining them with unevaluated functions will lead to errors.
+This will not work because `'(Power 1)` is not evaluated, and so will be treated like any other symbol.
 
 *Symbols passed to Wolfram must be alphanumeric* - In the end, when they get passed to the Wolfram kernel, symbols must be strictly alphanumeric (apart from forward slashes and dollar signs), *i.e.* `r_2` is currently not allowed. This is due to underlying limitations of the Wolfram language. Much like with Mathematica however, we can get around this in general by using Wolframite's aliasing system (see the relevant tutorials).
 
