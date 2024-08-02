@@ -179,7 +179,19 @@ Most recently, Clojuratica has been transformed into *Wolframite* by
 * Thomas Clark and
 * [Jakub Holý](https://holyjak.cz);
 
-and is now being maintained as part of the [SciCloj](https://github.com/scicloj) project.
+and is now being maintained as part of the [SciCloj](https://github.com/scicloj) project. Wolframite is free, open-source software, but if you would like to support our work then please cite us.
+
+``` bibtex
+@software{Holý_2024},
+author = {Holý, Jakub and Clark, Thomas and Ceranka, Pawel and Richards, Norman and Farmer, Dan and Chan, Steve and Sheldon-Coulon, Garth},
+license = {Mozilla Public License},
+title = {{Wolframite: }},
+url = {https://github.com/scicloj/wolframite},
+version = {1.0.0-SNAPSHOT},
+year = {2024}
+
+```
+
 
 ## Contact
 If you would like to contact the maintainers or otherwise seek help from the community then please drop a message into our [zulip channel](https://clojurians.zulipchat.com/#narrow/stream/313853-wolfram-clojure-bridge) or contact the team at [SciCloj](https://github.com/scicloj).
