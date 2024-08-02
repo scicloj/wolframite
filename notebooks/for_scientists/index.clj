@@ -25,11 +25,12 @@ This tutorial aims to be as comprehensive a reference as possible for the averag
 There are many useful online tools for getting started with Clojure. If you'd like to jump straight-in with interactive examples then try the [koans](http://clojurescriptkoans.com/).
 
 For an overview of the language itself, have a look at some of these references:
-- [Eric Normand's materials](https://ericnormand.me/) (guides and video courses for the uninitiated)
-- [Clojure is in fact a trinity...](https://blog.jakubholy.net/2022/trinity-of-clojure/) (a short blog post where Jakub argues that to really get Clojure, you have to learn and embrace interactive (REPL-driven) development and structural editing)
+- [Eric Normand's materials](https://ericnormand.me/) (Guides and video courses for the uninitiated)
+- [Clojure is in fact a trinity...](https://blog.jakubholy.net/2022/trinity-of-clojure/) (A short blog post where Jakub argues that to really get Clojure, you have to learn and embrace interactive (REPL-driven) development and structural editing)
 - [Getting started...](https://blog.jakubholy.net/clojure-for-beginners/#_getting_started) (More blog posts from Jakub!)
-- [Clojure for the Brave and True](https://www.braveclojure.com/introduction/) (an excellent free online (or paid paper) book for learning Clojure)
-- [Grokking Simplicity: Taming complex software with functional thinking](https://www.amazon.com/Grokking-Simplicity-software-functional-thinking/dp/1617296201) (makes no mention of Clojure but is an excellent tool to master functional thinking, which is essential for writing Clojure)
+- [Clojure for the Brave and True](https://www.braveclojure.com/introduction/) (An excellent free online, or paid paper, book for learning Clojure)
+- [Grokking Simplicity: Taming complex software with functional thinking](https://www.amazon.com/Grokking-Simplicity-software-functional-thinking/dp/1617296201) (Makes no mention of Clojure but is an excellent tool to master functional thinking, which is essential for writing Clojure)
+- [Syntax]( https://github.com/holyjak/interactive-dev-wshop/blob/master/doc/Clojure%20syntax%20intro%20slides-with-notes.pdf) (A quick reminder of the key syntax.)
 
 
 
