@@ -58,16 +58,20 @@
      `(do ~@(map (fn [s] `(ns-unmap *ns* (quote ~s)))
                  '[Byte Character Integer Number Short String Thread]))]))
 
-(defn- aliases->defs [aliases]
-  (mapv (fn [[from to]]
-          `(def ~from
-             ~(if-let [doc (-> to meta :doc)]
-                doc
-                (str "Maps to the Wolfram function " (when (symbol? to) to)))
-             (intern/wolfram-fn '~from))) ; let w.base.convert handle these...
-        aliases))
+(defn- aliases->defs [aliases all-syms]
+  (let [sym->doc (into {}
+                       (map (juxt :sym :doc))
+                       all-syms)]
+    (mapv (fn [[from to]]
+            `(def ~from
+               ~(if-let [doc (get sym->doc to)]
+                  doc
+                  (str "Maps to the Wolfram function " (when (symbol? to) to)))
+               (intern/wolfram-fn '~from))) ; let w.base.convert handle these...
+          aliases)))
 
-(def wolfram-ns-footer (aliases->defs (dissoc defaults/base-aliases 'fn)))  ; fn replaced by a macro
+(defn make-wolfram-ns-footer [all-syms]
+  (aliases->defs (dissoc defaults/base-aliases 'fn) all-syms))  ; fn replaced by a macro
 
 (defn- make-defs
   ([] (make-defs (wolfram-syms/fetch-all-wolfram-symbols core/eval)))
@@ -87,7 +91,8 @@
   Requires that you've run `wl/start` first."
   ([path] (write-ns! path nil))
   ([path {:keys [aliases] :as _opts}]
-   (let [{:keys [wolfram-version wolfram-kernel-name]} (core/kernel-info!)]
+   (let [{:keys [wolfram-version wolfram-kernel-name]} (core/kernel-info!)
+         all-syms (wolfram-syms/fetch-all-wolfram-symbols core/eval)]
      (try
        (spit path
              (str/join "\n"
@@ -97,10 +102,10 @@
                          ;; that clj doesn't complain about those *..*
                         [(format "(def ^:dynamic *wolfram-version* %s)" wolfram-version)]
                         [(format "(def ^:dynamic *wolfram-kernel-name* \"%s\")" wolfram-kernel-name)]
-                        (map pr-str (make-defs))
-                        (map pr-str wolfram-ns-footer)
+                        (map pr-str (make-defs all-syms))
+                        (map pr-str (make-wolfram-ns-footer all-syms))
                         [(inclusions-body-str!)]
-                        (some->> aliases aliases->defs (map pr-str)))))
+                        (some-> aliases (aliases->defs nil) (->> (map pr-str))))))
        (catch FileNotFoundException e
          (throw (ex-info (format "Could not write to %s - does the parent dir exist?"
                                  path)
