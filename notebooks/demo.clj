@@ -3,7 +3,7 @@
    [wolframite.core :as wl]
    [wolframite.wolfram :as w]
    [wolframite.impl.jlink-instance :as jlink-instance]
-   [wolframite.tools.hiccup :refer [view]]
+   [wolframite.tools.hiccup :as wh]
    [wolframite.base.parse :as parse]
    [scicloj.kindly.v4.kind :as k]))
 
@@ -58,11 +58,11 @@ The above code however, within Mathematica, actually produces graphics. Does Wol
 Yes!
 ")
 
-(view (w/GridGraph [5 5]))
+(wh/view (w/GridGraph [5 5]))
 
-(view (w/ChemicalData "Ethanol" "StructureDiagram"))
+(wh/view (w/ChemicalData "Ethanol" "StructureDiagram"))
 
-(view (w/TextStructure "The cat sat on the mat."))
+(wh/view (w/TextStructure "The cat sat on the mat."))
 
 (k/md "The above graphics were created using the `view` function from `wolframite.tools.hiccup`, as required above, and assumes that graphics are to be displayed in a browser.")
 
@@ -72,12 +72,12 @@ Wolfram is also known for its dynamic or 'computational knowledge' engine.
 
 This can be accessed by many functions directly, ")
 
-(view (w/GeoNearest (w/Entity "Ocean") w/Here))
+(wh/view (w/GeoNearest (w/Entity "Ocean") w/Here))
 (k/md ", or by posting a request to its online platform, Wolfram Alpha.")
 
 (wl/eval (w/WolframAlpha "number of moons of Saturn" "Result"))
 
-(view (w/WolframAlpha "number of moons of Saturn" "Result"))
+(wh/view (w/WolframAlpha "number of moons of Saturn" "Result"))
 (k/md "Here, we've shown a response with and without the view function, for reference.")
 
 (k/md "## Mathematics and beyond
@@ -105,4 +105,3 @@ In particular, the flagship product of Wolfram, the one you've probably heard of
     k/tex)
 
 (k/md "This is where Wolfram, and so Wolframite, really shines. And if you're interested in exploring this further, have a look at one of our longer tutorials.")
-
