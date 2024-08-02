@@ -4,7 +4,7 @@
 (def config {:format [:quarto :html]
              :base-source-path "notebooks"
              :source-path ["index.clj"
-                           "demo.clj"
+                           "quickstart.clj"
                            "gotcha.clj"
                            "packages.clj"
                            {:part "Tutorials for scientists"
