@@ -301,7 +301,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>An interface between Clojure and the Wolfram Language (Supports <a href="https://www.wolfram.com/mathematica/">Mathematica</a> and <a href="https://www.wolfram.com/engine/">Wolfram Engine</a> ).</p>
 <section id="status" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="status"><span class="header-section-number">1.1</span> Status</h2>
-<p><strong>Wolframite is currently (Q2/2024) under active development again. You can <a href="https://github.com/scicloj/wolframite/discussions/17">keep track of what is happening in this discussion</a>.</strong></p>
+<p><strong>Wolframite is currently (Q3/2024) under active development again. You can <a href="https://github.com/scicloj/wolframite/discussions/17">keep track of what is happening in this discussion</a>.</strong></p>
 </section>
 <section id="what-is-wolframite" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="what-is-wolframite"><span class="header-section-number">1.2</span> What is Wolframite?</h2>
@@ -369,7 +369,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>NOTE: The <code>wolframite.wolfram</code> (<code>w</code>) ns has vars for all Wolfram symbols at the time of the last release. Check <code>w/*wolfram-kernel-name*</code> for kernel type/version and run <code>(wolframite.impl.wolfram-syms.write-ns/write-ns!)</code> to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematice has, and/or with custom “aliases”.</p>
 <section id="learning-wolframite" class="level4" data-number="1.3.2.1">
 <h4 data-number="1.3.2.1" class="anchored" data-anchor-id="learning-wolframite"><span class="header-section-number">1.3.2.1</span> Learning Wolframite</h4>
-<p>Read through and play with <a href="dev%2Fexplainer.clj">explainer.clj</a> and <a href="dev%2Fquickstart.clj">quickstart.clj</a>, which demonstrate most of Wolframite’s features and what you can do with Wolfram.</p>
+<p><a href="https://scicloj.github.io/wolframite/">Visit our documentation site</a> to learn all you might want to know about using Wolframite.</p>
 </section>
 <section id="customizing-wolframite" class="level4" data-number="1.3.2.2">
 <h4 data-number="1.3.2.2" class="anchored" data-anchor-id="customizing-wolframite"><span class="header-section-number">1.3.2.2</span> Customizing Wolframite</h4>
@@ -385,6 +385,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="clerk-integration" class="level3" data-number="1.3.3">
 <h3 data-number="1.3.3" class="anchored" data-anchor-id="clerk-integration"><span class="header-section-number">1.3.3</span> Clerk Integration</h3>
+<p>We primarily use <a href="https://scicloj.github.io/clay/">Clay</a> as our notebook tool, but there is also experimental support for <a href="https://github.com/nextjournal/clerk">Clerk</a>.</p>
 <p>Example usage: (watching for changes in a folder)</p>
 <pre><code>user&gt; (require '[clojuratica.tools.clerk-helper :as ch])
 user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
@@ -423,7 +424,7 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 </section>
 <section id="authors" class="level2" data-number="1.6">
 <h2 data-number="1.6" class="anchored" data-anchor-id="authors"><span class="header-section-number">1.6</span> Authors</h2>
-<p>The original <a href="http://clojuratica.weebly.com/">Clojuratica</a> was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School.</p>
+<p>The original Clojuratica, Wolframite’s predecessor, was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School.</p>
 <p>Ongoing maintenance and development over the years have been thanks to * <a href="https://github.com/chanshunli">Steve Chan</a>, * <a href="https://github.com/dfarmer">Dan Farmer</a>, * <a href="https://github.com/orb">Norman Richards</a> and others.</p>
 <p>Most recently, Clojuratica has been transformed into <em>Wolframite</em> by</p>
 <ul>
