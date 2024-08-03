@@ -10,6 +10,14 @@ A very brief introduction to Clojure for a would-be users of Wolframite not fami
 
 ![Clojure syntax 1](./notebooks/clojure_primer/clj-syntax-slide-1.svg)
 
+TBD
+
+![Clojure syntax 2](./notebooks/clojure_primer/clj-syntax-slide-2.svg)
+
+TBD
+
+![Clojure syntax 3](./notebooks/clojure_primer/clj-syntax-slide-3.svg)
+
 TBD...")
 
 
