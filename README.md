@@ -116,7 +116,7 @@ the file, you'll be able to use `(wl/eval (w/** 2 5) {:aliases '{** Power}})`.
 
 ### Clerk Integration
 
-We use primarily [Clay](https://scicloj.github.io/clay/) as our notebook tool, but there is also an experimental support for [Clerk](https://github.com/nextjournal/clerk). 
+We primarily use [Clay](https://scicloj.github.io/clay/) as our notebook tool, but there is also experimental support for [Clerk](https://github.com/nextjournal/clerk). 
 
 Example usage: (watching for changes in a folder)
 
