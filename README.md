@@ -6,7 +6,7 @@ An interface between Clojure and the Wolfram Language (Supports [Mathematica](ht
 
 ## Status
 
-**Wolframite is currently (Q2/2024) under active development again. You can [keep track of what is happening in this discussion](https://github.com/scicloj/wolframite/discussions/17).**
+**Wolframite is currently (Q3/2024) under active development again. You can [keep track of what is happening in this discussion](https://github.com/scicloj/wolframite/discussions/17).**
 
 ## What is Wolframite? ##
 
@@ -92,7 +92,7 @@ to generate your own wolfram ns with whatever additional symbols your Wolfram/Ma
 
 #### Learning Wolframite
 
-Read through and play with [explainer.clj](dev%2Fexplainer.clj) and [quickstart.clj](dev%2Fquickstart.clj), which demonstrate most of Wolframite's features and what you can do with Wolfram.
+[Visit our documentation site](https://scicloj.github.io/wolframite/) to learn all you might want to know about using Wolframite.
 
 #### Customizing Wolframite
 
@@ -115,6 +115,8 @@ something like
 the file, you'll be able to use `(wl/eval (w/** 2 5) {:aliases '{** Power}})`.
 
 ### Clerk Integration
+
+We primarily use [Clay](https://scicloj.github.io/clay/) as our notebook tool, but there is also experimental support for [Clerk](https://github.com/nextjournal/clerk). 
 
 Example usage: (watching for changes in a folder)
 
@@ -165,7 +167,7 @@ To build the whole site, run `clojure -T:build build-site` (remembering to ensur
 
 ## Authors
 
-The original [Clojuratica](http://clojuratica.weebly.com/) was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School.
+The original Clojuratica, Wolframite's predecessor, was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School.
 
 Ongoing maintenance and development over the years have been thanks to
 * [Steve Chan](https://github.com/chanshunli),
