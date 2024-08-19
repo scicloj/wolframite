@@ -1,8 +1,12 @@
 ^:kindly/hide-code
 (ns clojure-primer.index
   "A very brief introduction to Clojure for a would-be users of Wolframite not familiar with the language"
-  (:require [scicloj.kindly.v4.kind :as k]))
+  (:require [scicloj.kindly.v4.kind :as k]
+            [clojure.math :as math]
+            [wolframite.core :as wl]
+            [wolframite.wolfram :as w]))
 
+(wl/start) ; let's start Wolfram to be ready for our examples underneath
 
 (k/md "# Clojure Primer
 
@@ -41,3 +45,6 @@ No `else`, no reserved words in Clojure. Everything returns a value.")
 (k/md "## Evaluation
 
 Code-as-data, ', quote ....")
+
+(+ (* 3 (math/pow 2 2))) ; 12.0
+(wl/eval (w/+ (w/* 3 (w/Power 2 2))))
