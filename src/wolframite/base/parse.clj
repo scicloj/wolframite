@@ -30,11 +30,9 @@
       (keyword (str/join "." (butlast parts))
                (last parts)))))
 
-(defn custom-parse-dispatch [expr {:keys [parse/custom-parse-symbols]}]
+(defn custom-parse-dispatch [expr _opts]
   (let [head (symbol (expr/head-str expr))]
-    (when-not
-     (and (seq custom-parse-symbols) (not (contains? (set custom-parse-symbols) head)))
-      head)))
+    head))
 
 (defn atom? [expr]
   (not (.listQ expr)))
@@ -84,7 +82,7 @@
   (let [inside    (first (.args expr))
         ;; inside    (first (.args expr))
         all-rules? (every? true? (map #(= "Rule" (expr/head-str %)) (.args expr)))
-        rules     (cond (.listQ inside) (parse inside opts)
+        rules     (cond (some-> inside (.listQ)) (parse inside opts)
                         all-rules? (into {}
                                          (map (fn [kv]
                                                 (bound-map (fn [x _opts] (parse x opts)) kv opts))
@@ -174,8 +172,6 @@
   "Modify how Wolfram response is parsed into Clojure data.
 
   The dispatch-val should be a symbol, matched against the first one of the result list.
-  You can override this by including `:parse/custom-parse-symbols ['sym1 'sym2 ...]` in the flags,
-  to be able to match against multiple symbols.
 
   Example:
 
@@ -187,7 +183,6 @@
         java.net.URI.))
 
   (wl/eval '(Hyperlink \"foo\" \"https://www.google.com\"))
-  ; or: (wl/eval '(Hyperlink \"foo\" \"https://www.google.com\") {:parse/custom-parse-symbols ['Hyperlink, #_...]})
   ; => #object[java.net.URI 0x3f5e5a46 \"https://www.google.com\"]
   ```"
   #'custom-parse-dispatch)

@@ -140,7 +140,7 @@
         You may add your own ones, to be able to use them in your Wolfram expressions and get those
         translated into Wolfram ones. See Wolframite docs.
      -  `:flags [kwd ...]` - various on/off toggles for how Wolframite processes inputs/results,
-        passed e.g. to the `custom-parse` multimethod.
+        passed e.g. to the `custom-parse` multimethod; see also wolframite.runtime.defaults/default-flags
 
   See also [[stop]]"
   ([] (start defaults/default-options))
@@ -182,7 +182,8 @@
   "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
 
    Args:
-   - `opts` - same as those for [[start]]
+   - `opts` - same as those for [[start]], especially `:aliases` and `:flags` (see
+      wolframite.runtime.defaults/default-flags)
 
     Example:
     ```clojure
