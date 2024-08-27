@@ -1,8 +1,7 @@
 (ns wolframite.runtime.defaults
   "Flags and aliases for the Wolfram runtime."
   (:require clojure.set
-            [clojure.walk :as walk]
-            [clojure.string :as string]))
+            [clojure.walk :as walk]))
 
 "TODO:
 - Consider function that finds all non-numeric symbols (and not '- ') that start with a '-' and replace them with Minus[<symbol>]
