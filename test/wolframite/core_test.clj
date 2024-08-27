@@ -54,13 +54,15 @@
          (wl/load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'wd)))
 
   (is (= "Used for testing Wolframite."
-         (wl/eval  (w/Information wd/tryIt "Usage"))))
+         ;; NOTE: Tests are not repl, so we need to use `eval` to stop Clojure complaining about
+         ;; unknown namespaces wd, WolframPackageDemo when _loading_ this file as a whole
+         (wl/eval  (w/Information (eval 'wd/tryIt) "Usage"))))
   (is (= 1000
-         (wl/eval (wd/tryIt 10))))
+         (wl/eval (eval '(wd/tryIt 10)))))
   (is (= "Another function in the test package."
-         (wl/eval  (w/Information WolframPackageDemo/additional "Usage"))))
+         (wl/eval (eval '(w/Information WolframPackageDemo/additional "Usage")))))
   (is (= 30
-         (wl/eval (WolframPackageDemo/additional 10)))))
+         (wl/eval (eval '(WolframPackageDemo/additional 10))))))
 
 (deftest restart
   (testing "first set of aliases"
