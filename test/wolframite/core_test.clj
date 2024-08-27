@@ -60,22 +60,22 @@
   (is (= 1000
          (wl/eval (eval '(wd/tryIt 10)))))
   (is (= "Another function in the test package."
-         (wl/eval (eval '(w/Information WolframPackageDemo/additional "Usage")))))
+         (wl/eval (w/Information (eval 'WolframPackageDemo/additional) "Usage"))))
   (is (= 30
          (wl/eval (eval '(WolframPackageDemo/additional 10))))))
 
 (deftest restart
   (testing "first set of aliases"
-    (wl/restart {:aliases '{** Power}})
+    (wl/restart {:aliases '{test** Power}})
     (is (= 8
-           (wl/eval '(** 2 3)))
-        "** is an alias for Power (and 2^3 is 8)"))
+           (wl/eval '(test** 2 3)))
+        "test** is an alias for Power (and 2^3 is 8)"))
   (testing "restart & another aliases"
     (wl/restart {:aliases '{pow Power}})
     (is (thrown-with-msg? ExceptionInfo
                           #"Unsupported symbol / unknown alias"
-                          (wl/eval '(** 2 3)))
-        "** is not known anymore")
+                          (wl/eval '(test** 2 3)))
+        "test** is not known anymore and thus should fail")
     (is (= 8
            (wl/eval '(pow 2 3)))
         "Now, `pow` is an alias for Power (and 2^3 is 8)")))
