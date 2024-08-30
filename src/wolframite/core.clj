@@ -91,7 +91,11 @@
    (->> (kernel-link-opts init-opts)
         (proto/create-kernel-link jlink-impl))))
 
-(defn- unqualify [form]
+(defn- unqualify
+  "Remove namespaces from all symbols nested wherever in the form.
+  Useful when you build Wolframite expressions using the syntax quote, which automatically
+  qualifies all symbols. (Though you can avoid it for a symbol by using `~'the-symbol`.)"
+  [form]
   (walk/postwalk (fn [form]
                    (if (qualified-symbol? form)
                      (symbol (name form))
@@ -200,7 +204,7 @@
      (let [with-eval-opts (merge {:jlink-instance jlink-inst}
                                  (:opts jlink-inst)
                                  eval-opts)
-           expr' (unqualify (if (string? expr) (express/express expr with-eval-opts) expr))]
+           expr' (if (string? expr) (express/express expr with-eval-opts) expr)]
        (cep/cep expr' with-eval-opts))
      (throw (IllegalStateException. "Not initialized, call start first")))))
 
