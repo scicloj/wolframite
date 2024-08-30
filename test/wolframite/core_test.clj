@@ -80,6 +80,14 @@
            (wl/eval '(pow 2 3)))
         "Now, `pow` is an alias for Power (and 2^3 is 8)")))
 
+(deftest quoted-symbols-test
+  (wl/start)
+  (testing "Wolfram namespaces"
+    (is (= (wl/eval '(Internal/StringToMReal "-123.56"))
+           -123.56)
+        ;; BEWARE: This may fail if/when Wolfram renames (again) this internal fn
+        "Namespaced symbols are turned into fully qualified Wolfram symbols")))
+
 (deftest bug-fixes
   (wl/start)
   (testing "#76 double eval of ->"

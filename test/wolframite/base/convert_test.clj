@@ -37,4 +37,9 @@
       (is (= "Function" (str (.head expr))))
       (is (= 2 (count (.args expr))))
       (is (= "{x}" (str signature)))
-      (is (= "x" (str body))))))
+      (is (= "x" (str body)))))
+  (testing "Various"
+    (testing "Wolfram namespaces"
+      (is (= (str (convert '(Internal/StringToMReal "123.56") nil))
+             "Internal`StringToMReal[\"123.56\"]")
+          "Clojure ns becomes Wolfram ns"))))

@@ -3,7 +3,7 @@
 
 (defn express [s {:keys [jlink-instance]}]
   {:pre [jlink-instance]}
-  (assert (string? s))
+  (assert (string? s) (str "Expected '" (pr-str s) "' to be a string but is " (type s)))
   ;; TODO: debug log: "express string>"
   (let [held-s (str "HoldComplete[" s "]")
         link (proto/kernel-link jlink-instance)
