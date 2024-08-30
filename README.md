@@ -193,7 +193,8 @@ version = {1.0.0-SNAPSHOT},
 year = {2024}
 
 ```
-
+## Support
+We are grateful for the financial support of [Clojurists Together](https://www.clojuriststogether.org/), who supported this work for a quarter in 2024.
 
 ## Contact
 If you would like to contact the maintainers or otherwise seek help from the community then please drop a message into our [zulip channel](https://clojurians.zulipchat.com/#narrow/stream/313853-wolfram-clojure-bridge) or contact the team at [SciCloj](https://github.com/scicloj).
