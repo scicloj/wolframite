@@ -88,12 +88,25 @@
         ;; BEWARE: This may fail if/when Wolfram renames (again) this internal fn
         "Namespaced symbols are turned into fully qualified Wolfram symbols")))
 
+(deftest corner-cases
+  (wl/start)
+  (testing "Lambdas, nested"
+    (is (= [[-1 -2]]
+           (wl/eval (w/Map (w/fn [x]
+                             (w/Map (w/fn [x] (w/Minus x)) x))
+                           [[1 2]])))
+        "Two nested uses of w/fn with arg shadowing should work")))
+
 (deftest bug-fixes
   (wl/start)
   (testing "#76 double eval of ->"
     (is (= '(-> x 5)
            (wl/eval (wl/eval (w/-> 'x 5))))
-        "Should not throw")))
+        "Should not throw"))
+  (testing "Quoted expr inside w/fn fails to convert due to missing jlink-instance"
+    (is (= [123.0]
+           (wl/eval (wl/->wl (w/Map (w/fn [row] '(Internal/StringToMReal row))
+                                    ["123"])))))))
 
 (comment
   (clojure.test/run-tests 'wolframite.core-test))

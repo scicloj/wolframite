@@ -104,7 +104,7 @@
                         [(format "(def ^:dynamic *wolfram-kernel-name* \"%s\")" wolfram-kernel-name)]
                         (map pr-str (make-defs all-syms))
                         (map pr-str (make-wolfram-ns-footer all-syms))
-                        [(inclusions-body-str!)]
+                        [(inclusions-body-str!)] ; the w/fn macro etc.
                         (some-> aliases (aliases->defs all-syms) (->> (map pr-str))))))
        (catch FileNotFoundException e
          (throw (ex-info (format "Could not write to %s - does the parent dir exist?"
