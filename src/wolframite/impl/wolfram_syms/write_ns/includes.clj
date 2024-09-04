@@ -16,8 +16,7 @@
 (defmacro fn
   "Creates a Wolfram anonymous function with the given arguments and single expression body.
   Example usage: `(wl/eval (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))`"
-  [args sexp]
+  [args body-sexp]
   ;; If there is any w/ symbol such as w/Plus, replace it just with the fn name, `Plus` -
   ;; we need the whole body to be pure symbols and primitives only, which Wolfram will understand
-  (let [symbolic-sexp (clojure.walk/prewalk wolframite.impl.wolfram-syms.intern/try->wolf-sym sexp)]
-    `(list (quote ~'Function) (quote ~args) (quote ~symbolic-sexp))))
+  `(list (quote ~'Function) (quote ~args) ~(wolframite.impl.wolfram-syms.intern/quote-args body-sexp args)))

@@ -1,7 +1,9 @@
 (ns wolframite.base.express
   (:require [wolframite.impl.protocols :as proto]))
 
-(defn express [s {:keys [jlink-instance]}]
+(defn express
+  "??? Convert a _string_ expression into JLink.Expr using Wolfram itself"
+  [s {:keys [jlink-instance]}]
   {:pre [jlink-instance]}
   (assert (string? s) (str "Expected '" (pr-str s) "' to be a string but is " (type s)))
   ;; TODO: debug log: "express string>"

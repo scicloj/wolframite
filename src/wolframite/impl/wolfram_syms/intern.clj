@@ -1,5 +1,6 @@
 (ns wolframite.impl.wolfram-syms.intern
   "Interning of Wolfram symbols as Clojure vars, for convenience."
+  (:require [clojure.walk])
   (:import (clojure.lang IMeta)))
 
 (defn interned-var-val->symbol
@@ -63,3 +64,15 @@
                                       extra-meta
                                       (meta f)))
              f))))
+
+(defn quote-args
+  "For the w/fn macro - quote _arguments_ (max once) so that Clojure
+  does not complain about unknown symbols in the fn body."
+  [body args]
+  (let [args-set (into #{} args)]
+    (clojure.walk/postwalk
+      #(if (and (args-set %)
+                (not (::quoted? (meta %))))
+         (list 'quote (with-meta % {::quoted? true})) ; add meta to that we can avoid recursion
+         %)
+      body)))

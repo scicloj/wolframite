@@ -236,7 +236,8 @@
   what will be sent to Wolfram for evaluation."
   ([clj-form] (->wl clj-form {:output-fn str}))
   ([clj-form {:keys [output-fn] :as opts}]
-   (cond-> (convert/convert clj-form (merge {:kernel/link @kernel-link-atom} opts))
+   (cond-> (convert/convert clj-form (merge {:jlink-instance (jlink-instance/get)
+                                             :kernel/link @kernel-link-atom} opts))
      (ifn? output-fn) output-fn)))
 
 (defn load-package!

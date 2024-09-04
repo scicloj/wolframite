@@ -1,6 +1,7 @@
 (ns wolframite.base.convert-test
   (:require [clojure.test :refer :all]
             [wolframite.core :as wl]
+            [wolframite.wolfram :as w]
             [wolframite.base.convert :refer [convert]]))
 
 (deftest test-convert
@@ -31,13 +32,43 @@
       (is (= (str (convert '{:evil 1, "good" 2} nil))
              "Association[Rule[\":evil\", 1], Rule[\"good\", 2]]")
           "Map becomes W. Association, with keys stringified")))
-  (testing "Clojure lambda -> `Function[{x}, x]`"
-    (let [expr (convert '(fn [x] x) nil)
-          [signature body] (.args expr)]
-      (is (= "Function" (str (.head expr))))
-      (is (= 2 (count (.args expr))))
-      (is (= "{x}" (str signature)))
-      (is (= "x" (str body)))))
+  (testing "Clojure lambda -> `Function[{args}, body]`"
+    (testing "(fn [x] x)"
+     (let [expr (convert '(fn [x] x) nil)
+           [signature body] (.args expr)]
+       (is (= "Function" (str (.head expr))))
+       (is (= 2 (count (.args expr))))
+       (is (= "{x}" (str signature)))
+       (is (= "x" (str body)))))
+    (testing "(fn [x] (Plus x x)"
+      (let [expr (convert '(fn [x] (Plus x x)) nil)
+            [signature body] (.args expr)]
+        (is (= "Function" (str (.head expr))))
+        (is (= 2 (count (.args expr))))
+        (is (= "{x}" (str signature)))
+        (is (= "Plus[x, x]" (str body)))))
+    (testing "w/fn"
+      (testing "basics"
+        (is (= (convert '(fn [x] x) nil)
+               (convert (w/fn [x] x) nil))
+            "Raw and evaluated form are equivalent")
+        (is (= (convert '(fn [x] (Internal/StringToMReal x)) nil)
+               (convert (w/fn [x] '(Internal/StringToMReal x)) nil))
+            "Allow quoting inside the body (so the IDE doesn't complain of unknown symbols)"))
+      (testing "using evaluated form w/<some-fn>"
+        (is (= (convert '(fn [x] (Plus x x)) nil)
+               (convert (w/fn [x] (w/Plus x x)) nil))
+            "We can use w/some-fn inside the body"))
+      (testing "deeper nesting of fns and w/functions"
+        (is (= (convert '(fn [x] (Plus x (Minus x))) nil)
+               (convert (w/fn [x] (w/Plus x (w/Minus x))) nil))))
+      (testing "quoted sub-expression"
+       (is (= "\"Map[Function[{row}, Internal`StringToMReal[row]], {\\\"123\\\"}]\"" ; not sure why JLink .toString double-escapes the strs
+              (-> (convert (wl/->wl (w/Map (w/fn [row] '(Internal/StringToMReal row))
+                                           ["123"]))
+                           nil)
+                  str))
+           "Fn body with is converted correctly"))))
   (testing "Various"
     (testing "Wolfram namespaces"
       (is (= (str (convert '(Internal/StringToMReal "123.56") nil))

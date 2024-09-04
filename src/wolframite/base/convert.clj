@@ -36,8 +36,9 @@
         (fn? obj) :fn-obj
         :else nil))
 
-(defmulti convert (fn [obj _]
-                    (dispatch obj)))
+(defmulti convert
+  "Convert a Wolframite clj expression into a JLink object representation"
+  (fn [clj-expr _opts] (dispatch clj-expr))) ; TODO Pass jlink-instance in explicitly inst. of fetching from the global
 
 ;; * Helpers
 
@@ -136,20 +137,28 @@
         (simple-vector? coll opts) (convert (to-array coll) opts)
         :else (convert-non-simple-list coll opts)))
 
-(defmethod convert :expr [[head & tail :as _cexpr] opts]
+(defmethod convert :expr [[head & tail :as cexpr] opts]
   (let [macro head
         arg (first tail)]
     (cond (= 'clojure.core/deref macro)    (convert (cexpr-from-prefix-form arg) opts)
           (= 'clojure.core/meta macro)     (convert (cexpr-from-postfix-form arg) opts)
           (= 'var macro)                   (convert (list 'Function arg) opts)
-          (= 'quote macro)                 (express/express arg opts)
+          ;; convert '(whatever...)
+          ;; Quoted symbol intended to be sent as Wolfram symbol
+          (and (= 'quote macro)
+               (symbol? arg))               (convert arg opts)
+          (= 'quote macro)                 (throw (ex-info (str "Unsupported quoted expression:"
+                                                                (pr-str cexpr))
+                                                           {:expr cexpr}))
+          ;; Originally we called `(express/express arg opts)` but it fails b/c it only handles strings
           :else                            (expr/expr-from-parts
-                                            (cons (convert head
-                                                           (cond-> opts
-                                                             (symbol? head)
-                                                             (assoc ::args tail)))
-                                                  (map #(convert % opts) tail))))))
+                                             (cons (convert head
+                                                            (cond-> opts
+                                                                     (symbol? head)
+                                                                     (assoc ::args tail)))
+                                                   (doall (map #(convert % opts) tail))))))) ; eager => fail early
 
 (comment
+  (convert '(whatever 1) nil)
   (convert '(- 12 1 2) {})
   (convert '(Plus 1 2) {}))
