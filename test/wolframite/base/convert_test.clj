@@ -1,11 +1,13 @@
 (ns wolframite.base.convert-test
   (:require [clojure.test :refer :all]
+            [wolframite.base.convert :as convert :refer [convert]]
             [wolframite.core :as wl]
-            [wolframite.wolfram :as w]
-            [wolframite.base.convert :refer [convert]]))
+            [wolframite.impl.jlink-instance :as jlink-instance]
+            [wolframite.wolfram :as w]))
 
 (deftest test-convert
-  (#'wl/init-jlink! (deref #'wl/kernel-link-atom) {}) ; bypass private var via deref #'
+  ;(#'wl/init-jlink! (deref #'wl/kernel-link-atom) {}) ; bypass private var via deref #'
+  (wl/start) ; needed for Wolfram expr string interpretation
   (testing "Basics"
     (testing "primitives"
       (is (= (str (convert "txt" nil)) "\"txt\""))
@@ -33,8 +35,9 @@
              "Association[Rule[\":evil\", 1], Rule[\"good\", 2]]")
           "Map becomes W. Association, with keys stringified")))
   (testing "raw Wolfram expr. string"
-    (is (= "\"Plus[1,2]\""
-           (str (convert "Plus[1,2]" nil)))))
+    (is (= "Plus[1, 2]"
+           (str (convert (convert/->wolfram-str-expr "Plus[1,2]")
+                         {:jlink-instance (jlink-instance/get)})))))
   (testing "Clojure lambda -> `Function[{args}, body]`"
     (testing "(fn [x] x)"
      (let [expr (convert '(fn [x] x) nil)
