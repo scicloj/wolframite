@@ -108,5 +108,10 @@
            (wl/eval (wl/->wl (w/Map (w/fn [row] '(Internal/StringToMReal row))
                                     ["123"])))))))
 
+(deftest ->clj
+  (is (= '(+ 1 2)
+         (wl/->clj "Plus[1,2]"))
+      "Translating Wolfram expr string to Wolframatica data form works"))
+
 (comment
   (clojure.test/run-tests 'wolframite.core-test))

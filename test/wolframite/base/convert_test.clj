@@ -32,6 +32,9 @@
       (is (= (str (convert '{:evil 1, "good" 2} nil))
              "Association[Rule[\":evil\", 1], Rule[\"good\", 2]]")
           "Map becomes W. Association, with keys stringified")))
+  (testing "raw Wolfram expr. string"
+    (is (= "\"Plus[1,2]\""
+           (str (convert "Plus[1,2]" nil)))))
   (testing "Clojure lambda -> `Function[{args}, body]`"
     (testing "(fn [x] x)"
      (let [expr (convert '(fn [x] x) nil)

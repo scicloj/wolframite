@@ -147,6 +147,9 @@
           ;; Quoted symbol intended to be sent as Wolfram symbol
           (and (= 'quote macro)
                (symbol? arg))               (convert arg opts)
+          ;; Somehow, (wl/eval "Minus[1]") ends up as (quote "...")
+          (and (= 'quote macro)
+               (string? arg))               (express/express arg opts)
           (= 'quote macro)                 (throw (ex-info (str "Unsupported quoted expression:"
                                                                 (pr-str cexpr))
                                                            {:expr cexpr}))
