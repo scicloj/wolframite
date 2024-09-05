@@ -97,9 +97,24 @@
 (defmethod convert :primitive [primitive _opts]
   (proto/expr (jlink-instance/get) primitive))
 
+(defn ->wolfram-str-expr
+  "Turn `str` (a raw Wolfram expression string) into a value that `convert` will
+  properly process as an expression, and not as a primitive string."
+  [str]
+  {::wolfram-str-expr str})
+
 (defmethod convert :hash-map [map {:keys [flags] :as opts}]
-  (if (options/flag?' flags :hash-maps)
+  (cond
+    (::wolfram-str-expr map)
+    ;; Custom way of telling convert that the input is a Wolfram expression as a string
+    (do (assert (= 1 (count map)) "::wolfram-str-expr must stand on its own")
+        (assert (-> map vals first string?) "::wolfram-str-expr value must be a string")
+        (express/express (::wolfram-str-expr map) opts))
+
+    (options/flag?' flags :hash-maps)
     (convert (apply list 'Association (for [[key value] map] (list 'Rule key value))) opts)
+
+    :else
     (convert (seq map) opts)))
 
 (defmethod convert :symbol [sym {:keys [aliases] ::keys [args] :as opts}]
@@ -147,9 +162,6 @@
           ;; Quoted symbol intended to be sent as Wolfram symbol
           (and (= 'quote macro)
                (symbol? arg))               (convert arg opts)
-          ;; Somehow, (wl/eval "Minus[1]") ends up as (quote "...")
-          (and (= 'quote macro)
-               (string? arg))               (express/express arg opts)
           (= 'quote macro)                 (throw (ex-info (str "Unsupported quoted expression:"
                                                                 (pr-str cexpr))
                                                            {:expr cexpr}))

@@ -228,7 +228,8 @@
   Ex.: `(->clj \"Power[2,3]\") ; => (Power 2 3)`"
   [s]
   {:flags [:no-evaluate]}
-  (eval (list 'quote s) {:flags [:no-evaluate]}))
+  ;; A hack to force interpretation
+  (eval (convert/->wolfram-str-expr s) {:flags [:no-evaluate]}))
 
 (defn ->wl
   "Convert Clojure forms to instances of Wolfram's Expr class.
