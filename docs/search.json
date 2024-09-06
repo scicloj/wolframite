@@ -70,11 +70,21 @@
     ]
   },
   {
+    "objectID": "index.html#support",
+    "href": "index.html#support",
+    "title": "Wolframite Documentation",
+    "section": "1.7 Support",
+    "text": "1.7 Support\nWe are grateful for the financial support of Clojurists Together, who supported this work for a quarter in 2024.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
     "objectID": "index.html#contact",
     "href": "index.html#contact",
     "title": "Wolframite Documentation",
-    "section": "1.7 Contact",
-    "text": "1.7 Contact\nIf you would like to contact the maintainers or otherwise seek help from the community then please drop a message into our zulip channel or contact the team at SciCloj.",
+    "section": "1.8 Contact",
+    "text": "1.8 Contact\nIf you would like to contact the maintainers or otherwise seek help from the community then please drop a message into our zulip channel or contact the team at SciCloj.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
     ]
@@ -83,8 +93,8 @@
     "objectID": "index.html#license",
     "href": "index.html#license",
     "title": "Wolframite Documentation",
-    "section": "1.8 License",
-    "text": "1.8 License\nDistributed under the Mozilla Public License either version 2.0 or (at your option) any later version.",
+    "section": "1.9 License",
+    "text": "1.9 License\nDistributed under the Mozilla Public License either version 2.0 or (at your option) any later version.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
     ]
@@ -93,8 +103,8 @@
     "objectID": "index.html#legal",
     "href": "index.html#legal",
     "title": "Wolframite Documentation",
-    "section": "1.9 Legal",
-    "text": "1.9 Legal\nThe product names used in this website are for identification purposes only. All trademarks and registered trademarks, including “Wolfram Mathematica,” are the property of their respective owners. Wolframite is not a product of Wolfram Research. The software on this site is provided “as-is,” without any express or implied warranty.",
+    "section": "1.10 Legal",
+    "text": "1.10 Legal\nThe product names used in this website are for identification purposes only. All trademarks and registered trademarks, including “Wolfram Mathematica,” are the property of their respective owners. Wolframite is not a product of Wolfram Research. The software on this site is provided “as-is,” without any express or implied warranty.",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
     ]
@@ -103,8 +113,8 @@
     "objectID": "index.html#further-documentation",
     "href": "index.html#further-documentation",
     "title": "Wolframite Documentation",
-    "section": "1.10 Further documentation",
-    "text": "1.10 Further documentation\nSee the book content menu on the left side\n\nsource: notebooks/index.clj",
+    "section": "1.11 Further documentation",
+    "text": "1.11 Further documentation\nSee the book content menu on the left side\n\nsource: notebooks/index.clj",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
     ]
@@ -346,7 +356,7 @@
     "href": "for_scientists.cavity_physics.html#visualised",
     "title": "6  Wolframite for scientists II (Cavity physics)",
     "section": "6.8 Visualised",
-    "text": "6.8 Visualised\nSo we finally have an equation for the field inside the cavity. If we were mathematicians, then of course, we might have stopped here. Assuming that it’s only real scientists who’re reading this (shhh!), then the next step is to explore these equations graphically, under practical assumptions.\nFor this, we will define a few utility functions, that also demonstrate Wolfram’s conciseness.\n\n(defn linspace\n  \"A list of n numbers between a and b.\"\n  [a b n]\n  (let [d (/ (- b a) (dec n))]\n    (into []\n          (map (fn [x]\n                 (+ a\n                    (* x d)))\n               (range n)))))\n\n\n(defn coordinates\n  \"There's no numpy here, so what do we do? It turns out Wolfram can reimplement a meshgrid-like function very concisely (let's not talk about the performance though...).\"\n  [xmin xmax ymin ymax]\n  (eval-&gt; (w/Outer w/List\n                   (linspace xmin xmax 100)\n                   (linspace ymin ymax 100))\n          (w/Flatten 1)))\n\n\n(defn Efield\n  \"For convenience, we build a clojure function over the Wolfram expression created earlier.\"\n  [t1 t2 l1 l2 phi]\n  (wl/eval (w/Clear 'f))\n  (wl/eval `(_= (f (Pattern t1 (Blank))\n                   (Pattern t2 (Blank))\n                   (Pattern l1 (Blank))\n                   (Pattern l2 (Blank))\n                   (Pattern phi (Blank)))\n                ~I4--approx))\n  (wl/eval `(f ~t1 ~t2 ~l1 ~l2 ~phi)))\n\n\n(defn Efield--transmission-phase\n  \"This is just a function to reduce the number of variables over which we plot. We can't (easily) plot in 4-D!\"\n  [[t1 phase]]\n  [t1 phase (Efield t1 t1 20E-6 20E-6 phase)])\n\n\n(wl/eval (w/_= 'nums (mapv Efield--transmission-phase\n                           (coordinates\n                            (math/sqrt 50E-6)\n                            (math/sqrt 700E-6)\n                            -0.001\n                            0.001))))\n\n\n(wh/view\n (w/ListPlot3D 'nums\n               (w/-&gt; w/PlotRange w/All)\n               (w/-&gt; w/Boxed w/False)\n               (w/-&gt; w/AxesLabel\n                     [\"Mirror transmission\" \"Phase\" \"Intracavity intensity\"])))\n\nListPlot3D[nums, Rule[PlotRange, All], Rule[Boxed, False], Rule[AxesLabel, {\"Mirror transmission\", \"Phase\", \"Intracavity intensity\"}]]\nAnd there you have it! It turns out that if you get the phase right and you buy high quality mirrors then you can massively amplify the laser light. In fact, if you add a ‘gain’ material in the middle then such light amplification by the stimulated emission of radiation has a catchier name: it’s called a Laser!",
+    "text": "6.8 Visualised\nSo we finally have an equation for the field inside the cavity. If we were mathematicians, then of course, we might have stopped here. Assuming that it’s only real scientists who’re reading this (shhh!), then the next step is to explore these equations graphically, under practical assumptions.\nFor this, we will define a few utility functions, that also demonstrate Wolfram’s conciseness.\n\n(defn linspace\n  \"A list of n numbers between a and b.\"\n  [a b n]\n  (let [d (/ (- b a) (dec n))]\n    (into []\n          (map (fn [x]\n                 (+ a\n                    (* x d)))\n               (range n)))))\n\n\n(defn coordinates\n  \"There's no numpy here, so what do we do? It turns out Wolfram can reimplement a meshgrid-like function very concisely (let's not talk about the performance though...).\"\n  [xmin xmax ymin ymax]\n  (eval-&gt; (w/Outer w/List\n                   (linspace xmin xmax 100)\n                   (linspace ymin ymax 100))\n          (w/Flatten 1)))\n\n\n(defn Efield\n  \"For convenience, we build a clojure function over the Wolfram expression created earlier.\"\n  [t1 t2 l1 l2 phi]\n  (wl/eval (w/Clear 'f))\n  (wl/eval (w/_= (list 'f\n                       (w/Pattern t1 (w/Blank))\n                       (w/Pattern t2 (w/Blank))\n                       (w/Pattern l1 (w/Blank))\n                       (w/Pattern l2 (w/Blank))\n                       (w/Pattern phi (w/Blank)))\n                 I4--approx))\n  (wl/eval (list 'f t1 t2 l1 l2 phi)))\n\n\n(defn Efield--transmission-phase\n  \"This is just a function to reduce the number of variables over which we plot. We can't (easily) plot in 4-D!\"\n  [[t1 phase]]\n  [t1 phase (Efield t1 t1 20E-6 20E-6 phase)])\n\n\n(wl/eval (w/_= 'nums (mapv Efield--transmission-phase\n                           (coordinates\n                            (math/sqrt 50E-6)\n                            (math/sqrt 700E-6)\n                            -0.001\n                            0.001))))\n\n\n(wh/view\n (w/ListPlot3D 'nums\n               (w/-&gt; w/PlotRange w/All)\n               (w/-&gt; w/Boxed w/False)\n               (w/-&gt; w/AxesLabel\n                     [\"Mirror transmission\" \"Phase\" \"Intracavity intensity\"])))\n\nListPlot3D[nums, Rule[PlotRange, All], Rule[Boxed, False], Rule[AxesLabel, {\"Mirror transmission\", \"Phase\", \"Intracavity intensity\"}]]\nAnd there you have it! It turns out that if you get the phase right and you buy high quality mirrors then you can massively amplify the laser light. In fact, if you add a ‘gain’ material in the middle then such light amplification by the stimulated emission of radiation has a catchier name: it’s called a Laser!",
     "crumbs": [
       "Tutorials for scientists",
       "<span class='chapter-number'>6</span>  <span class='chapter-title'>Wolframite for scientists II (Cavity physics)</span>"
