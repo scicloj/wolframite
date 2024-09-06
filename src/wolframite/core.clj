@@ -34,7 +34,6 @@
   (:require
    [babashka.fs :as fs]
    [clojure.tools.logging :as log]
-   [clojure.walk :as walk]
    [wolframite.base.cep :as cep]
    [wolframite.base.convert :as convert]
    [wolframite.base.evaluate :as evaluate]
@@ -90,17 +89,6 @@
    {:pre [(some-> os system/supported-OS) jlink-impl]}
    (->> (kernel-link-opts init-opts)
         (proto/create-kernel-link jlink-impl))))
-
-(defn- unqualify
-  "Remove namespaces from all symbols nested wherever in the form.
-  Useful when you build Wolframite expressions using the syntax quote, which automatically
-  qualifies all symbols. (Though you can avoid it for a symbol by using `~'the-symbol`.)"
-  [form]
-  (walk/postwalk (fn [form]
-                   (if (qualified-symbol? form)
-                     (symbol (name form))
-                     form))
-                 form))
 
 (declare eval)
 

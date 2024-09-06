@@ -152,7 +152,7 @@
         (simple-vector? coll opts) (convert (to-array coll) opts)
         :else (convert-non-simple-list coll opts)))
 
-(defmethod convert :expr [[head & tail :as cexpr] opts]
+(defmethod convert :expr [[head & tail :as clj-expr] opts]
   (let [macro head
         arg (first tail)]
     (cond (= 'clojure.core/deref macro)    (convert (cexpr-from-prefix-form arg) opts)
@@ -163,8 +163,8 @@
           (and (= 'quote macro)
                (symbol? arg))               (convert arg opts)
           (= 'quote macro)                 (throw (ex-info (str "Unsupported quoted expression:"
-                                                                (pr-str cexpr))
-                                                           {:expr cexpr}))
+                                                                (pr-str clj-expr))
+                                                           {:expr clj-expr}))
           ;; Originally we called `(express/express arg opts)` but it fails b/c it only handles strings
           :else                            (expr/expr-from-parts
                                              (cons (convert head
