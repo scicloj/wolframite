@@ -1,6 +1,7 @@
 (ns wolframite.impl.wolfram-syms.intern
   "Interning of Wolfram symbols as Clojure vars, for convenience."
-  (:require [clojure.walk])
+  (:require [clojure.walk :as walk]
+            [clojure.walk])
   (:import (clojure.lang IMeta)))
 
 (defn interned-var-val->symbol
@@ -76,3 +77,14 @@
          (list 'quote (with-meta % {::quoted? true})) ; add meta to that we can avoid recursion
          %)
       body)))
+
+(defn- unqualify
+  "Remove namespaces from all symbols nested wherever in the form.
+  Useful when you build Wolframite expressions using the syntax quote, which automatically
+  qualifies all symbols. (Though you can avoid it for a symbol by using `~'the-symbol`.)"
+  [form]
+  (walk/postwalk (fn [form]
+                   (if (qualified-symbol? form)
+                     (symbol (name form))
+                     form))
+                 form))
