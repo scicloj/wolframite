@@ -77,14 +77,7 @@
 (defn experimental-fn-alias? "EXPERIMENTAL - DO NOT USE!" [alias]
   (-> alias meta ::experimental-fn))
 
-(def clojure-scope-aliases
-  {#_#_'Function 'ClojurianScopes/Function
-   'Let      'ClojurianScopes/Let
-   'With     'ClojurianScopes/With
-   'Block    'ClojurianScopes/Block
-   'Module   'ClojurianScopes/Module})
-
-(def all-aliases (merge base-aliases clojure-scope-aliases))
+(def all-aliases base-aliases)
 
 ;; * Full config options
 
@@ -92,7 +85,6 @@
   (merge flag-sets
          {#_#_:alias-list                 :clojure-aliases
           :poll-interval              20 ;; ms
-          :clojure-scope-aliases      clojure-scope-aliases
           :clojure-aliases            base-aliases
           :all-aliases all-aliases}))
 

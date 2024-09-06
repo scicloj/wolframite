@@ -137,12 +137,7 @@
       (conj (parse (.head expr) opts))))
 
 (defn parse-complex-atom [expr {:keys [flags] :as opts}]
-  (let [head (expr/head-str expr)
-        ;; TODO(jh) finish this? NOTE: leaving this in until hash map support has been tested
-        #_#_handle-hash-map (fn [expr opts] (if (and (options/flag?' flags :hash-maps)
-                                                     (not (options/flag?' flags :full-form)))
-                                              (parse-hash-map expr opts)
-                                              (parse-generic-expression expr opts)))]
+  (let [head (expr/head-str expr)]
     (cond (.bigIntegerQ expr)      (.asBigInteger expr)
           (.bigDecimalQ expr)      (.asBigDecimal expr)
           (.integerQ expr)         (parse-integer expr)
@@ -155,7 +150,6 @@
                                             (not (options/flag?' flags :full-form)))
                                      (parse-fn expr opts)
                                      (parse-generic-expression expr opts))
-          ;; (= "HashMapObject" head) (handle-hash-map expr opts)
           :else                    (parse-generic-expression expr opts))))
 
 (defn standard-parse [expr {:keys [flags] :as opts}]

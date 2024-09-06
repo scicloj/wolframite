@@ -65,11 +65,7 @@
     (wl-eval (wl-convert 'init))
     (wl-eval (wl-convert '(Needs "Parallel`Developer`")))
     (wl-eval (wl-convert '(Needs "Developer`")))
-    (wl-eval (wl-convert '(ParallelNeeds "Developer`")))
-    (wl-eval (wl-convert '(Needs "ClojurianScopes`"))) ; FIXME Does this work? Shouldn't we send the file over?!
-    (wl-eval (wl-convert '(ParallelNeeds "ClojurianScopes`")))
-    (wl-eval (wl-convert '(Needs "HashMaps`")))
-    (wl-eval (wl-convert '(ParallelNeeds "HashMaps`")))))
+    (wl-eval (wl-convert '(ParallelNeeds "Developer`")))))
 
 (comment
   (evaluator-init (merge {:kernel/link @kernel-link-atom} defaults/default-options)))
