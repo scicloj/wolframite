@@ -5,6 +5,7 @@
              :base-source-path "notebooks"
              :source-path ["index.clj"
                            "quickstart.clj"
+                           "understanding_wolframite.clj"
                            "gotcha.clj"
                            "packages.clj"
                            {:part "Tutorials for scientists"
