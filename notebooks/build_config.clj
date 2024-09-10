@@ -12,7 +12,8 @@
                             :chapters ["for_scientists/index.clj"
                                        "for_scientists/cavity_physics.clj"]}
                            {:part "Tutorials for developers"
-                            :chapters ["for_developers/index.clj"]}
+                            :chapters ["for_developers/index.clj"
+                                       "for_developers/wolfram_for_clojurians.clj"]}
                            "faq.clj"]
              :base-target-path "docs"
              :book {:title "Wolframite Documentation"}
