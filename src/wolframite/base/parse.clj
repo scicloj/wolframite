@@ -6,6 +6,7 @@
     [wolframite.impl.protocols :as proto]
     [wolframite.lib.options :as options]
     [wolframite.base.expr :as expr]
+    [wolframite.base.types :as types]
     [clojure.string :as str]))
 
 (declare parse)
@@ -196,10 +197,10 @@
   #'custom-parse-dispatch)
 
 (defmethod custom-parse 'EntityProperty [expr opts]
-  (entity-type->keyword expr opts))
+  (types/->EntityProperty (mapv #(parse % opts) (.args expr))))
 
 (defmethod custom-parse 'Entity [expr opts]
-  (entity-type->keyword expr opts))
+  (types/->Entity (mapv #(parse % opts) (.args expr))))
 
 (defmethod custom-parse :default [expr opts]
   (standard-parse expr opts))

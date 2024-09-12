@@ -70,12 +70,14 @@ In Wolfram, everything is global by default and you need to take care to avoid t
 ; Use _entity_["Properties"] to find a list of properties and `EntityValue[entity, "Population"]`
 (def LA (w/Entity "City" ["LosAngeles" "California" "UnitedStates"]))
 (wl/eval (w/EntityValue LA "Population"))
-; In Wolframite, we represent these entities as keywords, but currently they are only one-way, from Wolfram to Clojure:
+; In Wolframite, we represent these entities as records:
 (wl/eval LA)
-;; Cannot do: `(wl/eval (w/EntityValue (wl/eval LA) "Population"))`
+; And they can be translated back to Wolfram and used there:
+(wl/eval (w/EntityValue (wl/eval LA) "Population"))
 
-(wl/eval (w/= 'LAent (w/Entity "City" ["LosAngeles" "California" "UnitedStates"])))
-(take 3 (wl/eval (list 'LAent "Properties")))
+;; Here we need a small workaround - Wolfram allows `someEntity["Properties"]` but in our case, we'd try to use the list
+;; `(Entity ...)` as a function, which wouldn't work. So we construct an expression list explicitly:
+(take 3 (wl/eval (list (w/Entity "City" ["LosAngeles" "California" "UnitedStates"]) "Properties")))
 ; Or, in Wolfram: `{ EntityProperty[City, ActiveHomeListingCount], EntityProperty[City, AdministrativeDivision], ... }`
 ;
 ; (Note: You may want to override `wolframite.base.parse/custom-parse` for `'Entity` and `'EntityProperty` to modify how these

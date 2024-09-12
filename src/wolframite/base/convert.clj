@@ -6,7 +6,9 @@
             [wolframite.lib.options :as options]
             [wolframite.base.express :as express]
             [wolframite.base.expr :as expr]
-            [wolframite.runtime.defaults :as defaults]))
+            [wolframite.base.types :as types]
+            [wolframite.runtime.defaults :as defaults])
+  (:import (wolframite.base.types Entity EntityProperty)))
 
 ;; (remove-ns 'wolframite.base.convert)
 
@@ -30,6 +32,7 @@
             (list? obj)) :list
         (ratio? obj) :rational
         (primitive? obj) :primitive
+        (types/wolframite-type? obj) :wolframite-entity
         (map? obj) :hash-map
         (symbol? obj) :symbol
         (nil? obj) :null
@@ -165,12 +168,21 @@
                                                                 (pr-str clj-expr))
                                                            {:expr clj-expr}))
           ;; Originally we called `(express/express arg opts)` but it fails b/c it only handles strings
-          :else                            (expr/expr-from-parts
-                                             (cons (convert head
-                                                            (cond-> opts
-                                                                     (symbol? head)
-                                                                     (assoc ::args tail)))
-                                                   (doall (map #(convert % opts) tail))))))) ; eager => fail early
+          :else (expr/expr-from-parts
+                  (cons (convert head
+                                 (cond-> opts
+                                         (symbol? head)
+                                         (assoc ::args tail)))
+                        (doall (map #(convert % opts) tail)))))))
+
+(defmethod convert :wolframite-entity [record opts]
+  (let [type-name (.getSimpleName (type record))]
+    (convert
+      (->> (get record (keyword type-name))
+           reverse
+           (into ())
+           (cons (symbol type-name)))
+      opts)))
 
 (comment
   (convert '(whatever 1) nil)
