@@ -6,53 +6,76 @@
     [clojure.string :as str]
     [wolframite.core :as wl]
     [wolframite.wolfram :as w]
-    [scicloj.kindly.v4.kind :as k]))
+    [scicloj.kindly.v4.kind :as k])
+  (:import (java.io FileInputStream)
+           (java.util.zip GZIPInputStream ZipInputStream)))
 
 (k/md "# Wolframite for developers
 
-## TL;DR
+We introduce you, the motivated Clojure developer, to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and some getting started notes, we outline a 'real' workflow using the example of **TODO**")
 
-We introduce you, the motivated Clojure developer, to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and some getting started notes, we outline a 'real' workflow using the example of ...")
+; First, start & connect to a Wolfram Kernel (assuming all the common requires):
+(wl/start)
 
-(wl/start) ; start & connect to a Wolfram Kernel
-
-
-(k/md "Let's read a CSV file. The docs
+(k/md "
+Now, let's play with some data! But first we will need to read them in from a CSV file. The docs
 tell us [how to import the first ten lines](https://reference.wolfram.com/language/ref/format/CSV.html) of a CSV:
 
 ```wolfram
 Import[\"ExampleData/financialtimeseries.csv\", {\"Data\", 1 ;; 10}]
 ```
-
 However, how do we write the `1 ;; 10` in Wolframite?! Let's ask!")
 
 (wl/->clj "1 ;; 10")
 
 (k/md "Thus, we could write it as `'(Span 1 10)` (notice the important quote!),
-but we rather user our convenience functions:")
+but we rather use our convenience functions:")
 
 (w/Span 1 10)
 
-(def R (time (wl/eval (w/Import (.getAbsolutePath (io/file "notebooks/data/202304_divvy_tripdata.csv.gz"))
-                                [["GZIP" "CSV"]
-                                 (w/Span 1 10)])))) ; 2s for 10 rows on my PC
+(k/md "
+Ideally, we'd take the easy path and follow the docs and use the very smart and flexible `Import` on our `202304_divvy_tripdata.csv.gz`.
+Sadly, the current version of Wolfram is not very efficient in this and with our 400k rows it is unbearably slow. All the smartness and
+auto-detection costs \uD83E\uDD37. If we read only a few rows then it is fine (±2s for 10s - 100s of rows):")
 
-(k/md "Note: [Loading the ± 400k rows file with the awesome SciCloj tooling](https://github.com/scicloj/clojure-data-scrapbook/blob/bdc46d643ac5fcdba2fb21002e269897274d9be3/projects/geography/chicago-bikes/notebooks/index.clj#L84-L88) would take ± 3.5s. How amazing is that?!")
+(k/table
+  {:row-vectors
+   (time (wl/eval (w/Import (.getAbsolutePath (io/file "notebooks/data/202304_divvy_tripdata.csv.gz"))
+                            ["Data"
+                             (w/Span 1 3)])))})
 
-;(wl/eval (w/Import "/Users/holyjak/tmp/delme/demo.csv.gz"
-;                   ["GZIP", "CSV"])) ; works
-;; TODO 1.5s for 3 rows, 1.8s for 100
-;; TODO ols 3+4 are "2023-04-02 08:37:28" => parse?
-#_ FIXME ; Import takes too long, we need to do a simpler Open + ReadList of records; TODO How to parse parts of interest?
-;(wl/->wl (w/Import (.getAbsolutePath (io/file "notebooks/data/202304_divvy_tripdata.csv.gz"))
-;                   ["Data" (w/Span 1 10000)], ; import as 2D data, but only rows 1...3 [inc. headers]
-;                   ;; Notice that the format (gzipped CSV) is detected automatically
-;                   (w/-> "HeaderLines" 1)))
+(k/md "
+Note: [Loading the ± 400k rows file with the awesome SciCloj tooling](https://github.com/scicloj/clojure-data-scrapbook/blob/bdc46d643ac5fcdba2fb21002e269897274d9be3/projects/geography/chicago-bikes/notebooks/index.clj#L84-L88) would take ± 3.5s. How amazing is that?!
 
-(time (wl/eval "f = OpenRead[\"/tmp/huge.csv\"];
-   AbsoluteTiming[data = ReadList[f, Table[Record, {13}], RecordSeparators -> {\",\", \"\\n\"}]; \"done\"];
-   Close[f];
-   Length[data]"))
+It would be nice to load the data with SciCloj / dtype.next and send it to Wolfram as data, but there is currently [no efficient
+way to share large binary data](https://github.com/scicloj/wolframite/issues/113).
+
+Thus we will need a more DIY and lower-level approach to getting the data in, leveraging `OpenRead` and `ReadList`.
+Sadly, it cannot handle a gzpipped files (as far as I know) so we need to unzip it first:")
+
+(when-not (.exists (io/file "/tmp/huge.csv"))
+ (let [zip (io/file "notebooks/data/202304_divvy_tripdata.csv.gz")]
+   (with-open [zis (GZIPInputStream. (io/input-stream zip))]
+     (io/copy zis (io/file "/tmp/huge.csv")))))
+
+(k/md "
+Now we are ready to read the data in. We will store them into a Wolfram-side var called `data` so that we can work with them further.
+")
+
+(time
+  (wl/eval (w/do (w/= 'f (w/OpenRead "/tmp/huge.csv"))
+                 (w/AbsoluteTiming (w/= 'data (w/ReadList 'f
+                                                          w/Word
+                                                          (w/-> 'WordSeparators [","])
+                                                          (w/-> 'NullWords true)
+                                                          (w/-> 'RecordLists true)))
+                                   #_#_(w/Table w/Record [13]) ; a row of 13 records b/c there are 13 columns
+                                           (w/-> 'RecordSeparators ["," "\n"]))
+                 (w/Length 'data))))
+
+
+
+(wl/->clj "ReadList[f, Word, WordSeparators -> {\",\"}, NullWords -> True, RecordLists -> True]")
 
 (time (wl/eval "f = OpenRead[\"/tmp/huge.csv\"];
    AbsoluteTiming[data = ReadList[f, Word, WordSeparators -> {\",\"}, NullWords -> True, RecordLists -> True]; \"done\"];
@@ -61,7 +84,7 @@ but we rather user our convenience functions:")
 
 (wl/eval "Length[data]")
 (wl/eval "data[[300123]]")
-(def headers (->> (wl/eval "data[[1]]")
+(def headers (->> (wl/eval "data[[1]]") ; FIXME fails if $Failed
                   (map #(str/replace % "\"" ""))))
 (def header->idx (zipmap headers (next (range))))
 
@@ -81,7 +104,7 @@ but we rather user our convenience functions:")
                    ["123"]))
     wl/eval)
 
-(-> (wl/->wl (w/Map (w/fn [row] (Internal/StringToMReal row)) ;; FIXME does not work ,but the above thus
+(-> (wl/->wl (w/Map (w/fn [row] (list 'Internal/StringToMReal row))
                     ["123"]))
     wl/eval)
 

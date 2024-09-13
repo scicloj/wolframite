@@ -1,16 +1,17 @@
 ;; # Understanding Wolframite {#sec-understanding-wolframite}
 ;;
-;; Where we learn a little more about how Wolframite works, so that you can use it effectively.
+;; Where you learn a little more about how Wolframite works, so that you can use it effectively.
 ;;
-;; If you are in a hurry, you can just skim it to know what answers you can find here, when you need them.
+;; If you are in a hurry, you can just skim through this to know what answers you can find here when you need them.
 ;; We will refer to it from other parts of the documentation.
 ;;
-;; First, some required requires:
+;; First, we need some namespaces:
 (ns understanding-wolframite
   (:require [scicloj.kindly.v4.kind :as k]
             [wolframite.core :as wl]
             [wolframite.wolfram :as w]
-            wolframite.runtime.defaults))
+            wolframite.runtime.defaults)
+  (:import (com.sun.org.apache.xpath.internal.operations Plus)))
 
 (k/md "Next, we need to actually start a [Wolfram Kernel](https://reference.wolfram.com/language/ref/program/WolframKernel.html)
 and connect to it:")
@@ -33,15 +34,15 @@ There are three ways of writing these expression.
 
 ### Raw form {#sec-raw-form}
 
-The first one is the _raw (quoted) data form_,with symbols corresponding to Wolfram symbols or Wolframite _aliases_
-that are mapped to such symbols:")
+The first one is the _raw (quoted) data form_, using actual Clojure symbols corresponding to Wolfram symbols or Wolframite _aliases_.
+Notice the `'` quote in front of the expression, telling Clojure Reader not to evaluate it but return it as-is:")
 
 (wl/eval '(+ 1 (Minus 1)))
 
 ;; ### Aside: Wolframite aliases {#sec-aliases-table}
 ;;
-;; Aside of symbols that directly correspond to Wolfram symbols, you can also use some Wolframite aliases, which
-;; provide alternative names for these symbols. We have used above `+`, which is an alias of `Plus`. Here are
+;; Aside of symbols that directly correspond to Wolfram symbols, you can also use Wolframite aliases. The aliases
+;; provide alternative names for Wolfram symbols. We have used above `+`, which is an alias of `Plus`. Here are
 ;; all the built-in aliases that we currently support:
 
 (k/table {:column-names [:Alias :Wolfram],
@@ -49,34 +50,38 @@ that are mapped to such symbols:")
                            (dissoc '-)
                            (assoc '- "Minus or Subtract"))})
 
-(k/md "We could also use the aliased symbol directly:")
+(k/md "Thus, the following two expressions are equivalent")
+
+(wl/eval '(+ 1 (- 1)))
 
 (wl/eval '(Plus 1 (Minus 1)))
 
 ;; ### Evaluated form {#sec-evaluated-form}
 ;;
-;; The second is the _evaluated form_, which uses vars from the [`wolframite.wolfram`](https://github.com/scicloj/wolframite/blob/main/src/wolframite/wolfram.clj)
-;; namespace and is much more convenient, enabling autocomplete and mixing with evaluated Clojure code:)
+;; The second form is the _evaluated form_, which uses vars from the [`wolframite.wolfram`](https://github.com/scicloj/wolframite/blob/main/src/wolframite/wolfram.clj)
+;; namespace and is much more convenient, enabling autocomplete and mixing with evaluated Clojure code:
 
 (wl/eval (w/+ (clojure.core/- 5 4) (w/Minus 1)))
 
-; Notice that we have convenience vars for both Wolfram symbols and Wolframite aliases. We could also rewrite it without the alias:
+; Notice that we have convenience vars for both Wolfram symbols and Wolframite aliases and thus both of the following work:
 
-(wl/eval (w/Plus (clojure.core/- 5 4) (w/Minus 1)))
+(=
+  (wl/eval (w/+ 1 (w/- 1)))
+  (wl/eval (w/Plus 1 (w/Minus 1))))
 
 ;; Notice that we can mix Clojure and Wolfram - but the Clojure parts are evaluated on our side,
-;; before the expression is translated and sent to Wolfram.
+;; before the rest of the expression is translated and sent to Wolfram.
 ;;
 ;; The evaluated form is actually translated into the raw form before being evaluated, as we can see if
 ;; we run it on its own, without passing it to `wl/eval`:
 (w/Plus (clojure.core/- 5 4) (w/Minus 1))
 
 ;; You can see here that the convenience functions from the `w/` namespace essentially evaluate to
-;; themselves in the symbolic, unevaluated form.
+;; themselves in the symbolic, unevaluated form - `(w/Plus arguments...)` becomes `'(Plus arguments...)`.
 
 ;; ### Wolfram string form {#sec-wolfram-string-form}
 ;;
-;; There is one more form, the _Wolfram string form_, which is the raw Wolfram code as a string:
+;; There is one more form, the _Wolfram string form_, which is the raw Wolfram code in a string:
 
 (wl/eval "Plus[1,Minus[1]]")
 
@@ -85,16 +90,18 @@ that are mapped to such symbols:")
 
 ;; ### Mixing different kinds of forms
 ;;
-;; The other forms may be nested the evaluated one. You'd typically need that when Wolframite evaluated form
-;; does not support (yet) what you are trying to do. When nesting a Wolfram string form, we need to
-;; explicitly tell Wolframite to treat it as an expression and not just as a primitive string:
+;; The evaluated form may also contain sections in the other forms. You'd typically need that when Wolframite evaluated form
+;; does not (yet) support that which you are trying to do. When nesting a Wolfram string form, we need to
+;; explicitly tell Wolframite to treat it as an expression and not just as a primitive string, by passing it through `wl/wolfram-expr`:
 
-(wl/eval (w/Plus '(Internal/StringToMReal "-1.5") (wl/wolfram-expr "Minus[3]")))
+(wl/eval (w/Plus
+           '(Internal/StringToMReal "-1.5")
+           (wl/wolfram-expr "Minus[3]")))
 
 ;; ### Aside: Wolfram modules and fully qualified names
 ;;
 ;; Most Wolfram functions are global, but they can also be placed inside modules and need to be referred to by their
-;; fully qualified name. While Wolfram using `` ` `` to separate module and symbol, we use `/`. Thus, these two are equivalent:
+;; fully qualified names. While Wolfram uses `` ` `` to separate module and symbol, we write it as `/`. Thus, these two are equivalent:
 
 (wl/eval "Internal`StringToMReal[\"-1.5\"]")
 
@@ -106,7 +113,7 @@ that are mapped to such symbols:")
 
 (k/md "## Aside: Translating Wolfram to Wolframite
 
-When looking up how to do a certain thing in Wolfram, you will get a Wolfram answer.
+When asking the internets or ChatGPT how to do a certain thing in Wolfram, you will get a Wolfram answer.
 Thus you need to know how to translate it from Wolfram to Wolframite. Let's say you have
 this Wolfram snippet:
 
@@ -139,3 +146,5 @@ When there is a syntactic or semantic error in your expression, you often get th
 
 ;; Correct:
 (wl/eval (w/FromDigits "87"))
+
+;; On the other hand, some operations are coded to return the symbol `$Failed` - read the doc strings.

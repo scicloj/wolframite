@@ -108,5 +108,7 @@ In particular, the flagship product of Wolfram, the one you've probably heard of
 
 (k/md "This is where Wolfram, and so Wolframite, really shines. And if you're interested in exploring this further, have a look at one of our longer tutorials.
 
+## Wolfram has a lot to offer
+
 You may also want to browse the [thousands of functions from various domains that Wolfram provides](https://www.wolfram.com/language/core-areas/).
 These domains include Machine Learning, Calculus & Algebra, Optimization, Geography, and much more.")
