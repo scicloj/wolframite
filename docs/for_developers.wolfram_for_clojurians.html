@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10&nbsp; FAQ – Wolframite Documentation</title>
+<title>9&nbsp; Brief introduction into Wolfram Language for Clojure developers – Wolframite Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,7 +64,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./for_developers.wolfram_for_clojurians.html" rel="prev">
+<link href="./faq.html" rel="next">
+<link href="./for_developers.index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -102,35 +103,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -143,7 +115,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./faq.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">FAQ</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./for_developers.index.html">Tutorials for developers</a></li><li class="breadcrumb-item"><a href="./for_developers.wolfram_for_clojurians.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Brief introduction into Wolfram Language for Clojure developers</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -238,7 +210,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./for_developers.wolfram_for_clojurians.html" class="sidebar-item-text sidebar-link">
+  <a href="./for_developers.wolfram_for_clojurians.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Brief introduction into Wolfram Language for Clojure developers</span></span></a>
   </div>
 </li>
@@ -246,7 +218,7 @@ window.Quarto = {
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./faq.html" class="sidebar-item-text sidebar-link active">
+  <a href="./faq.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
   </div>
 </li>
@@ -255,15 +227,33 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#what-is-wolfram" id="toc-what-is-wolfram" class="nav-link active" data-scroll-target="#what-is-wolfram"><span class="header-section-number">9.1</span> What is Wolfram?</a></li>
+  <li><a href="#pitfalls" id="toc-pitfalls" class="nav-link" data-scroll-target="#pitfalls"><span class="header-section-number">9.2</span> Pitfalls</a></li>
+  <li><a href="#building-blocks" id="toc-building-blocks" class="nav-link" data-scroll-target="#building-blocks"><span class="header-section-number">9.3</span> Building blocks</a>
+  <ul>
+  <li><a href="#symbolic-expressions" id="toc-symbolic-expressions" class="nav-link" data-scroll-target="#symbolic-expressions"><span class="header-section-number">9.3.0.1</span> Symbolic expressions</a></li>
+  <li><a href="#lists" id="toc-lists" class="nav-link" data-scroll-target="#lists"><span class="header-section-number">9.3.0.2</span> Lists</a></li>
+  <li><a href="#iterators-to-simplify-repetitive-operations" id="toc-iterators-to-simplify-repetitive-operations" class="nav-link" data-scroll-target="#iterators-to-simplify-repetitive-operations"><span class="header-section-number">9.3.0.3</span> Iterators (to simplify repetitive operations)</a></li>
+  <li><a href="#rules" id="toc-rules" class="nav-link" data-scroll-target="#rules"><span class="header-section-number">9.3.0.4</span> Rules</a></li>
+  <li><a href="#associations" id="toc-associations" class="nav-link" data-scroll-target="#associations"><span class="header-section-number">9.3.0.5</span> Associations</a></li>
+  <li><a href="#patterns" id="toc-patterns" class="nav-link" data-scroll-target="#patterns"><span class="header-section-number">9.3.0.6</span> Patterns</a></li>
+  <li><a href="#real-world-entities" id="toc-real-world-entities" class="nav-link" data-scroll-target="#real-world-entities"><span class="header-section-number">9.3.0.7</span> Real-World Entities</a></li>
+  <li><a href="#various" id="toc-various" class="nav-link" data-scroll-target="#various"><span class="header-section-number">9.3.0.8</span> Various</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./for_developers.index.html">Tutorials for developers</a></li><li class="breadcrumb-item"><a href="./for_developers.wolfram_for_clojurians.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Brief introduction into Wolfram Language for Clojure developers</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-FAQ" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">FAQ</span></span></h1>
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Brief introduction into Wolfram Language for Clojure developers</span></h1>
 </div>
 
 
@@ -290,66 +280,146 @@ window.Quarto = {
 .clay-side-by-side .sourceCode {margin: 0}
 .clay-side-by-side {margin: 1em 0}
 </style>
-<script src="faq_files/md-default0.js" type="text/javascript"></script>
-<script src="faq_files/md-default1.js" type="text/javascript"></script>
-<script src="faq_files/katex2.js" type="text/javascript"></script>
-<p><link href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" rel="stylesheet" type="text/css"></p>
+<script src="for_developers.wolfram_for_clojurians_files/md-default0.js" type="text/javascript"></script>
+<script src="for_developers.wolfram_for_clojurians_files/md-default1.js" type="text/javascript"></script>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">ns</span> faq</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Anticipated and, potentially literally, frequently asked questions."</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  (<span class="at">:require</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>   [scicloj.kindly.v4.kind <span class="at">:as</span> k]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>   [wolframite.core <span class="at">:as</span> wl]</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   [wolframite.wolfram <span class="at">:as</span> w]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">ns</span> for-developers.wolfram-for-clojurians</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  (<span class="at">:require</span> [scicloj.kindly.v4.kind <span class="at">:as</span> k]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>            [wolframite.core <span class="at">:as</span> wl]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            [wolframite.wolfram <span class="at">:as</span> w]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>Why Wolfram?</strong> - From the horse’s <a href="https://www.wolfram.com/language/">mouth</a>:</p>
-<blockquote class="blockquote">
-<p>Wolfram Language is a symbolic language, deliberately designed with the breadth and unity needed to develop powerful programs quickly. By integrating high-level forms—like Image, GeoPolygon or Molecule—along with advanced superfunctions—such as ImageIdentify or ApplyReaction—Wolfram Language makes it possible to quickly express complex ideas in computational form.</p>
-</blockquote>
-<p>More concretely, the Wolfram language, and associated ecosystem, is a powerful way of getting stuff done. As a high-level functional programming language, with <a href="https://reference.wolfram.com/language/">more than 6000 functions from across mathematics and data processing</a>, it is sometimes the only practical way of of getting things done. Particularly in explicitly scientific fields. What makes it potentially unique is its place in the Venn diagram of symbolic manipulation, built-in factual and computational knowledge and niche, fully implemented algorithms.</p>
-<p>Check out the <a href="https://www.wolfram.com/language/gallery/">Wolfram Language Code Gallery</a> for some amazing examples of what you can achieve with Wolfram much more easily than with any other programming language under the sun.</p>
-<p><strong>Why Wolframite?</strong></p>
-<p>‘Why Wolframite?’ is really just the combination of ‘Why Wolfram?’ (above) and ‘<a href="https://clojure.org/about/rationale">Why Clojure?</a>’.</p>
-<p>In a nutshell, the Wolfram programming language is ‘best-in-class’ for certain specialist tasks, like manipulating equations, but, to paraphrase <a href="https://xkcd.com/1270/">Randall Munroe</a>, &gt; Wolfram combines the flexibility and power of abstract mathematics with the intuitive clarity of abstract mathematics.</p>
-<p>Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don’t we call Wolfram from Clojure? It seems like the atypical ‘best of both worlds’.</p>
-<p>To put it another way, Wolfram is <em>a powerful tool in need of a toolbox</em>. And so what language is best placed to be that ‘box’? Well, Wolfram is, underneath, built on LisP and so will naturally work better with a similar design philosophy (and way of thinking) than, say, with an object-oriented or scripting language. Furthermore, somewhat ironically, it has a very good ‘link’ to the Java ecosystem. In <a href="https://reference.wolfram.com/language/JLink/tutorial/Introduction.html#25629">fact</a>,</p>
-<blockquote class="blockquote">
-<p>For all types of WSTP programs, J/Link provides a higher-level layer of functionality than the traditional C WSTP programming interface. This makes Java the easiest and most convenient language for writing programs to interact with the Wolfram Language.</p>
-</blockquote>
-<p>Even at a fundamental level therefore, our toolbox language should be a LisP with strong Java interop: mmm…!</p>
-<p>At the <em>usability</em> layer, Clojure is a well-designed, ergonomic language that leaves its users <a href="https://www.computerworld.com/article/1379902/clojure-developers-are-the-happiest-developers.html">happy</a>! When it comes to working with mathematical expressions specifically, there are a few key features. First of all, for many people, Clojure was the first language to introduce ergonomic chaining of function expressions, <em>e.g.</em></p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb2"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">-&gt;</span> (w/* <span class="at">'x</span> w/I)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    (w/+ <span class="at">'y</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    w/Abs</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    (w/Power <span class="dv">2</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    w/ComplexExpand</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    w/TeXForm</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    w/ToString</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    wl/eval</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    k/tex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(wl/start)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><span class="math display">\[x^2+y^2\]</span></p>
-<p>. In my view, chaining Wolfram function calls together with <a href="https://clojure.org/guides/threading_macros">threading macros</a> (<em>e.g.</em> <code>-&gt;</code> and <code>-&gt;&gt;</code> etc.) is actually a big usability improvement. Wolfram expressions can get pretty involved (it’s common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read and manipulate these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, <code>@</code>, to help with function composition, <em>e.g.</em> <code>f@g@h</code>. Unfortunately however, this doesn’t work with multiple arguments. It is possible to do things like <code>f@@args</code>, and even things like <code>f@@@{{a, b}, {c, d}}</code>, but the readability quickly becomes dire. On the other hand, Clojure’s threading is simple, clear and scalable. Secondly, by using a LisP, you are automatically thinking (and evaluating) at the level of the <em>symbolic expression</em> (a.k.a. s-expression). This is in contrast to thinking at the level of ‘files’, lines or ‘cells’ of a notebook. This maps very well to the exploration of <em>mathematical</em> expressions. In fact, it’s almost surprising that Wolfram had such a big influence on the idea of <em>notebook</em>-style programming, considering that, at heart, it’s all LisP. In our view, Wolframite brings Wolfram back to a more fundamental form of <strong>literate programming</strong>.</p>
-<p><strong>Why literate programming?</strong></p>
-<p>One of the key motivations of Wolframite is to integrate the power of Wolfram within a more general, more ergonomic programming environment. When it comes to solving complex problems however, it is also important to be able to document and visualise the process. In fact, this is a core part of the academic sciences and consumes a lot of time. Largely however, solving problems and documenting the results have been considered orthogonal processes: duplicating huge amounts of work</p>
-<p>In contrast, what if</p>
+<section id="what-is-wolfram" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="what-is-wolfram"><span class="header-section-number">9.1</span> What is Wolfram?</h2>
+<p>According to Wikipedia,</p>
 <blockquote class="blockquote">
-<p>Programs are meant to be read by humans and only incidentally for computers to execute. [<em>D. Knuth</em>]?</p>
+<p>The Wolfram Language is a proprietary, general, very high-level multi-paradigm programming language developed by Wolfram Research. It emphasizes symbolic computation, functional programming, and rule-based programming and can employ arbitrary structures and data. It is the programming language of the mathematical symbolic computation program Mathematica.</p>
 </blockquote>
-<p>This is the heart of <em>literate programming</em>.</p>
-<p>The immediate question that flows from this however, is <em>how</em>? In TeX systems, the answer was to include executable code within running text. In Mathematica, which largely popularized the <em>notebook</em> model, a fully integrated IDE product was built around the underlying language. Jupyter carried on this idea, but universalized the concept by bringing the interaction into the browser.</p>
-<p>And yet, for programmers, both of these systems are the wrong way around. The core content and information is in the namespaces and the right level of abstraction is not at arbitrarily chosen <em>cells</em>, but rather evaluation at the level of <em>expressions</em>. Such is the case, a LisP-style evaluation model is one of the biggest advantages of Woframite, particularly when paired with <em>notebooks as a namespace</em>-style literate programming, <em>e.g.</em> <a href="https://github.com/scicloj/clay">clay</a> and <a href="https://github.com/nextjournal/clerk">clerk</a>. When it comes to analysis, being able to interrogate data interactively is often as, if not more, important than being able to run long simulations. With LisP-style literate programming this becomes even more powerful and the other thing to bear in mind is that with literate programming, the docs double as tests!</p>
-<p>For more information about the downsides of the <em>notebook</em>-model, have a look at this <a href="https://www.microsoft.com/en-us/research/uploads/prod/2020/03/chi20c-sub8173-cam-i16.pdf">paper</a>, as cited by the Clerk document system.</p>
-<p><strong>Why not Emmy?</strong></p>
-<p>You <em>should</em> use <a href="https://github.com/mentat-collective/emmy">Emmy</a>! Emmy is a fully Clojure(script) symbolic algebra engine that is built on the <a href="https://groups.csail.mit.edu/mac/users/gjs/6946/refman.txt">SCMUTILS</a> system, orginally developed by G.J. Sussman and J. Wisdom. Emmy is a very exciting prospect for symbolic manipulation, but is only a subset of what Wolfram is capable of. In the future, we hope to integrate the two more closely. Our current advice though, is that where you have to do a lot of <code>Solve</code>-ing (<em>i.e.</em> rearranging of equations), or where you need a more powerful simplifier, use Wolframite.</p>
-<p><strong>How do I translate Mathematica’s syntax sugar?</strong></p>
-<p>Since <em>Mathematica</em> hides the internals of the <em>Wolfram Language</em> by default, it can sometimes be difficult to work out what functions are being called. If you’re in Mathematica, you can use <code>FullForm@Unevaluated[...]</code> to get a more understandable (if less concise) expression. Of course, you can also use Wolframite, <em>i.e.</em> <code>(wl/-&gt;clj ...)</code> !</p>
+<p>Moreover, the Wolfram Language has the unique position of being not only a programming language but also a full-scale computational language, that incorporates vast amounts of computable knowledge and lets one broadly express things computationally.</p>
+<p>“Symbolic” means that everything is a symbolic expression and you can manipulate these expressions themselves - somewhat reminiscent of how you can transform code with Clojure macros.</p>
+</section>
+<section id="pitfalls" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="pitfalls"><span class="header-section-number">9.2</span> Pitfalls</h2>
+<p>In Wolfram, everything is global by default and you need to take care to avoid that, when necessary.</p>
+</section>
+<section id="building-blocks" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="building-blocks"><span class="header-section-number">9.3</span> Building blocks</h2>
+<section id="symbolic-expressions" class="level4" data-number="9.3.0.1">
+<h4 data-number="9.3.0.1" class="anchored" data-anchor-id="symbolic-expressions"><span class="header-section-number">9.3.0.1</span> <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/symbolic-expressions/">Symbolic expressions</a></h4>
+<p>Expressions have the generic form <code>head[arguments...]</code>, which becomes Wolframite <code>(head arguments...)</code></p>
+<p>Ex.: <code>Plus[Power[x, 2], Times[3, Power[y, 3]]]</code>. Notice that we can use undefined symbols, since this is just a symbolic expression, not (yet) a computation. An expression’s <em>head</em> identifies the type of data or operation being represented.</p>
+</section>
+<section id="lists" class="level4" data-number="9.3.0.2">
+<h4 data-number="9.3.0.2" class="anchored" data-anchor-id="lists"><span class="header-section-number">9.3.0.2</span> <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/lists/">Lists</a></h4>
+<p>Wolfram’s list <code>{1, "hello", 3.14}</code> becomes a vector in Wolframite: <code>[1, "hello", 3.14]</code></p>
+<p>List access by indexing (from 1) via <code>[[idx or a range a.k.a. Span]]</code>:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb3"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(wl/-&gt;clj <span class="st">"{1,2,3}[[1 ;; 2]]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(Part [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] (Span <span class="dv">1</span> <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>→</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/Part [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] (w/Span <span class="dv">1</span> <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span> <span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Many operations “thread” over lists, applying to each element:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb7"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/Plus [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb8"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span> <span class="dv">12</span> <span class="dv">13</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="iterators-to-simplify-repetitive-operations" class="level4" data-number="9.3.0.3">
+<h4 data-number="9.3.0.3" class="anchored" data-anchor-id="iterators-to-simplify-repetitive-operations"><span class="header-section-number">9.3.0.3</span> <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/iterators/">Iterators</a> (to simplify repetitive operations)</h4>
+<p><code>Table[x^2, {x, 4, 20, 2}]</code> in Wolfram is equivalent to Clojure’s <code>(map (fn [x] (math/pow x 2)) (range 4 20 2))</code></p>
+</section>
+<section id="rules" class="level4" data-number="9.3.0.4">
+<h4 data-number="9.3.0.4" class="anchored" data-anchor-id="rules"><span class="header-section-number">9.3.0.4</span> Rules</h4>
+<p>Rules, or rewrite rules, of the form <code>key -&gt; value</code> predate associations and are used where you’d expect a map, often to define <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/options/">options to functions</a>, as in here: <code>Import["demo.csv.gz", {"Data", 1}]) ;; 3}, "HeaderLines" -&gt; 1]</code> (Think of this as saying “when evaluating the operation, replace HeaderLines with a truthy value.)</p>
+</section>
+<section id="associations" class="level4" data-number="9.3.0.5">
+<h4 data-number="9.3.0.5" class="anchored" data-anchor-id="associations"><span class="header-section-number">9.3.0.5</span> <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/associations/">Associations</a></h4>
+<p>Similar to Maps, just with a unique syntax using Rules. Fortunately, in Clojure we can just use maps:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb9"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>(wl/-&gt;clj <span class="st">"&lt;|</span><span class="sc">\"</span><span class="st">a</span><span class="sc">\"</span><span class="st"> -&gt; x, </span><span class="sc">\"</span><span class="st">b</span><span class="sc">\"</span><span class="st"> -&gt; y|&gt;"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb10"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>{<span class="st">"a"</span> x, <span class="st">"b"</span> y}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="patterns" class="level4" data-number="9.3.0.6">
+<h4 data-number="9.3.0.6" class="anchored" data-anchor-id="patterns"><span class="header-section-number">9.3.0.6</span> Patterns</h4>
+<p>are used to transform symbolic expressions into other symbolic expressions, f.ex.</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb11"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>(wl/eval <span class="st">"Replace[f[100], f[x_] -&gt; x + 5]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb12"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dv">105</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here, <code>_</code> a.k.a. Blank is a pattern that matches any expression and a double blank <code>__</code> matches any sequence of expressions. We can name the captured value by prepending a name, as in <code>x_</code>. There is also <code>|</code> for alternatives, <code>_h</code> to capture expressions with the head <code>h</code>, <code>:&gt;</code> for a delayed rules.</p>
+</section>
+<section id="real-world-entities" class="level4" data-number="9.3.0.7">
+<h4 data-number="9.3.0.7" class="anchored" data-anchor-id="real-world-entities"><span class="header-section-number">9.3.0.7</span> <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/real-world-entities/">Real-World Entities</a></h4>
+<p>Real-world entities are symbolic expressions representing information about entities such as countries, chemicals etc. Ex.: Use <em>entity</em>[“Properties”] to find a list of properties and <code>EntityValue[entity, "Population"]</code></p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb13"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> LA </span>(w/Entity <span class="st">"City"</span> [<span class="st">"LosAngeles"</span> <span class="st">"California"</span> <span class="st">"UnitedStates"</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb14"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/EntityValue LA <span class="st">"Population"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb15"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>(Quantity <span class="dv">3849297</span> <span class="st">"People"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In Wolframite, we represent these entities as records:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb16"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(wl/eval LA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb17"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:Entity</span> [<span class="st">"City"</span> [<span class="st">"LosAngeles"</span> <span class="st">"California"</span> <span class="st">"UnitedStates"</span>]]}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And they can be translated back to Wolfram and used there:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb18"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/EntityValue (wl/eval LA) <span class="st">"Population"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb19"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>(Quantity <span class="dv">3849297</span> <span class="st">"People"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here we need a small workaround - Wolfram allows <code>someEntity["Properties"]</code> but in our case, we’d try to use the list <code>(Entity ...)</code> as a function, which wouldn’t work. So we construct an expression list explicitly:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb20"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">take</span> <span class="dv">3</span> (wl/eval (<span class="kw">list</span> (w/Entity <span class="st">"City"</span> [<span class="st">"LosAngeles"</span> <span class="st">"California"</span> <span class="st">"UnitedStates"</span>]) <span class="st">"Properties"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb21"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>({<span class="at">:EntityProperty</span> [<span class="st">"City"</span> <span class="st">"ActiveHomeListingCount"</span>]}</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a> {<span class="at">:EntityProperty</span> [<span class="st">"City"</span> <span class="st">"AdministrativeDivision"</span>]}</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a> {<span class="at">:EntityProperty</span> [<span class="st">"City"</span> <span class="st">"AggravatedAssault"</span>]})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Or, in Wolfram: <code>{ EntityProperty[City, ActiveHomeListingCount], EntityProperty[City, AdministrativeDivision], ... }</code></p>
+<p>(Note: You may want to override <code>wolframite.base.parse/custom-parse</code> for <code>'Entity</code> and <code>'EntityProperty</code> to modify how these get read from Wolfram.</p>
+</section>
+<section id="various" class="level4" data-number="9.3.0.8">
+<h4 data-number="9.3.0.8" class="anchored" data-anchor-id="various"><span class="header-section-number">9.3.0.8</span> Various</h4>
+<ul>
+<li><a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/assignments/">Assignments</a> - <code>=</code> and <code>:=</code>; <code>Module</code> for scoping</li>
+<li><a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/applying-functions/">Applying Functions</a> - <code>Map</code> with the shorthand <code>/@</code>, <code>Apply</code> with the shorthand <code>@@</code></li>
+<li><a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/functionals-and-operators/">Functionals &amp; Operators</a> - Wolfram supports currying functions, f.ex. <code>f[1][2]</code> is equivalent to <code>f[1, 2]</code></li>
+<li>Use <code>;</code> to separate different side-effecting operations, as <code>(do ...)</code> would in Clojure</li>
+<li>Booleans: <code>True</code>, <code>False</code></li>
+<li>String: “…”</li>
+</ul>
+<p>Read more in the online booklet <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/">The Wolfram Language: Fast Introduction for Programmers</a>, which we have borrowed heavily from.</p>
 <div style="background-color:grey;height:2px;width:100%;"></div>
-<div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/faq.clj">notebooks/faq.clj</a></small></small></pre></div>
+<div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/for_developers/wolfram_for_clojurians.clj">notebooks/for_developers/wolfram_for_clojurians.clj</a></small></small></pre></div>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -774,11 +844,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./for_developers.wolfram_for_clojurians.html" class="pagination-link" aria-label="Brief introduction into Wolfram Language for Clojure developers">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Brief introduction into Wolfram Language for Clojure developers</span></span>
+      <a href="./for_developers.index.html" class="pagination-link" aria-label="Wolframite for developers">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Wolframite for developers</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./faq.html" class="pagination-link" aria-label="FAQ">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">FAQ</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
