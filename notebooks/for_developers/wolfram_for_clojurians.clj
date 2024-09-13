@@ -66,8 +66,8 @@ In Wolfram, everything is global by default and you need to take care to avoid t
 ; There is also `|` for alternatives, `_h` to capture expressions with the head `h`, `:>` for a delayed rules.
 
 ; #### [Real-World Entities](https://www.wolfram.com/language/fast-introduction-for-programmers/en/real-world-entities/)
-; Real-world entities are symbolic expressions representing information about entities such as countries, chemicals etc. Ex.:
-; Use _entity_["Properties"] to find a list of properties and `EntityValue[entity, "Population"]`
+; Real-world entities are symbolic expressions representing information about concepts, things etc. such as countries, chemicals etc. Ex.:
+; Use _entity_["Properties"] to find a list of properties and `EntityValue[entity, "Population"]` to get the value of a property.
 (def LA (w/Entity "City" ["LosAngeles" "California" "UnitedStates"]))
 (wl/eval (w/EntityValue LA "Population"))
 ; In Wolframite, we represent these entities as records:

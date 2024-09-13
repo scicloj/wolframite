@@ -35,12 +35,13 @@ but we rather use our convenience functions:")
 
 (k/md "
 Ideally, we'd take the easy path and follow the docs and use the very smart and flexible `Import` on our `202304_divvy_tripdata.csv.gz`.
-Sadly, the current version of Wolfram is not very efficient in this and with our 400k rows it is unbearably slow. All the smartness and
+Sadly, the current version of Wolfram is not very efficient in this and with our 400k rows it is unbearably slow. I assume that with the
+shortened, 100k row file it wouldn't be much different. All the smartness and
 auto-detection costs \uD83E\uDD37. If we read only a few rows then it is fine (±2s for 10s - 100s of rows):")
 
 (k/table
   {:row-vectors
-   (time (wl/eval (w/Import (.getAbsolutePath (io/file "notebooks/data/202304_divvy_tripdata.csv.gz"))
+   (time (wl/eval (w/Import (.getAbsolutePath (io/file "docs-buildtime-data/202304_divvy_tripdata_first100k.csv.gz"))
                             ["Data"
                              (w/Span 1 3)])))})
 
@@ -54,7 +55,7 @@ Thus we will need a more DIY and lower-level approach to getting the data in, le
 Sadly, it cannot handle a gzpipped files (as far as I know) so we need to unzip it first:")
 
 (when-not (.exists (io/file "/tmp/huge.csv"))
- (let [zip (io/file "notebooks/data/202304_divvy_tripdata.csv.gz")]
+ (let [zip (io/file "docs-buildtime-data/202304_divvy_tripdata_first100k.csv.gz")]
    (with-open [zis (GZIPInputStream. (io/input-stream zip))]
      (io/copy zis (io/file "/tmp/huge.csv")))))
 
