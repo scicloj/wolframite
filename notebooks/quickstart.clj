@@ -34,7 +34,8 @@ To check that the kernel is working, try the following command:")
 `wl/eval` asks Wolframite to translate the following expression to Wolfram and send it to a Wolfram kernel for evaluation. ")
 (k/md "We could also use one of our fancy aliases,")
 (wl/eval (w/<*> [1 2 3] [4 5 6]))
-(k/md ", which may be more familiar to the Mathematically inclined. If you're interested in adding your own aliases, then have a look at @sec-wolfram-basics.
+(k/md ", which may be more familiar to the Mathematically inclined. If you're interested in adding your own aliases, then have a look at
+@sec-wolfram-basics.
 
 Here, the `w` namespace is a preconfigured, but configurable, intermediary to Wolfram's built-in symbols. This allows you to manipulate Wolfram functions just like any other Clojure symbol (and get reliable editor autocompletion).")
 

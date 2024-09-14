@@ -1,4 +1,4 @@
-;; # Brief introduction into Wolfram Language for Clojure developers
+;; # Brief introduction into Wolfram Language for Clojure developers {#sec-wolfram-for-clojurians}
 
 (ns for-developers.wolfram-for-clojurians
   (:require [scicloj.kindly.v4.kind :as k]

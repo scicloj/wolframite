@@ -155,52 +155,28 @@ When there is a syntactic or semantic error in your expression, you often get th
 
 We can leverage Clojure repl's documentation support with the Wolfram convenience vars:")
 
-(repl/doc w/GeoGraphics)
-
-(k/md "
-```
-wolframite.wolfram/GeoGraphics
-  GeoGraphics[primitives, options] represents a two-dimensional geographical image.
-```
-(printed in the REPL)
-")
+(with-out-str
+  (repl/doc w/GeoGraphics))
 
 ;; Search for symbols (case-insensitive):
-(repl/apropos #"(?i)geo")
-
-'(wolframite.wolfram/$GeoLocation
-   wolframite.wolfram/$GeoLocationCity
-   wolframite.wolfram/$GeoLocationCountry
-   wolframite.wolfram/ArithmeticGeometricMean
-   ...)
+(->> (repl/apropos #"(?i)geo")
+     (drop 2)
+     (take 3))
 
 ;; Search complete docstrings for a pattern:
-(repl/find-doc "two-dimensional")
-
-(k/md "
-```
-wolframite.wolfram/Area
-  Area[reg] gives the area of the two-dimensional region reg.
-Area[{x1, …, xn}, {s, smin, smax}, {t, tmin, tmax}] gives the area of the parametrized surface whose Cartesian coordinates xi are functions of s and t.
-Area[{x1, …, xn}, {s, smin, smax}, {t, tmin, tmax}, chart] interprets the xi as coordinates in the specified coordinate chart.
--------------------------
-wolframite.wolfram/AstroGraphics
-  AstroGraphics[primitives, options] represents a two-dimensional view of space and the celestial sphere.
--------------------------
-...
-```
-")
+(-> (with-out-str
+      (repl/find-doc "two-dimensional"))
+    (subs 0 500))
 
 (k/md "
 If we evaluate `(h/help! 'ArithmeticGeometricMean)` then it will open the Wolfram documentation page for `ArithmeticGeometricMean`.
 
 We could instead ask for the link(s):")
 
-(h/help! w/ArithmeticGeometricMean :return-links true)
+(h/help! w/ArithmeticGeometricMean :links true)
 
 (k/md "`h/help!` also works on whole expressions, providing docs for each symbol:")
 
-(h/help! '(GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"]))
-       :return-links true)
+(h/help! '(GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"])) :links true)
 
 ;; (Notice that help! works both with symbols and our convenience vars.)
