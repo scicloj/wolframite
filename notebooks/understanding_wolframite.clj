@@ -8,7 +8,9 @@
 ;; First, we need some namespaces:
 (ns understanding-wolframite
   (:require [scicloj.kindly.v4.kind :as k]
+            [clojure.repl :as repl]
             [wolframite.core :as wl]
+            [wolframite.lib.helpers :as h]
             [wolframite.wolfram :as w]
             wolframite.runtime.defaults)
   (:import (com.sun.org.apache.xpath.internal.operations Plus)))
@@ -148,3 +150,57 @@ When there is a syntactic or semantic error in your expression, you often get th
 (wl/eval (w/FromDigits "87"))
 
 ;; On the other hand, some operations are coded to return the symbol `$Failed` - read the doc strings.
+
+(k/md "## Documentation
+
+We can leverage Clojure repl's documentation support with the Wolfram convenience vars:")
+
+(repl/doc w/GeoGraphics)
+
+(k/md "
+```
+wolframite.wolfram/GeoGraphics
+  GeoGraphics[primitives, options] represents a two-dimensional geographical image.
+```
+(printed in the REPL)
+")
+
+;; Search for symbols (case-insensitive):
+(repl/apropos #"(?i)geo")
+
+'(wolframite.wolfram/$GeoLocation
+   wolframite.wolfram/$GeoLocationCity
+   wolframite.wolfram/$GeoLocationCountry
+   wolframite.wolfram/ArithmeticGeometricMean
+   ...)
+
+;; Search complete docstrings for a pattern:
+(repl/find-doc "two-dimensional")
+
+(k/md "
+```
+wolframite.wolfram/Area
+  Area[reg] gives the area of the two-dimensional region reg.
+Area[{x1, …, xn}, {s, smin, smax}, {t, tmin, tmax}] gives the area of the parametrized surface whose Cartesian coordinates xi are functions of s and t.
+Area[{x1, …, xn}, {s, smin, smax}, {t, tmin, tmax}, chart] interprets the xi as coordinates in the specified coordinate chart.
+-------------------------
+wolframite.wolfram/AstroGraphics
+  AstroGraphics[primitives, options] represents a two-dimensional view of space and the celestial sphere.
+-------------------------
+...
+```
+")
+
+(k/md "
+If we evaluate `(h/help! 'ArithmeticGeometricMean)` then it will open the Wolfram documentation page for `ArithmeticGeometricMean`.
+
+We could instead ask for the link(s):")
+
+(h/help! w/ArithmeticGeometricMean :return-links true)
+
+(k/md "`h/help!` also works on whole expressions, providing docs for each symbol:")
+
+(h/help! '(GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"]))
+       :return-links true)
+
+;; (Notice that help! works both with symbols and our convenience vars.)

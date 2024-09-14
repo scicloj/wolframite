@@ -96,3 +96,5 @@ In Wolfram, everything is global by default and you need to take care to avoid t
 
 ;; Read more in the online booklet [The Wolfram Language: Fast Introduction for Programmers](https://www.wolfram.com/language/fast-introduction-for-programmers/en/),
 ;; which we have borrowed heavily from.
+;;
+;; The dense one-page [Wolfram Language Syntax](https://reference.wolfram.com/language/guide/Syntax.html) may also be of use, especially when reading Wolfram code.
