@@ -1,6 +1,6 @@
 # Wolframite
 
-[![Clojars Project](https://img.shields.io/clojars/v/org.scicloj/wolframite.svg)](https://clojars.org/org.scicloj/wolframite)
+[![Clojars download](https://img.shields.io/clojars/v/org.scicloj/wolframite.svg)](https://clojars.org/org.scicloj/wolframite) [Wolframite sources](https://github.com/scicloj/wolframite/)
 
 An interface between Clojure and the Wolfram Language (Supports [Mathematica](https://www.wolfram.com/mathematica/) and [Wolfram Engine](https://www.wolfram.com/engine/) ).
 
