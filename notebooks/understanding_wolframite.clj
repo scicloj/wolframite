@@ -12,8 +12,7 @@
             [wolframite.core :as wl]
             [wolframite.lib.helpers :as h]
             [wolframite.wolfram :as w]
-            wolframite.runtime.defaults)
-  (:import (com.sun.org.apache.xpath.internal.operations Plus)))
+            wolframite.runtime.defaults))
 
 (k/md "Next, we need to actually start a [Wolfram Kernel](https://reference.wolfram.com/language/ref/program/WolframKernel.html)
 and connect to it:")
@@ -41,22 +40,35 @@ Notice the `'` quote in front of the expression, telling Clojure Reader not to e
 
 (wl/eval '(+ 1 (Minus 1)))
 
-;; ### Aside: Wolframite aliases {#sec-aliases-table}
+;; We could also be more explicit and replace `'` with the `quote` that it turns into under the hood:
+
+(wl/eval (quote (+ 1 (Minus 1))))
+
+;; However, quoting the whole form does not allow us to have any evaluations inside the whole expression.
+;; We can instead build the form manually, quoting only the symbols:
+
+(wl/eval (list 'Plus 1 (list 'Minus 1)))
+
+;; ### Advanced: Syntax quote
 ;;
-;; Aside of symbols that directly correspond to Wolfram symbols, you can also use Wolframite aliases. The aliases
-;; provide alternative names for Wolfram symbols. We have used above `+`, which is an alias of `Plus`. Here are
-;; all the built-in aliases that we currently support:
+;; As mentioned, quoting a form makes it impossible to refer to any vars or evaluate any code within the form.
+;; We can bypass the problem by not quoting the whole form but replacing `(...)` with `(list ...)` and quoting each symbol.
+;; But there is yet another way, used by Clojure macros - namely [the syntax quote](https://clojure.org/reference/reader#syntax-quote) ``` ` ```.
+;; It makes it possible to evaluate things within the quoted form by prefixing them with the "unquote" `~` (or "splicing unquote" `~@`).
+;; The only problem here is that ``` ` ``` automatically fully qualifies all symbols, as we can see here:
 
-(k/table {:column-names [:Alias :Wolfram],
-          :row-vectors (-> wolframite.runtime.defaults/all-aliases
-                           (dissoc '-)
-                           (assoc '- "Minus or Subtract"))})
+(do `(Minus 42))
 
-(k/md "Thus, the following two expressions are equivalent")
+;; This would of course break our translation to Wolfram. There is fortunately one trick to tell the Clojure Reader to keep a symbol unqualified
+;; by combining `~'`, essentially telling it "evaluate this expression, which returns a simple symbol":
 
-(wl/eval '(+ 1 (- 1)))
+(do `(~'Minus 42))
 
-(wl/eval '(Plus 1 (Minus 1)))
+;; ### A word on aliases
+
+;; When we come back to our original expression, `'(+ 1 (Minus 1))`, you may notice that `+` is not actually a Wolfram function.
+;; It is a [Wolframite alias](@sec-aliases-table), which we replace with `Plus` before we send it to Wolfram.
+;; You can read about it further down this document.
 
 ;; ### Evaluated form {#sec-evaluated-form}
 ;;
@@ -99,6 +111,23 @@ Notice the `'` quote in front of the expression, telling Clojure Reader not to e
 (wl/eval (w/Plus
            '(Internal/StringToMReal "-1.5")
            (wl/wolfram-expr "Minus[3]")))
+
+;; ### Aside: Wolframite aliases {#sec-aliases-table}
+;;
+;; Aside of symbols that directly correspond to Wolfram symbols, you can also use Wolframite aliases. The aliases
+;; provide alternative names for Wolfram symbols. We have used above `+`, which is an alias of `Plus`. Here are
+;; all the built-in aliases that we currently support:
+
+(k/table {:column-names [:Alias :Wolfram],
+          :row-vectors (-> wolframite.runtime.defaults/all-aliases
+                           (dissoc '-)
+                           (assoc '- "Minus or Subtract"))})
+
+(k/md "Thus, the following two expressions are equivalent")
+
+(wl/eval '(+ 1 (- 1)))
+
+(wl/eval '(Plus 1 (Minus 1)))
 
 ;; ### Aside: Wolfram modules and fully qualified names
 ;;
