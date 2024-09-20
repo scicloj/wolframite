@@ -47,7 +47,10 @@
    '+=   'AddTo
    '-=   'SubtractFrom
    '+    'Plus
-   '-    ^{::experimental-fn true, :doc "Maps to Wolfram Minus/Subtract"}
+   '-    ^{:doc "Maps to Wolfram Minus/Subtract"
+           ::experimental-fn true
+           :wolframite.alias/targets #{'Minus 'Subtract}}
+
    (fn [args] (case (count args)
                 1 'Minus
                 2 'Subtract

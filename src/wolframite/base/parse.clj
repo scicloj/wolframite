@@ -1,6 +1,7 @@
 (ns wolframite.base.parse
   "Translate a jlink.Expr returned from an evaluation into Clojure data"
   (:require
+    [clojure.set :as set]
     [wolframite.impl.jlink-instance :as jlink-instance]
     [wolframite.impl.protocols :as proto]
     [wolframite.lib.options :as options]
@@ -68,10 +69,20 @@
     (/ numer denom)))
 
 (defn parse-symbol [expr {:keys [aliases/base-list]}]
-  (let [aliases (into {} (map (comp vec rseq) (options/aliases base-list)))
+  (let [alias->wolf (options/aliases base-list)
+        smart-aliases (keep (fn [[alias wolf]]
+                              (when (fn? wolf) alias))
+                            alias->wolf)
+        wolf->smart-alias (into {} (for [[alias smart-fn] (select-keys alias->wolf smart-aliases)
+                                         wolf-sym (-> smart-fn meta :wolframite.alias/targets)
+                                         :when wolf-sym]
+                                     [wolf-sym alias]))
+        wolf->alias (-> (apply dissoc alias->wolf smart-aliases)
+                        set/map-invert
+                        (merge wolf->smart-alias))
         s       (.toString expr)
         sym     (symbol (apply str (replace {\` \/} s)))]
-    (if-let [alias (aliases sym)]
+    (if-let [alias (get wolf->alias sym)]
       alias
       (cond (= "True" s)   true
             (= "False" s)  false
