@@ -46,11 +46,11 @@
 
 (deftest package-test
   (wl/start)
-  (is (= nil
+  (is (= 'WolframPackageDemo
          (wl/<<! "resources/WolframPackageDemo.wl")))
-  (is (= nil
+  (is (= 'WolframPackageDemo
          (wl/load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo")))
-  (is (= nil
+  (is (= 'wd
          (wl/load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'wd)))
 
   (is (= "Used for testing Wolframite."
