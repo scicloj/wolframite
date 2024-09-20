@@ -90,9 +90,10 @@
           res))))
   (terminate-kernel! [_this]
     ;; BEWARE: it is not absolutely guaranteed that the kernel will die immediately
-    (doto ^KernelLink @kernel-link-atom
-      (.terminateKernel)
-      (.close))
+    (when-let [link ^KernelLink @kernel-link-atom]
+      (doto link
+        (.terminateKernel)
+        (.close)))
     (reset! kernel-link-atom nil))
   (expr [_this primitive-or-exprs]
     (make-expr primitive-or-exprs))
