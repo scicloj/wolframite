@@ -133,7 +133,9 @@
   See also [[stop]]"
   ([] (start defaults/default-options))
   ([opts]
-   (when-not (some-> (jlink-instance/get) (proto/kernel-link?)) ; need both, b/c some tests only init jlink
+   (if (some-> (jlink-instance/get) (proto/kernel-link?)) ; need both, b/c some tests only init jlink
+     {:status :ok
+      :wolfram-version (:wolfram-version (deref kernel-info 1 :N/A))}
      (let [jlink-inst (or (jlink-instance/get)
                           (init-jlink! kernel-link-atom opts))]
        (init-kernel! jlink-inst)
@@ -148,9 +150,9 @@
            (log/warnf "You have a newer Wolfram version %s than the %s used to generate wolframite.wolfram
            and may want to re-create it with (wolframite.impl.wolfram-syms.write-ns/write-ns!)"
                       wolfram-version w/*wolfram-version*)))
-       (:wolfram-version @kernel-info))
-     nil)
-   nil))
+       {:status :ok
+        :wolfram-version (:wolfram-version (deref kernel-info 1 :N/A))
+        :started? true}))))
 
 (defn stop
   "Sends a request to the kernel to shut down.
@@ -159,7 +161,8 @@
   []
   (some-> (jlink-instance/get) (proto/terminate-kernel!))
   (jlink-instance/reset!)
-  (reset! kernel-link-atom nil))
+  (reset! kernel-link-atom nil)
+  {:status :ok})
 
 (defn restart
   "Same as calling [[stop]] and then [[start]]."
