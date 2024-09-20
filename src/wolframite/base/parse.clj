@@ -117,7 +117,9 @@
 (defn parse-simple-matrix [expr type opts]
   (let [type (or type (simple-matrix-type expr))]
     (bound-map (fn process-bound-map [a _opts]
-                 (parse-simple-vector a type opts)) (.args expr) opts)))
+                 (parse-simple-vector a type opts))
+               (.args expr)
+               opts)))
 
 (defn parse-fn
   "Return a function that invokes the Wolfram expression `expr` (typically just a symbol naming a fn),
@@ -155,7 +157,7 @@
 (defn standard-parse [expr {:keys [flags] :as opts}]
   (assert (proto/expr? (jlink-instance/get) expr))
   (cond
-    (options/flag?' flags :as-function)                   (parse-fn expr opts)
+    ;(options/flag?' flags :as-function)                   (parse-fn expr opts)
     (or (atom? expr) (options/flag?' flags :full-form))   (parse-complex-atom expr opts)
     (simple-vector-type expr)                        (parse-simple-vector expr nil opts)
     (simple-matrix-type expr)                        (parse-simple-matrix expr nil opts)

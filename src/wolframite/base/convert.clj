@@ -103,19 +103,18 @@
   [str]
   {::wolfram-str-expr str})
 
-(defmethod convert :hash-map [map {:keys [flags] :as opts}]
-  (cond
-    (::wolfram-str-expr map)
-    ;; Custom way of telling convert that the input is a Wolfram expression as a string
-    (do (assert (= 1 (count map)) "::wolfram-str-expr must stand on its own")
-        (assert (-> map vals first string?) "::wolfram-str-expr value must be a string")
-        (express/express (::wolfram-str-expr map) opts))
+(defn- wolfram-str-expr->jlink-expr [wolfram-str-expr-map opts]
+  (do (assert (= 1 (count wolfram-str-expr-map)) "::wolfram-str-expr must stand on its own")
+      (assert (-> wolfram-str-expr-map vals first string?) "::wolfram-str-expr value must be a string")
+      (express/express (::wolfram-str-expr wolfram-str-expr-map) opts)))
 
-    (options/flag?' flags :hash-maps)
-    (convert (apply list 'Association (for [[key value] map] (list 'Rule key value))) opts)
-
-    :else
-    (convert (seq map) opts)))
+(defmethod convert :hash-map [map opts]
+  ;; A map could be either normal map value the user supplied, or it could be our magical
+  ;; map used to mark the actual value for special treatment, namely to be interpreted as
+  ;; Wolfram code in a string; see `->wolfram-str-expr`
+  (if (::wolfram-str-expr map)
+    (wolfram-str-expr->jlink-expr map opts)
+    (convert (apply list 'Association (for [[key value] map] (list 'Rule key value))) opts)))
 
 (defmethod convert :symbol [sym {:keys [aliases] ::keys [args] :as opts}]
   (let [all-aliases (merge defaults/all-aliases aliases)]

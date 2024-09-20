@@ -211,9 +211,9 @@
 
   Ex.: `(->clj \"Power[2,3]\") ; => (Power 2 3)`"
   [s]
-  {:flags [:no-evaluate]}
   ;; A hack to force interpretation
-  (eval (convert/->wolfram-str-expr s) {:flags [:no-evaluate]}))
+  (eval (convert/->wolfram-str-expr s)
+        {:flags [:no-evaluate]})) ; the flag tells us to conver the string to Expr then parse to Clj
 
 (defn ->wl
   "Convert Clojure forms to instances of Wolfram's Expr class.

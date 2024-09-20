@@ -9,21 +9,21 @@
 
 ;; * Flags
 (def flag-sets {#{:vectors :seqs #_:seq-fn} :vectors ;; FIXME: this is not really a flag, not sure how useful at all
-                #{:parallel :serial}        :serial
+                #{:parallel :serial}        :serial ; serial = req-response; parallel = when having a bunch of parallel kernels (Wolfram-managed)
                 #{:parse :no-parse}         :parse
                 #{:evaluate :no-evaluate}   :evaluate
                 #{:convert :no-convert}     :convert
-                #{:hash-maps :no-hash-maps} :hash-maps ;; FIXME: remove when Association's impltd
-                #{:functions :no-functions} :functions ;; ??
+                ;#{:hash-maps :no-hash-maps} :hash-maps
+                #{:functions :no-functions} :functions ;; ?? parse (Function ...) into our parse-fn instance?!
                 #{:aliases :no-aliases}     :aliases
-                #{:N :no-N}                 :no-N
-                #{:verbose :no-verbose}     :no-verbose
-                #{:as-function
-                  :as-expression}           :as-expression
+                #{:N :no-N}                 :no-N ; :N -> use Expr.asArray on matrix' rows
+                ;#{:verbose :no-verbose}     :no-verbose
+                ;#{:as-function
+                ;  :as-expression}           :as-expression
+                ;#{:restore-defaults
+                ;  :no-restore-defaults}     :no-restore-defaults
                 #{:full-form
-                  :clojure-form}            :clojure-form
-                #{:restore-defaults
-                  :no-restore-defaults}     :no-restore-defaults})
+                  :clojure-form}            :clojure-form})
 
 (def all-flags (apply clojure.set/union (keys flag-sets)))
 
@@ -98,7 +98,7 @@
      :parse        true
      :functions    true
      :aliases      true
-     :as-expression true ;; FIXME: shouldn't be a flag but a parsing option?
+     ;:as-expression true
      :clojure-form true ;; FIXME: better name
      :N false})
 
