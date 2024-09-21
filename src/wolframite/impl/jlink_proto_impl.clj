@@ -56,6 +56,10 @@
 (defrecord JLinkImpl [opts kernel-link-atom]
   proto/JLink
   (create-kernel-link [_this kernel-link-opts]
+    ;; BEWARE: The fact that createKernelLink() succeeds does not mean that the link is connected
+    ;; and functioning properly. There is a difference between creating a link (which involves
+    ;; setting up your side) and connecting one (which verifies that the other side is alive and well).
+    ;; WSTP will automatically try to connect it the first time you try to read or write something.
     (loop [attempts 3, wait-ms 10, orig-err nil]
       ;; Sometimes, starting a link may fail b/c the previous one
       ;; has not been shut down properly

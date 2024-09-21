@@ -10,31 +10,44 @@
 
 ;; Default path information can be listed here, in order of preference.
 (def ^:private defaults
-  [{:root  "/usr/local/Wolfram/Mathematica"
+  [;; LINUX
+   {:root  "/usr/local/Wolfram/Wolfram"
+    :kernel "Executables/WolframKernel"
+    :product :wolfram ; version 14.1+
+    :os :linux}
+   {:root  "/usr/local/Wolfram/Mathematica"
     :kernel "Executables/MathKernel"
-    :product :mathematica
+    :product :mathematica ; prior to 14.1
     :os :linux}
    {:root  "/opt/Mathematica"
     :kernel "Executables/MathKernel"
-    :product :mathematica
+    :product :mathematica ; alternative location
     :os :linux}
    {:root  "/usr/local/Wolfram/WolframEngine"
     :kernel "Executables/WolframKernel"
     :product :wolfram-engine
     :os :linux}
-
+   ;; MAC
+   {:root  "/Applications/Wolfram.app/Contents"
+    :kernel "MacOS/WolframKernel"
+    :product :wolfram ; version 14.1+
+    :os :mac}
    {:root  "/Applications/Mathematica.app/Contents"
     :kernel "MacOS/MathKernel"
-    :product :mathematica
+    :product :mathematica ; prior to 14.1
     :os :mac}
    {:root   "/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents"
     :kernel "MacOS/WolframKernel"
     :product :wolfram-engine
     :os :mac}
-
+   ;; WINDOWS
+   {:root "/c:/Program Files/Wolfram Research/Wolfram/" ; TODO verify
+    :kernel "WolframKernel.exe" ; TODO verify
+    :product :wolfram ; version 14.1+
+    :os :windows}
    {:root "/c:/Program Files/Wolfram Research/Mathematica/"
     :kernel "WolframKernel.exe"
-    :product :mathematica
+    :product :mathematica ; prior to 14.1
     :os :windows}
    {:root "/c:/Program Files/Wolfram Research/Wolfram Engine/"
     :kernel "MathKernel.exe"

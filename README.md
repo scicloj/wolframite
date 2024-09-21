@@ -33,9 +33,9 @@ Wolframite is open-source and targeted at applications in scientific computing, 
 
 First, if you haven't already, install the [Clojure CLI toolchain](https://clojure.org/guides/getting_started) (homebrew is a great way to do this if you're on Mac or Linux, but you can just as easily use the installation scripts if you prefer).
 
-#### Mathematica or Wolfram Engine
+#### Wolfram (Mathematica) or Wolfram Engine
 
-Next, obviously, you'll need to ensure that you have Wolfram Engine or Mathematica installed and your license (free for W. E.) registered - make sure you can run these tools on their own _before_ trying Wolframite.
+Next, obviously, you'll need to ensure that you have Wolfram Engine or the Wolfram desktop app (formerly called Mathematica) installed and your license (free for W. E.) registered - make sure you can run these tools on their own _before_ trying Wolframite.
 
 First of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:
 
@@ -154,6 +154,10 @@ Build the jar with `clojure -T:build jar` then deploy with
 
 Note: You need to log in to Clojars and generate a deployment token. You also need to be added to
 the SciCloj group there by an admin.
+
+Consider studying Wolfram's guide [Writing Java Programs That Use the Wolfram Language](https://reference.wolfram.com/language/JLink/tutorial/WritingJavaProgramsThatUseTheWolframLanguage.html) and 
+[WSTP and External Program Communication](https://reference.wolfram.com/language/tutorial/WSTPAndExternalProgramCommunicationOverview.html)
+when you want to dig into the JVM ↔ Wolfram communication.
 
 #### Documentation
 
