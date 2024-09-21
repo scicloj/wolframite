@@ -1,5 +1,8 @@
 (ns wolframite.tools.graphics
   "Displaying WL graphics with java.awt"
+  ;; Wolfram has You use MathCanvas when you want an AWT component and MathGraphicsJPanel when you
+  ;; want a Swing component - see https://reference.wolfram.com/language/JLink/tutorial/CallingJavaFromTheWolframLanguage.html#20608
+  ;; Notice that KernelLink also has evaluateToImage() and evaluateToTypeset() methods
   (:require [wolframite.impl.jlink-instance :as jlink-instance]
             [wolframite.impl.protocols :as proto]
             [wolframite.core :as wl])

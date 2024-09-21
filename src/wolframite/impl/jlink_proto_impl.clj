@@ -1,10 +1,11 @@
 (ns wolframite.impl.jlink-proto-impl
   "The 'real' implementation of JLink, which does depend on JLink classes and thus
   cannot be loaded/required until JLink is on the classpath."
-  (:require [clojure.string :as str]
+  (:require [clojure.tools.logging :as log]
             [wolframite.impl.protocols :as proto])
   (:import (clojure.lang BigInt)
-           [com.wolfram.jlink Expr KernelLink MathCanvas MathLinkException MathLinkFactory]))
+           [com.wolfram.jlink Expr KernelLink MathCanvas MathLink MathLinkException MathLinkFactory
+                              PacketListener PacketArrivedEvent PacketPrinter]))
 
 (defn- array? [x]
   (some-> x class .isArray))
@@ -53,7 +54,89 @@
                                 (type primitive-or-exprs))
                        :cause e})))))
 
-(defrecord JLinkImpl [opts kernel-link-atom]
+(defrecord InfoPacketCaptureListener [capture]
+  ;; A packet listener that enables us to get hold of the normally ignored Print outputs
+  ;; and warning messages sent before a return packet.
+  PacketListener
+  (packetArrived [_this #_PacketArrivedEvent event]
+    (let [link (cast KernelLink (.getSource event))]
+      (some->>
+        (condp = (.getPktType event) ; note: `case` doesn't work 🤷
+          MathLink/TEXTPKT
+          {:type :text :content (.getString link)}
+
+          MathLink/MESSAGEPKT
+          (let [expr (.getExpr link)]
+            (when-not (.symbolQ expr)
+              ;; not sure why these are sent, not useful; e.g. Get when a Get call failed etc.
+             {:type :message :content expr}))
+
+          nil)
+        (swap! capture conj)))
+    true))
+
+(comment
+  (let [link (proto/kernel-link ((requiring-resolve 'wolframite.impl.jlink-instance/get)))]
+    ;(.removePacketListener link packet-listener)
+    (.addPacketListener link packet-listener)
+    ,)
+  ,)
+
+(defn install-packet-logger!
+  "Call this to help debug your program - it will print all incoming JLink packets (the units
+  of communication between JVM and Wolfram) to stdout.
+
+  Ex.:
+  ```clj
+  (install-packet-logger! (proto/kernel-link (jlink-instance/get)))
+  ```"
+  [^KernelLink link]
+  (.addPacketListener link (PacketPrinter. System/out)))
+
+;; Wolfram sometimes indicates failure by returning the symbol $Failed
+(defonce failed-expr (Expr. Expr/SYMBOL "$Failed"))
+
+(defn- evaluate! [^KernelLink link packet-capture-atom ^Expr expr]
+  (assert link "Kernel link not initialized?!")
+  (io!
+    (locking link
+      (reset! packet-capture-atom nil)
+      ;; NOTE: There is also evaluateToImage => byte[] of GIF for graphics-returning fns such as Plot
+      ;; NOTE 2: .waitForAnswer discard packets until ReturnPacket; our packet-listener collects those
+      (doto link (.evaluate expr) (.waitForAnswer))
+      (let [res (.getExpr link)
+            messages (seq (first (reset-vals! packet-capture-atom nil)))
+            messages-text (mapv :content messages)]
+        (def M messages)
+        (cond
+          (and (seq messages)
+               (or (= res failed-expr)
+                   (= res expr)))
+          ;; If input expr == output expr, this usually means the evaluation failed
+          ;; (or there was nothing to do); if there are also any extra text/message packets
+          ;; then it most likely has failed, and those messages explain what was wrong
+          (throw (ex-info (str "Evaluation seems to have failed. Result: "
+                               res
+                               " Details: "
+                               (cond-> messages-text
+                                       (= 1 (count messages-text))
+                                       first))
+                          {:expr expr
+                           :messages messages
+                           :result res}))
+
+          (= res failed-expr) ; but no messages
+          (throw (ex-info (str "Evaluation has failed. Result: "
+                               res
+                               " No details available.")
+                          {:expr expr :result res}))
+
+          :else
+          (do (when (seq messages)
+                (log/info "Messages retrieved during evaluation:" messages-text))
+              res))))))
+
+(defrecord JLinkImpl [opts kernel-link-atom packet-listener]
   proto/JLink
   (create-kernel-link [_this kernel-link-opts]
     (loop [attempts 3, wait-ms 10, orig-err nil]
@@ -63,6 +146,8 @@
             (try (let [opts-array (into-array String kernel-link-opts)
                        kernel-link
                        (->> (doto (MathLinkFactory/createKernelLink ^"[Ljava.lang.String;" opts-array)
+                              (.addPacketListener packet-listener) ; TBD doesn't get anything when link fails due to e.g. # kernels > license
+                              ;; Note: The call below ensures we actually try to connect to the kernel
                               (.discardAnswer))
                             (reset! kernel-link-atom))]
                    ;(.getError kernel-link) (.getErrorMessage kernel-link)
@@ -95,13 +180,15 @@
         (.terminateKernel)
         (.close)))
     (reset! kernel-link-atom nil))
+  (evaluate! [_this expr]
+    (evaluate! @kernel-link-atom (:capture packet-listener) expr))
   (expr [_this primitive-or-exprs]
     (make-expr primitive-or-exprs))
   (expr [_this type name]
     (Expr. ^int (case type
                   :Expr/SYMBOL  Expr/SYMBOL)
            ^String (apply str (replace {\/ \`} name))))
-  (->expr [_this obj]
+  (->expr [_this obj] ; fallback for transforming anything we don't handle manually, via JLink itself
     (.getExpr
      (doto (MathLinkFactory/createLoopbackLink)
        (.put obj)
@@ -153,4 +240,5 @@
 (defn create [kernel-link-atom opts]
   (map->JLinkImpl
    {:opts opts
-    :kernel-link-atom kernel-link-atom}))
+    :kernel-link-atom kernel-link-atom
+    :packet-listener (->InfoPacketCaptureListener (atom nil))}))

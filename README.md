@@ -50,6 +50,7 @@ However, sometimes Wolframite may fail to find the correct path automatically an
 
 ```shell
 export WOLFRAM_INSTALL_PATH=/opt/mathematica/13.1
+export WOLFRAM_INSTALL_PATH="/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents"
 ```
 
 ### Getting started
