@@ -20,4 +20,5 @@
                   (.. link getExpr args)))] ; TODO (jakub) get rid of reflection, move into the protocol
     (if (= (count output) 1)
       (first output)
-      (throw (Exception. (str "Invalid expression: " s))))))
+      (throw (Exception. (format "Invalid expression `%s`. Output lenght expected 1, was %d"
+                                 s (count output)))))))

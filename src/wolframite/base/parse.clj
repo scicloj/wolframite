@@ -6,7 +6,6 @@
     [wolframite.impl.protocols :as proto]
     [wolframite.lib.options :as options]
     [wolframite.base.expr :as expr]
-    [wolframite.base.types :as types]
     [clojure.string :as str]))
 
 (declare parse)
@@ -195,12 +194,6 @@
   ; => #object[java.net.URI 0x3f5e5a46 \"https://www.google.com\"]
   ```"
   #'custom-parse-dispatch)
-
-(defmethod custom-parse 'EntityProperty [expr opts]
-  (types/->EntityProperty (mapv #(parse % opts) (.args expr))))
-
-(defmethod custom-parse 'Entity [expr opts]
-  (types/->Entity (mapv #(parse % opts) (.args expr))))
 
 (defmethod custom-parse :default [expr opts]
   (standard-parse expr opts))

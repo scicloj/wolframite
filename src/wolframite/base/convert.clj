@@ -6,9 +6,7 @@
             [wolframite.lib.options :as options]
             [wolframite.base.express :as express]
             [wolframite.base.expr :as expr]
-            [wolframite.base.types :as types]
-            [wolframite.runtime.defaults :as defaults])
-  (:import (wolframite.base.types Entity EntityProperty)))
+            [wolframite.runtime.defaults :as defaults]))
 
 ;; (remove-ns 'wolframite.base.convert)
 
@@ -32,7 +30,6 @@
             (list? obj)) :list
         (ratio? obj) :rational
         (primitive? obj) :primitive
-        (types/wolframite-type? obj) :wolframite-entity
         (map? obj) :hash-map
         (symbol? obj) :symbol
         (nil? obj) :null
@@ -174,15 +171,6 @@
                                          (symbol? head)
                                          (assoc ::args tail)))
                         (doall (map #(convert % opts) tail)))))))
-
-(defmethod convert :wolframite-entity [record opts]
-  (let [type-name (.getSimpleName (type record))]
-    (convert
-      (->> (get record (keyword type-name))
-           reverse
-           (into ())
-           (cons (symbol type-name)))
-      opts)))
 
 (comment
   (convert '(whatever 1) nil)

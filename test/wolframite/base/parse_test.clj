@@ -4,6 +4,7 @@
     [wolframite.base.convert :as convert]
     [wolframite.base.parse :as parse]
     [wolframite.core :as wl]
+    [wolframite.wolfram :as w]
     [wolframite.impl.jlink-instance :as jlink-instance]))
 
 (deftest parse-test
@@ -14,6 +15,22 @@
     (is (= {}
            (parse/parse (convert/convert {} nil) nil))
         "Empty maps work too")))
+
+(deftest custom-parse
+  (wl/start)
+  (testing "entities & co."
+    (is (= (w/Entity "City" ["SanFrancisco" "California" "UnitedStates"])
+           (wl/eval (w/Entity "City" ["SanFrancisco" "California" "UnitedStates"]))))
+    (is (= (w/EntityProperty "City" "ActiveHomeListingCount")
+           (wl/eval (w/Part (list (w/Entity "City" ["LosAngeles" "California" "UnitedStates"]) "Properties")
+                            1))))
+    (is (= (-> #'w/Quantity meta :name)
+           (->> (wl/eval (w/Part (list (w/Entity "City" ["LosAngeles" "California" "UnitedStates"]) "Properties")
+                                 1))
+                (list (w/Entity "City" ["SanFrancisco" "California" "UnitedStates"]))
+                (wl/eval)
+                first))
+        "Round-trip works (we get Ent.Prop. back, pass that to another eval)")))
 
 (deftest parse-with-kernel-test
   (wl/start)
