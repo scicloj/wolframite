@@ -5,6 +5,8 @@
     [wolframite.base.evaluate :as evaluate]
     [wolframite.base.parse :as parse]))
 
+(defn- identity-first [x & _] x)
+
 (defn cep
   "Convert-Evaluate-Parse pipeline.
   Convert:  from clj data to jlink Expr
@@ -13,9 +15,9 @@
   Each stage can be skipped with appropriate `opts` `:flag` e.g. `:no-parse`"
   [expr {:keys [flags]
          :as   opts}]
-  (let [convert  (if (options/flag?' flags :convert)   convert/convert   (fn [& args] (first args)))
-        evaluate (if (options/flag?' flags :evaluate)  evaluate/evaluate (fn [& args] (first args)))
-        parse    (if (options/flag?' flags :parse)     parse/parse       (fn [& args] (first args)))]
+  (let [convert  (if (options/flag?' flags :convert)   convert/convert   identity-first)
+        evaluate (if (options/flag?' flags :evaluate)  evaluate/evaluate identity-first)
+        parse    (if (options/flag?' flags :parse)     parse/parse       identity-first)]
     (-> expr
         (convert  opts)
         (evaluate opts)
