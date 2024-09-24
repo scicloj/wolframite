@@ -10,6 +10,7 @@
   from the existing code."
   (create-kernel-link [this kernel-link-opts])
   (terminate-kernel! [this])
+  (evaluate! [this expr] "Evaluate the given JLink Expr in the kernel")
   (expr
     [this]
     [this primitive-or-exprs]
@@ -35,6 +36,8 @@
   (create-kernel-link [this kernel-link-opts]
     (throw (IllegalStateException. "JLink not loaded!")))
   (terminate-kernel! [this]
+    (throw (IllegalStateException. "JLink not loaded!")))
+  (evaluate! [this expr]
     (throw (IllegalStateException. "JLink not loaded!")))
   (expr [this expr-coll]
     (throw (IllegalStateException. "JLink not loaded!")))
