@@ -35,6 +35,7 @@
   {:pre [jlink-instance]}
   (assert (proto/expr? jlink-instance expr))
   (assert (proto/kernel-link? jlink-instance))
+
   (let [link (proto/kernel-link jlink-instance)]
    (if (options/flag?' (:flags opts) :serial)
      (io!

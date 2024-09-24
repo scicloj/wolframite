@@ -8,7 +8,10 @@
   (assert (string? s) (str "Expected '" (pr-str s) "' to be a string but is " (type s)))
   ;; TODO: debug log: "express string>"
   (let [held-s (str "HoldComplete[" s "]")
-        link (proto/kernel-link jlink-instance)
+        link (or (proto/kernel-link jlink-instance)
+                 (throw (IllegalStateException.
+                          (str "Something is wrong - there is no JLink instance, which shouldn't"
+                               " be possible. Try to stop and start Wolframite again."))))
         output (io!
                 (locking link
                   (doto link
