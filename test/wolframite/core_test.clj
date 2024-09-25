@@ -111,7 +111,11 @@
 (deftest ->clj
   (is (= '(+ 1 2)
          (wl/->clj "Plus[1,2]"))
-      "Translating Wolfram expr string to Wolframatica data form works"))
+      "Translating Wolfram expr string to Wolframatica data form works")
+  (testing "pure lambda"
+    (is (= '(fn (Slot 1))
+           (wl/->clj "#&"))
+        "An anonymous, one-arg lambda becomes Function (aliased to fn) w/ Slot")))
 
 (comment
   (clojure.test/run-tests 'wolframite.core-test))

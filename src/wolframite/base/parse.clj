@@ -149,6 +149,18 @@
       (into (map #(parse % opts) (rseq (vec (.args expr)))))
       (conj (parse (.head expr) opts))))
 
+(defn parse-fn-expression [expr opts]
+  (assert (= "Function" (expr/head-str expr)))
+  (let [head (parse (.head expr) opts)
+        args (.args expr)
+        arglist (when (= 2 (count args))
+                  (parse (first args) opts))
+        body (parse (last args) opts)]
+    (if arglist
+      (list head arglist body)
+      ;; No arglist => uses the anonymous (Slot <n>) args
+      (list head body))))
+
 (defn parse-complex-atom [expr {:keys [flags] :as opts}]
   (let [head (expr/head-str expr)]
     (cond (.bigIntegerQ expr)      (.asBigInteger expr)
@@ -159,10 +171,11 @@
           (.rationalQ expr)        (parse-rational expr)
           (.symbolQ expr)          (parse-symbol expr opts)
           (= "Association" head)   (parse-hash-map expr opts) #_(parse-generic-expression expr opts)
-          (= "Function" head)      (if (and (options/flag?' flags :functions)
-                                            (not (options/flag?' flags :full-form)))
-                                     (parse-fn expr opts)
-                                     (parse-generic-expression expr opts))
+          (= "Function" head)      (parse-fn-expression expr opts)
+          ;(if (and (options/flag?' flags :functions)
+          ;         (not (options/flag?' flags :full-form)))
+          ;  (parse-fn expr opts)
+          ;  (parse-generic-expression expr opts))
           :else                    (parse-generic-expression expr opts))))
 
 (defn standard-parse [expr {:keys [flags] :as opts}]
