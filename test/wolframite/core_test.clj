@@ -119,7 +119,7 @@
         "An anonymous, one-arg lambda becomes Function (aliased to fn) w/ Slot")
     (is (= [2 4]
            (wl/eval "Map[#+1&,{1,3}]")
-           #_(wl/eval (w/Map (w/fn (w/+ (w/Slot 1) 1)) [1 3]))))
+           (wl/eval (w/Map (w/fn (w/+ (w/Slot 1) 1)) [1 3]))))
     (is (= [2 4]
            (wl/eval "Map[Function[{x}, x + 1],{1,3}]")
            (wl/eval (w/Map (w/fn [x] (w/+ x 1)) [1 3]))))))
