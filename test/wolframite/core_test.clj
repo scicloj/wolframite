@@ -64,14 +64,14 @@
   (is (= 30
          (wl/eval (eval '(WolframPackageDemo/additional 10))))))
 
-(deftest restart
+(deftest restart!
   (testing "first set of aliases"
-    (wl/restart {:aliases '{test** Power}})
+    (wl/restart! {:aliases '{test** Power}})
     (is (= 8
            (wl/eval '(test** 2 3)))
         "test** is an alias for Power (and 2^3 is 8)"))
   (testing "restart & another aliases"
-    (wl/restart {:aliases '{pow Power}})
+    (wl/restart! {:aliases '{pow Power}})
     (is (thrown-with-msg? ExceptionInfo
                           #"Unsupported symbol / unknown alias"
                           (wl/eval '(test** 2 3)))
