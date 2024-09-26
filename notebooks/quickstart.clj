@@ -19,7 +19,7 @@ To be extra 'meta', this page is itself a demonstration of a literate programmin
 First, we must initialize Wolframite and connect it to a Wolfram kernel,
 which will perform the computations.")
 
-(wl/start)
+(wl/start!)
 
 (k/md "If you get an error then please refer to the [Wolframite README](https://github.com/scicloj/wolframite/blob/main/README.md) for further instructions. Your Wolfram installation is probably just in an unusual place and so you will have to provide the correct path.")
 

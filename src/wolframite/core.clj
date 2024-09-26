@@ -28,7 +28,7 @@
 (ns wolframite.core
   "The main user-facing namespace of Wolframite (in conjunction with wolframite.wolfram).
 
-  Public functions start and stop the kernel, load packages and perform conversions to and from the Wolfram language.
+  Public functions start! and stop! the kernel, load packages and perform conversions to and from the Wolfram language.
   "
   (:refer-clojure :exclude [eval])
   (:require
@@ -109,7 +109,7 @@
    :wolfram-kernel-name \"Wolfram Language 14.0.0 Engine\"
    :max-license-processes 2} ; how many concurrent kernels (=> Wolframite REPLs/processes) may we run
   ```
-  Requires [[start]] to be called first."
+  Requires [[start!]] to be called first."
   []
   (zipmap
    [:wolfram-version :wolfram-kernel-name :max-license-processes]
@@ -117,8 +117,8 @@
            (SystemInformation "Kernel", "ProductKernelName")
            (SystemInformation "Kernel", "MaxLicenseProcesses")])))
 
-(defn start
-  "Initialize Wolframite and start the underlying Wolfram Kernel - required once before you make any eval calls.
+(defn start!
+  "Initialize Wolframite and start! the underlying Wolfram Kernel - required once before you make any eval calls.
 
   - `opts` - a map that is passed to `eval` and other functions used in the convert-evaluate-parse
              cycle, which may contain, among others:
@@ -130,8 +130,8 @@
      -  `:flags [kwd ...]` - various on/off toggles for how Wolframite processes inputs/results,
         passed e.g. to the `custom-parse` multimethod; see also wolframite.runtime.defaults/default-flags
 
-  See also [[stop]]"
-  ([] (start defaults/default-options))
+  See also [[stop!]]"
+  ([] (start! defaults/default-options))
   ([opts]
    (if (some-> (jlink-instance/get) (proto/kernel-link?)) ; need both, b/c some tests only init jlink
      {:status :ok
@@ -152,9 +152,9 @@
                       wolfram-version w/*wolfram-version*)))
        {:status :ok
         :wolfram-version (:wolfram-version (deref kernel-info 1 :N/A))
-        :started? true}))))
+        :start!ed? true}))))
 
-(defn stop
+(defn stop!
   "Sends a request to the kernel to shut down.
 
   See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/KernelLink.html#terminateKernel()"
@@ -164,16 +164,16 @@
   (reset! kernel-link-atom nil)
   {:status :ok})
 
-(defn restart
-  "Same as calling [[stop]] and then [[start]]."
-  ([] (stop) (start))
-  ([opts] (stop) (start opts)))
+(defn restart!
+  "Same as calling [[stop!]] and then [[start!]]."
+  ([] (stop!) (start!))
+  ([opts] (stop!) (start! opts)))
 
 (defn eval
   "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
 
    Args:
-   - `opts` - same as those for [[start]], especially `:aliases` and `:flags` (see
+   - `opts` - same as those for [[start!]], especially `:aliases` and `:flags` (see
       wolframite.runtime.defaults/default-flags)
 
     Example:
@@ -193,7 +193,7 @@
                                  eval-opts)
            expr' (if (string? expr) (express/express expr with-eval-opts) expr)]
        (cep/cep expr' with-eval-opts))
-     (throw (IllegalStateException. "Not initialized, call start first")))))
+     (throw (IllegalStateException. "Not initialized, call start! first")))))
 
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
 (defn- clj-intern-autoevaled
@@ -256,15 +256,15 @@ See `package/intern-context!` for details of turning the Wolfram context into a 
 
 (comment
   ;; Initialization/alias test
-  (start {:aliases
-          '{** Power}})
+  (start! {:aliases
+           '{** Power}})
   (eval '(** 5 2))
   (eval (w/Dot [1 2 3] [4 5 6]))
-  (stop))
+  (stop!))
 
 (comment
   ;; Package test
-  (start)
+  (start!)
 
   (<<! "resources/WolframPackageDemo.wl")
   (load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo")

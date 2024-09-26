@@ -17,12 +17,10 @@
   (clerk/serve! {:browse? true :watch-paths ["src"]})
 
   (clerk/serve! {:browse? true})
-  (clerk/show! "dev/explainer.clj")
-
-  )
+  (clerk/show! "dev/explainer.clj"))
 
 ;; ### Init Wolframite
-(wl/start)
+(wl/start!)
 
 ;; * Syntax
 
@@ -82,12 +80,12 @@
            n)
          :return-links true)
 (h/help! (w/Take
-            (w/Sort
-              (w/Map
+          (w/Sort
+           (w/Map
                 ;(w/Function ['gene] [(w/GenomeData 'gene "SequenceLength") 'gene])
-                (w/fn [gene] [(w/GenomeData gene "SequenceLength") gene])
-                (w/GenomeData)))
-            'n)
+            (w/fn [gene] [(w/GenomeData gene "SequenceLength") gene])
+            (w/GenomeData)))
+          'n)
          :return-links true)
 
 (wl/eval (w/Information w/GenomeData))
@@ -126,8 +124,8 @@
 (defn wf [& {:keys [prop]
              :or   {prop "CaseVariants"}}]
   (wl/eval (w/WordFrequency (w/ExampleData (conj ["Text"] "AliceInWonderland"))
-                  (vector "a" "an" "the")
-                  prop)))
+                            (vector "a" "an" "the")
+                            prop)))
 
 (wf :prop "Total")
 

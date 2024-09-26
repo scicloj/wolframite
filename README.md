@@ -40,7 +40,7 @@ Next, obviously, you'll need to ensure that you have Wolfram Engine or Mathemati
 First of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:
 
 ```clojure
-(wolframite.core/start)
+(wolframite.core/start!)
 ```
 This should also find and load the JLink JAR included with your installation. Watch stdout for an INFO log message (via clojure.tools.logging) like:
 
@@ -60,7 +60,7 @@ Start a REPL with Wolframite on the classpath, then initialize it:
 (require '[wolframite.core :as wl] 
          '[wolframite.wolfram :as w]) ; Wolfram symbols as Clojure vars / fns
 ;; Initialize
-(wl/start) ; => nil
+(wl/start!) ; => nil
 ;; Use it:
 (wl/eval (w/Dot [1 2 3] [4 5 6]))
 ;=> 32
@@ -98,13 +98,13 @@ to generate your own wolfram ns with whatever additional symbols your Wolfram/Ma
 
 A big advantage of Wolframite (as opposed to its earlier incarnations) is that we can now individually tailor the user experience at the level of initialization,
 ```clojure
-(wl/start {:aliases '{** Power}})
+(wl/start! {:aliases '{** Power}})
 (wl/eval '(** 2 5)) ; => 32
 ```
 ,
 and function call,
 ```clojure
-(wl/start)
+(wl/start!)
 (wl/eval '(** 2 5) {:aliases '{** Power}}) ; => 32
 ```
 . Use it how you want to!

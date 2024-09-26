@@ -3,28 +3,26 @@
   See also the explainer ns."
   ;; FIXME Why do we have both demo and explainer? Could we settle on one? If not then clarify the difference!
   (:require
-    [wolframite.core :as wl]
-    [wolframite.impl.jlink-instance :as jlink-instance]
-    [wolframite.wolfram :as w]
-    [wolframite.tools.graphics :as graphics]
-    [wolframite.base.parse :as parse]
-    [wolframite.runtime.defaults :as defaults]
-    [wolframite.base.convert :as convert]
-    [wolframite.base.evaluate :as evaluate]
-    [wolframite.base.express :as express]))
+   [wolframite.core :as wl]
+   [wolframite.impl.jlink-instance :as jlink-instance]
+   [wolframite.wolfram :as w]
+   [wolframite.tools.graphics :as graphics]
+   [wolframite.base.parse :as parse]
+   [wolframite.runtime.defaults :as defaults]
+   [wolframite.base.convert :as convert]
+   [wolframite.base.evaluate :as evaluate]
+   [wolframite.base.express :as express]))
 
 (comment
 
   ;; !!! INIT WOLFRAMITE !!!
-  (wl/start)
+  (wl/start!)
 
   ;; Low-level evaluate of a Wolfram expression (here, `Plus[1,2]`)
   ;; You normally don't want this - just use wl/eval. Notice that all the connection details explicitly specified.
   ((parse/parse-fn 'Plus (merge {:jlink-instance (jlink-instance/get)}
                                 defaults/default-options))
    1 2))
-
-
 
 ;; * Clojure a 1min intro
 ;; ** Interactive developement
@@ -52,7 +50,6 @@
 ;; namespaced
 
 :project.media/image
-
 
 ;; *** Interesting compound datatypes
 
@@ -91,13 +88,11 @@
 
 (greetings "Stephen")
 
-
 ;; ** Bidirectional translation
 ;; (Somewhat experimental, especially in the wl->clj direction)
 
 (wl/->clj "GridGraph[{5, 5}]")
 (wl/->wl '(GridGraph [5 5]) {:output-fn str})
-
 
 ;; ** Graphics
 
@@ -121,7 +116,6 @@
 (quick-show (w/ChemicalData "Ethanol" "StructureDiagram"))
 (quick-show (w/GridGraph [5 5]))
 (quick-show (w/GeoImage (w/Entity "City" ["NewYork" "NewYork" "UnitedStates"])))
-
 
 ;; ** More Working Examples
 
