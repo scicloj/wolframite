@@ -110,14 +110,35 @@ use the internal `StringToMReal` instead. I got [these performance tips](https:/
 
 ;; Now we extract and parse the columns of interest (processing all but displaying only the first 3 here):
 (k/table
-  {:column-names ["Start latitude" "Start longitude"]
+  {:column-names ["Start latitude" "Start longitude"
+                  "End latitude" "End longitude"]
    :row-vectors
-   (wl/eval (-> (w/= 'starts
-                     (w/Map (w/fn [row] [(list 'Internal/StringToMReal (w/Part row (header->idx "start_lat")))
-                                         (list 'Internal/StringToMReal (w/Part row (header->idx "start_lng")))])
-                            'rows))
-                (w/Part (w/Range 1 3))))})
+   (time ; 0.6s w/ Map only, 2s with Select as well
+    (wl/eval (-> (w/= 'parsed
+                      (->> (w/Select 'rows (w/fn [r] (w/AllTrue r (w/fn [v] (w/Not (w/== v ""))))))
+                           (w/Map (w/fn [row] [(list 'Internal/StringToMReal (w/Part row (header->idx "start_lat")))
+                                               (list 'Internal/StringToMReal (w/Part row (header->idx "start_lng")))
+                                               (list 'Internal/StringToMReal (w/Part row (header->idx "end_lat")))
+                                               (list 'Internal/StringToMReal (w/Part row (header->idx "end_lng")))]))))
+                 (w/Part (w/Range 1 3)))))})
 
 ;; For me, it took ±0.8s to extract the 2 columns as text and 1.5s to parse them into numbers. With `ToExpression` it would take ±5s.
 
 ;; **TO BE CONTINUED** - featuring GeoDistance & more!
+
+;; **TODO** Plot start/stop points
+;; Map[{#["lat"]/1000000,#["lng"]/1000000}&,Import[APIURL,"RawJSON"]]//GeoHistogram
+(comment
+
+  (->> (w/Map (w/fn [latLon]
+                [(w/Part latLon 3)
+                 (w/Part latLon 4)])
+              'parsed)
+       w/GeoHistogram
+       ((requiring-resolve 'wolframite.tools.experimental/show!)) #_wl/eval)
+  (->> (w/Map (w/fn [latLon]
+                [(w/Part latLon 1)
+                 (w/Part latLon 2)])
+              'parsed)
+       w/GeoHistogram
+       ((requiring-resolve 'wolframite.tools.experimental/show!)) #_wl/eval))

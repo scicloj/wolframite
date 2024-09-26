@@ -28,13 +28,13 @@ In Wolfram, everything is global by default and you need to take care to avoid t
 ## Building blocks
 ")
 
-; #### [Symbolic expressions](https://www.wolfram.com/language/fast-introduction-for-programmers/en/symbolic-expressions/)
+(k/md "#### #### [Symbolic expressions](https://www.wolfram.com/language/fast-introduction-for-programmers/en/symbolic-expressions/)")
 ; Expressions have the generic form `head[arguments...]`, which becomes Wolframite `(head arguments...)`
 ;
 ; Ex.: `Plus[Power[x, 2], Times[3, Power[y, 3]]]`. Notice that we can use undefined symbols, since this
 ; is just a symbolic expression, not (yet) a computation. An expression's _head_ identifies the type of data or operation being represented.
 
-; #### [Lists](https://www.wolfram.com/language/fast-introduction-for-programmers/en/lists/)
+(k/md "#### [Lists](https://www.wolfram.com/language/fast-introduction-for-programmers/en/lists/)")
 ; Wolfram's list `{1, "hello", 3.14}` becomes a vector in Wolframite: `[1, "hello", 3.14]`
 ;
 ; List access by indexing (from 1) via `[[idx or a range a.k.a. Span]]`:
@@ -45,10 +45,12 @@ In Wolfram, everything is global by default and you need to take care to avoid t
 ; Many operations "thread" over lists, applying to each element:
 (wl/eval (w/Plus [1 2 3] 10))
 
-; #### [Iterators](https://www.wolfram.com/language/fast-introduction-for-programmers/en/iterators/) (to simplify repetitive operations)
+(k/md "#### [Iterators](https://www.wolfram.com/language/fast-introduction-for-programmers/en/iterators/) (to simplify repetitive operations)")
 ; `Table[x^2, {x, 4, 20, 2}]` in Wolfram is equivalent to Clojure's `(map (fn [x] (math/pow x 2)) (range 4 20 2))`
 
-; #### Rules
+;; See also the [List Manipulation reference](https://reference.wolfram.com/language/guide/ListManipulation.html).
+
+(k/md "#### Rules")
 ; Rules, or rewrite rules, of the form `key -> value` predate associations and are used where you'd expect a map,
 ; often to define [options to functions](https://www.wolfram.com/language/fast-introduction-for-programmers/en/options/),
 ; as in here: `Import["demo.csv.gz", {"Data", 1}]) ;; 3}, "HeaderLines" -> 1]`
@@ -58,14 +60,14 @@ In Wolfram, everything is global by default and you need to take care to avoid t
 ; Similar to Maps, just with a unique syntax using Rules. Fortunately, in Clojure we can just use maps:
 (wl/->clj "<|\"a\" -> x, \"b\" -> y|>")
 
-; #### Patterns
+(k/md "#### Patterns")
 ; are used to transform symbolic expressions into other symbolic expressions, f.ex.
 (wl/eval "Replace[f[100], f[x_] -> x + 5]")
 ;  Here, `_` a.k.a. Blank is a pattern that matches any expression and a double blank `__` matches any sequence of expressions.
 ; We can name the captured value by prepending a name, as in `x_`.
 ; There is also `|` for alternatives, `_h` to capture expressions with the head `h`, `:>` for a delayed rules.
 
-; #### [Real-World Entities](https://www.wolfram.com/language/fast-introduction-for-programmers/en/real-world-entities/)
+(k/md "#### [Real-World Entities](https://www.wolfram.com/language/fast-introduction-for-programmers/en/real-world-entities/)")
 ; Real-world entities are symbolic expressions representing information about concepts, things etc. such as countries, chemicals etc. Ex.:
 ; Use _entity_["Properties"] to find a list of properties and `EntityValue[entity, "Population"]` to get the value of a property.
 (def LA (w/Entity "City" ["LosAngeles" "California" "UnitedStates"]))
@@ -83,7 +85,7 @@ In Wolfram, everything is global by default and you need to take care to avoid t
 ; (Note: You may want to override `wolframite.base.parse/custom-parse` for `'Entity` and `'EntityProperty` to modify how these
 ; get read from Wolfram.
 
-; #### Various
+(k/md "#### Various")
 ; * [Assignments](https://www.wolfram.com/language/fast-introduction-for-programmers/en/assignments/) - `=` and `:=`; `Module` for scoping
 ; * [Applying Functions](https://www.wolfram.com/language/fast-introduction-for-programmers/en/applying-functions/) - `Map` with the shorthand `/@`,
 ;   `Apply` with the shorthand `@@`
@@ -98,3 +100,11 @@ In Wolfram, everything is global by default and you need to take care to avoid t
 ;; which we have borrowed heavily from.
 ;;
 ;; The dense one-page [Wolfram Language Syntax](https://reference.wolfram.com/language/guide/Syntax.html) may also be of use, especially when reading Wolfram code.
+
+(k/md "#### Clojure <-> Wolfram")
+(k/table {:column-names [:Clojure :Wolfram],
+          :row-vectors {"apply" "Apply"
+                        "count" "Length"
+                        "filter" "Select"
+                        "nth" "Part"
+                        "take" "Part"}})
