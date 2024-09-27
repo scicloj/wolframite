@@ -209,6 +209,14 @@
                                         defaults/default-options
                                         opts))))
 
+(defn wolfram-expr
+  "Mark the string `str` as containing a Wolfram expression, which should be evaluated as such.
+  This is useful when you need to nest a raw Wolfram expression in a bigger Wolframite expression
+  to work around a yet unsolved limitation of Wolframite."
+  [^String str]
+  {:pre [(string? str)]}
+  (convert/->wolfram-str-expr str))
+
 (defn ->clj
   "Turn the given Wolfram expression string into its Clojure data structure form.
 

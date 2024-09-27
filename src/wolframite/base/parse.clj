@@ -195,12 +195,6 @@
   ```"
   #'custom-parse-dispatch)
 
-(defmethod custom-parse 'EntityProperty [expr opts]
-  (entity-type->keyword expr opts))
-
-(defmethod custom-parse 'Entity [expr opts]
-  (entity-type->keyword expr opts))
-
 (defmethod custom-parse :default [expr opts]
   (standard-parse expr opts))
 

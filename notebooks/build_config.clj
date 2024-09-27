@@ -5,13 +5,17 @@
              :base-source-path "notebooks"
              :source-path ["index.clj"
                            "quickstart.clj"
+                           "understanding_wolframite.clj"
                            "gotcha.clj"
-                           "packages.clj"
                            {:part "Tutorials for scientists"
                             :chapters ["for_scientists/index.clj"
                                        "for_scientists/cavity_physics.clj"]}
                            {:part "Tutorials for developers"
-                            :chapters ["for_developers/index.clj"]}
+                            :chapters ["for_developers/index.clj"
+                                       "for_developers/wolfram_for_clojurians.clj"
+                                       "for_developers/demo_analysis_cycling.clj"]}
+                           {:part "Advanced topics"
+                            :chapters ["packages.clj"]}
                            "faq.clj"]
              :base-target-path "docs"
              :book {:title "Wolframite Documentation"}

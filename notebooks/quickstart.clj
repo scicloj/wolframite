@@ -1,23 +1,25 @@
+;; # Quickstart {#sec-quickstart}
+;;
+;; A brief demonstration of what Wolframite can do. It's a quick read, but you can also jump to any section of interest.
+;
+;; To be extra 'meta', this page is itself a demonstration of a literate programming workflow and, as such, is simply a Clojure
+;; namespace annotated using the [Kindly](https://scicloj.github.io/kindly-noted/kindly) system. Currently, this is the recommended
+;; way of using Wolframite: for the ability to clearly display equations and plots. To use this system, simply look at the relevant
+;; [source](https://github.com/scicloj/wolframite/). It is not necessary however; it is still possible, and productive, to use the
+;; REPL directly.
+;;
+;; First, let's require few Wolframite namespaces
 (ns quickstart
   (:require
    [wolframite.core :as wl]
    [wolframite.wolfram :as w]
-   [wolframite.impl.jlink-instance :as jlink-instance]
    [wolframite.tools.hiccup :as wh]
-   [wolframite.base.parse :as parse]
    [scicloj.kindly.v4.kind :as k]))
-
-(k/md "# Quickstart {#sec-quickstart}
-
-A brief demonstration of what Wolframite can do. It's a quick read, but you can also jump to any section of interest.
-
-To be extra 'meta', this page is itself a demonstration of a literate programming workflow and, as such, is simply a Clojure namespace annotated using the [Kindly](https://scicloj.github.io/kindly-noted/kindly) system. Currently, this is the recommended way of using Wolframite: for the ability to clearly display equations and plots. To use this system, simply look at the relevant  [source](https://github.com/scicloj/wolframite/). It is not necessary however; it is still possible, and productive, to use the REPL directly.
-")
 
 (k/md "## Init
 
-First, we must initialize Wolframite and connect it to a Wolfram kernel,
-which will perform the computations.")
+Before we do anything else, we must initialize Wolframite and connect it to a Wolfram kernel,
+which will perform the computations:")
 
 (wl/start!)
 
@@ -26,13 +28,14 @@ which will perform the computations.")
 (k/md "## First things first
 
 To check that the kernel is working, try the following command:")
-(wl/eval '(Dot [1 2 3] [4 5 6]))
-
-(k/md "As you can see, we can treat Wolfram commands similarly to unevaluated Clojure source code, with some predictable syntax adaptations. This works fine as a starting point, but dealing with long chains of raw symbols doesn't always scale well. Instead, you can also write")
 (wl/eval (w/Dot [1 2 3] [4 5 6]))
-(k/md "or, using one of our fancy aliases,")
+
+(k/md "
+`wl/eval` asks Wolframite to translate the following expression to Wolfram and send it to a Wolfram kernel for evaluation. ")
+(k/md "We could also use one of our fancy aliases,")
 (wl/eval (w/<*> [1 2 3] [4 5 6]))
-(k/md ", which may be more familiar to the Mathematically inclined. If you're interested in adding your own aliases, then have a look at @sec-wolfram-basics.
+(k/md ", which may be more familiar to the Mathematically inclined. If you're interested in adding your own aliases, then have a look at
+@sec-wolfram-basics.
 
 Here, the `w` namespace is a preconfigured, but configurable, intermediary to Wolfram's built-in symbols. This allows you to manipulate Wolfram functions just like any other Clojure symbol (and get reliable editor autocompletion).")
 
@@ -104,4 +107,9 @@ In particular, the flagship product of Wolfram, the one you've probably heard of
     wl/eval
     k/tex)
 
-(k/md "This is where Wolfram, and so Wolframite, really shines. And if you're interested in exploring this further, have a look at one of our longer tutorials.")
+(k/md "This is where Wolfram, and so Wolframite, really shines. And if you're interested in exploring this further, have a look at one of our longer tutorials.
+
+## Wolfram has a lot to offer
+
+You may also want to browse the [thousands of functions from various domains that Wolfram provides](https://www.wolfram.com/language/core-areas/).
+These domains include Machine Learning, Calculus & Algebra, Optimization, Geography, and much more.")

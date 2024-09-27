@@ -165,12 +165,12 @@
                                                                 (pr-str clj-expr))
                                                            {:expr clj-expr}))
           ;; Originally we called `(express/express arg opts)` but it fails b/c it only handles strings
-          :else                            (expr/expr-from-parts
-                                             (cons (convert head
-                                                            (cond-> opts
-                                                                     (symbol? head)
-                                                                     (assoc ::args tail)))
-                                                   (doall (map #(convert % opts) tail))))))) ; eager => fail early
+          :else (expr/expr-from-parts
+                  (cons (convert head
+                                 (cond-> opts
+                                         (symbol? head)
+                                         (assoc ::args tail)))
+                        (doall (map #(convert % opts) tail)))))))
 
 (comment
   (convert '(whatever 1) nil)

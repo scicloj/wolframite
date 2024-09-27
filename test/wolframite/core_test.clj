@@ -109,7 +109,7 @@
                                     ["123"])))))))
 
 (deftest ->clj
-  (wl/start)
+  (wl/start!)
   (is (= '(+ 1 2)
          (wl/->clj "Plus[1,2]"))
       "Translating Wolfram expr string to Wolframatica data form works")

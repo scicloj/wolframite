@@ -7,7 +7,7 @@
             [wolframite.wolfram :as w]))
 
 ;; Let's start Wolfram to be ready for our examples underneath:
-(wl/start)
+(wl/start!)
 
 (k/md "# Clojure Primer
 
