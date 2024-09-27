@@ -14,7 +14,7 @@
 We introduce you, the motivated Clojure developer, to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and some getting started notes, we outline a 'real' workflow using the example of analysing data about bike trips.")
 
 ; First, start & connect to a Wolfram Kernel (assuming all the common requires):
-(wl/start)
+(wl/start!)
 
 (k/md "
 Now, let's play with some data! But first we will need to read them in from a CSV file. The docs

@@ -17,7 +17,7 @@
 (k/md "Next, we need to actually start a [Wolfram Kernel](https://reference.wolfram.com/language/ref/program/WolframKernel.html)
 and connect to it:")
 
-(wl/start)
+(wl/start!)
 
 (k/md "## How it all works
 

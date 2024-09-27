@@ -5,7 +5,7 @@
             [wolframite.core :as wl]
             [wolframite.wolfram :as w]))
 
-(wl/start)
+(wl/start!)
 
 (k/md "## What is Wolfram?
 

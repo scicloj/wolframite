@@ -17,7 +17,7 @@
         "Empty maps work too")))
 
 (deftest custom-parse
-  (wl/start)
+  (wl/start!)
   (testing "entities & co."
     (is (= (w/Entity "City" ["SanFrancisco" "California" "UnitedStates"])
            (wl/eval (w/Entity "City" ["SanFrancisco" "California" "UnitedStates"]))))
@@ -33,7 +33,7 @@
         "Round-trip works (we get Ent.Prop. back, pass that to another eval)")))
 
 (deftest parse-with-kernel-test
-  (wl/start)
+  (wl/start!)
   (let [ctx {:jlink-instance (jlink-instance/get)}]
     (testing "pure fn" ; needed by ->clj when translating wolfram expressions using this
       (testing "w/ named args"
@@ -56,7 +56,7 @@
                    (parse/parse nil))))))))
 
 (deftest fix-minus-reverse-aliased
-  (wl/start) ; we need the Kernel for turning stringified Wolfram into Expr
+  (wl/start!) ; we need the Kernel for turning stringified Wolfram into Expr
   (let [ctx {:jlink-instance (jlink-instance/get)}]
     (is (= '(- 42)
            (-> (convert/convert (convert/->wolfram-str-expr "Minus[42]") ctx)
