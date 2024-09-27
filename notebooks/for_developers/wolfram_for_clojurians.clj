@@ -94,6 +94,7 @@ In Wolfram, everything is global by default and you need to take care to avoid t
 ; * Use `;` to separate different side-effecting operations, as `(do ...)` would in Clojure
 ; * Booleans: `True`, `False`
 ; * String: "..."
+; * Note: indices in Wolfram start from 1, not 0
 
 
 ;; Read more in the online booklet [The Wolfram Language: Fast Introduction for Programmers](https://www.wolfram.com/language/fast-introduction-for-programmers/en/),
@@ -102,9 +103,11 @@ In Wolfram, everything is global by default and you need to take care to avoid t
 ;; The dense one-page [Wolfram Language Syntax](https://reference.wolfram.com/language/guide/Syntax.html) may also be of use, especially when reading Wolfram code.
 
 (k/md "#### Clojure <-> Wolfram")
-(k/table {:column-names [:Clojure :Wolfram],
-          :row-vectors {"apply" "Apply"
-                        "count" "Length"
-                        "filter" "Select"
-                        "nth" "Part"
-                        "take" "Part"}})
+(k/table {:column-names [:Clojure :Wolfram :Comments],
+          :row-vectors [["apply" "Apply"]
+                        ["count" "Length"]
+                        ["filter" "Select"]
+                        ["nth" "Part" "1-based indexing"]
+                        ["map" "Map"]
+                        ["reduce" "Fold"]
+                        ["take" "Part"]]})

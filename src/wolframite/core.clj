@@ -152,7 +152,7 @@
                       wolfram-version w/*wolfram-version*)))
        {:status :ok
         :wolfram-version (:wolfram-version (deref kernel-info 1 :N/A))
-        :start!ed? true}))))
+        :started? true}))))
 
 (defn stop!
   "Sends a request to the kernel to shut down.

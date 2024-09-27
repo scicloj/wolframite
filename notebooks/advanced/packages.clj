@@ -1,4 +1,4 @@
-(ns packages
+(ns advanced.packages
   "A notebook demonstrating how to import and use Wolfram packages in Wolframite."
   (:require
    [scicloj.kindly.v4.kind :as k]

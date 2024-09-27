@@ -113,7 +113,7 @@ use the internal `StringToMReal` instead. I got [these performance tips](https:/
   {:column-names ["Start latitude" "Start longitude"
                   "End latitude" "End longitude"]
    :row-vectors
-   (time ; 0.6s w/ Map only, 2s with Select as well
+   (time ; 0.6s w/ Map only, ~2s with Select as well
     (wl/eval (-> (w/= 'parsed
                       (->> (w/Select 'rows (w/fn [r] (w/AllTrue r (w/fn [v] (w/Not (w/== v ""))))))
                            (w/Map (w/fn [row] [(list 'Internal/StringToMReal (w/Part row (header->idx "start_lat")))
@@ -124,10 +124,22 @@ use the internal `StringToMReal` instead. I got [these performance tips](https:/
 
 ;; For me, it took ±0.8s to extract the 2 columns as text and 1.5s to parse them into numbers. With `ToExpression` it would take ±5s.
 
-;; **TO BE CONTINUED** - featuring GeoDistance & more!
+;; #### Starting positions in a map
+;; I'd love to include the following, but exporting the graphics seems to take forever on my
+;; older machine...
+;(time (delay (wl/eval (w/Export (.getAbsolutePath (io/file "notebooks" "start-locs.webp"))
+;                                (w/Map (w/fn [row] [(w/Part row 1) (w/Part row 2)])
+;                                       'parsed)))))
+;(k/hiccup [:img {:src "notebooks/start-locs.webp"}])
+;
+; The following code does the same, still slow, but much faster. But it opens a Java window, which we cannot
+; display in this page:
+(comment (->> (w/Map (w/fn [row] [(w/Part row 1) (w/Part row 2)])
+                     'parsed)
+              w/GeoHistogram
+              ((requiring-resolve 'wolframite.tools.experimental/show!))))
 
-;; **TODO** Plot start/stop points
-;; Map[{#["lat"]/1000000,#["lng"]/1000000}&,Import[APIURL,"RawJSON"]]//GeoHistogram
+
 (comment
 
   (->> (w/Map (w/fn [latLon]
@@ -142,3 +154,5 @@ use the internal `StringToMReal` instead. I got [these performance tips](https:/
               'parsed)
        w/GeoHistogram
        ((requiring-resolve 'wolframite.tools.experimental/show!)) #_wl/eval))
+
+;; **TO BE CONTINUED** - featuring GeoDistance & more!

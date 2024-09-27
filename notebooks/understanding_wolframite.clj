@@ -67,7 +67,7 @@ Notice the `'` quote in front of the expression, telling Clojure Reader not to e
 ;; ### A word on aliases
 
 ;; When we come back to our original expression, `'(+ 1 (Minus 1))`, you may notice that `+` is not actually a Wolfram function.
-;; It is a [Wolframite alias](@sec-aliases-table), which we replace with `Plus` before we send it to Wolfram.
+;; It is a Wolframite alias (see @sec-aliases-table), which we replace with `Plus` before we send it to Wolfram.
 ;; You can read about it further down this document.
 
 ;; ### Evaluated form {#sec-evaluated-form}

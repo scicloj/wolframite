@@ -6,10 +6,7 @@
             [wolframite.core :as wl]
             [wolframite.wolfram :as w]))
 
-;; Let's start Wolfram to be ready for our examples underneath:
-(wl/start!)
-
-(k/md "# Clojure Primer
+(k/md "# Clojure primer {#sec-clojure-primer}
 
 A very brief introduction to Clojure for a would-be users of Wolframite not familiar with the language.
 
@@ -25,6 +22,9 @@ and produce code that is well suited to evolution over time.
 Let's start by comparing how **adding a few elements to a list**
 looks like in Wolfram, Python, and Clojure:
 ")
+
+;; Let's start Wolfram to be ready for our examples underneath:
+(wl/start!)
 
 ^:kindly/hide-code
 (k/table

@@ -14,8 +14,11 @@
                             :chapters ["for_developers/index.clj"
                                        "for_developers/wolfram_for_clojurians.clj"
                                        "for_developers/demo_analysis_cycling.clj"]}
+                           {:part "Clojure primer"
+                            :chapters ["clojure_primer/index.clj"]}
                            {:part "Advanced topics"
-                            :chapters ["packages.clj"]}
+                            :chapters ["advanced/customizing_wolframite.clj"
+                                       "advanced/packages.clj"]}
                            "faq.clj"]
              :base-target-path "docs"
              :book {:title "Wolframite Documentation"}
