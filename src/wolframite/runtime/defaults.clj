@@ -14,7 +14,7 @@
                 #{:evaluate :no-evaluate}   :evaluate
                 #{:convert :no-convert}     :convert
                 ;#{:hash-maps :no-hash-maps} :hash-maps
-                #{:functions :no-functions} :functions ;; ?? parse (Function ...) into our parse-fn instance?!
+                ;#{:functions :no-functions} :functions ;; ?? parse (Function ...) into our parse-fn instance?!
                 #{:aliases :no-aliases}     :aliases
                 #{:N :no-N}                 :no-N ; :N -> use Expr.asArray on matrix' rows
                 ;#{:verbose :no-verbose}     :no-verbose

@@ -159,10 +159,11 @@
           (.rationalQ expr)        (parse-rational expr)
           (.symbolQ expr)          (parse-symbol expr opts)
           (= "Association" head)   (parse-hash-map expr opts) #_(parse-generic-expression expr opts)
-          (= "Function" head)      (if (and (options/flag?' flags :functions)
-                                            (not (options/flag?' flags :full-form)))
-                                     (parse-fn expr opts)
-                                     (parse-generic-expression expr opts))
+          (= "Function" head)      (parse-generic-expression expr opts)
+          ;(if (and (options/flag?' flags :functions)
+          ;         (not (options/flag?' flags :full-form)))
+          ;  (parse-fn expr opts)
+          ;  (parse-generic-expression expr opts))
           :else                    (parse-generic-expression expr opts))))
 
 (defn standard-parse [expr {:keys [flags] :as opts}]

@@ -109,9 +109,23 @@
                                     ["123"])))))))
 
 (deftest ->clj
+  (wl/start)
   (is (= '(+ 1 2)
          (wl/->clj "Plus[1,2]"))
-      "Translating Wolfram expr string to Wolframatica data form works"))
+      "Translating Wolfram expr string to Wolframatica data form works")
+  (testing "pure lambda"
+    (is (= '(fn (Slot 1))
+           (wl/->clj "#&"))
+        "An anonymous, one-arg lambda becomes Function (aliased to fn) w/ Slot")
+    (is (= [2 4]
+           (wl/eval "Map[#+1&,{1,3}]")
+           (wl/eval (w/Map (w/fn (w/+ (w/Slot 1) 1)) [1 3]))))
+    (is (= [2 4]
+           (wl/eval "Map[Function[{x}, x + 1],{1,3}]")
+           (wl/eval (w/Map (w/fn [x] (w/+ x 1)) [1 3]))))))
 
 (comment
+  (wl/->wl (w/Map (w/fn [] (w/+ (w/Slot 1) 1)) [1 3]))
+  (wl/eval (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))
+  (wl/eval (w/Map (w/fn [x] (w/+ x 1)) [1 3]))
   (clojure.test/run-tests 'wolframite.core-test))
