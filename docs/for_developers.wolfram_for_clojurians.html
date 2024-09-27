@@ -253,7 +253,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#pitfalls" id="toc-pitfalls" class="nav-link" data-scroll-target="#pitfalls"><span class="header-section-number">8.2</span> Pitfalls</a></li>
   <li><a href="#building-blocks" id="toc-building-blocks" class="nav-link" data-scroll-target="#building-blocks"><span class="header-section-number">8.3</span> Building blocks</a>
   <ul>
-  <li><a href="#symbolic-expressions" id="toc-symbolic-expressions" class="nav-link" data-scroll-target="#symbolic-expressions"><span class="header-section-number">8.3.0.1</span> Symbolic expressions</a></li>
+  <li><a href="#symbolic-expressions" id="toc-symbolic-expressions" class="nav-link" data-scroll-target="#symbolic-expressions"><span class="header-section-number">8.3.0.1</span> #### Symbolic expressions</a></li>
   <li><a href="#lists" id="toc-lists" class="nav-link" data-scroll-target="#lists"><span class="header-section-number">8.3.0.2</span> Lists</a></li>
   <li><a href="#iterators-to-simplify-repetitive-operations" id="toc-iterators-to-simplify-repetitive-operations" class="nav-link" data-scroll-target="#iterators-to-simplify-repetitive-operations"><span class="header-section-number">8.3.0.3</span> Iterators (to simplify repetitive operations)</a></li>
   <li><a href="#rules" id="toc-rules" class="nav-link" data-scroll-target="#rules"><span class="header-section-number">8.3.0.4</span> Rules</a></li>
@@ -261,6 +261,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#patterns" id="toc-patterns" class="nav-link" data-scroll-target="#patterns"><span class="header-section-number">8.3.0.6</span> Patterns</a></li>
   <li><a href="#real-world-entities" id="toc-real-world-entities" class="nav-link" data-scroll-target="#real-world-entities"><span class="header-section-number">8.3.0.7</span> Real-World Entities</a></li>
   <li><a href="#various" id="toc-various" class="nav-link" data-scroll-target="#various"><span class="header-section-number">8.3.0.8</span> Various</a></li>
+  <li><a href="#clojure---wolfram" id="toc-clojure---wolfram" class="nav-link" data-scroll-target="#clojure---wolfram"><span class="header-section-number">8.3.0.9</span> Clojure &lt;-&gt; Wolfram</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -306,7 +307,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            [wolframite.wolfram <span class="at">:as</span> w]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb2"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(wl/start)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(wl/start!)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb3"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:status</span> <span class="at">:ok</span>, <span class="at">:wolfram-version</span> <span class="fl">14.1</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="what-is-wolfram" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="what-is-wolfram"><span class="header-section-number">8.1</span> What is Wolfram?</h2>
@@ -324,7 +328,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="building-blocks" class="level2" data-number="8.3">
 <h2 data-number="8.3" class="anchored" data-anchor-id="building-blocks"><span class="header-section-number">8.3</span> Building blocks</h2>
 <section id="symbolic-expressions" class="level4" data-number="8.3.0.1">
-<h4 data-number="8.3.0.1" class="anchored" data-anchor-id="symbolic-expressions"><span class="header-section-number">8.3.0.1</span> <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/symbolic-expressions/">Symbolic expressions</a></h4>
+<h4 data-number="8.3.0.1" class="anchored" data-anchor-id="symbolic-expressions"><span class="header-section-number">8.3.0.1</span> #### <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/symbolic-expressions/">Symbolic expressions</a></h4>
 <p>Expressions have the generic form <code>head[arguments...]</code>, which becomes Wolframite <code>(head arguments...)</code></p>
 <p>Ex.: <code>Plus[Power[x, 2], Times[3, Power[y, 3]]]</code>. Notice that we can use undefined symbols, since this is just a symbolic expression, not (yet) a computation. An expression’s <em>head</em> identifies the type of data or operation being represented.</p>
 </section>
@@ -333,29 +337,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Wolfram’s list <code>{1, "hello", 3.14}</code> becomes a vector in Wolframite: <code>[1, "hello", 3.14]</code></p>
 <p>List access by indexing (from 1) via <code>[[idx or a range a.k.a. Span]]</code>:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb3"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(wl/-&gt;clj <span class="st">"{1,2,3}[[1 ;; 2]]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(wl/-&gt;clj <span class="st">"{1,2,3}[[1 ;; 2]]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(Part [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] (Span <span class="dv">1</span> <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(Part [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] (Span <span class="dv">1</span> <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>→</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/Part [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] (w/Span <span class="dv">1</span> <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/Part [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] (w/Span <span class="dv">1</span> <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span> <span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>[<span class="dv">1</span> <span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Many operations “thread” over lists, applying to each element:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb7"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/Plus [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/Plus [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb8"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span> <span class="dv">12</span> <span class="dv">13</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>[<span class="dv">11</span> <span class="dv">12</span> <span class="dv">13</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="iterators-to-simplify-repetitive-operations" class="level4" data-number="8.3.0.3">
 <h4 data-number="8.3.0.3" class="anchored" data-anchor-id="iterators-to-simplify-repetitive-operations"><span class="header-section-number">8.3.0.3</span> <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/iterators/">Iterators</a> (to simplify repetitive operations)</h4>
 <p><code>Table[x^2, {x, 4, 20, 2}]</code> in Wolfram is equivalent to Clojure’s <code>(map (fn [x] (math/pow x 2)) (range 4 20 2))</code></p>
+<p>See also the <a href="https://reference.wolfram.com/language/guide/ListManipulation.html">List Manipulation reference</a>.</p>
 </section>
 <section id="rules" class="level4" data-number="8.3.0.4">
 <h4 data-number="8.3.0.4" class="anchored" data-anchor-id="rules"><span class="header-section-number">8.3.0.4</span> Rules</h4>
@@ -365,20 +370,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h4 data-number="8.3.0.5" class="anchored" data-anchor-id="associations"><span class="header-section-number">8.3.0.5</span> <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/associations/">Associations</a></h4>
 <p>Similar to Maps, just with a unique syntax using Rules. Fortunately, in Clojure we can just use maps:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb9"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>(wl/-&gt;clj <span class="st">"&lt;|</span><span class="sc">\"</span><span class="st">a</span><span class="sc">\"</span><span class="st"> -&gt; x, </span><span class="sc">\"</span><span class="st">b</span><span class="sc">\"</span><span class="st"> -&gt; y|&gt;"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>(wl/-&gt;clj <span class="st">"&lt;|</span><span class="sc">\"</span><span class="st">a</span><span class="sc">\"</span><span class="st"> -&gt; x, </span><span class="sc">\"</span><span class="st">b</span><span class="sc">\"</span><span class="st"> -&gt; y|&gt;"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb10"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>{<span class="st">"a"</span> x, <span class="st">"b"</span> y}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>{<span class="st">"a"</span> x, <span class="st">"b"</span> y}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="patterns" class="level4" data-number="8.3.0.6">
 <h4 data-number="8.3.0.6" class="anchored" data-anchor-id="patterns"><span class="header-section-number">8.3.0.6</span> Patterns</h4>
 <p>are used to transform symbolic expressions into other symbolic expressions, f.ex.</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb11"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>(wl/eval <span class="st">"Replace[f[100], f[x_] -&gt; x + 5]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>(wl/eval <span class="st">"Replace[f[100], f[x_] -&gt; x + 5]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb12"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dv">105</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dv">105</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here, <code>_</code> a.k.a. Blank is a pattern that matches any expression and a double blank <code>__</code> matches any sequence of expressions. We can name the captured value by prepending a name, as in <code>x_</code>. There is also <code>|</code> for alternatives, <code>_h</code> to capture expressions with the head <code>h</code>, <code>:&gt;</code> for a delayed rules.</p>
 </section>
@@ -386,36 +391,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h4 data-number="8.3.0.7" class="anchored" data-anchor-id="real-world-entities"><span class="header-section-number">8.3.0.7</span> <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/real-world-entities/">Real-World Entities</a></h4>
 <p>Real-world entities are symbolic expressions representing information about concepts, things etc. such as countries, chemicals etc. Ex.: Use <em>entity</em>[“Properties”] to find a list of properties and <code>EntityValue[entity, "Population"]</code> to get the value of a property.</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb13"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> LA </span>(w/Entity <span class="st">"City"</span> [<span class="st">"LosAngeles"</span> <span class="st">"California"</span> <span class="st">"UnitedStates"</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> LA </span>(w/Entity <span class="st">"City"</span> [<span class="st">"LosAngeles"</span> <span class="st">"California"</span> <span class="st">"UnitedStates"</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb14"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/EntityValue LA <span class="st">"Population"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/EntityValue LA <span class="st">"Population"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb15"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>(Quantity <span class="dv">3849297</span> <span class="st">"People"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(Quantity <span class="dv">3849297</span> <span class="st">"People"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In Wolframite, we represent these entities as records:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb16"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(wl/eval LA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>(wl/eval LA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb17"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:Entity</span> [<span class="st">"City"</span> [<span class="st">"LosAngeles"</span> <span class="st">"California"</span> <span class="st">"UnitedStates"</span>]]}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(Entity <span class="st">"City"</span> [<span class="st">"LosAngeles"</span> <span class="st">"California"</span> <span class="st">"UnitedStates"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And they can be translated back to Wolfram and used there:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb18"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/EntityValue (wl/eval LA) <span class="st">"Population"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/EntityValue (wl/eval LA) <span class="st">"Population"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb19"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>(Quantity <span class="dv">3849297</span> <span class="st">"People"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(Quantity <span class="dv">3849297</span> <span class="st">"People"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here we need a small workaround - Wolfram allows <code>someEntity["Properties"]</code> but in our case, we’d try to use the list <code>(Entity ...)</code> as a function, which wouldn’t work. So we construct an expression list explicitly:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb20"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">take</span> <span class="dv">3</span> (wl/eval (<span class="kw">list</span> (w/Entity <span class="st">"City"</span> [<span class="st">"LosAngeles"</span> <span class="st">"California"</span> <span class="st">"UnitedStates"</span>]) <span class="st">"Properties"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">take</span> <span class="dv">3</span> (wl/eval (<span class="kw">list</span> (w/Entity <span class="st">"City"</span> [<span class="st">"LosAngeles"</span> <span class="st">"California"</span> <span class="st">"UnitedStates"</span>]) <span class="st">"Properties"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb21"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>({<span class="at">:EntityProperty</span> [<span class="st">"City"</span> <span class="st">"ActiveHomeListingCount"</span>]}</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a> {<span class="at">:EntityProperty</span> [<span class="st">"City"</span> <span class="st">"AdministrativeDivision"</span>]}</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a> {<span class="at">:EntityProperty</span> [<span class="st">"City"</span> <span class="st">"AggravatedAssault"</span>]})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>((EntityProperty <span class="st">"City"</span> <span class="st">"ActiveHomeListingCount"</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a> (EntityProperty <span class="st">"City"</span> <span class="st">"AdministrativeDivision"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a> (EntityProperty <span class="st">"City"</span> <span class="st">"AggravatedAssault"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Or, in Wolfram: <code>{ EntityProperty[City, ActiveHomeListingCount], EntityProperty[City, AdministrativeDivision], ... }</code></p>
 <p>(Note: You may want to override <code>wolframite.base.parse/custom-parse</code> for <code>'Entity</code> and <code>'EntityProperty</code> to modify how these get read from Wolfram.</p>
@@ -432,6 +437,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>Read more in the online booklet <a href="https://www.wolfram.com/language/fast-introduction-for-programmers/en/">The Wolfram Language: Fast Introduction for Programmers</a>, which we have borrowed heavily from.</p>
 <p>The dense one-page <a href="https://reference.wolfram.com/language/guide/Syntax.html">Wolfram Language Syntax</a> may also be of use, especially when reading Wolfram code.</p>
+</section>
+<section id="clojure---wolfram" class="level4" data-number="8.3.0.9">
+<h4 data-number="8.3.0.9" class="anchored" data-anchor-id="clojure---wolfram"><span class="header-section-number">8.3.0.9</span> Clojure &lt;-&gt; Wolfram</h4>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb23"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>(k/table {<span class="at">:column-names</span> [<span class="at">:Clojure</span> <span class="at">:Wolfram</span>],</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">:row-vectors</span> {<span class="st">"apply"</span> <span class="st">"Apply"</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"count"</span> <span class="st">"Length"</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"filter"</span> <span class="st">"Select"</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"nth"</span> <span class="st">"Part"</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"take"</span> <span class="st">"Part"</span>}})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="clay-table">
+<div class="table-responsive">
+<table class="table table-hover caption-top" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">Clojure</th>
+<th data-quarto-table-cell-role="th">Wolfram</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>apply</td>
+<td>Apply</td>
+</tr>
+<tr class="even">
+<td>count</td>
+<td>Length</td>
+</tr>
+<tr class="odd">
+<td>filter</td>
+<td>Select</td>
+</tr>
+<tr class="even">
+<td>nth</td>
+<td>Part</td>
+</tr>
+<tr class="odd">
+<td>take</td>
+<td>Part</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div style="background-color:grey;height:2px;width:100%;"></div>
 <div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/for_developers/wolfram_for_clojurians.clj">notebooks/for_developers/wolfram_for_clojurians.clj</a></small></small></pre></div>
 

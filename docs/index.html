@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -257,7 +257,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites"><span class="header-section-number">1.3.1</span> Prerequisites:</a>
   <ul class="collapse">
   <li><a href="#clojure" id="toc-clojure" class="nav-link" data-scroll-target="#clojure"><span class="header-section-number">1.3.1.1</span> Clojure</a></li>
-  <li><a href="#mathematica-or-wolfram-engine" id="toc-mathematica-or-wolfram-engine" class="nav-link" data-scroll-target="#mathematica-or-wolfram-engine"><span class="header-section-number">1.3.1.2</span> Mathematica or Wolfram Engine</a></li>
+  <li><a href="#wolfram-mathematica-or-wolfram-engine" id="toc-wolfram-mathematica-or-wolfram-engine" class="nav-link" data-scroll-target="#wolfram-mathematica-or-wolfram-engine"><span class="header-section-number">1.3.1.2</span> Wolfram (Mathematica) or Wolfram Engine</a></li>
   </ul></li>
   <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">1.3.2</span> Getting started</a>
   <ul class="collapse">
@@ -352,9 +352,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h4 data-number="1.3.1.1" class="anchored" data-anchor-id="clojure"><span class="header-section-number">1.3.1.1</span> Clojure</h4>
 <p>First, if you haven’t already, install the <a href="https://clojure.org/guides/getting_started">Clojure CLI toolchain</a> (homebrew is a great way to do this if you’re on Mac or Linux, but you can just as easily use the installation scripts if you prefer).</p>
 </section>
-<section id="mathematica-or-wolfram-engine" class="level4" data-number="1.3.1.2">
-<h4 data-number="1.3.1.2" class="anchored" data-anchor-id="mathematica-or-wolfram-engine"><span class="header-section-number">1.3.1.2</span> Mathematica or Wolfram Engine</h4>
-<p>Next, obviously, you’ll need to ensure that you have Wolfram Engine or Mathematica installed and your license (free for W. E.) registered - make sure you can run these tools on their own <em>before</em> trying Wolframite.</p>
+<section id="wolfram-mathematica-or-wolfram-engine" class="level4" data-number="1.3.1.2">
+<h4 data-number="1.3.1.2" class="anchored" data-anchor-id="wolfram-mathematica-or-wolfram-engine"><span class="header-section-number">1.3.1.2</span> Wolfram (Mathematica) or Wolfram Engine</h4>
+<p>Next, obviously, you’ll need to ensure that you have Wolfram Engine or the Wolfram desktop app (formerly called Mathematica) installed and your license (free for W. E.) registered - make sure you can run these tools on their own <em>before</em> trying Wolframite.</p>
 <p>First of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(wolframite.core/start!)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This should also find and load the JLink JAR included with your installation. Watch stdout for an INFO log message (via clojure.tools.logging) like:</p>
@@ -362,7 +362,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>=== Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar ===</p>
 </blockquote>
 <p>However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the <code>WOLFRAM_INSTALL_PATH</code> environment variable or Java system property (the latter takes priority) to point to the correct location. Example:</p>
-<pre class="shell"><code>export WOLFRAM_INSTALL_PATH=/opt/mathematica/13.1</code></pre>
+<pre class="shell"><code>export WOLFRAM_INSTALL_PATH=/opt/mathematica/13.1
+export WOLFRAM_INSTALL_PATH="/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents"</code></pre>
 </section>
 </section>
 <section id="getting-started" class="level3" data-number="1.3.2">
@@ -439,6 +440,7 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 <h3 data-number="1.5.2" class="anchored" data-anchor-id="deployment"><span class="header-section-number">1.5.2</span> Deployment</h3>
 <p>Build the jar with <code>clojure -T:build jar</code> then deploy with <code>env CLOJARS_USERNAME=&lt;tbd&gt; CLOJARS_PASSWORD=&lt;clojars-token&gt; clojure -T:build deploy</code></p>
 <p>Note: You need to log in to Clojars and generate a deployment token. You also need to be added to the SciCloj group there by an admin.</p>
+<p>Consider studying Wolfram’s guide <a href="https://reference.wolfram.com/language/JLink/tutorial/WritingJavaProgramsThatUseTheWolframLanguage.html">Writing Java Programs That Use the Wolfram Language</a> and <a href="https://reference.wolfram.com/language/tutorial/WSTPAndExternalProgramCommunicationOverview.html">WSTP and External Program Communication</a> when you want to dig into the JVM ↔︎ Wolfram communication.</p>
 <section id="documentation" class="level4" data-number="1.5.2.1">
 <h4 data-number="1.5.2.1" class="anchored" data-anchor-id="documentation"><span class="header-section-number">1.5.2.1</span> Documentation</h4>
 <p>Documentation is written as literal programming sources in the <code>notebooks</code> directory and turned into HTML under <code>docs</code> using <a href="https://scicloj.github.io/clay/">Clay</a> and <a href="https://quarto.org/">Quarto</a>.</p>
