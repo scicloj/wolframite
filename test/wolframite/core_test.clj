@@ -11,7 +11,7 @@
 ;;   (testing (is wl/math-evaluate)))
 
 (deftest basic-math
-  (wl/start)
+  (wl/start!)
   (is (= 2 (wl/eval '(Plus 1 1)))
       "A simple expression-as-symbol")
   (is (= 2 (wl/eval "Plus[1,1]"))
@@ -28,7 +28,7 @@
 ;;                                                                          :output-fn str})))))
 
 (deftest load-all-symbols-test
-  (wl/start)
+  (wl/start!)
   (wolfram-syms/load-all-symbols wl/eval 'w2)
   (is (= 3
          (wl/eval (eval '(w2/Plus 1 2))))
@@ -45,12 +45,12 @@
       "Interned vars have docstrings"))
 
 (deftest package-test
-  (wl/start)
-  (is (= nil
+  (wl/start!)
+  (is (= 'WolframPackageDemo
          (wl/<<! "resources/WolframPackageDemo.wl")))
-  (is (= nil
+  (is (= 'WolframPackageDemo
          (wl/load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo")))
-  (is (= nil
+  (is (= 'wd
          (wl/load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'wd)))
 
   (is (= "Used for testing Wolframite."
@@ -64,14 +64,14 @@
   (is (= 30
          (wl/eval (eval '(WolframPackageDemo/additional 10))))))
 
-(deftest restart
+(deftest restart!
   (testing "first set of aliases"
-    (wl/restart {:aliases '{test** Power}})
+    (wl/restart! {:aliases '{test** Power}})
     (is (= 8
            (wl/eval '(test** 2 3)))
         "test** is an alias for Power (and 2^3 is 8)"))
   (testing "restart & another aliases"
-    (wl/restart {:aliases '{pow Power}})
+    (wl/restart! {:aliases '{pow Power}})
     (is (thrown-with-msg? ExceptionInfo
                           #"Unsupported symbol / unknown alias"
                           (wl/eval '(test** 2 3)))
@@ -81,7 +81,7 @@
         "Now, `pow` is an alias for Power (and 2^3 is 8)")))
 
 (deftest quoted-symbols-test
-  (wl/start)
+  (wl/start!)
   (testing "Wolfram namespaces"
     (is (= (wl/eval '(Internal/StringToMReal "-123.56"))
            -123.56)
@@ -89,7 +89,7 @@
         "Namespaced symbols are turned into fully qualified Wolfram symbols")))
 
 (deftest corner-cases
-  (wl/start)
+  (wl/start!)
   (testing "Lambdas, nested"
     (is (= [[-1 -2]]
            (wl/eval (w/Map (w/fn [x]
@@ -98,7 +98,7 @@
         "Two nested uses of w/fn with arg shadowing should work")))
 
 (deftest bug-fixes
-  (wl/start)
+  (wl/start!)
   (testing "#76 double eval of ->"
     (is (= '(-> x 5)
            (wl/eval (wl/eval (w/-> 'x 5))))

@@ -30,7 +30,7 @@ First of all, we redefine the shortcuts that we used in the previous part, befor
     √ Sqrt
     ∫ Integrate})
 
-(wl/restart {:aliases aliases})
+(wl/restart! {:aliases aliases})
 
 (defmacro eval->
   "Extends the threading macro to automatically pass the result to wolframite eval."

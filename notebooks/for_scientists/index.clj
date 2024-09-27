@@ -81,7 +81,7 @@ Therefore, we enter the following.
     √ Sqrt
     ∫ Integrate})
 
-(wl/restart {:aliases aliases})
+(wl/restart! {:aliases aliases})
 
 (k/md "We can define new aliases by simply listing any Clojure-allowed symbol in the above map, with a corresponding symbol that represents a Wofram value (function or constant). This works fine, but these are only symbol replacements and so you would need to *use* them as symbols, *e.g.* `'(** 2 3)`. Here, `'x` is simpler syntax for `(quote x)`, which simply creates and uses a 'literal' symbol `x`, *i.e.* `'x` is not evaluated to anything else.
 

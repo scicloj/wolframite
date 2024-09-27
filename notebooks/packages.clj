@@ -25,7 +25,7 @@ additional[y_]:=3*y
 .
 ")
 
-(wl/restart)
+(wl/restart!)
 (wl/<<! "resources/WolframPackageDemo.wl")
 
 (wl/eval
