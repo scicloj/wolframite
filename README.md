@@ -31,8 +31,8 @@ Wolfram / Mathematica itself is a commercial product and requires a license. Tho
 
 No matter what is your level of experience with either Clojure or Wolfram, we have you covered!
 
-While this page provides a brief overview of Wolframite assuming some level of knowledge of each of the systems, we have also tutorials targeted at scientists new to Clojure (@sec-scientists) 
-and at Clojure developers new to Wolfram (@sec-for-developers). However, you should try to read through this page, the Quickstart (@sec-quickstart), and browse through Understanding Wolframite (@sec-understanding-wolframite) before diving into the tutorials. If you have never seen Clojure before, you may want to start with a quick look at our Clojure Primer (@sec-clojure-primer) to understand better the rest of the documentation. Remember: you don't need to learn or remember all at once.
+While this page provides a brief overview of Wolframite assuming some level of knowledge of each of the systems, we have also tutorials targeted at [scientists new to Clojure](https://scicloj.github.io/wolframite/for_scientists.index.html) 
+and at [Clojure developers new to Wolfram](https://scicloj.github.io/wolframite/for_developers.index.html). However, you should try to read through this page, the [Quickstart](https://scicloj.github.io/wolframite/quickstart.html), and browse through [Understanding Wolframite](https://scicloj.github.io/wolframite/understanding_wolframite.html) before diving into the tutorials. If you have never seen Clojure before, you may want to start with a quick look at our [Clojure Primer](https://scicloj.github.io/wolframite/clojure_primer.index.html) to understand better the rest of the documentation. Remember: you don't need to learn or remember all at once.
 
 ## Usage
 
