@@ -11,10 +11,15 @@
 ;; First, let's require few Wolframite namespaces
 (ns quickstart
   (:require
-   [wolframite.core :as wl]
-   [wolframite.wolfram :as w]
-   [wolframite.tools.hiccup :as wh]
-   [scicloj.kindly.v4.kind :as k]))
+    [clojure.set :as set]
+    [wolframite.core :as wl]
+    [wolframite.lib.helpers :as h]
+    [wolframite.runtime.defaults :as defaults]
+    [wolframite.wolfram :as w :refer :all
+     :exclude [* + - -> / < <= = == > >= fn
+               Byte Character Integer Number Short String Thread]]
+    [wolframite.tools.hiccup :as wh]
+    [scicloj.kindly.v4.kind :as k]))
 
 (k/md "## Init
 
@@ -108,8 +113,37 @@ In particular, the flagship product of Wolfram, the one you've probably heard of
     k/tex)
 
 (k/md "This is where Wolfram, and so Wolframite, really shines. And if you're interested in exploring this further, have a look at one of our longer tutorials.
+")
 
-## Wolfram has a lot to offer
+(k/md (format "
+## Productivity tip
+
+When you write a lot of Wolframite, it may be a little annoying with all the `w/` prefixes. Therefore,
+we recommend to use this require form instead:
+```clojure
+(ns whatever
+  (:require [wolframite.wolfram :as w :refer :all
+             :exclude %s]))
+```
+
+Then you can refer to most symbols directly, with the exception of those that conflict with Clojure's core functions
+and JAva classes, which could lead to confusion and mistakes.
+
+With this, you can write:
+"
+              (->
+                (set/intersection
+                  (-> (ns-publics 'clojure.core) keys set)
+                  (-> defaults/all-aliases keys set))
+                sort
+                ;; Add java.lang classes:
+                (concat '[Byte Character Integer Number Short String Thread])
+                vec
+                pr-str)))
+
+(wl/eval (Map (w/fn [x] (Power x 2)) (Table 'i ['i 1 3])))
+
+(k/md "## Wolfram has a lot to offer
 
 You may also want to browse the [thousands of functions from various domains that Wolfram provides](https://www.wolfram.com/language/core-areas/).
 These domains include Machine Learning, Calculus & Algebra, Optimization, Geography, and much more.")
