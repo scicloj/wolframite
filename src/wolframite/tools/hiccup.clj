@@ -2,11 +2,12 @@
   (:require [wolframite.core :as wl]
             [scicloj.kindly.v4.kind :as kind]
             [wolframite.impl.jlink-instance :as jlink-instance]
-            [wolframite.impl.protocols :as proto]))
+            [wolframite.impl.protocols :as proto])
+  (:import (java.util Base64)))
 
 (defn bytes->b64encodedString
-  [bs]
-  (java.lang.String. (.encode (java.util.Base64/getEncoder) bs)))
+  [^bytes bs]
+  (String. (.encode (Base64/getEncoder) bs)))
 
 (defn img [b64img]
   (kind/hiccup
@@ -30,7 +31,10 @@
 
 (defn view
   "View a given Wolframite `form` as Hiccup, Kindly compatible.
-  `:folded true` will fold the view."
+  `:folded true` will fold the view.
+
+  NOTE: We use base-64 encoding and for larger images, you may be better off using `wl/Export` and then
+  including the image as a file."
   ([form]
    (view form nil))
   ([form {:keys [folded?]}]
