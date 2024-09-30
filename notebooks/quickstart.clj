@@ -136,15 +136,7 @@ and Java classes, which could lead to confusion and mistakes.
 
 With this, you can write:
 "
-              (->
-                (set/intersection
-                  (-> (ns-publics 'clojure.core) keys set)
-                  (-> defaults/all-aliases keys set))
-                sort
-                ;; Add java.lang classes:
-                (concat '[Byte Character Integer Number Short String Thread])
-                vec
-                pr-str)))
+              (pr-str (wl/ns-exclusions :assert-as-expected))))
 
 (wl/eval (Map (w/fn [x] (Power x 2)) (Table 'i ['i 1 3])))
 

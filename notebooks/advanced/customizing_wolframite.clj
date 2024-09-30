@@ -7,7 +7,7 @@
 There are several ways to customize Wolframite to your liking.
 ")
 
-(k/md "### Custom aliases
+(k/md "### Custom aliases {#sec-custom-aliases}
 
 We've discussed Wolframite's built-in aliases in @sec-aliases-table.
 However, Wolframite allows you to individually tailor the user experience at the level of initialization:

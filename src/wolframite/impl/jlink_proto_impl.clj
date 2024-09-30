@@ -107,7 +107,6 @@
       (let [res (.getExpr link)
             messages (seq (first (reset-vals! packet-capture-atom nil)))
             messages-text (mapv :content messages)]
-        (def M messages)
         (cond
           (and (seq messages)
                (or (= res failed-expr)
