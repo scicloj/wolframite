@@ -124,6 +124,12 @@
            (wl/eval "Map[Function[{x}, x + 1],{1,3}]")
            (wl/eval (w/Map (w/fn [x] (w/+ x 1)) [1 3]))))))
 
+(deftest error-handling
+  (wl/start!)
+  (is (thrown? ExceptionInfo
+               (wl/eval (w/FromDigits "-87.6")))
+      "Should throw on invalid Wolfram expression"))
+
 (comment
   (wl/->wl (w/Map (w/fn [] (w/+ (w/Slot 1) 1)) [1 3]))
   (wl/eval (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))

@@ -34,31 +34,25 @@
                       :as   opts}]
   {:pre [jlink-instance]}
   (assert (proto/expr? jlink-instance expr))
-  (assert (proto/kernel-link? jlink-instance))
 
-  (let [link (proto/kernel-link jlink-instance)]
-   (if (options/flag?' (:flags opts) :serial)
-     (io!
-       (locking link
-         (doto link (.evaluate expr) (.waitForAnswer))
-         ; When eval failed b/c it needs internet but offline, still (.error link) = 0, (.errorMessage link) = "No ... problem..."
-         (.getExpr link)))
-     (let [opts' (update opts :flags conj :serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
-           ;; Generate a new, unique symbol for a ref to the submitted computation (~ Java Future?)
-           pid-expr (evaluate (convert/convert
-                                (list 'Unique
-                                      ; Beware: technically, this is an invalid clj symbol due to the slashes:
-                                      (symbol "Wolframite/Concurrent/process")) opts')
-                              opts)]
-       ;; Submit the expr for evaluation on the next available parallel kernel
-       (evaluate (convert/convert (list '= pid-expr (list 'ParallelSubmit expr)) opts') opts)
-       (evaluate (convert/convert '(QueueRun) opts') opts)
-       (loop []
-         (let [[state result] (process-state pid-expr opts)]
-           (if (not= :finished state)
-             (do
-               (queue-run-or-wait opts)
-               (recur))
-             (do
-               (evaluate (convert/convert (list 'Remove pid-expr) opts') opts)
-               result))))))))
+  (if (options/flag?' (:flags opts) :serial)
+    (proto/evaluate! jlink-instance expr)
+    (let [opts' (update opts :flags conj :serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
+          ;; Generate a new, unique symbol for a ref to the submitted computation (~ Java Future?)
+          pid-expr (evaluate (convert/convert
+                               (list 'Unique
+                                     ; Beware: technically, this is an invalid clj symbol due to the slashes:
+                                     (symbol "Wolframite/Concurrent/process")) opts')
+                             opts)]
+      ;; Submit the expr for evaluation on the next available parallel kernel
+      (evaluate (convert/convert (list '= pid-expr (list 'ParallelSubmit expr)) opts') opts)
+      (evaluate (convert/convert '(QueueRun) opts') opts)
+      (loop []
+        (let [[state result] (process-state pid-expr opts)]
+          (if (not= :finished state)
+            (do
+              (queue-run-or-wait opts)
+              (recur))
+            (do
+              (evaluate (convert/convert (list 'Remove pid-expr) opts') opts)
+              result)))))))
