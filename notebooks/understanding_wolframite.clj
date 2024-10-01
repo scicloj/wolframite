@@ -8,7 +8,8 @@
 ;;
 ;; First, we need some namespaces:
 (ns understanding-wolframite
-  (:require [scicloj.kindly.v4.kind :as kind]
+  (:require [scicloj.kindly.v4.api :as kindly]
+            [scicloj.kindly.v4.kind :as kind]
             [scicloj.kindly.v4.kind :as k]
             [clojure.repl :as repl]
             [wolframite.core :as wl]
@@ -234,8 +235,11 @@ If we evaluate `(h/help! 'ArithmeticGeometricMean)` then it will open the Wolfra
 
 We could instead ask for the link(s):")
 (h/help! w/ArithmeticGeometricMean :links true)
-#_(k/md
-   (h/help! w/ArithmeticGeometricMean :links true))
+#_"TODO(Jakub) the below shall replace the above when https://github.com/scicloj/clay/issues/171 fixed"
+#_
+(kindly/hide-code
+    (k/md (h/help! w/ArithmeticGeometricMean :links true))
+  false)
 
 (k/md "`h/help!` also works on whole expressions, providing docs for each symbol:")
 
