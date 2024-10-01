@@ -6,7 +6,7 @@
              :source-path ["index.clj"
                            "quickstart.clj"
                            "understanding_wolframite.clj"
-                           "gotcha.clj"
+                           "gotchas.clj"
                            {:part "Tutorials for scientists"
                             :chapters ["for_scientists/index.clj"
                                        "for_scientists/cavity_physics.clj"]}
