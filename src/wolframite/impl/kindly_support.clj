@@ -1,5 +1,6 @@
 (ns wolframite.impl.kindly-support
-  "Add Kindly annotations to eval results to improve their display in compatible tools, such as Clay")
+  "Add Kindly annotations to eval results to improve their display in compatible tools, such as Clay"
+  (:import (clojure.lang IObj)))
 
 (defn- head [expr]
   (when (list? expr)
@@ -13,8 +14,10 @@
 
 (defn maybe-add-kindly-meta [expr]
   {:pre [expr]}
-  (->> (cond
-         (= (head expr) 'Video)
-         {:kind/video true
-          :kindly/options {:kindly/f video->url}})
-       (with-meta expr)))
+  (if (instance? IObj expr)
+   (->> (cond
+          (= (head expr) 'Video)
+          {:kind/video true
+           :kindly/options {:kindly/f video->url}})
+        (with-meta expr))
+   expr))

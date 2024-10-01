@@ -60,7 +60,8 @@
                (system/path--kernel)
                (throw (IllegalStateException. "mathlink path neither provided nor auto-detected"))))])
 
-(defn- evaluator-init [opts]
+(defn-
+  evaluator-init [opts]
   (let [wl-convert #(convert/convert   % opts)
         wl-eval    #(evaluate/evaluate % opts)]
     (wl-eval (wl-convert 'init))
