@@ -41,6 +41,7 @@
    [wolframite.base.package :as package]
    [wolframite.base.parse :as parse]
    [wolframite.impl.jlink-instance :as jlink-instance]
+   [wolframite.impl.kindly-support :as kindly-support]
    [wolframite.impl.protocols :as proto]
    [wolframite.runtime.defaults :as defaults]
    [wolframite.runtime.jlink :as jlink]
@@ -192,7 +193,8 @@
                                  (:opts jlink-inst)
                                  eval-opts)
            expr' (if (string? expr) (express/express expr with-eval-opts) expr)]
-       (cep/cep expr' with-eval-opts))
+       (some-> (cep/cep expr' with-eval-opts)
+               kindly-support/maybe-add-kindly-meta))
      (throw (IllegalStateException. "Not initialized, call start! first")))))
 
 ;; TODO Should we expose this, or will just folks shoot themselves in the foot with it?
