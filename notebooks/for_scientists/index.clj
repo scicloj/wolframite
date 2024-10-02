@@ -5,7 +5,9 @@
    [wolframite.core :as wl]
    [wolframite.impl.wolfram-syms.write-ns :as write]
    [wolframite.tools.hiccup :as wh]
-   [wolframite.wolfram :as w]))
+   [wolframite.wolfram :as w :refer :all
+    :exclude [* + - -> / < <= = == > >= fn
+              Byte Character Integer Number Short String Thread]]))
 
 (k/md "# Wolframite for scientists I (Introduction) {#sec-scientists}")
 (k/md "## Abstract
@@ -43,7 +45,7 @@ If you'd like to see why a physicist might be interested in Clojure then have a 
 
 (k/md "#### Clojure notation
 
-For those who are still fairly new to clojure, the first thing to get used to is the style of notation. It might seem strange at first, but a functional LisP can be more efficient (symbolically) than a lot of object-oriented languages and even standard mathematical notation. For example, why write 1+1+1+2 and not (+ 1 1 1 2)? They have around the same number of characters and yet even here it's arguable that the signal to noise ratio is higher for the second one. Where the second form really shines however, is in it's scalability. As soon as you add another operator, e.g. 1+1+1+2/3, we have a problem. Okay so you made it through primary school and know that 1+1+1+2/3 is really 1+1+1+(2/3) and not (1+1+1+2)/3, but the mental complexity is still there, you're just used to it. If we introduce another operator, e.g. 1+1+1+2✝3, now what do you do? The truth is that if we stick to one simple rule, i.e. use brackets, then we completely solve a whole range of problems in advance, with the 'cost' of having to write two characters. In fact, although it might not be obvious, the Wolfram language is actually inspired by/built on the LisP syntax (underneath). The outer layer is just to make it look more like the inefficient notation that mathematicians already know and love...
+For those who are still fairly new to Clojure, the first thing to get used to is the style of notation. It might seem strange at first, but a functional LisP can be more efficient (symbolically) than a lot of object-oriented languages and even standard mathematical notation. For example, why write 1+1+1+2 and not (+ 1 1 1 2)? They have around the same number of characters and yet even here it's arguable that the signal to noise ratio is higher for the second one. Where the second form really shines however, is in it's scalability. As soon as you add another operator, e.g. 1+1+1+2/3, we have a problem. Okay so you made it through primary school and know that 1+1+1+2/3 is really 1+1+1+(2/3) and not (1+1+1+2)/3, but the mental complexity is still there, you're just used to it. If we introduce another operator, e.g. 1+1+1+2✝3, now what do you do? The truth is that if we stick to one simple rule, i.e. use brackets, then we completely solve a whole range of problems in advance, with the 'cost' of having to write two characters. In fact, although it might not be obvious, the Wolfram language is actually inspired by/built on the LisP syntax (underneath). The outer layer is just to make it look more like the inefficient notation that mathematicians already know and love...
 
 In summary, [BODMAS](https://en.wikipedia.org/wiki/Order_of_operations#Mnemonics) is six rules and incomplete. (function argument ...) is a single rule and complete. Be kind to yourself, just write (+ 1 1 1 (/ 2 3)) :).
 
@@ -58,7 +60,7 @@ If you're sold on Clojure and interested in problems close to data science then 
 
 ## Wolfram basics {#sec-wolfram-basics}")
 (k/md "### Let's define our terms!
- One of the really nice things about using Wolfram as a library is that our middle man (Wolframite) can provide default substitutions to  simplify verbose terms, e.g. `'(Power x 2)` can become `'(** x 2)` or even `'(**2 x)`, for readability. What's even nicer however, is that we can make our own aliases at runtime: the choice is ours!
+ One of the really nice things about using Wolfram as a library is that our middle man (Wolframite) can provide default substitutions to  simplify verbose terms, e.g. `(Power x 2)` can become `(w/** x 2)` or even `'(**2 x)`, for readability. What's even nicer however, is that we can make our own aliases at runtime (see @sec-custom-aliases): the choice is ours!
 
 We mention this now because the best time to define our terms is before we start. The first few aliases give us an insight into how I would have designed Wolfram. The last two go a step further. Here, we make use of Clojure's modernity and decision to support a much wider character set than Wolfram. Depending on your editor, it can be just as easy to enter these unicode characters as typing the long function name, but the real win is in the readability. Remember, we read our documents far more often than we write them (even if it's just peer review...).
 
@@ -109,16 +111,16 @@ For those coming from Mathematica (the official, graphical front-end for the Wol
 
 This is where the main cost of 'Wolfram as a library' lies. In a Wolfram environment, all non-language characters are treated as global symbols by default. This works well for symbol and expression manipulation (Mathematica's assumed raison d'être), but not for any other purpose. To successfully embed Wolfram expressions into a general purpose programming language we must make choices.
 
-In this library, there are two approaches. For all official functions, the cleanest way of referring to them is to import the base symbol namespace, i.e. wolframite.wolfram, or a customized one, e.g. 'wolframite.wolfram-extended'. This allows the user to manipulate expressions like other clojure functions (and to access the associated Wolfram documentation from your editor) e.g.
+In this library, there are two approaches. For all official functions, the cleanest way of referring to them is to import the base symbol namespace, i.e. `wolframite.wolfram`, or a customized one, e.g. `wolframite.wolfram-extended`. This allows the user to manipulate expressions like other Clojure functions (and to access the associated Wolfram documentation from your editor) e.g.
 ")
 (-> 2
-    (w/Power 1)
-    (w/Subtract 2))
+    (Power 1)
+    (Subtract 2))
 
-(k/md "To calculate/retrieve the result we then simply add 'eval' from the Wolframite core namespace:")
+(k/md "To calculate/retrieve the result we then simply add `eval` from the Wolframite core namespace:")
 (-> 2
-    (w/Power 1)
-    (w/Subtract 2)
+    (Power 1)
+    (Subtract 2)
     wl/eval)
 
 (k/md "To deal with general symbols, we return to one of LisPs' strengths: controlled evaluation. Historically necessitated by LisPs' 'code-as-data' paradigm, all LisPs can deal with general symbols by simply not evaluating them. This makes it easy to create and manipulate arbitrary Wolfram expressions, as we can simply treat them as unevaluated symbols (note our use of the new aliases too). ")
@@ -127,12 +129,12 @@ In this library, there are two approaches. For all official functions, the clean
     (w/- '5)
     wl/eval)
 
-(k/md "This comes at the cost of having to 'mark' symbols, lists and functions manually, but it's a choice between being unevaluated by default (e.g. Wolfram, Maple), unevaluated when marked (LisPs) or no easy way to work with symbols (the vast majority of programming languages). It also comes at the cost of some 'gotchas' (listed elsewhere in the docs), but these are avoided for the most part by using a wolframite.wolfram namespace (and 'write-ns!' function), as introduced in the beginning.")
+(k/md "This comes at the cost of having to 'mark' symbols, lists and functions manually, but it's a choice between being unevaluated by default (e.g. Wolfram, Maple), unevaluated when marked (LisPs) or no easy way to work with symbols (the vast majority of programming languages). It also comes at the cost of some 'gotchas' (see @sec-gotchas), but these are avoided for the most part by using a `wolframite.wolfram` namespace (and 'write-ns!' function), as introduced in the beginning.")
 
 (k/md "### Defining functions
 Functions are slightly more complicated. Functions can be defined in many different ways. The easiest way is to keep functions, where appropriate, as standard Clojure expressions.
 
-If you're used to using Wolfram/Mathematica, then f[x_]:=x^2 is simply
+If you're used to using Wolfram/Mathematica, then `f[x_]:=x^2` is simply
 ")
 (defn f [x] (wl/eval (w/Power x 2)))
 (f 2)
@@ -141,11 +143,12 @@ If you're used to using Wolfram/Mathematica, then f[x_]:=x^2 is simply
 (k/md ". If instead you want to define functions inside the Wolfram kernel, and attach them to arbitrary symbols, then the most ergonomic way is")
 (wl/eval (w/_= 'f (w/fn [x] (w/** x 2))))
 (wl/eval '(f 5))
-(k/md ", where '_=' is the Wolframite version of ':=' (SetDelayed). See the 'Gotchas' section (@sec-gotchas) for why. Rather than a direct alias, w/fn is a special form that allows you to define Wolfram functions in a convenient way. Note that 'f' is a new symbol and therefore cannot be expected to be part of wolframite.wolfram or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.
+(wl/eval (list 'f 5))
+(k/md ", where `_=` is the Wolframite version of `:=` (SetDelayed). See the 'Gotchas' section (@sec-gotchas) for why. Rather than a direct alias, `w/fn` is a special form that allows you to define Wolfram functions in a convenient way. Note that `f` is a new symbol and therefore cannot be expected to be part of `wolframite.wolfram` or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.
 
 In my opinion, this mixes the best of Wolfram and Clojure: and scales well. The most explicitly Wolfram way of doing it however, is to write")
 (wl/eval (w/Clear 'f))
-(wl/eval '(_= (f (Pattern x (Blank))) (Power x 2)))
+(wl/eval (w/_= (list 'f (w/Pattern 'x (w/Blank))) (w/Power 'x 2)))
 (wl/eval '(f 5))
 (k/md ", where we first removed all definitions from 'f' before reassigning the function.
 
@@ -169,10 +172,10 @@ Such is the case, we can demonstrate a new workflow. As noted above, it is strai
     ||2
     wl/eval)
 
-(k/md "Here we make a shorthand, the absolute value squared. Defined as a clojure function, it simply abstracts two Wolfram operations, which can then be used alongside others.
+(k/md "Here we make a shorthand, the absolute value squared. Defined as a Clojure function, it simply abstracts two Wolfram operations, which can then be used alongside others.
 
 And yet there are two meaningful improvements already. First of all, we can, [currently](https://ask.clojure.org/index.php/11627/the-pipe-char-considered-valid-symbol-constituent-character), use more mathematical characters in Clojure, such that even the raw code can approach familiar symbolic maths.
-Second of all, we can exploit Clojure's 'threading' features. In my view, chaining Wolfram function calls together with threading macros is actually a big usability improvement. Wolfram expressions can get pretty involved (it's common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, '@', to help with function composition, e.g. f@g@h. Unfortunately however, this doesn't work with multiple arguments. It is possible to do things like f@@args, and even things like f@@@{{a, b}, {c, d}}, but the readability quickly becomes dire. On the other hand, Clojure's threading is simple, clear and scalable.
+Second of all, we can exploit Clojure's 'threading' features. In my view, chaining Wolfram function calls together with threading macros is actually a big usability improvement. Wolfram expressions can get pretty involved (it's common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, `@`, to help with function composition, e.g. `f@g@h`. Unfortunately however, this doesn't work with multiple arguments. It is possible to do things like `f@@args`, and even things like `f@@@{{a, b}, {c, d}}`, but the readability quickly becomes dire. On the other hand, Clojure's threading is simple, clear and scalable.
 
 In fact, a little Clojure goes a long way. Look how easily we can add UX conveniences to our workflow.")
 
@@ -182,7 +185,8 @@ In fact, a little Clojure goes a long way. Look how easily we can add UX conveni
   `(-> ~@xs wl/eval))
 
 (defn TeX
-  "UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might not realise that 'ToString' is necessary."
+  "UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might
+  not realise that 'ToString' is necessary."
   [tex-form]
   (w/ToString (w/TeXForm tex-form)))
 
@@ -209,21 +213,21 @@ Before we finish this part of the tutorial, let's consider a (slightly) more rea
 
 Wolfram can be used to define quite general approximations, using the 'Pattern' system. For example, let us assume that we want to expand Cos(x) as a polynomial when x is small. First, we need to know what the expansion is. We can actually find out by using Wolfram! i.e. ")
 
-(eval-> (w/Series (w/Cos 'x)
-                  ['x 0 2])
-        w/Normal)
+(eval-> (Series (Cos 'x)
+                ['x 0 2])
+        Normal)
 
 (k/md "Now that we know (or have remembered!) the form, we can create a general rule that is not limited to specific symbol definitions:")
 
 (def small-angle
-  (w/_> (w/Cos (w/Pattern 'x (w/Blank)))
+  (w/_> (Cos (Pattern 'x (Blank)))
         (w/+ 1 (w/* -1/2 (w/** 'x 2)))))
 
 (k/md ", where we have made use of Clojure's native support for ratios. The rule can now be named and used for any Cos function with any argument. Which of course looks much nicer using TeX.")
 
-(TeX-> (w/x>> (w/Cos 'phi)
+(TeX-> (w/x>> (Cos 'phi)
               small-angle))
-(TeX-> (w/x>> (w/Cos (w/+ 1 'phi))
+(TeX-> (w/x>> (Cos (w/+ 1 'phi))
               small-angle))
 
 (k/md "# What's next?
