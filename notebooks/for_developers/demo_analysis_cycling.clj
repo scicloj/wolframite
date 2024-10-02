@@ -6,7 +6,9 @@
     [clojure.string :as str]
     [wolframite.core :as wl]
     [wolframite.lib.helpers :as h]
-    [wolframite.wolfram :as w]
+    [wolframite.wolfram :as w :refer :all
+     :exclude [* + - -> / < <= = == > >= fn
+               Byte Character Integer Number Short String Thread]]
     [wolframite.impl.wolfram-syms.intern :as intern]
     [scicloj.kindly.v4.kind :as k])
   (:import (java.util.zip GZIPInputStream)))

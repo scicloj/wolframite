@@ -1,11 +1,14 @@
 (ns for-scientists.cavity-physics
-  "The second part of Wolframite for scientists. Here, we consider a real physics problem as a demonstration of how one might use Wolframite in practice."
+  "The second part of Wolframite for scientists. Here, we consider a real physics problem
+  as a demonstration of how one might use Wolframite in practice."
   (:require
    [clojure.math :as math]
    [scicloj.kindly.v4.kind :as k]
    [wolframite.core :as wl]
    [wolframite.tools.hiccup :as wh]
-   [wolframite.wolfram :as w]))
+   [wolframite.wolfram :as w :refer :all
+    :exclude [* + - -> / < <= = == > >= fn
+              Byte Character Integer Number Short String Thread]]))
 
 (k/md "# Wolframite for scientists II (Cavity physics)
 
@@ -40,7 +43,7 @@ First of all, we redefine the shortcuts that we used in the previous part, befor
 (defn TeX
   "UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might not realise that 'ToString' is necessary."
   [tex-form]
-  (w/ToString (w/TeXForm tex-form)))
+  (ToString (TeXForm tex-form)))
 
 (defmacro TeX->
   "Extends the thread-first macro to automatically eval and prepare the expression for TeX display."
@@ -87,7 +90,7 @@ Setting the incoming field amplitude to unity, then the value of the field at po
 (k/md ", where k is the field wavenumber:")
 
 (def E2
-  (w/* E1 (w/Exp (w/* w/I phi))))
+  (w/* E1 (Exp (w/* I phi))))
 
 (k/md ". Note how we are able to seamlessly mix Clojure and Wolfram expressions.
 
@@ -98,51 +101,51 @@ At position three, the field undergoes reflection and so now carries an addition
   (w/* (w/- 'r2) E2))
 (k/md "By position four, the field has travelled a further distance L and so is now equal to ")
 (def E4
-  (w/* E3 (w/Exp (w/* w/I phi))))
+  (w/* E3 (Exp (w/* I phi))))
 
 (k/md ". Which we can evaluate and visualise with one of our handy macros.")
 (TeX->> E4
         (w/== 'E4))
 
-(k/md " ## Fields
+(k/md "## Fields
  Using these expressions, we can now calculate the inner, transmitted and reflected fields of the cavity (with some subtle phase assumptions). Note how easy it is to, first of all, form an equation from the symbol 'E4 and the clojure variable E4, and, second of all, to rearrange the equation for a solution.
 ")
 
 (def e4 (-> (w/== 'E4 E4)
-            (w/Solve 'E4)
-            w/First w/First))
+            (Solve 'E4)
+            First First))
 (TeX-> e4)
 
 (k/md "Substitution and simplification can then be used to arrive at the transmission and reflection, respectively.")
 
-(def T (-> (w/x>> (w/* E2 't2)
+(def T (-> (x>> (w/* E2 't2)
                   e4)
            w/>>_<<))
 (TeX->> T (w/== 'T))
 
 (def R (-> (w/+ (w/* E4 't1) 'r1)
-           (w/x>> e4)
-           w/>>_<<
-           w/Together))
+           (x>> e4)
+           >>_<<
+           Together))
 (TeX->> R (w/== 'R))
 
 (k/md "## Observables
  Taking the square of the fields (using the complex conjugate), gives the corresponding observables, *i.e.* things that can be actually measured.")
 
 (def I4 (-> (w/x>> 'E4 e4) ||2
-            w/++<_>
-            w/>>_<<))
-(TeX-> (w/== 'I4 (w/** (w/Abs 'E4) 2) I4))
+            ++<_>
+            >>_<<))
+(TeX-> (w/== 'I4 (w/** (Abs 'E4) 2) I4))
 
 (def Tsq (-> T ||2
-             w/++<_>
-             w/>>_<<))
+             ++<_>
+             >>_<<))
 (TeX-> (w/== (w/** 'T 2) Tsq))
 
 (def Rsq (-> R ||2
-             w/++<_>
-             w/>>_<<
-             w/Together))
+             ++<_>
+             >>_<<
+             Together))
 (TeX-> (w/== (w/** 'R 2) Rsq))
 
 (k/md "## Observables with loss
@@ -170,19 +173,19 @@ Rather than just substitute the new rule into our expressions, we're going to ta
 (def approximations
   [(w/-> (w/* 'r1 'r2)
          (let [vars [(w/** 't1 2) (w/** 't2 2) 'l1 'l2]]
-           (->  (w/x>> (w/* (w/√ (w/** 'r1 2))
-                            (w/√ (w/** 'r2 2)))
-                       losses)
-                (w/Series ['t1 0 2]
-                          ['t2 0 2]
-                          ['l1 0 2]
-                          ['l2 0 2])
-                w/Normal
-                w/<<_>>
-                (w/x>> (mapv #(w/-> % (w/* 'temp %)) vars))
-                (w/Series ['temp 0 1])
-                w/Normal
-                (w/x>> (w/-> 'temp 1)))))])
+           (-> (x>> (w/* (√ (w/** 'r1 2))
+                         (√ (w/** 'r2 2)))
+                    losses)
+               (Series ['t1 0 2]
+                       ['t2 0 2]
+                       ['l1 0 2]
+                       ['l2 0 2])
+               Normal
+               <<_>>
+               (x>> (mapv #(w/-> % (w/* 'temp %)) vars))
+               (Series ['temp 0 1])
+               Normal
+               (x>> (w/-> 'temp 1)))))])
 (TeX-> approximations)
 
 (k/md "What's happening here is that we are simplifying the expression for r1*r2 by assuming that the transmission and loss for light going through a mirror is small. So small, that higher powers of these variabes are negligible. And so, we substitute the values into the expression, expand the functions in a power series and neglect any higher powers. The neglect is done by inserting ['big O' notation](https://mathworld.wolfram.com/Big-ONotation.html) and then restricting the series to a single power in that variable. As we want to do this for multiple variables, then we map over each one. This is a complicated mathematical procedure, but Wolframite allows us to do this quite concisely, apart from some necessary Wolfram datatype conversions (*e.g.* using the w/Normal function).")
@@ -192,22 +195,22 @@ Rather than just substitute the new rule into our expressions, we're going to ta
 We remember (from part I) that Wolfram can define quite general approximations. With the small angle approximation, and those defined above, we can formulate our final expression for the optical intensity inside the cavity: ")
 
 (def small-angle
-  (w/_> (w/Cos (w/Pattern 'x (w/Blank)))
-        (w/+ 1 (w/* -1/2 (w/** 'x 2)))))
+  (_> (Cos (Pattern 'x (Blank)))
+      (w/+ 1 (w/* -1/2 (w/** 'x 2)))))
 
 (def I4--approx
   (eval-> I4
-          (w/x>> (w/-> (w/Cos (w/* 2 'k 'L))
-                       (w/Cos 'phi)))
-          (w/x>> approximations)
-          (w/x>> (w/-> (w/** (w/* 'r1 'r2) 2)
-                       (-> (w/x>> (w/* 'r1 'r2) approximations)
-                           (w/** 2))))
-          (w/x>> (conj losses small-angle))
-          w/>_<))
+          (x>> (w/-> (Cos (w/* 2 'k 'L))
+                     (Cos 'phi)))
+          (x>> approximations)
+          (x>> (w/-> (w/** (w/* 'r1 'r2) 2)
+                     (-> (x>> (w/* 'r1 'r2) approximations)
+                         (w/** 2))))
+          (x>> (conj losses small-angle))
+          >_<))
 
 (TeX->> I4--approx
-        (w/== (w/** (w/Abs 'E4) 2)))
+        (w/== (w/** (Abs 'E4) 2)))
 
 (k/md "## Visualised
 
@@ -229,22 +232,22 @@ For this, we will define a few utility functions, that also demonstrate Wolfram'
 (defn coordinates
   "There's no numpy here, so what do we do? It turns out Wolfram can reimplement a meshgrid-like function very concisely (let's not talk about the performance though...)."
   [xmin xmax ymin ymax]
-  (eval-> (w/Outer w/List
-                   (linspace xmin xmax 100)
-                   (linspace ymin ymax 100))
-          (w/Flatten 1)))
+  (eval-> (Outer List
+                 (linspace xmin xmax 100)
+                 (linspace ymin ymax 100))
+          (Flatten 1)))
 
 (defn Efield
   "For convenience, we build a clojure function over the Wolfram expression created earlier."
   [t1 t2 l1 l2 phi]
-  (wl/eval (w/Clear 'f))
-  (wl/eval (w/_= (list 'f
-                       (w/Pattern t1 (w/Blank))
-                       (w/Pattern t2 (w/Blank))
-                       (w/Pattern l1 (w/Blank))
-                       (w/Pattern l2 (w/Blank))
-                       (w/Pattern phi (w/Blank)))
-                 I4--approx))
+  (wl/eval (Clear 'f))
+  (wl/eval (_= (list 'f
+                     (Pattern t1 (Blank))
+                     (Pattern t2 (Blank))
+                     (Pattern l1 (Blank))
+                     (Pattern l2 (Blank))
+                     (Pattern phi (Blank)))
+               I4--approx))
   (wl/eval (list 'f t1 t2 l1 l2 phi)))
 
 (defn Efield--transmission-phase
@@ -261,9 +264,9 @@ For this, we will define a few utility functions, that also demonstrate Wolfram'
 
 (wh/view
  (w/ListPlot3D 'nums
-               (w/-> w/PlotRange w/All)
-               (w/-> w/Boxed w/False)
-               (w/-> w/AxesLabel
+               (w/-> PlotRange All)
+               (w/-> Boxed false)
+               (w/-> AxesLabel
                      ["Mirror transmission" "Phase" "Intracavity intensity"])))
 
 (k/md "And there you have it! It turns out that if you get the phase right and you buy high quality mirrors then you can massively amplify the laser light. In fact, if you add a 'gain' material in the middle then such light amplification by the stimulated emission of radiation has a catchier name: it's called a *Laser*!")
