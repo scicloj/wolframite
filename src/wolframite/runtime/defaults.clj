@@ -64,7 +64,6 @@
    '!    'Not
    'fn   'Function
    '?? 'Information
-   ;; The "new" aliases, added for v1:
    '** 'Power
    '++ 'Conjugate
    'x> 'Replace
