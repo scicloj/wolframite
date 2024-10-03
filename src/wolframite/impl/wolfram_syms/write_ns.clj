@@ -119,7 +119,7 @@
 (comment
 
   (core/start!)
-  (core/stop)
+  (core/stop!)
   (load-file "src/wolframite/wolfram.clj")
   (do (time (write-ns! "src/wolframite/wolfram.clj"))
       (load-file "src/wolframite/wolfram.clj"))

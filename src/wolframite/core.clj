@@ -274,6 +274,8 @@ See `package/intern-context!` for details of turning the Wolfram context into a 
   ;; Package test
   (start!)
 
+  (init-kernel! (jlink-instance/get))
+
   (<<! "resources/WolframPackageDemo.wl")
   (load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo")
   (load-package! "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'wd)

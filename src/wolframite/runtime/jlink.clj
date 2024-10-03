@@ -13,8 +13,8 @@
   os - keyword
   "
   (:require
-    [babashka.fs :as fs]
-    [clojure.tools.logging :as log]
+   [babashka.fs :as fs]
+   [clojure.tools.logging :as log]
    ;clojure.repl.deps ; required dynamically, for a better error on old clj
    [wolframite.runtime.system :as system]))
 
@@ -65,3 +65,5 @@
                              {:os (get-in info [:defaults :os])
                               :path path
                               :env (:user-paths info)}))))))
+
+(comment (println (find-jlink-jar)))

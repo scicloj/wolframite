@@ -63,7 +63,7 @@
    '||   'Or
    '!    'Not
    'fn   'Function
-   ;; The "new" aliases, added for v1:
+   '?? 'Information
    '** 'Power
    '++ 'Conjugate
    'x> 'Replace
