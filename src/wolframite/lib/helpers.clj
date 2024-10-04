@@ -14,14 +14,15 @@
   By default, opens web browser with relevant reference documentation.
   You can pass `links true` if you just want URLs."
   [sym-or-form & {:keys [return-links links]}]
-  (let [sym-or-form' (or (intern/interned-var-val->symbol sym-or-form)
+  (let [return-links? (or return-links links)
+        sym-or-form' (or (intern/interned-var-val->symbol sym-or-form)
                          sym-or-form)
         links (cond
                 (symbol? sym-or-form') [(help-link sym-or-form')]
                 (list? sym-or-form') (map help-link (just-symbols sym-or-form'))
                 :else (throw (ex-info "You need to pass `symbol?` or `list?` as argument"
                                       {:passed-type (type sym-or-form')})))]
-    (if (or links return-links)
+    (if return-links?
       links
       (doseq [l links]
         (browse-url l)))))

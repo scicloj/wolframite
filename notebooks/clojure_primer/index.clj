@@ -6,10 +6,7 @@
             [wolframite.core :as wl]
             [wolframite.wolfram :as w]))
 
-;; Let's start Wolfram to be ready for our examples underneath:
-(wl/start!)
-
-(k/md "# Clojure Primer
+(k/md "# Clojure primer {#sec-clojure-primer}
 
 A very brief introduction to Clojure for a would-be users of Wolframite not familiar with the language.
 
@@ -25,6 +22,9 @@ and produce code that is well suited to evolution over time.
 Let's start by comparing how **adding a few elements to a list**
 looks like in Wolfram, Python, and Clojure:
 ")
+
+;; Let's start Wolfram to be ready for our examples underneath:
+(wl/start!)
 
 ^:kindly/hide-code
 (k/table
@@ -136,9 +136,17 @@ that can be evaluated fully on the Clojure side and replaced with the result, be
  (catch Exception e
    (str e)))
 
-;; This fail because we are passing a Wolframite expression (a list) to the Clojure `+` function, but it only works with numbers. We'd need to evaluate the expression first:
+;; This fails because we are passing a Wolframite expression (a list) to the Clojure `+` function, but it only works with numbers. We'd need to evaluate the expression first:
 
 (+ (wl/eval (w/* 3 (w/Power (+ 1 1) 2))))
+
+(k/md "## How to work with Clojure: the REPL and interactive development {#sec-clojure-repl}
+
+Contrary to most languages, Clojure is designed to be written incrementally, in an interactive session. While this is alien to most developers,
+who are used to the write-compile-run cycle, you may already be well familiar with this style of coding from Wolfram or Python notebooks. In both
+cases, your \"program\" is running all the time and you keep adding to it, building on the previous code and state, and can examine the state at any moment.
+
+You can read more on Clojure's take on [interactive development](https://clojure.org/guides/repl/introduction) a.k.a. REPL-driven development on the official Clojure website.")
 
 (k/md "## Resources for further learning
 

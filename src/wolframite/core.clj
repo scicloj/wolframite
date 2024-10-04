@@ -32,20 +32,21 @@
   "
   (:refer-clojure :exclude [eval])
   (:require
-   [babashka.fs :as fs]
-   [clojure.tools.logging :as log]
-   [wolframite.base.cep :as cep]
-   [wolframite.base.convert :as convert]
-   [wolframite.base.evaluate :as evaluate]
-   [wolframite.base.express :as express]
-   [wolframite.base.package :as package]
-   [wolframite.base.parse :as parse]
-   [wolframite.impl.jlink-instance :as jlink-instance]
-   [wolframite.impl.protocols :as proto]
-   [wolframite.runtime.defaults :as defaults]
-   [wolframite.runtime.jlink :as jlink]
-   [wolframite.runtime.system :as system]
-   [wolframite.wolfram :as w]))
+    [babashka.fs :as fs]
+    [clojure.set :as set]
+    [clojure.tools.logging :as log]
+    [wolframite.base.cep :as cep]
+    [wolframite.base.convert :as convert]
+    [wolframite.base.evaluate :as evaluate]
+    [wolframite.base.express :as express]
+    [wolframite.base.package :as package]
+    [wolframite.base.parse :as parse]
+    [wolframite.impl.jlink-instance :as jlink-instance]
+    [wolframite.impl.protocols :as proto]
+    [wolframite.runtime.defaults :as defaults]
+    [wolframite.runtime.jlink :as jlink]
+    [wolframite.runtime.system :as system]
+    [wolframite.wolfram :as w]))
 
 (defonce ^{:deprecated true, :private true} kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
 
@@ -152,7 +153,7 @@
                       wolfram-version w/*wolfram-version*)))
        {:status :ok
         :wolfram-version (:wolfram-version (deref kernel-info 1 :N/A))
-        :start!ed? true}))))
+        :started? true}))))
 
 (defn stop!
   "Sends a request to the kernel to shut down.
@@ -261,6 +262,32 @@ See `package/intern-context!` for details of turning the Wolfram context into a 
 (def <<!
   "A Wolfram-like alias to load-package!. An extended version of Wolfram's 'Get'. Gets a Wolfram package and makes the constants/functions etc. accessible via a Clojure namespace (the given `alias`, by default the same as `context`)."
   load-package!)
+
+(defn ns-exclusions
+  "Returns a list of `wolframite.wolfram` symbols that may conflict with Clojure or Java and thus should not be referred.
+  Otherwise, confusion and head scratching may ensure. (True story.)
+
+  This function lists the exclusions you need for
+  ```clj
+  (ns x (:require [wolframite.wolfram :as w :refer :all:exclude <the exclusions>]))
+  ```"
+  ([] (ns-exclusions false))
+  ([assert-as-expected]
+   (let [exclusions
+         (->
+           (set/intersection
+             (-> (ns-publics 'clojure.core) keys set)
+             (-> defaults/all-aliases keys set))
+           sort
+           ;; Add java.lang classes:
+           (concat '[Byte Character Integer Number Short String Thread])
+           vec)]
+     (when assert-as-expected
+       (assert (= exclusions
+                  '[* + - -> / < <= = == > >= fn
+                    Byte Character Integer Number Short String Thread])
+               "A new alias or Wolfram symbol conflicts with Clojure/Java => update this lists, docs."))
+     exclusions)))
 
 (comment
   ;; Initialization/alias test

@@ -3,7 +3,11 @@
   (:require
    [scicloj.kindly.v4.kind :as k]
    [wolframite.core :as wl]
-   [wolframite.wolfram :as w]))
+   [wolframite.wolfram :as w :refer :all
+    :exclude [* + - -> / < <= = == > >= fn
+              Byte Character Integer Number Short String Thread]]))
+
+(wl/start!)
 
 (k/md "# FAQ {#sec-FAQ}
 **Why Wolfram?** - From the horse's [mouth](https://www.wolfram.com/language/):
@@ -32,14 +36,14 @@ Even at a fundamental level therefore, our toolbox language should be a LisP wit
 At the *usability* layer, Clojure is a well-designed, ergonomic language that leaves its users [happy](https://www.computerworld.com/article/1379902/clojure-developers-are-the-happiest-developers.html)! When it comes to working with mathematical expressions specifically, there are a few key features. First of all, for many people, Clojure was the first language to introduce ergonomic chaining of function expressions, *e.g.*
 ")
 
-(-> (w/* 'x w/I)
+(-> (w/* 'x I)
     (w/+ 'y)
-    w/Abs
-    (w/Power 2)
-    w/ComplexExpand
+    Abs
+    (** 2)
+    ComplexExpand
 
-    w/TeXForm
-    w/ToString
+    TeXForm
+    ToString
     wl/eval
     k/tex)
 

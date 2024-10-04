@@ -32,6 +32,9 @@
 ;; * Aliases
 
 (def base-aliases
+  ;; TIP: Ideally, respect https://clojure.org/reference/reader#_symbols, or at least the wider
+  ;;  https://github.com/edn-format/edn?tab=readme-ov-file#symbols minus Clojure's reserved `: .`
+  ;; OF the syms we use, especially / is problematic; few others may be too.
   {'do   'CompoundExpression
    '=    'Set
    '_=  'SetDelayed
