@@ -1,8 +1,13 @@
 (ns wolframite.impl.kindly-support
   "Add Kindly annotations to eval results to improve their display in compatible tools, such as Clay"
-  (:require [scicloj.kindly.v4.kind :as k]
-            [scicloj.kindly.v4.api])
+  ;; NOTE We do not require Kindly APIs and only use keyword metadata b/c we don't want Wolframite itself to depend
+  ;;      on the kindly libs (contrary to our build profile, which does so to be able to build docs)
   (:import (clojure.lang IObj)))
+
+;; # Clay video test
+;; (Uncomment the eval line below & render this file with Clay to verify it works.
+;; Make sure ./docs/Baby.mp4 exists first.)
+;; (wolframite.core/eval '(Video "./Baby.mp4"))
 
 (defn- head [expr]
   (when (list? expr)
@@ -14,40 +19,18 @@
   {:pre [(= (head expr) 'Video)]}
   (second expr))
 
-;; (defn maybe-add-kindly-meta [expr]
-;;   {:pre [expr]}
-;;   (if (instance? IObj expr)
-;;     (->> (cond
-;;            (= (head expr) 'Video)
-;;            {:kind/video true
-;;             :kindly/options {:kindly/f video->url}})
-;;          (with-meta expr))
-;;     expr))
-;;
-(defn- kind<-Video
-  "Takes a Wolfram-like `(video url ...)` expression and returns an appropriate video kind.
-
-  NOTE: Take care with the capital letter. This is to distinguish a Wolfram `Video` from other types."
-  [expr]
-  (k/video {:src (second expr)}))
+(defn ->video-kind [expr]
+  ;; BEWARE: The path should be *relative* w.r.t. a folder on Clay's path, such as ./docs
+  ;; (see clay.edn and its :base-target-path and :subdirs-to-sync, and
+  ;; https://scicloj.github.io/clay/#referring-to-files)
+  ^:kind/video {:src (video->url expr)})
 
 (defn maybe-add-kindly-meta [expr]
   {:pre [expr]}
   (if (instance? IObj expr)
-    (cond
-      (= (head expr) 'Video)
-      (k/fn expr
-        {:kindly/f kind<-Video}))
-
+    (->> (cond
+           (= (head expr) 'Video)
+           {:kindly/kind :kind/fn
+            :kindly/options {:kindly/f ->video-kind}})
+         (with-meta expr))
     expr))
-
-(comment
-  (def vid
-    '(Video "./resources/video/Baby.mp4" (-> Appearance Automatic) (-> AudioOutputDevice Automatic) (-> AudioTrackSelection [1]) (-> PlaybackSettings {}) (-> SoundVolume Automatic) (-> SubtitleTrackSelection []) (-> VideoTrackSelection [1])))
-
-  (def vid--VideoTrim-output
-    '(Video "/home/ctw/Documents/Wolfram/Video/VideoTrim-2024-10-02T14-14-20.mp4" (-> Appearance Automatic) (-> AudioOutputDevice Automatic) (-> AudioTrackSelection [1]) (-> PlaybackSettings {}) (-> SoundVolume Automatic) (-> SubtitleTrackSelection []) (-> VideoTrackSelection [1])))
-
-  ;; Both (below) work here...
-  (maybe-add-kindly-meta vid)
-  (maybe-add-kindly-meta vid--VideoTrim-output))

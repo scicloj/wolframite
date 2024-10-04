@@ -126,14 +126,15 @@
 
 (deftest kindly-support
   (wl/start!)
-  (let [res (wl/eval '(Video "file:///my-fake.mps"))
+  (let [res (wl/eval '(Video "path/to/my-fake.mps"))
         {:keys [kindly/options] :as m}
         (meta res)
         view-fn (:kindly/f options)]
     (is (= 'Video (first res)) "Sanity check: expect Wolfram to return (Video ..)")
-    (is (:kind/video m))
-    (is (= "file:///my-fake.mps" (view-fn res))
-        "Correct metadata is attached, including view fn to extract the video url")))
+    (is (= :kind/fn (:kindly/kind m)))
+    (is (= {:src "path/to/my-fake.mps"} (view-fn res))
+        "Correct metadata is attached, including view fn to extract the video url")
+    (is (-> (view-fn res) meta :kind/video))))
 
 
 (comment
