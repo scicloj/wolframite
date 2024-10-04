@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -248,7 +248,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Advanced topics</span></a>
+ <span class="menu-text">Clojure primer</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -256,8 +256,31 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./packages.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Packages</span></span></a>
+  <a href="./clojure_primer.index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Clojure primer</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Advanced topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./advanced.customizing_wolframite.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Customizing Wolframite</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./advanced.packages.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Packages</span></span></a>
   </div>
 </li>
       </ul>
@@ -265,7 +288,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./faq.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
   </div>
 </li>
     </ul>
@@ -281,11 +304,12 @@ window.Quarto = {
   <li><a href="#cavities" id="toc-cavities" class="nav-link active" data-scroll-target="#cavities"><span class="header-section-number">6.1</span> Cavities?</a></li>
   <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup"><span class="header-section-number">6.2</span> Setup</a></li>
   <li><a href="#interfaces" id="toc-interfaces" class="nav-link" data-scroll-target="#interfaces"><span class="header-section-number">6.3</span> Interfaces</a></li>
-  <li><a href="#observables" id="toc-observables" class="nav-link" data-scroll-target="#observables"><span class="header-section-number">6.4</span> Observables</a></li>
-  <li><a href="#observables-with-loss" id="toc-observables-with-loss" class="nav-link" data-scroll-target="#observables-with-loss"><span class="header-section-number">6.5</span> Observables with loss</a></li>
-  <li><a href="#approximations" id="toc-approximations" class="nav-link" data-scroll-target="#approximations"><span class="header-section-number">6.6</span> Approximations</a></li>
-  <li><a href="#the-cavity-field" id="toc-the-cavity-field" class="nav-link" data-scroll-target="#the-cavity-field"><span class="header-section-number">6.7</span> The cavity field</a></li>
-  <li><a href="#visualised" id="toc-visualised" class="nav-link" data-scroll-target="#visualised"><span class="header-section-number">6.8</span> Visualised</a></li>
+  <li><a href="#fields" id="toc-fields" class="nav-link" data-scroll-target="#fields"><span class="header-section-number">6.4</span> Fields</a></li>
+  <li><a href="#observables" id="toc-observables" class="nav-link" data-scroll-target="#observables"><span class="header-section-number">6.5</span> Observables</a></li>
+  <li><a href="#observables-with-loss" id="toc-observables-with-loss" class="nav-link" data-scroll-target="#observables-with-loss"><span class="header-section-number">6.6</span> Observables with loss</a></li>
+  <li><a href="#approximations" id="toc-approximations" class="nav-link" data-scroll-target="#approximations"><span class="header-section-number">6.7</span> Approximations</a></li>
+  <li><a href="#the-cavity-field" id="toc-the-cavity-field" class="nav-link" data-scroll-target="#the-cavity-field"><span class="header-section-number">6.8</span> The cavity field</a></li>
+  <li><a href="#visualised" id="toc-visualised" class="nav-link" data-scroll-target="#visualised"><span class="header-section-number">6.9</span> Visualised</a></li>
   <li><a href="#acknowledgements" id="toc-acknowledgements" class="nav-link" data-scroll-target="#acknowledgements"><span class="header-section-number">7</span> Acknowledgements</a></li>
   </ul>
 </nav>
@@ -328,13 +352,16 @@ window.Quarto = {
 <p><link href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" rel="stylesheet" type="text/css"></p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">ns</span> for-scientists.cavity-physics</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The second part of Wolframite for scientists. Here, we consider a real physics problem as a demonstration of how one might use Wolframite in practice."</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  (<span class="at">:require</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>   [clojure.math <span class="at">:as</span> math]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>   [scicloj.kindly.v4.kind <span class="at">:as</span> k]</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   [wolframite.core <span class="at">:as</span> wl]</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>   [wolframite.tools.hiccup <span class="at">:as</span> wh]</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>   [wolframite.wolfram <span class="at">:as</span> w]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"The second part of Wolframite for scientists. Here, we consider a real physics problem</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="st">  as a demonstration of how one might use Wolframite in practice."</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  (<span class="at">:require</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>   [clojure.math <span class="at">:as</span> math]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   [scicloj.kindly.v4.kind <span class="at">:as</span> k]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>   [wolframite.core <span class="at">:as</span> wl]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>   [wolframite.tools.hiccup <span class="at">:as</span> wh]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>   [wolframite.wolfram <span class="at">:as</span> w <span class="at">:refer</span> <span class="at">:all</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">:exclude</span> [<span class="kw">*</span> <span class="kw">+</span> <span class="kw">-</span> <span class="kw">-&gt;</span> <span class="kw">/</span> <span class="kw">&lt;</span> <span class="kw">&lt;=</span> <span class="kw">=</span> <span class="kw">==</span> <span class="kw">&gt;</span> <span class="kw">&gt;=</span> <span class="kw">fn</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>              Byte Character Integer Number Short String Thread]]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Congratulations if you made it here from part I. In this part, rather than introducing Wolframite, <em>per se</em>, we’re going to solve a physics problem, such that Wolframite is simply a tool to get the job done.</p>
 <p>First of all, we redefine the shortcuts that we used in the previous part, before introducing the problem at hand.</p>
@@ -359,7 +386,7 @@ window.Quarto = {
 <div class="sourceCode" id="cb3"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(wl/restart! {<span class="at">:aliases</span> aliases})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:status</span> <span class="at">:ok</span>, <span class="at">:wolfram-version</span> <span class="fl">14.0</span>, <span class="at">:start</span>!ed? <span class="va">true</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:status</span> <span class="at">:ok</span>, <span class="at">:wolfram-version</span> <span class="fl">14.1</span>, <span class="at">:started</span>? <span class="va">true</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defmacro</span><span class="fu"> eval-&gt;</span></span>
@@ -371,7 +398,7 @@ window.Quarto = {
 <div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> TeX</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might not realise that 'ToString' is necessary."</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  [tex-form]</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  (w/ToString (w/TeXForm tex-form)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  (ToString (TeXForm tex-form)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb7"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defmacro</span><span class="fu"> TeX-&gt;</span></span>
@@ -426,7 +453,7 @@ window.Quarto = {
 <p>, where k is the field wavenumber:</p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb14"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> E2</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  (w/* E1 (w/Exp (w/* w/I phi))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  (w/* E1 (Exp (w/* I phi))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>. Note how we are able to seamlessly mix Clojure and Wolfram expressions.</p>
 <p>At position three, the field undergoes reflection and so now carries an additional reflection coefficient as well as an extra π phase change.</p>
@@ -437,7 +464,7 @@ window.Quarto = {
 <p>By position four, the field has travelled a further distance L and so is now equal to</p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb16"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> E4</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  (w/* E3 (w/Exp (w/* w/I phi))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  (w/* E3 (Exp (w/* I phi))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>. Which we can evaluate and visualise with one of our handy macros.</p>
 <div class="sourceClojure">
@@ -445,11 +472,14 @@ window.Quarto = {
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>        (w/== <span class="at">'E4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><span class="math display">\[\text{E4}=\text{r2} \left(-e^{2 i k L}\right) (\text{t1}-\text{E4} \text{r1})\]</span></p>
-<p>## Fields Using these expressions, we can now calculate the inner, transmitted and reflected fields of the cavity (with some subtle phase assumptions). Note how easy it is to, first of all, form an equation from the symbol ’E4 and the clojure variable E4, and, second of all, to rearrange the equation for a solution.</p>
+</section>
+<section id="fields" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="fields"><span class="header-section-number">6.4</span> Fields</h2>
+<p>Using these expressions, we can now calculate the inner, transmitted and reflected fields of the cavity (with some subtle phase assumptions). Note how easy it is to, first of all, form an equation from the symbol ’E4 and the clojure variable E4, and, second of all, to rearrange the equation for a solution.</p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb18"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> e4 </span>(<span class="kw">-&gt;</span> (w/== <span class="at">'E4</span> E4)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>            (w/Solve <span class="at">'E4</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>            w/First w/First))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>            (Solve <span class="at">'E4</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>            First First))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb19"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>(TeX-&gt; e4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -457,7 +487,7 @@ window.Quarto = {
 <p><span class="math display">\[\text{E4}\to \frac{\text{r2} \text{t1} e^{2 i k L}}{-1+\text{r1} \text{r2} e^{2 i k L}}\]</span></p>
 <p>Substitution and simplification can then be used to arrive at the transmission and reflection, respectively.</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb20"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> T </span>(<span class="kw">-&gt;</span> (w/x&gt;&gt; (w/* E2 <span class="at">'t2</span>)</span>
+<div class="sourceCode" id="cb20"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> T </span>(<span class="kw">-&gt;</span> (x&gt;&gt; (w/* E2 <span class="at">'t2</span>)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                  e4)</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>           w/&gt;&gt;_&lt;&lt;))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -467,31 +497,31 @@ window.Quarto = {
 <p><span class="math display">\[T=\frac{\text{t1} \text{t2} e^{i k L}}{1-\text{r1} \text{r2} e^{2 i k L}}\]</span></p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb22"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> R </span>(<span class="kw">-&gt;</span> (w/+ (w/* E4 <span class="at">'t1</span>) <span class="at">'r1</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>           (w/x&gt;&gt; e4)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>           w/&gt;&gt;_&lt;&lt;</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>           w/Together))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>           (x&gt;&gt; e4)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>           &gt;&gt;_&lt;&lt;</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>           Together))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb23"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>(TeX-&gt;&gt; R (w/== <span class="at">'R</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><span class="math display">\[R=\frac{\text{r1}^2 \text{r2} e^{2 i k L}+\text{r2} \text{t1}^2 e^{2 i k L}-\text{r1}}{-1+\text{r1} \text{r2} e^{2 i k L}}\]</span></p>
 </section>
-<section id="observables" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="observables"><span class="header-section-number">6.4</span> Observables</h2>
+<section id="observables" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="observables"><span class="header-section-number">6.5</span> Observables</h2>
 <p>Taking the square of the fields (using the complex conjugate), gives the corresponding observables, <em>i.e.</em> things that can be actually measured.</p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb24"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> I4 </span>(<span class="kw">-&gt;</span> (w/x&gt;&gt; <span class="at">'E4</span> e4) ||<span class="dv">2</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>            w/++&lt;_&gt;</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>            w/&gt;&gt;_&lt;&lt;))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>            ++&lt;_&gt;</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>            &gt;&gt;_&lt;&lt;))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb25"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>(TeX-&gt; (w/== <span class="at">'I4</span> (w/** (w/Abs <span class="at">'E4</span>) <span class="dv">2</span>) I4))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>(TeX-&gt; (w/== <span class="at">'I4</span> (w/** (Abs <span class="at">'E4</span>) <span class="dv">2</span>) I4))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><span class="math display">\[\text{I4}=| \text{E4}| ^2=\frac{\text{r2}^2 \text{t1}^2}{-2 \text{r1} \text{r2} \cos (2 k L)+\text{r1}^2 \text{r2}^2+1}\]</span></p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb26"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> Tsq </span>(<span class="kw">-&gt;</span> T ||<span class="dv">2</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>             w/++&lt;_&gt;</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>             w/&gt;&gt;_&lt;&lt;))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>             ++&lt;_&gt;</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>             &gt;&gt;_&lt;&lt;))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb27"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>(TeX-&gt; (w/== (w/** <span class="at">'T</span> <span class="dv">2</span>) Tsq))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -499,17 +529,17 @@ window.Quarto = {
 <p><span class="math display">\[T^2=\frac{\text{t1}^2 \text{t2}^2}{-2 \text{r1} \text{r2} \cos (2 k L)+\text{r1}^2 \text{r2}^2+1}\]</span></p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb28"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> Rsq </span>(<span class="kw">-&gt;</span> R ||<span class="dv">2</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>             w/++&lt;_&gt;</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>             w/&gt;&gt;_&lt;&lt;</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>             w/Together))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>             ++&lt;_&gt;</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>             &gt;&gt;_&lt;&lt;</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>             Together))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb29"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>(TeX-&gt; (w/== (w/** <span class="at">'R</span> <span class="dv">2</span>) Rsq))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><span class="math display">\[R^2=\frac{-2 \text{r1}^3 \text{r2} \cos (2 k L)-2 \text{r1} \text{r2} \text{t1}^2 \cos (2 k L)+\text{r1}^4 \text{r2}^2+2 \text{r1}^2 \text{r2}^2 \text{t1}^2+\text{r1}^2+\text{r2}^2 \text{t1}^4}{-2 \text{r1} \text{r2} \cos (2 k L)+\text{r1}^2 \text{r2}^2+1}\]</span></p>
 </section>
-<section id="observables-with-loss" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="observables-with-loss"><span class="header-section-number">6.5</span> Observables with loss</h2>
+<section id="observables-with-loss" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="observables-with-loss"><span class="header-section-number">6.6</span> Observables with loss</h2>
 <p>The above result is a perfectly reasonable, but simple, model. More realistically, we want to be able to understand mirrors that have losses, <em>i.e.</em> that don’t just reflect or transmit light, but that actually absorb or ‘waste’ light.</p>
 <p>This is one of the places that Wolfram really shines. Almost the entire engine is designed around replacement rules. And so we just have to define a substitution, which says that reflection + transmission + loss is equal to 1:</p>
 <div class="sourceClojure">
@@ -525,26 +555,26 @@ window.Quarto = {
 </div>
 <p>and substitute these into the equations. We’re going to go a step further however…</p>
 </section>
-<section id="approximations" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="approximations"><span class="header-section-number">6.6</span> Approximations</h2>
+<section id="approximations" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="approximations"><span class="header-section-number">6.7</span> Approximations</h2>
 <p>Rather than just substitute the new rule into our expressions, we’re going to take this opportunity to define some other replacement rules. Now so far, we’ve been fairly mathematically pure, but a lot of physics is about knowing when (and being able) to make good approximations.</p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb31"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> approximations</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  [(w/-&gt; (w/* <span class="at">'r1</span> <span class="at">'r2</span>)</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>         (<span class="kw">let</span> [vars [(w/** <span class="at">'t1</span> <span class="dv">2</span>) (w/** <span class="at">'t2</span> <span class="dv">2</span>) <span class="at">'l1</span> <span class="at">'l2</span>]]</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>           (<span class="kw">-&gt;</span>  (w/x&gt;&gt; (w/* (w/√ (w/** <span class="at">'r1</span> <span class="dv">2</span>))</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                            (w/√ (w/** <span class="at">'r2</span> <span class="dv">2</span>)))</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                       losses)</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>                (w/Series [<span class="at">'t1</span> <span class="dv">0</span> <span class="dv">2</span>]</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>                          [<span class="at">'t2</span> <span class="dv">0</span> <span class="dv">2</span>]</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>                          [<span class="at">'l1</span> <span class="dv">0</span> <span class="dv">2</span>]</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>                          [<span class="at">'l2</span> <span class="dv">0</span> <span class="dv">2</span>])</span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>                w/Normal</span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>                w/&lt;&lt;_&gt;&gt;</span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>                (w/x&gt;&gt; (<span class="kw">mapv</span> #(w/-&gt; <span class="va">%</span> (w/* <span class="at">'temp</span> <span class="va">%</span>)) vars))</span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>                (w/Series [<span class="at">'temp</span> <span class="dv">0</span> <span class="dv">1</span>])</span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>                w/Normal</span>
-<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>                (w/x&gt;&gt; (w/-&gt; <span class="at">'temp</span> <span class="dv">1</span>)))))])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>           (<span class="kw">-&gt;</span> (x&gt;&gt; (w/* (√ (w/** <span class="at">'r1</span> <span class="dv">2</span>))</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                         (√ (w/** <span class="at">'r2</span> <span class="dv">2</span>)))</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                    losses)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>               (Series [<span class="at">'t1</span> <span class="dv">0</span> <span class="dv">2</span>]</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>                       [<span class="at">'t2</span> <span class="dv">0</span> <span class="dv">2</span>]</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>                       [<span class="at">'l1</span> <span class="dv">0</span> <span class="dv">2</span>]</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>                       [<span class="at">'l2</span> <span class="dv">0</span> <span class="dv">2</span>])</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>               Normal</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>               &lt;&lt;_&gt;&gt;</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>               (x&gt;&gt; (<span class="kw">mapv</span> #(w/-&gt; <span class="va">%</span> (w/* <span class="at">'temp</span> <span class="va">%</span>)) vars))</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>               (Series [<span class="at">'temp</span> <span class="dv">0</span> <span class="dv">1</span>])</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>               Normal</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>               (x&gt;&gt; (w/-&gt; <span class="at">'temp</span> <span class="dv">1</span>)))))])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb32"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>(TeX-&gt; approximations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -552,34 +582,34 @@ window.Quarto = {
 <p><span class="math display">\[\left\{\text{r1} \text{r2}\to \frac{1}{2} \left(-\text{l1}-\text{l2}-\text{t1}^2-\text{t2}^2\right)+1\right\}\]</span></p>
 <p>What’s happening here is that we are simplifying the expression for r1<em>r2 by assuming that the transmission and loss for light going through a mirror is small. So small, that higher powers of these variabes are negligible. And so, we substitute the values into the expression, expand the functions in a power series and neglect any higher powers. The neglect is done by inserting <a href="https://mathworld.wolfram.com/Big-ONotation.html">‘big O’ notation</a> and then restricting the series to a single power in that variable. As we want to do this for multiple variables, then we map over each one. This is a complicated mathematical procedure, but Wolframite allows us to do this quite concisely, apart from some necessary Wolfram datatype conversions (</em>e.g.* using the w/Normal function).</p>
 </section>
-<section id="the-cavity-field" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="the-cavity-field"><span class="header-section-number">6.7</span> The cavity field</h2>
+<section id="the-cavity-field" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="the-cavity-field"><span class="header-section-number">6.8</span> The cavity field</h2>
 <p>We remember (from part I) that Wolfram can define quite general approximations. With the small angle approximation, and those defined above, we can formulate our final expression for the optical intensity inside the cavity:</p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb33"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> small-angle</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  (w/_&gt; (w/Cos (w/Pattern <span class="at">'x</span> (w/Blank)))</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>        (w/+ <span class="dv">1</span> (w/* -<span class="fl">1/2</span> (w/** <span class="at">'x</span> <span class="dv">2</span>)))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  (_&gt; (Cos (Pattern <span class="at">'x</span> (Blank)))</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>      (w/+ <span class="dv">1</span> (w/* -<span class="fl">1/2</span> (w/** <span class="at">'x</span> <span class="dv">2</span>)))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb34"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> I4--approx</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  (eval-&gt; I4</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>          (w/x&gt;&gt; (w/-&gt; (w/Cos (w/* <span class="dv">2</span> <span class="at">'k</span> <span class="at">'L</span>))</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                       (w/Cos <span class="at">'phi</span>)))</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>          (w/x&gt;&gt; approximations)</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>          (w/x&gt;&gt; (w/-&gt; (w/** (w/* <span class="at">'r1</span> <span class="at">'r2</span>) <span class="dv">2</span>)</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                       (<span class="kw">-&gt;</span> (w/x&gt;&gt; (w/* <span class="at">'r1</span> <span class="at">'r2</span>) approximations)</span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>                           (w/** <span class="dv">2</span>))))</span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>          (w/x&gt;&gt; (<span class="kw">conj</span> losses small-angle))</span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>          w/&gt;_&lt;))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>          (x&gt;&gt; (w/-&gt; (Cos (w/* <span class="dv">2</span> <span class="at">'k</span> <span class="at">'L</span>))</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                     (Cos <span class="at">'phi</span>)))</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>          (x&gt;&gt; approximations)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>          (x&gt;&gt; (w/-&gt; (w/** (w/* <span class="at">'r1</span> <span class="at">'r2</span>) <span class="dv">2</span>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                     (<span class="kw">-&gt;</span> (x&gt;&gt; (w/* <span class="at">'r1</span> <span class="at">'r2</span>) approximations)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>                         (w/** <span class="dv">2</span>))))</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>          (x&gt;&gt; (<span class="kw">conj</span> losses small-angle))</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>          &gt;_&lt;))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb35"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>(TeX-&gt;&gt; I4--approx</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>        (w/== (w/** (w/Abs <span class="at">'E4</span>) <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>        (w/== (w/** (Abs <span class="at">'E4</span>) <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><span class="math display">\[| \text{E4}| ^2=\frac{4 \text{t1}^2 \left(-\text{l2}-\text{t2}^2+1\right)}{-2 \left(\phi ^2-2\right) \left(\text{l1}+\text{l2}+\text{t1}^2+\text{t2}^2-2\right)+\left(\text{l1}+\text{l2}+\text{t1}^2+\text{t2}^2-2\right)^2+4}\]</span></p>
 </section>
-<section id="visualised" class="level2" data-number="6.8">
-<h2 data-number="6.8" class="anchored" data-anchor-id="visualised"><span class="header-section-number">6.8</span> Visualised</h2>
+<section id="visualised" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="visualised"><span class="header-section-number">6.9</span> Visualised</h2>
 <p>So we finally have an equation for the field inside the cavity. If we were mathematicians, then of course, we might have stopped here. Assuming that it’s only real scientists who’re reading this (shhh!), then the next step is to explore these equations graphically, under practical assumptions.</p>
 <p>For this, we will define a few utility functions, that also demonstrate Wolfram’s conciseness.</p>
 <div class="sourceClojure">
@@ -597,23 +627,23 @@ window.Quarto = {
 <div class="sourceCode" id="cb37"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> coordinates</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"There's no numpy here, so what do we do? It turns out Wolfram can reimplement a meshgrid-like function very concisely (let's not talk about the performance though...)."</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  [xmin xmax ymin ymax]</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  (eval-&gt; (w/Outer w/List</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>                   (linspace xmin xmax <span class="dv">100</span>)</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                   (linspace ymin ymax <span class="dv">100</span>))</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>          (w/Flatten <span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  (eval-&gt; (Outer List</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>                 (linspace xmin xmax <span class="dv">100</span>)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                 (linspace ymin ymax <span class="dv">100</span>))</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>          (Flatten <span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb38"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> Efield</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"For convenience, we build a clojure function over the Wolfram expression created earlier."</span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  [t1 t2 l1 l2 phi]</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  (wl/eval (w/Clear <span class="at">'f</span>))</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  (wl/eval (w/_= (<span class="kw">list</span> <span class="at">'f</span></span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>                       (w/Pattern t1 (w/Blank))</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>                       (w/Pattern t2 (w/Blank))</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>                       (w/Pattern l1 (w/Blank))</span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>                       (w/Pattern l2 (w/Blank))</span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>                       (w/Pattern phi (w/Blank)))</span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>                 I4--approx))</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  (wl/eval (Clear <span class="at">'f</span>))</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  (wl/eval (_= (<span class="kw">list</span> <span class="at">'f</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>                     (Pattern t1 (Blank))</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>                     (Pattern t2 (Blank))</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>                     (Pattern l1 (Blank))</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>                     (Pattern l2 (Blank))</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>                     (Pattern phi (Blank)))</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>               I4--approx))</span>
 <span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>  (wl/eval (<span class="kw">list</span> <span class="at">'f</span> t1 t2 l1 l2 phi)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
@@ -633,12 +663,12 @@ window.Quarto = {
 <div class="sourceClojure">
 <div class="sourceCode" id="cb41"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>(wh/view</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a> (w/ListPlot3D <span class="at">'nums</span></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>               (w/-&gt; w/PlotRange w/All)</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>               (w/-&gt; w/Boxed w/False)</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>               (w/-&gt; w/AxesLabel</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>               (w/-&gt; PlotRange All)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>               (w/-&gt; Boxed <span class="va">false</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>               (w/-&gt; AxesLabel</span>
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>                     [<span class="st">"Mirror transmission"</span> <span class="st">"Phase"</span> <span class="st">"Intracavity intensity"</span>])))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div><details open="open"><summary><h5 style="cursor:pointer;display:inline;padding:0.5rem 1rem 0 1rem;" class="anchored">ListPlot3D[nums, Rule[PlotRange, All], Rule[Boxed, False], Rule[AxesLabel, {"Mirror transmission", "Phase", "Intracavity intensity"}]]</h5></summary><div class="wl-results"><hr><img src="data:image/jpeg;base64,R0lGODlh4AEQAfcXAJycnI6OjvDw8NfX15KSkrKysqWlpbe3t7m5uampqfLy8qysrLCwsJaWlpubm/j4+DAwMO/v7729vZmZmby8vJ+fn6ioqP///6qqqsjIyIiIiMXFxVBQUEBAQN/f3yAgIMDAwH9/f66uroqKihAQENjY2JWVlQAAAKCgoIyMjOzs7I+Pj8HBwaamps/Pz7+/v6+vr9DQ0HBwcKSkpOrq6ubm5mBgYMzMzPX19eLi4mZmZoODg6GhoZ2dnXl5ebu7u9PT07W1tY2NjcnJycTExIaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhiH/C05FVFNDQVBFMi4wAwEAAAAh+QQECgD/ACwAAAAA4AEQAQAI/wAvCBxIsKDBgwgTKlzIsKHDhxAjSpxIsaLFixgzatzIsaPHjyBDihxJsqTJkyhTqlzJsqXLlzBjypxJs6bNmzhz6tzJs6fPn0CDCh1KtKjR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" style="margin-top:1rem;"></div></details></div>
+<div><details open="open"><summary><h5 style="cursor:pointer;display:inline;padding:0.5rem 1rem 0 1rem;" class="anchored">ListPlot3D[nums, Rule[PlotRange, All], Rule[Boxed, False], Rule[AxesLabel, {"Mirror transmission", "Phase", "Intracavity intensity"}]]</h5></summary><div class="wl-results"><hr><img src="data:image/jpeg;base64,R0lGODlh0AKyAfcFAGZmZrKystnZ2cXFxXl5ef///42Njd/f32BgYCAgIEBAQKCgoL+/v39/fwAAAOzs7J+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fnyH/C05FVFNDQVBFMi4wAwEAAAAh+QQECgD/ACwAAAAA0AKyAQAI/wALCBxIsKDBgwgTKlzIsKHDhxAjSpxIsaLFixgzatzIsaPHjyBDihxJsqTJkyhTqlzJsqXLlzBjypxJs6bNmzhz6tzJs6fPn0CDCh1KtKjR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" style="margin-top:1rem;"></div></details></div>
 <p>And there you have it! It turns out that if you get the phase right and you buy high quality mirrors then you can massively amplify the laser light. In fact, if you add a ‘gain’ material in the middle then such light amplification by the stimulated emission of radiation has a catchier name: it’s called a <em>Laser</em>!</p>
 </section>
 <section id="acknowledgements" class="level1" data-number="7">

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -218,7 +218,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Advanced topics</span></a>
+ <span class="menu-text">Clojure primer</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -226,8 +226,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./packages.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Packages</span></span></a>
+  <a href="./clojure_primer.index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Clojure primer</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Advanced topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./advanced.customizing_wolframite.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Customizing Wolframite</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./advanced.packages.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Packages</span></span></a>
   </div>
 </li>
       </ul>
@@ -235,7 +258,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./faq.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
   </div>
 </li>
     </ul>
@@ -252,32 +275,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#status" id="toc-status" class="nav-link" data-scroll-target="#status"><span class="header-section-number">1.1</span> Status</a></li>
   <li><a href="#what-is-wolframite" id="toc-what-is-wolframite" class="nav-link" data-scroll-target="#what-is-wolframite"><span class="header-section-number">1.2</span> What is Wolframite?</a></li>
-  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage"><span class="header-section-number">1.3</span> Usage</a>
+  <li><a href="#documentation" id="toc-documentation" class="nav-link" data-scroll-target="#documentation"><span class="header-section-number">1.3</span> Documentation</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage"><span class="header-section-number">1.4</span> Usage</a>
   <ul class="collapse">
-  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites"><span class="header-section-number">1.3.1</span> Prerequisites:</a>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites"><span class="header-section-number">1.4.1</span> Prerequisites:</a>
   <ul class="collapse">
-  <li><a href="#clojure" id="toc-clojure" class="nav-link" data-scroll-target="#clojure"><span class="header-section-number">1.3.1.1</span> Clojure</a></li>
-  <li><a href="#wolfram-mathematica-or-wolfram-engine" id="toc-wolfram-mathematica-or-wolfram-engine" class="nav-link" data-scroll-target="#wolfram-mathematica-or-wolfram-engine"><span class="header-section-number">1.3.1.2</span> Wolfram (Mathematica) or Wolfram Engine</a></li>
+  <li><a href="#clojure" id="toc-clojure" class="nav-link" data-scroll-target="#clojure"><span class="header-section-number">1.4.1.1</span> Clojure</a></li>
+  <li><a href="#wolfram-mathematica-or-wolfram-engine" id="toc-wolfram-mathematica-or-wolfram-engine" class="nav-link" data-scroll-target="#wolfram-mathematica-or-wolfram-engine"><span class="header-section-number">1.4.1.2</span> Wolfram Mathematica or Wolfram Engine</a></li>
   </ul></li>
-  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">1.3.2</span> Getting started</a>
-  <ul class="collapse">
-  <li><a href="#learning-wolframite" id="toc-learning-wolframite" class="nav-link" data-scroll-target="#learning-wolframite"><span class="header-section-number">1.3.2.1</span> Learning Wolframite</a></li>
-  <li><a href="#customizing-wolframite" id="toc-customizing-wolframite" class="nav-link" data-scroll-target="#customizing-wolframite"><span class="header-section-number">1.3.2.2</span> Customizing Wolframite</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">1.4.2</span> Getting started</a></li>
+  <li><a href="#clerk-integration" id="toc-clerk-integration" class="nav-link" data-scroll-target="#clerk-integration"><span class="header-section-number">1.4.3</span> Clerk Integration</a></li>
+  <li><a href="#how-does-it-work" id="toc-how-does-it-work" class="nav-link" data-scroll-target="#how-does-it-work"><span class="header-section-number">1.4.4</span> How does it work?</a></li>
   </ul></li>
-  <li><a href="#clerk-integration" id="toc-clerk-integration" class="nav-link" data-scroll-target="#clerk-integration"><span class="header-section-number">1.3.3</span> Clerk Integration</a></li>
-  <li><a href="#how-does-it-work" id="toc-how-does-it-work" class="nav-link" data-scroll-target="#how-does-it-work"><span class="header-section-number">1.3.4</span> How does it work?</a></li>
-  </ul></li>
-  <li><a href="#dependencies" id="toc-dependencies" class="nav-link" data-scroll-target="#dependencies"><span class="header-section-number">1.4</span> Dependencies</a></li>
   <li><a href="#development" id="toc-development" class="nav-link" data-scroll-target="#development"><span class="header-section-number">1.5</span> Development</a>
   <ul class="collapse">
   <li><a href="#running-tests" id="toc-running-tests" class="nav-link" data-scroll-target="#running-tests"><span class="header-section-number">1.5.1</span> Running tests</a></li>
   <li><a href="#deployment" id="toc-deployment" class="nav-link" data-scroll-target="#deployment"><span class="header-section-number">1.5.2</span> Deployment</a>
   <ul class="collapse">
-  <li><a href="#documentation" id="toc-documentation" class="nav-link" data-scroll-target="#documentation"><span class="header-section-number">1.5.2.1</span> Documentation</a></li>
+  <li><a href="#writing-documentation" id="toc-writing-documentation" class="nav-link" data-scroll-target="#writing-documentation"><span class="header-section-number">1.5.2.1</span> Writing documentation</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#authors" id="toc-authors" class="nav-link" data-scroll-target="#authors"><span class="header-section-number">1.6</span> Authors</a></li>
-  <li><a href="#support" id="toc-support" class="nav-link" data-scroll-target="#support"><span class="header-section-number">1.7</span> Support</a></li>
+  <li><a href="#sponsorship" id="toc-sponsorship" class="nav-link" data-scroll-target="#sponsorship"><span class="header-section-number">1.7</span> Sponsorship</a></li>
   <li><a href="#contact" id="toc-contact" class="nav-link" data-scroll-target="#contact"><span class="header-section-number">1.8</span> Contact</a></li>
   <li><a href="#license" id="toc-license" class="nav-link" data-scroll-target="#license"><span class="header-section-number">1.9</span> License</a></li>
   <li><a href="#legal" id="toc-legal" class="nav-link" data-scroll-target="#legal"><span class="header-section-number">1.10</span> Legal</a></li>
@@ -323,10 +342,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="wolframite" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Wolframite</h1>
 <p><a href="https://clojars.org/org.scicloj/wolframite"><img src="https://img.shields.io/clojars/v/org.scicloj/wolframite.svg" class="img-fluid" alt="Clojars download"></a> <a href="https://github.com/scicloj/wolframite/">Wolframite sources</a></p>
-<p>An interface between Clojure and the Wolfram Language (Supports <a href="https://www.wolfram.com/mathematica/">Mathematica</a> and <a href="https://www.wolfram.com/engine/">Wolfram Engine</a> ).</p>
+<p>An interface between Clojure and the Wolfram Language (Supports <a href="https://www.wolfram.com/mathematica/">Mathematica</a> and <a href="https://www.wolfram.com/engine/">Wolfram Engine</a>).</p>
 <section id="status" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="status"><span class="header-section-number">1.1</span> Status</h2>
-<p><strong>Wolframite is currently (Q3/2024) under active development again. You can <a href="https://github.com/scicloj/wolframite/discussions/17">keep track of what is happening in this discussion</a>.</strong></p>
+<p><strong>We are working on wrapping up version 1.0, focusing on documentation. You can <a href="https://github.com/scicloj/wolframite/discussions/17">keep track of what is happening in this discussion</a>.</strong></p>
 </section>
 <section id="what-is-wolframite" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="what-is-wolframite"><span class="header-section-number">1.2</span> What is Wolframite?</h2>
@@ -339,95 +358,88 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Wolframite lets you <strong>write Wolfram as if it was Clojure</strong> by providing Clojure functions and vars for all Wolfram symbols, including docstrings and autocompletion in your favorite IDE</li>
 <li>[Tentative] Wolframite facilitates <strong>the “Clojurization” of Wolfram’s existing parallel-computing capabilities.</strong> Wolfram is not designed for threads or concurrency. It has excellent support for parallel computation, but parallel evaluations are initiated from a single-threaded master kernel which blocks until all parallel evaluations return. By contrast, Wolframite includes a concurrency framework that lets multiple Clojure threads execute Wolfram expressions without blocking others. Now it is easy to run a simulation in Clojure with 1,000 independent threads asynchronously evaluating processor-intensive expressions in Wolfram. The computations will be farmed out adaptively and transparently to however many Wolfram kernels are available on any number of processor cores, either locally or across a cluster, grid, or network.
 <ul>
-<li>Notice that you cannot run more Wolfram kernels than your license allows (see <code>wolframite/kernel-info!</code>)</li>
+<li>Notice that you cannot run more Wolfram kernels than your license allows (see the function <code>(wolframite.core/kernel-info!)</code>)</li>
 </ul></li>
 </ul>
 <p>Wolframite is open-source and targeted at applications in scientific computing, computational economics, finance, and other fields that rely on the combination of parallelized simulation and high-performance number-crunching. Wolframite gives the programmer access to Clojure’s most cutting-edge features–easy concurrency and multithreading, immutable persistent data structures, and software transactional memory—alongside Wolfram’s easy-to-use algorithms for numerics, symbolic mathematics, optimization, statistics, visualization, and image-processing.</p>
+<p>Wolfram / Mathematica itself is a commercial product and requires a license. Though Wolfram Engine is <a href="https://www.wolfram.com/engine/free-license/">free to use in development</a>.</p>
 </section>
-<section id="usage" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="usage"><span class="header-section-number">1.3</span> Usage</h2>
-<section id="prerequisites" class="level3" data-number="1.3.1">
-<h3 data-number="1.3.1" class="anchored" data-anchor-id="prerequisites"><span class="header-section-number">1.3.1</span> Prerequisites:</h3>
-<section id="clojure" class="level4" data-number="1.3.1.1">
-<h4 data-number="1.3.1.1" class="anchored" data-anchor-id="clojure"><span class="header-section-number">1.3.1.1</span> Clojure</h4>
+<section id="documentation" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="documentation"><span class="header-section-number">1.3</span> Documentation</h2>
+<p>No matter what is your level of experience with either Clojure or Wolfram, we have you covered!</p>
+<p>While this page provides a brief overview of Wolframite assuming some level of knowledge of each of the systems, we have also tutorials targeted at <a href="https://scicloj.github.io/wolframite/for_scientists.index.html">scientists new to Clojure</a> and at <a href="https://scicloj.github.io/wolframite/for_developers.index.html">Clojure developers new to Wolfram</a>. However, you should try to read through this page, the <a href="https://scicloj.github.io/wolframite/quickstart.html">Quickstart</a>, and browse through <a href="https://scicloj.github.io/wolframite/understanding_wolframite.html">Understanding Wolframite</a> before diving into the tutorials. If you have never seen Clojure before, you may want to start with a quick look at our <a href="https://scicloj.github.io/wolframite/clojure_primer.index.html">Clojure Primer</a> to understand better the rest of the documentation. Remember: you don’t need to learn or remember all at once.</p>
+</section>
+<section id="usage" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="usage"><span class="header-section-number">1.4</span> Usage</h2>
+<section id="prerequisites" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="prerequisites"><span class="header-section-number">1.4.1</span> Prerequisites:</h3>
+<section id="clojure" class="level4" data-number="1.4.1.1">
+<h4 data-number="1.4.1.1" class="anchored" data-anchor-id="clojure"><span class="header-section-number">1.4.1.1</span> Clojure</h4>
 <p>First, if you haven’t already, install the <a href="https://clojure.org/guides/getting_started">Clojure CLI toolchain</a> (homebrew is a great way to do this if you’re on Mac or Linux, but you can just as easily use the installation scripts if you prefer).</p>
 </section>
-<section id="wolfram-mathematica-or-wolfram-engine" class="level4" data-number="1.3.1.2">
-<h4 data-number="1.3.1.2" class="anchored" data-anchor-id="wolfram-mathematica-or-wolfram-engine"><span class="header-section-number">1.3.1.2</span> Wolfram (Mathematica) or Wolfram Engine</h4>
-<p>Next, obviously, you’ll need to ensure that you have Wolfram Engine or the Wolfram desktop app (formerly called Mathematica) installed and your license (free for W. E.) registered - make sure you can run these tools on their own <em>before</em> trying Wolframite.</p>
+<section id="wolfram-mathematica-or-wolfram-engine" class="level4" data-number="1.4.1.2">
+<h4 data-number="1.4.1.2" class="anchored" data-anchor-id="wolfram-mathematica-or-wolfram-engine"><span class="header-section-number">1.4.1.2</span> Wolfram Mathematica or Wolfram Engine</h4>
+<p>Next, obviously, you’ll need to ensure that you have Wolfram Engine or the Wolfram desktop application (formerly called Mathematica) installed and your license registered. Make sure you can run these tools on their own <em>before</em> trying Wolframite.</p>
 <p>First of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(wolframite.core/start!)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This should also find and load the JLink JAR included with your installation. Watch stdout for an INFO log message (via clojure.tools.logging) like:</p>
 <blockquote class="blockquote">
 <p>=== Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar ===</p>
 </blockquote>
-<p>However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the <code>WOLFRAM_INSTALL_PATH</code> environment variable or Java system property (the latter takes priority) to point to the correct location. Example:</p>
+<p>However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the <code>WOLFRAM_INSTALL_PATH</code> environment variable or Java system property (the latter takes priority) to point to the correct location. Examples:</p>
 <pre class="shell"><code>export WOLFRAM_INSTALL_PATH=/opt/mathematica/13.1
 export WOLFRAM_INSTALL_PATH="/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents"</code></pre>
 </section>
 </section>
-<section id="getting-started" class="level3" data-number="1.3.2">
-<h3 data-number="1.3.2" class="anchored" data-anchor-id="getting-started"><span class="header-section-number">1.3.2</span> Getting started</h3>
-<p>Start a REPL with Wolframite on the classpath, then initialize it:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">require</span> '[wolframite.core <span class="at">:as</span> wl] </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>         '[wolframite.wolfram <span class="at">:as</span> w]) <span class="co">; Wolfram symbols as Clojure vars / fns</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">;; Initialize</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>(wl/start!) <span class="co">; =&gt; nil</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">;; Use it:</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/Dot [<span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>] [<span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span>]))</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; 32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>More examples</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/D (w/Power <span class="at">'x</span> <span class="dv">2</span>) <span class="at">'x</span>))</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; (* 2 x)</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/ChemicalData <span class="st">"Ethanol"</span> <span class="st">"MolarMass"</span>))</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; (Quantity 46.069M (* "Grams" (Power "Moles" -1)))</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">;; Accessing WlframAlpha</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/WolframAlpha <span class="st">"How many licks does it take to get to the center of a Tootsie Pop?"</span>)) <span class="co">; BEWARE: must be online</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; [(-&gt; [["Input" 1] "Plaintext"] "How many licks does it take to get to the Tootsie Roll center of a Tootsie Pop?") (-&gt; [["Result" 1] "Plaintext"] "3481\n(according to student researchers at the University of Cambridge)")]</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/N w/Pi <span class="dv">20</span>))</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; 3.141592653589793238462643383279502884197169399375105820285M</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/Map (w/fn [x] (w/Sqrt x)) [<span class="dv">4</span> <span class="dv">16</span>]))</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; [2 4]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="getting-started" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="getting-started"><span class="header-section-number">1.4.2</span> Getting started</h3>
+<p>Start a <a href="https://clojure.org/guides/repl/introduction">Clojure REPL</a> with Wolframite on the classpath:</p>
+<pre class="shell"><code>clj -Sdeps '{:deps {org.scicloj/wolframite {:mvn/version "1.0.0-SNAPSHOT"}}}'</code></pre>
+<p>and try it out:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">require</span> '[wolframite.core <span class="at">:as</span> wl] </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>         '[wolframite.wolfram <span class="at">:as</span> w <span class="at">:refer</span> <span class="at">:all</span>  <span class="co">; Wolfram symbols as Clojure vars / fns</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">:exclude</span> [<span class="kw">*</span> <span class="kw">+</span> <span class="kw">-</span> <span class="kw">-&gt;</span> <span class="kw">/</span> <span class="kw">&lt;</span> <span class="kw">&lt;=</span> <span class="kw">=</span> <span class="kw">==</span> <span class="kw">&gt;</span> <span class="kw">&gt;=</span> <span class="kw">fn</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                     Byte Character Integer Number Short String Thread]])</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">;; Initialize</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>(wl/start!) <span class="co">; =&gt; {:status :ok, :wolfram-version 14.1, :started? true}</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">;; Use it:</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>(wl/eval (Dot [<span class="dv">2</span> <span class="dv">2</span> <span class="dv">4</span>] [<span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span>]))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; 42</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>More examples:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (D (Power <span class="at">'x</span> <span class="dv">2</span>) <span class="at">'x</span>)) <span class="co">; derivative</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; (* 2 x)</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>(wl/eval (ChemicalData <span class="st">"Ethanol"</span> <span class="st">"MolarMass"</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; (Quantity 46.069M (* "Grams" (Power "Moles" -1)))</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">;; Accessing WolframAlpha (BEWARE: must be online)</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>(wl/eval (WolframAlpha <span class="st">"How many licks does it take to get to the center of a Tootsie Pop?"</span>))</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; [(-&gt; [["Input" 1] "Plaintext"] "How many licks does it take to get to the Tootsie Roll</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">;   center of a Tootsie Pop?") (-&gt; [["Result" 1] "Plaintext"] "3481\n(according to student</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">;   researchers at the University of Cambridge)")]</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>(wl/eval (N Pi <span class="dv">20</span>)) <span class="co">; numerical value with 20 digit precision</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; 3.141592653589793238462643383279502884197169399375105820285M</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>(wl/eval (Map (w/fn [x] (Sqrt x)) [<span class="dv">4</span> <span class="dv">16</span>]))</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; [2 4]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>TIP: Cursive - teach it to resolve <code>w/fn</code> as <code>clojure.core/fn</code>.</p>
-<p>NOTE: The <code>wolframite.wolfram</code> (<code>w</code>) ns has vars for all Wolfram symbols at the time of the last release. Check <code>w/*wolfram-kernel-name*</code> for kernel type/version and run <code>(wolframite.impl.wolfram-syms.write-ns/write-ns!)</code> to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematice has, and/or with custom “aliases”.</p>
-<section id="learning-wolframite" class="level4" data-number="1.3.2.1">
-<h4 data-number="1.3.2.1" class="anchored" data-anchor-id="learning-wolframite"><span class="header-section-number">1.3.2.1</span> Learning Wolframite</h4>
-<p><a href="https://scicloj.github.io/wolframite/">Visit our documentation site</a> to learn all you might want to know about using Wolframite.</p>
+<p>NOTE: The <code>wolframite.wolfram</code> (<code>w</code>) namespace has vars for all Wolfram symbols at the time of the last release of Wolframite. Check <code>w/*wolfram-kernel-name*</code> for kernel type/version and run <code>(wolframite.impl.wolfram-syms.write-ns/write-ns!)</code> to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematice has, and/or with custom “aliases”.</p>
 </section>
-<section id="customizing-wolframite" class="level4" data-number="1.3.2.2">
-<h4 data-number="1.3.2.2" class="anchored" data-anchor-id="customizing-wolframite"><span class="header-section-number">1.3.2.2</span> Customizing Wolframite</h4>
-<p>A big advantage of Wolframite (as opposed to its earlier incarnations) is that we can now individually tailor the user experience at the level of initialization,</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/start! {<span class="at">:aliases</span> '{** Power}})</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>(wl/eval '(** <span class="dv">2</span> <span class="dv">5</span>)) <span class="co">; =&gt; 32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>, and function call,</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(wl/start!)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>(wl/eval '(** <span class="dv">2</span> <span class="dv">5</span>) {<span class="at">:aliases</span> '{** Power}}) <span class="co">; =&gt; 32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>. Use it how you want to!</p>
-<p>TIP: You can also get convenience vars for your aliases in <code>wolframite.wolfram</code> by running something like <code>(wolframite.impl.wolfram-syms.write-ns/write-ns! &lt;path&gt; {:aliases '{** Power}})</code>. After you load the file, you’ll be able to use <code>(wl/eval (w/** 2 5) {:aliases '{** Power}})</code>.</p>
-</section>
-</section>
-<section id="clerk-integration" class="level3" data-number="1.3.3">
-<h3 data-number="1.3.3" class="anchored" data-anchor-id="clerk-integration"><span class="header-section-number">1.3.3</span> Clerk Integration</h3>
+<section id="clerk-integration" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="clerk-integration"><span class="header-section-number">1.4.3</span> Clerk Integration</h3>
 <p>We primarily use <a href="https://scicloj.github.io/clay/">Clay</a> as our notebook tool, but there is also experimental support for <a href="https://github.com/nextjournal/clerk">Clerk</a>.</p>
 <p>Example usage: (watching for changes in a folder)</p>
-<pre><code>user&gt; (require '[clojuratica.tools.clerk-helper :as ch])
+<pre><code>user&gt; (require '[wolframite.tools.clerk-helper :as ch])
 user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 <ul>
-<li>Open dev/notebook/quickstart.clj, make a change and save.</li>
+<li>Open <code>dev/notebook/quickstart.clj</code>, make a change and save.</li>
 <li>Open <code>localhost:7777</code> in the browser</li>
 </ul>
 </section>
-<section id="how-does-it-work" class="level3" data-number="1.3.4">
-<h3 data-number="1.3.4" class="anchored" data-anchor-id="how-does-it-work"><span class="header-section-number">1.3.4</span> How does it work?</h3>
-<p>You compose Wolfram expressions using the convenience functions and vars from <code>wolframite.wolfram</code>. These are then turned first into a symbolic representation of themselves and later into a tree of JLink <code>Expr</code> objects and sent to a Wolfram kernel subprocess (started by <code>wl/start</code>) for evaluation. The result is translated back from jlink.Expr into a Clojure form. This translation allows for some additional convenience logic, such as supporting <code>w/*</code> instead of <code>Times</code>.</p>
+<section id="how-does-it-work" class="level3" data-number="1.4.4">
+<h3 data-number="1.4.4" class="anchored" data-anchor-id="how-does-it-work"><span class="header-section-number">1.4.4</span> How does it work?</h3>
+<p>You compose Wolfram expressions using the convenience functions and vars from <code>wolframite.wolfram</code>. These are then turned first into a symbolic representation of themselves and later into a tree of JLink <code>Expr</code> objects and sent to a Wolfram kernel subprocess (started by <code>wl/start!</code>) for evaluation. The result is translated back from jlink.Expr into a Clojure form. This translation allows for some additional convenience logic, such as supporting <code>w/*</code> instead of <code>Times</code>.</p>
 </section>
-</section>
-<section id="dependencies" class="level2" data-number="1.4">
-<h2 data-number="1.4" class="anchored" data-anchor-id="dependencies"><span class="header-section-number">1.4</span> Dependencies</h2>
-<p>Wolframite requires Wolfram’s Java integration library JLink, which is currently only available with a Wolfram Engine or Mathematica installation. It will also need to know where the <code>WolframKernel</code> / <code>MathKernel</code> executable is, in order to be able to start the external evaluation kernel process. Normally, <code>wl/start</code> should be able to find these automatically, if you installed either into a standard location on Mac, Linux or Windows. However, if necessary, you can specify either with env variables / sys properties - see Prerequisites above.</p>
 </section>
 <section id="development" class="level2" data-number="1.5">
 <h2 data-number="1.5" class="anchored" data-anchor-id="development"><span class="header-section-number">1.5</span> Development</h2>
@@ -438,21 +450,26 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 </section>
 <section id="deployment" class="level3" data-number="1.5.2">
 <h3 data-number="1.5.2" class="anchored" data-anchor-id="deployment"><span class="header-section-number">1.5.2</span> Deployment</h3>
-<p>Build the jar with <code>clojure -T:build jar</code> then deploy with <code>env CLOJARS_USERNAME=&lt;tbd&gt; CLOJARS_PASSWORD=&lt;clojars-token&gt; clojure -T:build deploy</code></p>
+<p>Build the jar with <code>clojure -T:build jar</code> then deploy with <code>env CLOJARS_USERNAME=&lt;tbd&gt; CLOJARS_PASSWORD=&lt;clojars-token&gt; clojure -T:build deploy</code>.</p>
 <p>Note: You need to log in to Clojars and generate a deployment token. You also need to be added to the SciCloj group there by an admin.</p>
 <p>Consider studying Wolfram’s guide <a href="https://reference.wolfram.com/language/JLink/tutorial/WritingJavaProgramsThatUseTheWolframLanguage.html">Writing Java Programs That Use the Wolfram Language</a> and <a href="https://reference.wolfram.com/language/tutorial/WSTPAndExternalProgramCommunicationOverview.html">WSTP and External Program Communication</a> when you want to dig into the JVM ↔︎ Wolfram communication.</p>
-<section id="documentation" class="level4" data-number="1.5.2.1">
-<h4 data-number="1.5.2.1" class="anchored" data-anchor-id="documentation"><span class="header-section-number">1.5.2.1</span> Documentation</h4>
+<section id="writing-documentation" class="level4" data-number="1.5.2.1">
+<h4 data-number="1.5.2.1" class="anchored" data-anchor-id="writing-documentation"><span class="header-section-number">1.5.2.1</span> Writing documentation</h4>
 <p>Documentation is written as literal programming sources in the <code>notebooks</code> directory and turned into HTML under <code>docs</code> using <a href="https://scicloj.github.io/clay/">Clay</a> and <a href="https://quarto.org/">Quarto</a>.</p>
 <p>To render a single namespace/page, require Clay and run <code>(clay/make! {:source-path "&lt;path to the file&gt;""})</code>. Tip: You can also do this without quarto - just add <code>:run-quarto false</code> to the options.</p>
-<p>To build the whole site, run <code>clojure -T:build build-site</code> (remembering to ensure that you have a ./symlink-jlink.jar symlink).</p>
+<p>To build the whole site, run <code>clojure -T:build build-site</code> (remembering to ensure that you have the <code>./symlink-jlink.jar</code> symlink).</p>
 </section>
 </section>
 </section>
 <section id="authors" class="level2" data-number="1.6">
 <h2 data-number="1.6" class="anchored" data-anchor-id="authors"><span class="header-section-number">1.6</span> Authors</h2>
 <p>The original Clojuratica, Wolframite’s predecessor, was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School.</p>
-<p>Ongoing maintenance and development over the years have been thanks to * <a href="https://github.com/chanshunli">Steve Chan</a>, * <a href="https://github.com/dfarmer">Dan Farmer</a>, * <a href="https://github.com/orb">Norman Richards</a> and others.</p>
+<p>Ongoing maintenance and development over the years have been thanks to</p>
+<ul>
+<li><a href="https://github.com/chanshunli">Steve Chan</a>,</li>
+<li><a href="https://github.com/dfarmer">Dan Farmer</a>,</li>
+<li><a href="https://github.com/orb">Norman Richards</a> and others.</li>
+</ul>
 <p>Most recently, Clojuratica has been transformed into <em>Wolframite</em> by</p>
 <ul>
 <li>Pawel Ceranka,</li>
@@ -460,21 +477,21 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 <li><a href="https://holyjak.cz">Jakub Holý</a>;</li>
 </ul>
 <p>and is now being maintained as part of the <a href="https://github.com/scicloj">SciCloj</a> project. Wolframite is free, open-source software, but if you would like to support our work then please cite us.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">@software{Holý_2024},</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">author = {Holý, Jakub and Clark, Thomas and Ceranka, Pawel and Richards, Norman and Farmer, Dan and Chan, Steve and Sheldon-Coulon, Garth},</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">license = {Mozilla Public License},</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">title = {{Wolframite: }},</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">url = {https://github.com/scicloj/wolframite},</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">version = {1.0.0-SNAPSHOT},</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">year = {2024}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">@software{Holý_2024},</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">author = {Holý, Jakub and Clark, Thomas and Ceranka, Pawel and Richards, Norman and Farmer, Dan and Chan, Steve and Sheldon-Coulon, Garth},</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">license = {Mozilla Public License},</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">title = {{Wolframite: }},</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">url = {https://github.com/scicloj/wolframite},</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">version = {1.0.0-SNAPSHOT},</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">year = {2024}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="support" class="level2" data-number="1.7">
-<h2 data-number="1.7" class="anchored" data-anchor-id="support"><span class="header-section-number">1.7</span> Support</h2>
+<section id="sponsorship" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="sponsorship"><span class="header-section-number">1.7</span> Sponsorship</h2>
 <p>We are grateful for the financial support of <a href="https://www.clojuriststogether.org/">Clojurists Together</a>, who supported this work for a quarter in 2024.</p>
 </section>
 <section id="contact" class="level2" data-number="1.8">
 <h2 data-number="1.8" class="anchored" data-anchor-id="contact"><span class="header-section-number">1.8</span> Contact</h2>
-<p>If you would like to contact the maintainers or otherwise seek help from the community then please drop a message into our <a href="https://clojurians.zulipchat.com/#narrow/stream/313853-wolfram-clojure-bridge">zulip channel</a> or contact the team at <a href="https://github.com/scicloj">SciCloj</a>.</p>
+<p>If you would like to contact the maintainers or otherwise seek help from the community then please drop a message into our <a href="https://clojurians.zulipchat.com/#narrow/stream/313853-wolfram-clojure-bridge">zulip channel</a>, the <code>#wolframite</code> channel in <a href="https://clojurians.net">Clojurians Slack</a>, or contact the team at <a href="https://github.com/scicloj">SciCloj</a>.</p>
 </section>
 <section id="license" class="level2" data-number="1.9">
 <h2 data-number="1.9" class="anchored" data-anchor-id="license"><span class="header-section-number">1.9</span> License</h2>

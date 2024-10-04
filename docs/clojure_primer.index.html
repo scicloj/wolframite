@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; Gotchas… – Wolframite Documentation</title>
+<title>10&nbsp; Clojure primer – Wolframite Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,8 +64,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./for_scientists.index.html" rel="next">
-<link href="./understanding_wolframite.html" rel="prev">
+<link href="./advanced.customizing_wolframite.html" rel="next">
+<link href="./for_developers.demo_analysis_cycling.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -115,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./gotchas.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Gotchas…</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clojure_primer.index.html">Clojure primer</a></li><li class="breadcrumb-item"><a href="./clojure_primer.index.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Clojure primer</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -160,7 +160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./gotchas.html" class="sidebar-item-text sidebar-link active">
+  <a href="./gotchas.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Gotchas…</span></span></a>
   </div>
 </li>
@@ -227,7 +227,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clojure_primer.index.html" class="sidebar-item-text sidebar-link">
+  <a href="./clojure_primer.index.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Clojure primer</span></span></a>
   </div>
 </li>
@@ -267,15 +267,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-essence-of-clojure" id="toc-the-essence-of-clojure" class="nav-link active" data-scroll-target="#the-essence-of-clojure"><span class="header-section-number">10.1</span> The essence of Clojure</a></li>
+  <li><a href="#elementary-syntax" id="toc-elementary-syntax" class="nav-link" data-scroll-target="#elementary-syntax"><span class="header-section-number">10.2</span> Elementary syntax</a></li>
+  <li><a href="#basics" id="toc-basics" class="nav-link" data-scroll-target="#basics"><span class="header-section-number">10.3</span> Basics</a></li>
+  <li><a href="#evaluation" id="toc-evaluation" class="nav-link" data-scroll-target="#evaluation"><span class="header-section-number">10.4</span> Evaluation</a></li>
+  <li><a href="#sec-clojure-repl" id="toc-sec-clojure-repl" class="nav-link" data-scroll-target="#sec-clojure-repl"><span class="header-section-number">10.5</span> How to work with Clojure: the REPL and interactive development</a></li>
+  <li><a href="#resources-for-further-learning" id="toc-resources-for-further-learning" class="nav-link" data-scroll-target="#resources-for-further-learning"><span class="header-section-number">10.6</span> Resources for further learning</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clojure_primer.index.html">Clojure primer</a></li><li class="breadcrumb-item"><a href="./clojure_primer.index.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Clojure primer</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-gotchas" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Gotchas…</span></span></h1>
+<h1 class="title"><span id="sec-clojure-primer" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Clojure primer</span></span></h1>
 </div>
 
 
@@ -302,27 +313,184 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 .clay-side-by-side .sourceCode {margin: 0}
 .clay-side-by-side {margin: 1em 0}
 </style>
-<script src="gotchas_files/md-default0.js" type="text/javascript"></script>
-<script src="gotchas_files/md-default1.js" type="text/javascript"></script>
+<script src="clojure_primer.index_files/md-default0.js" type="text/javascript"></script>
+<script src="clojure_primer.index_files/md-default1.js" type="text/javascript"></script>
+<p>A very brief introduction to Clojure for a would-be users of Wolframite not familiar with the language.</p>
+<section id="the-essence-of-clojure" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="the-essence-of-clojure"><span class="header-section-number">10.1</span> The essence of Clojure</h2>
+<p>It’s impossible to summarize any language in just a few words. But we can say that simplicity and expressiveness are some of the core values of Clojure. It has been designed to allow you to express your thoughts concisely, to write programs that avoid some common sources of errors (especially those caused by shared mutable data), and produce code that is well suited to evolution over time.</p>
+</section>
+<section id="elementary-syntax" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="elementary-syntax"><span class="header-section-number">10.2</span> Elementary syntax</h2>
+<p>Let’s start by comparing how <strong>adding a few elements to a list</strong> looks like in Wolfram, Python, and Clojure:</p>
+<p>Let’s start Wolfram to be ready for our examples underneath:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">ns</span> gotchas</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  [<span class="at">:require</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   [scicloj.kindly.v4.kind <span class="at">:as</span> k]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(wl/start!)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Although we try to avoid such things, sometimes, when you’re fighting the host language, it’s just not practical to carry over the original conventions. Here we will try to keep an up-to-date list of possible surprises, when coming from Wolfram to Wolframite (that are not easy to ‘fix’).</p>
-<p><strong>^</strong> (<code>Power</code>) - Despite allowing a wider range of characters, we cannot use <code>^</code> in Wolframite because it is reserved for adding metadata to virtually all Clojure symbols. <code>(^ x 2)</code> will probably not do what you expect! Thus we use <code>(w/** 'x 2)</code> instead.</p>
-<p><strong>:=</strong> (<code>SetDelayed</code>) - Is actually <code>_=</code> in Wolframite. This is because <code>:</code> is usually a reserved in Clojure for creating keywords. It’s worth noting though that this is possibly nicer, in a way, because <code>_</code> looks like a placeholder, and defining a placeholder for the expression is what it does. It also sort of implies a delay…</p>
-<p><strong>:&gt;</strong> (<code>RuleDelayed</code>) - Is <code>_&gt;</code> in Wolframite.</p>
-<p><strong>.</strong> (<code>Dot</code>) - Has been changed to <code>&lt;*&gt;</code>, in the spirit of the inner product, because <code>.</code> is a key character in Clojure, and most object-oriented systems, for namespacing.</p>
-<p><strong>/.</strong> (<code>ReplaceAll</code>) - Similarly, has been changed to <code>x&gt;&gt;</code> (and <code>Replace</code> to <code>x&gt;</code>) for consistency.</p>
-<p><strong>=.</strong> (<code>Unset</code>) - has also been changed to <code>=!</code>; be careful not to confuse this with <code>!=</code>!</p>
-<p>Symbols within threading macros. - After spending so much time playing with symbols, be careful of slipping into things like <code>(-&gt; 'x '(Power 1))</code> This will not work because <code>'(Power 1)</code> is not evaluated, and so will be treated like any other symbol. However, if you use <code>w/Power</code> and friends then you do not have this problem.</p>
-<p><em>Symbols passed to Wolfram must be alphanumeric</em> - In the end, when they get passed to the Wolfram kernel, symbols must be strictly alphanumeric (apart from forward slashes and dollar signs), <em>i.e.</em> <code>r_2</code> is currently not allowed. This is due to underlying limitations of the Wolfram language. Much like with Mathematica however, we can get around this in general by using Wolframite’s aliasing system (see the relevant tutorials).</p>
-<p><em>Vectors, <code>[]</code>, vs lists, <code>()</code>.</em> - Lists are used to represent function calls and so when combining Clojure and Wolfram expressions, make sure that data literals are vectors. For example, <code>(wh/view (w/ListLinePlot (range 10)))</code> will fail (otherwise unexpectedly), but <code>(wh/view (w/ListLinePlot (into [] (range 10))))</code> will give you what you expect.</p>
+<div class="printedClojure">
+<div class="sourceCode" id="cb2"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:status</span> <span class="at">:ok</span>, <span class="at">:wolfram-version</span> <span class="fl">14.1</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="clay-table">
+<div class="table-responsive">
+<table class="table table-hover clay-table caption-top" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>Wolfram</td>
+<td><code class="wolfram">  Join[{}, {"first", 2, &lt;|"name" -&gt; "Ava"|&gt;}]</code></td>
+</tr>
+<tr class="even">
+<td>Python</td>
+<td><code class="sourceCode python">  []<span class="op">+</span>[<span class="st">"first"</span>,<span class="dv">2</span>,{<span class="st">"name"</span>: <span class="st">"Ava"</span>}]</code></td>
+</tr>
+<tr class="odd">
+<td>Clojure</td>
+<td><div>
+<pre class="sourceCode language-clojure printed-clojure code-with-copy"><code>(conj [] "first" 2 {"name" "Ava"})</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre>
+</div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We see here a few basic data structures: a <code>[vector]</code>, similar to Wolfram/Python lists, and a map <code>{"key": "value"}</code>, similar to Python dictionaries / Wolfram associations. One interesting difference is that <code>,</code> commas in Clojure are optional.</p>
+<p><code>"Strings"</code> and numbers <code>1, 2, ...</code> are the same. Clojure’s <code>nil</code> is just like Python’s <code>None</code></p>
+<p>Now, how would we <strong>define a function</strong> that sums two numbers?</p>
+<div class="clay-table">
+<div class="table-responsive">
+<table class="table table-hover clay-table caption-top" data-quarto-postprocess="true">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>Wolfram</td>
+<td><code class="wolfram">  plus[x_, y_] := Plus[x, y]</code></td>
+</tr>
+<tr class="even">
+<td>Python</td>
+<td><code class="sourceCode python">  <span class="kw">def</span> plus(x, y):
+      <span class="cf">return</span> x <span class="op">+</span> y</code></td>
+</tr>
+<tr class="odd">
+<td>Clojure</td>
+<td><div>
+<pre class="sourceCode language-clojure printed-clojure code-with-copy"><code>(defn plus [x y] (+ x y))</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre>
+</div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Now we are ready to learn a little more about how to read Clojure code.</p>
+<img alt="Clojure syntax 1" height="150" src="./notebooks/clojure_primer/clj-syntax-slide-1.svg" width="422">
+<p>Clojure is a Lisp, i.e.&nbsp;the code consists of the same data you use as a programmer: lists, vectors, maps, symbols, etc.</p>
+<p>Lists and vectors are both sequential data structures. Vectors support efficient access to any element, while lists are always read from start.</p>
+<p>Keywords are similar to strings, but tuned for use as keys in maps. Additionally, a keyword may be used as a function that takes a map and looks up the corresponding value:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(<span class="at">:name</span> {<span class="at">:name</span> <span class="st">"Ava"</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="st">"Ava"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb7"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">map</span> <span class="at">:name</span> [{<span class="at">:name</span> <span class="st">"Ava"</span>} {<span class="at">:name</span> <span class="st">"Boudicca"</span>}])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb8"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>(<span class="st">"Ava"</span> <span class="st">"Boudicca"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This is the syntax, i.e.&nbsp;how characters become data. Now, on to <em>semantics</em>, i.e.&nbsp;what does the data mean:</p>
+<img alt="Clojure syntax 1" height="193" src="./notebooks/clojure_primer/clj-syntax-slide-2.svg" width="586">
+<p>A list is <em>interpreted</em> as an invocation (e.g.&nbsp;a function call), where the first element is a symbol that resolves to something invocable (a function, a special form, or a macro; we don’t need to care about their differences here). All the other elements are arguments to the function.</p>
+<p>The same code structure is used for everything, including defining functions:</p>
+<img alt="Clojure syntax 1" height="286" src="./notebooks/clojure_primer/clj-syntax-slide-3.svg" width="640">
+<p>The <code>defn</code>here defines a new function called <code>subtract-smaller</code>, taking two arguments <code>x</code> and <code>y</code>.</p>
+<p>Noteworthy:</p>
+<p><code>&gt;</code>, <code>-</code> are just function calls. <code>if</code> is a “special form” and <code>defn</code> is a macro, but they behave very similarly to functions.</p>
+<p>Notice there is no <code>else</code>. There are no reserved/special words in Clojure.</p>
+</section>
+<section id="basics" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="basics"><span class="header-section-number">10.3</span> Basics</h2>
+<ul>
+<li>Everything returns a value (which may be <code>nil</code>). F.ex. <code>if</code> returns whatever the evaluated branch returned.</li>
+<li>Clojure is <a href="https://ericnormand.me/article/nil-punning">very tolerant of <code>nil</code></a>, <em>most</em> functions treat it as an empty value - you can <code>map</code> over it (getting <code>nil</code> back), append to it (getting back a list with the appended element) etc.</li>
+<li>Whitespace is not significant. Commas are treated as a whitespace, and used occasionally for readability</li>
+<li>Booleans: <code>true</code> and <code>false</code>. All predicates and conditional expressions treat both <code>false</code> and <code>nil</code> as <code>false</code> and everything else as <code>true</code> (also called “truthy”).</li>
+<li>Clojure runs on the Java Virtual Machine (JVM) and you can directly call Java methods. (Learn more about <a href="https://clojure.org/reference/java_interop">Clojure ↔︎ Java interoperability</a>.)</li>
+<li>Clojure is intended for <a href="https://clojure.org/guides/repl/introduction"><em>interactive development</em></a>, also known as REPL-driven development, where you build and evolve your application while it is running. You may be used to a very similar this style of development from Python or Wolfram notebooks.</li>
+</ul>
+</section>
+<section id="evaluation" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="evaluation"><span class="header-section-number">10.4</span> Evaluation</h2>
+<p>Now is a good time to revisit <a href="@sec-understanding-wolframite">Understanding Wolframite</a> and read about the three forms of Wolframite expressions (raw, evaluated, and Wolfram string).</p>
+<p>A point worth re-iterating is that Wolframite expressions are not evaluated by Clojure but are sent ± as-is to Wolfram for evaluation. Thus, you may not mix Clojure and Wolframite expressions freely. But there is one exception to that - a Wolframite expression may contain Clojure expressions that can be evaluated fully on the Clojure side and replaced with the result, before being sent to Wolfram. Let’s have a look at a few examples:</p>
+<p>Clojure-side only:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb9"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">+</span> (<span class="kw">*</span> <span class="dv">3</span> (math/pow <span class="dv">2</span> <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb10"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fl">12.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>12.0</p>
+<p>Wolfram-only:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb11"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/+ (w/* <span class="dv">3</span> (w/Power <span class="dv">2</span> <span class="dv">2</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb12"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dv">12</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Mixed, with Clojure evaluated before sending the form to Wolfram:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb13"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (w/+ (w/* <span class="dv">3</span> (w/Power (<span class="kw">+</span> <span class="dv">1</span> <span class="dv">1</span>) <span class="dv">2</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb14"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="dv">12</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This is how the expression is evaluated before we resolve aliases and turn it into Wolfram and send it over to the kernel:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb15"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>(w/+ (w/* <span class="dv">3</span> (w/Power (<span class="kw">+</span> <span class="dv">1</span> <span class="dv">1</span>) <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb16"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">+</span> (<span class="kw">*</span> <span class="dv">3</span> (Power <span class="dv">2</span> <span class="dv">2</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notice that you may nest Clojure-only expression, which does not depend on the surrounding Wolfram context, inside a Wolframite expression, but you cannot do the opposite, i.e.&nbsp;nest a Wolframite expression inside a Clojure expression:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb17"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">try</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a> (wl/eval (<span class="kw">+</span> (w/* <span class="dv">3</span> (w/Power (<span class="kw">+</span> <span class="dv">1</span> <span class="dv">1</span>) <span class="dv">2</span>))))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a> (<span class="kw">catch</span> Exception <span class="kw">e</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>   (<span class="kw">str</span> <span class="kw">e</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb18"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="st">"java.lang.ClassCastException: Cannot cast clojure.lang.PersistentList to java.lang.Number"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This fails because we are passing a Wolframite expression (a list) to the Clojure <code>+</code> function, but it only works with numbers. We’d need to evaluate the expression first:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb19"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">+</span> (wl/eval (w/* <span class="dv">3</span> (w/Power (<span class="kw">+</span> <span class="dv">1</span> <span class="dv">1</span>) <span class="dv">2</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb20"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="dv">12</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-clojure-repl" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="sec-clojure-repl"><span class="header-section-number">10.5</span> How to work with Clojure: the REPL and interactive development</h2>
+<p>Contrary to most languages, Clojure is designed to be written incrementally, in an interactive session. While this is alien to most developers, who are used to the write-compile-run cycle, you may already be well familiar with this style of coding from Wolfram or Python notebooks. In both cases, your “program” is running all the time and you keep adding to it, building on the previous code and state, and can examine the state at any moment.</p>
+<p>You can read more on Clojure’s take on <a href="https://clojure.org/guides/repl/introduction">interactive development</a> a.k.a. REPL-driven development on the official Clojure website.</p>
+</section>
+<section id="resources-for-further-learning" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="resources-for-further-learning"><span class="header-section-number">10.6</span> Resources for further learning</h2>
+<ul>
+<li>The <a href="http://jafingerhut.github.io/cheatsheet/clojuredocs/cheatsheet-tiptip-cdocs-summary.html">Clojure cheatsheat</a> is a good place to look for functions.</li>
+<li><a href="https://ericnormand.me/article/100-most-used-clojure-expressions">The 100 Most Used Clojure Expressions</a></li>
+</ul>
 <div style="background-color:grey;height:2px;width:100%;"></div>
-<div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/gotchas.clj">notebooks/gotchas.clj</a></small></small></pre></div>
+<div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/clojure_primer/index.clj">notebooks/clojure_primer/index.clj</a></small></small></pre></div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -747,13 +915,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./understanding_wolframite.html" class="pagination-link" aria-label="Understanding Wolframite">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Understanding Wolframite</span></span>
+      <a href="./for_developers.demo_analysis_cycling.html" class="pagination-link" aria-label="Using Wolframite to analyse cycle trips data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Wolframite to analyse cycle trips data</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./for_scientists.index.html" class="pagination-link" aria-label="Wolframite for scientists I (Introduction)">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Wolframite for scientists I (Introduction)</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./advanced.customizing_wolframite.html" class="pagination-link" aria-label="Customizing Wolframite">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Customizing Wolframite</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
