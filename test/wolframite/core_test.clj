@@ -124,6 +124,18 @@
            (wl/eval "Map[Function[{x}, x + 1],{1,3}]")
            (wl/eval (w/Map (w/fn [x] (w/+ x 1)) [1 3]))))))
 
+(deftest kindly-support
+  (wl/start!)
+  (let [res (wl/eval '(Video "file:///my-fake.mps"))
+        {:keys [kindly/options] :as m}
+        (meta res)
+        view-fn (:kindly/f options)]
+    (is (= 'Video (first res)) "Sanity check: expect Wolfram to return (Video ..)")
+    (is (:kind/video m))
+    (is (= "file:///my-fake.mps" (view-fn res))
+        "Correct metadata is attached, including view fn to extract the video url")))
+
+
 (comment
   (wl/->wl (w/Map (w/fn [] (w/+ (w/Slot 1) 1)) [1 3]))
   (wl/eval (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))
