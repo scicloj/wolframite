@@ -60,7 +60,7 @@ If you're sold on Clojure and interested in problems close to data science then 
 
 ## Wolfram basics {#sec-wolfram-basics}")
 (k/md "### Let's define our terms!
- One of the really nice things about using Wolfram as a library is that our middle man (Wolframite) can provide default substitutions to  simplify verbose terms, e.g. `(Power x 2)` can become `(w/** x 2)` or even `'(**2 x)`, for readability. What's even nicer however, is that we can make our own aliases at runtime (see @sec-custom-aliases): the choice is ours!
+ One of the really nice things about using Wolfram as a library is that our middle man (Wolframite) can provide default substitutions to  simplify verbose terms, e.g. `(Power x 2)` can become `(** x 2)` or even `'(**2 x)`, for readability. What's even nicer however, is that we can make our own aliases at runtime (see @sec-custom-aliases): the choice is ours!
 
 We mention this now because the best time to define our terms is before we start. The first few aliases give us an insight into how I would have designed Wolfram. The last two go a step further. Here, we make use of Clojure's modernity and decision to support a much wider character set than Wolfram. Depending on your editor, it can be just as easy to enter these unicode characters as typing the long function name, but the real win is in the readability. Remember, we read our documents far more often than we write them (even if it's just peer review...).
 
@@ -99,8 +99,8 @@ With the recent emergence of ChatGPT and similar AI systems, direct access to kn
 
 For example, we can make both knowledge-based requests and perform complicated calculations on demand (requires internet access).")
 
-(wh/view (w/WolframAlpha "What is the mass of 5 rubidium atoms?" "Result"))
-(wh/view (w/WolframAlpha "What is the relativistic momentum of a 0.8c electron?" "Result"))
+(wh/view (WolframAlpha "What is the mass of 5 rubidium atoms?" "Result"))
+(wh/view (WolframAlpha "What is the relativistic momentum of a 0.8c electron?" "Result"))
 
 (k/md "In each case, Wolfram does not just provide the answer, but returns the data in different formats and units in an attempt to anticipate different usecases. This verbosity might seem frustrating, but of course adds flexibility: leaving the user free to filter or present the results in any way that they wish. Here, we have used the last argument to simply display the core 'Result'.")
 
@@ -125,7 +125,7 @@ In this library, there are two approaches. For all official functions, the clean
 
 (k/md "To deal with general symbols, we return to one of LisPs' strengths: controlled evaluation. Historically necessitated by LisPs' 'code-as-data' paradigm, all LisPs can deal with general symbols by simply not evaluating them. This makes it easy to create and manipulate arbitrary Wolfram expressions, as we can simply treat them as unevaluated symbols (note our use of the new aliases too). ")
 (-> 'x
-    (w/** 1)
+    (** 1)
     (w/- '5)
     wl/eval)
 
@@ -136,19 +136,19 @@ Functions are slightly more complicated. Functions can be defined in many differ
 
 If you're used to using Wolfram/Mathematica, then `f[x_]:=x^2` is simply
 ")
-(defn f [x] (wl/eval (w/Power x 2)))
+(defn f [x] (wl/eval (** x 2)))
 (f 2)
 (f 'x)
 
 (k/md ". If instead you want to define functions inside the Wolfram kernel, and attach them to arbitrary symbols, then the most ergonomic way is")
-(wl/eval (w/_= 'f (w/fn [x] (w/** x 2))))
+(wl/eval (_= 'f (w/fn [x] (** x 2))))
 (wl/eval '(f 5))
 (wl/eval (list 'f 5))
 (k/md ", where `_=` is the Wolframite version of `:=` (SetDelayed). See the 'Gotchas' section (@sec-gotchas) for why. Rather than a direct alias, `w/fn` is a special form that allows you to define Wolfram functions in a convenient way. Note that `f` is a new symbol and therefore cannot be expected to be part of `wolframite.wolfram` or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.
 
 In my opinion, this mixes the best of Wolfram and Clojure: and scales well. The most explicitly Wolfram way of doing it however, is to write")
-(wl/eval (w/Clear 'f))
-(wl/eval (w/_= (list 'f (w/Pattern 'x (w/Blank))) (w/Power 'x 2)))
+(wl/eval (Clear 'f))
+(wl/eval (_= (list 'f (Pattern 'x (Blank))) (** 'x 2)))
 (wl/eval '(f 5))
 (k/md ", where we first removed all definitions from 'f' before reassigning the function.
 
