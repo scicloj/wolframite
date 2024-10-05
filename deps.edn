@@ -1,9 +1,6 @@
 {:paths ["src" "resources"]
  :deps {org.clojure/clojure {:mvn/version "1.12.0"}
         org.clojure/tools.logging {:mvn/version "1.3.0"}
-
-        org.scicloj/kindly {:mvn/version "4-beta5"}
-        org.scicloj/kindly-default {:mvn/version "1-alpha10"}
         babashka/fs {:mvn/version "0.5.20"}}
 
  :aliases {:neil {:project {:name org.scicloj/wolframite
@@ -39,5 +36,4 @@
                    org.scicloj/wolframite {:local/root "."}
                    wolfram/jlink {:local/root "./symlink-jlink.jar"}} ; FYI jlink only needed for build-site
             :extra-paths ["notebooks"]
-            :override-deps {io.github.nextjournal/markdown {:git/sha "6683c48dfdb23404a23057817b6ac3acf0310bca"}} ; see #wolframite/56
             :ns-default build}}}
