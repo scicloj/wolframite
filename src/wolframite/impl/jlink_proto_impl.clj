@@ -1,11 +1,12 @@
 (ns wolframite.impl.jlink-proto-impl
   "The 'real' implementation of JLink, which does depend on JLink classes and thus
   cannot be loaded/required until JLink is on the classpath."
-  (:require [clojure.tools.logging :as log]
-            [wolframite.impl.protocols :as proto])
-  (:import (clojure.lang BigInt)
-           [com.wolfram.jlink Expr KernelLink MathCanvas MathLink MathLinkException MathLinkFactory
-                              PacketListener PacketArrivedEvent PacketPrinter]))
+  (:require
+    [clojure.tools.logging :as log]
+    [wolframite.impl.protocols :as proto])
+  (:import
+    (clojure.lang BigInt)
+    (com.wolfram.jlink Expr KernelLink MathCanvas MathLink MathLinkException MathLinkFactory PacketArrivedEvent PacketListener PacketPrinter)))
 
 (defn- array? [x]
   (some-> x class .isArray))
@@ -15,8 +16,8 @@
     (cond
       (sequential? primitive-or-exprs)
       (Expr.
-       ^Expr (first primitive-or-exprs)
-       ^"[Lcom.wolfram.jlink.Expr;" (into-array Expr (rest primitive-or-exprs)))
+        ^Expr (first primitive-or-exprs)
+        ^"[Lcom.wolfram.jlink.Expr;" (into-array Expr (rest primitive-or-exprs)))
       ;; Here, primitive-or-exprs could be an int, a String, long[], or similar
 
       (array? primitive-or-exprs)
@@ -69,7 +70,7 @@
           (let [expr (.getExpr link)]
             (when-not (.symbolQ expr)
               ;; not sure why these are sent, not useful; e.g. Get when a Get call failed etc.
-             {:type :message :content expr}))
+              {:type :message :content expr}))
 
           nil)
         (swap! capture conj)))
@@ -77,7 +78,7 @@
 
 (comment
   (let [link (proto/kernel-link ((requiring-resolve 'wolframite.impl.jlink-instance/get)))]
-    ;(.removePacketListener link packet-listener)
+    ; (.removePacketListener link packet-listener)
     (.addPacketListener link packet-listener)
     ,)
   ,)
@@ -153,7 +154,7 @@
                               ;; Note: The call below ensures we actually try to connect to the kernel
                               (.discardAnswer))
                             (reset! kernel-link-atom))]
-                   ;(.getError kernel-link) (.getErrorMessage kernel-link)
+                   ; (.getError kernel-link) (.getErrorMessage kernel-link)
                    kernel-link)
                  (catch MathLinkException e
                    (if (= (ex-message e) "MathLink connection was lost.")
@@ -193,9 +194,9 @@
            ^String (apply str (replace {\/ \`} name))))
   (->expr [_this obj] ; fallback for transforming anything we don't handle manually, via JLink itself
     (.getExpr
-     (doto (MathLinkFactory/createLoopbackLink)
-       (.put obj)
-       (.endPacket))))
+      (doto (MathLinkFactory/createLoopbackLink)
+        (.put obj)
+        (.endPacket))))
   (expr? [_this x]
     (instance? Expr x))
   (expr-element-type [_this container-type expr]
@@ -242,6 +243,6 @@
 
 (defn create [kernel-link-atom opts]
   (map->JLinkImpl
-   {:opts opts
-    :kernel-link-atom kernel-link-atom
-    :packet-listener (->InfoPacketCaptureListener (atom nil))}))
+    {:opts opts
+     :kernel-link-atom kernel-link-atom
+     :packet-listener (->InfoPacketCaptureListener (atom nil))}))

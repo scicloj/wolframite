@@ -2,13 +2,11 @@
   "The second part of Wolframite for scientists. Here, we consider a real physics problem
   as a demonstration of how one might use Wolframite in practice."
   (:require
-   [clojure.math :as math]
-   [scicloj.kindly.v4.kind :as k]
-   [wolframite.core :as wl]
-   [wolframite.tools.hiccup :as wh]
-   [wolframite.wolfram :as w :refer :all
-    :exclude [* + - -> / < <= = == > >= fn
-              Byte Character Integer Number Short String Thread]]))
+    [clojure.math :as math]
+    [scicloj.kindly.v4.kind :as k]
+    [wolframite.core :as wl]
+    [wolframite.tools.hiccup :as wh]
+    [wolframite.wolfram :as w :refer :all :exclude [* + - -> / < <= = == > >= Byte Character Integer Number Short String Thread fn]]))
 
 (k/md "# Wolframite for scientists II (Cavity physics)
 
@@ -119,7 +117,7 @@ At position three, the field undergoes reflection and so now carries an addition
 (k/md "Substitution and simplification can then be used to arrive at the transmission and reflection, respectively.")
 
 (def T (-> (x>> (w/* E2 't2)
-                  e4)
+             e4)
            w/>>_<<))
 (TeX->> T (w/== 'T))
 
@@ -257,17 +255,17 @@ For this, we will define a few utility functions, that also demonstrate Wolfram'
 
 (wl/eval (w/_= 'nums (mapv Efield--transmission-phase
                            (coordinates
-                            (math/sqrt 50E-6)
-                            (math/sqrt 700E-6)
-                            -0.001
-                            0.001))))
+                             (math/sqrt 50E-6)
+                             (math/sqrt 700E-6)
+                             -0.001
+                             0.001))))
 
 (wh/view
- (w/ListPlot3D 'nums
-               (w/-> PlotRange All)
-               (w/-> Boxed false)
-               (w/-> AxesLabel
-                     ["Mirror transmission" "Phase" "Intracavity intensity"])))
+  (w/ListPlot3D 'nums
+                (w/-> PlotRange All)
+                (w/-> Boxed false)
+                (w/-> AxesLabel
+                      ["Mirror transmission" "Phase" "Intracavity intensity"])))
 
 (k/md "And there you have it! It turns out that if you get the phase right and you buy high quality mirrors then you can massively amplify the laser light. In fact, if you add a 'gain' material in the middle then such light amplification by the stimulated emission of radiation has a catchier name: it's called a *Laser*!")
 

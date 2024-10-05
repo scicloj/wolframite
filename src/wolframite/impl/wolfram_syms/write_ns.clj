@@ -3,14 +3,15 @@
   autocompletion (even in editors using static code analysis) and linters (clj-kondo only does
   static code)"
   (:require
-   [clojure.string :as str]
-   [clojure.java.io :as io]
-   [clojure.edn :as edn]
-   [wolframite.core :as core]
-   [wolframite.impl.wolfram-syms.intern :as intern]
-   [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
-   [wolframite.runtime.defaults :as defaults])
-  (:import (java.io FileNotFoundException PushbackReader)))
+    [clojure.edn :as edn]
+    [clojure.java.io :as io]
+    [clojure.string :as str]
+    [wolframite.core :as core]
+    [wolframite.impl.wolfram-syms.intern :as intern]
+    [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
+    [wolframite.runtime.defaults :as defaults])
+  (:import
+    (java.io FileNotFoundException PushbackReader)))
 
 (comment
   (-> (io/resource "wolframite/impl/wolfram_syms/write_ns/includes.clj")
@@ -31,7 +32,7 @@
                      (keep #(when-let [kw (and (list? %)
                                                (keyword? (first %))
                                                (first %))]
-                              [kw (rest %)]))
+                             [kw (rest %)]))
                      (into {}))]
     (update incl-ns :refer-clojure #(apply hash-map %))))
 
@@ -97,24 +98,24 @@
        (spit path
              (str/join "\n"
                        (concat
-                        (map pr-str wolfram-ns-heading)
+                         (map pr-str wolfram-ns-heading)
                          ;; Add version info, similar to clojure's *clojure-version*; marked dynamic so
                          ;; that clj doesn't complain about those *..*
-                        [(format "(def ^:dynamic *wolfram-version* %s)" wolfram-version)]
-                        [(format "(def ^:dynamic *wolfram-kernel-name* \"%s\")" wolfram-kernel-name)]
-                        (map pr-str (make-defs all-syms))
-                        (map pr-str (make-wolfram-ns-footer all-syms))
-                        [(inclusions-body-str!)] ; the w/fn macro etc.
-                        (some-> aliases (aliases->defs all-syms) (->> (map pr-str))))))
+                         [(format "(def ^:dynamic *wolfram-version* %s)" wolfram-version)]
+                         [(format "(def ^:dynamic *wolfram-kernel-name* \"%s\")" wolfram-kernel-name)]
+                         (map pr-str (make-defs all-syms))
+                         (map pr-str (make-wolfram-ns-footer all-syms))
+                         [(inclusions-body-str!)] ; the w/fn macro etc.
+                         (some-> aliases (aliases->defs all-syms) (->> (map pr-str))))))
        (catch FileNotFoundException e
          (throw (ex-info (format "Could not write to %s - does the parent dir exist?"
                                  path)
                          {:path path, :cause (ex-message e)})))))))
 
-;(defmacro make-wolf-defs []
+; (defmacro make-wolf-defs []
 ;  `(do ~@(make-defs)))
 ; USAGE: Use
-;(macroexpand '(make-wolf-defs))
+; (macroexpand '(make-wolf-defs))
 
 (comment
 
@@ -125,5 +126,5 @@
       (load-file "src/wolframite/wolfram.clj"))
 
   (write-ns!
-   "src/wolframite/wolfram.clj"
-   {:aliases '{I Integrate}}))
+    "src/wolframite/wolfram.clj"
+    {:aliases '{I Integrate}}))

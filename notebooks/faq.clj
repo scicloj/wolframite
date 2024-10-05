@@ -1,11 +1,9 @@
 (ns faq
   "Anticipated and, potentially literally, frequently asked questions."
   (:require
-   [scicloj.kindly.v4.kind :as k]
-   [wolframite.core :as wl]
-   [wolframite.wolfram :as w :refer :all
-    :exclude [* + - -> / < <= = == > >= fn
-              Byte Character Integer Number Short String Thread]]))
+    [scicloj.kindly.v4.kind :as k]
+    [wolframite.core :as wl]
+    [wolframite.wolfram :as w :refer :all :exclude [* + - -> / < <= = == > >= Byte Character Integer Number Short String Thread fn]]))
 
 (wl/start!)
 

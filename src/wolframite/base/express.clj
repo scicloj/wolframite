@@ -1,6 +1,6 @@
 (ns wolframite.base.express
-  (:require [wolframite.impl.protocols :as proto]))
-
+  (:require
+    [wolframite.impl.protocols :as proto]))
 (defn express
   "??? Convert a _string_ expression into JLink.Expr using Wolfram itself"
   [s {:keys [jlink-instance]}]
@@ -13,11 +13,11 @@
                           (str "Something is wrong - there is no JLink instance, which shouldn't"
                                " be possible. Try to stop and start Wolframite again."))))
         output (io!
-                (locking link
-                  (doto link
-                    (.evaluate held-s)
-                    (.waitForAnswer))
-                  (.. link getExpr args)))] ; TODO (jakub) get rid of reflection, move into the protocol
+                 (locking link
+                   (doto link
+                     (.evaluate held-s)
+                     (.waitForAnswer))
+                   (.. link getExpr args)))] ; TODO (jakub) get rid of reflection, move into the protocol
     (if (= (count output) 1)
       (first output)
       (throw (Exception. (format "Invalid expression `%s`. Output lenght expected 1, was %d"

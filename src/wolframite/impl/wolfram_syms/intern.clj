@@ -1,8 +1,10 @@
 (ns wolframite.impl.wolfram-syms.intern
   "Interning of Wolfram symbols as Clojure vars, for convenience."
-  (:require [clojure.walk :as walk]
-            [clojure.walk])
-  (:import (clojure.lang IMeta)))
+  (:require
+    [clojure.walk :as walk]
+    [clojure.walk])
+  (:import
+    (clojure.lang IMeta)))
 
 (defn interned-var-val->symbol
   "Turns the value of an [[clj-intern]]-ed Wolfram symbols into said symbol, if possible - otherwise, returns nil.
@@ -74,8 +76,8 @@
     (clojure.walk/postwalk
       #(if (and (args-set %)
                 (not (::quoted? (meta %))))
-         (list 'quote (with-meta % {::quoted? true})) ; add meta to that we can avoid recursion
-         %)
+        (list 'quote (with-meta % {::quoted? true})) ; add meta to that we can avoid recursion
+        %)
       body)))
 
 (defn- unqualify

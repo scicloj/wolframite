@@ -4,14 +4,13 @@
   (:require
     [clojure.java.io :as io]
     [clojure.string :as str]
+    [scicloj.kindly.v4.kind :as k]
     [wolframite.core :as wl]
-    [wolframite.lib.helpers :as h]
-    [wolframite.wolfram :as w :refer :all
-     :exclude [* + - -> / < <= = == > >= fn
-               Byte Character Integer Number Short String Thread]]
     [wolframite.impl.wolfram-syms.intern :as intern]
-    [scicloj.kindly.v4.kind :as k])
-  (:import (java.util.zip GZIPInputStream)))
+    [wolframite.lib.helpers :as h]
+    [wolframite.wolfram :as w :refer :all :exclude [* + - -> / < <= = == > >= Byte Character Integer Number Short String Thread fn]])
+  (:import
+    (java.util.zip GZIPInputStream)))
 
 (k/md "
 We introduce you, the motivated Clojure developer, to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and some getting started notes, we outline a 'real' workflow using the example of analysing data about bike trips.")
@@ -57,10 +56,10 @@ Thus we will need a more DIY and lower-level approach to getting the data in, le
 Sadly, it cannot handle a gzpipped files (as far as I know) so we need to unzip it first:")
 
 (when-not (.exists (io/file "/tmp/huge.csv"))
- (let [zip (io/file "docs-buildtime-data/202304_divvy_tripdata_first100k.csv.gz")]
-   (with-open [zis (GZIPInputStream. (io/input-stream zip))]
-     (io/copy zis (io/file "/tmp/huge.csv"))))
- :extracted)
+  (let [zip (io/file "docs-buildtime-data/202304_divvy_tripdata_first100k.csv.gz")]
+    (with-open [zis (GZIPInputStream. (io/input-stream zip))]
+      (io/copy zis (io/file "/tmp/huge.csv"))))
+  :extracted)
 
 (k/md "
 Now we are ready to read the data in. We will store them into a Wolfram-side var so that we can work with them further.
@@ -72,7 +71,6 @@ For readability and auto-completion, we will define vars for the names of the Wo
 (def rawRows "Wolf var - unparsed data rows" 'rawRows)
 (def rows "Wolf var - parsed data rows" 'rows)
 
-
 (wl/eval (w/do (w/= 'f (w/OpenRead "/tmp/huge.csv"))
                (w/= csv (w/ReadList 'f
                                     w/Word
@@ -82,7 +80,6 @@ For readability and auto-completion, we will define vars for the names of the Wo
                                     (w/-> w/RecordLists true)))
                ;; Let's return only the length instead of all the large data:
                (w/Length csv)))
-
 
 (k/md (str "We leverage the flexibility of [ReadList](" (first (h/help! w/ReadList :links true))
            "), instructing it to read \"Words\" separated by `,` (instead of applying the normal word separating characters),
@@ -162,7 +159,6 @@ Let's see how it works:")
 (defn rowvals' [& col-names]
   (let [header->idx' (zipmap loc-ks (next (range)))]
     (w/fn [row] (mapv #(w/Part row (header->idx' %)) col-names))))
-
 
 ;; For me, it took ±0.8s to extract the 2 columns as text and 1.5s to parse them into numbers. With `ToExpression` it would take ±5s.
 

@@ -13,10 +13,10 @@
   os - keyword
   "
   (:require
-   [babashka.fs :as fs]
-   [clojure.tools.logging :as log]
-   ;clojure.repl.deps ; required dynamically, for a better error on old clj
-   [wolframite.runtime.system :as system]))
+    [babashka.fs :as fs]
+    [clojure.tools.logging :as log]
+    ;clojure.repl.deps ; required dynamically, for a better error on old clj
+    [wolframite.runtime.system :as system]))
 
 (def ^:private default-jlink-path-under-root "SystemFiles/Links/JLink/JLink.jar")
 

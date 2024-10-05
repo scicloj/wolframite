@@ -1,6 +1,7 @@
 ^:kindly/hide-code
 (ns for-developers.index
-  (:require [scicloj.kindly.v4.kind :as k]))
+  (:require
+    [scicloj.kindly.v4.kind :as k]))
 
 (k/md "# Wolframite for Clojure developers {#sec-for-developers}
 

@@ -1,6 +1,7 @@
 (ns advanced.customizing-wolframite
-  (:require [scicloj.kindly.v4.kind :as k]
-            [wolframite.core :as wl]))
+  (:require
+    [scicloj.kindly.v4.kind :as k]
+    [wolframite.core :as wl]))
 
 (k/md "## Customizing Wolframite
 

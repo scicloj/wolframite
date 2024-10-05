@@ -1,9 +1,9 @@
 (ns advanced.packages
   "A notebook demonstrating how to import and use Wolfram packages in Wolframite."
   (:require
-   [scicloj.kindly.v4.kind :as k]
-   [wolframite.core :as wl]
-   [wolframite.wolfram :as w]))
+    [scicloj.kindly.v4.kind :as k]
+    [wolframite.core :as wl]
+    [wolframite.wolfram :as w]))
 
 (k/md "# Packages
 
@@ -29,11 +29,11 @@ additional[y_]:=3*y
 (wl/<<! "resources/WolframPackageDemo.wl")
 
 (wl/eval
- (WolframPackageDemo/tryIt 10))
+  (WolframPackageDemo/tryIt 10))
 (wl/eval
- (WolframPackageDemo/additional 10))
+  (WolframPackageDemo/additional 10))
 (wl/eval
- (w/Information WolframPackageDemo/tryIt "Usage"))
+  (w/Information WolframPackageDemo/tryIt "Usage"))
 
 (k/md "That's it! As you can see, the functions are callable and the documentation is available too.
 

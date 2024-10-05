@@ -1,11 +1,10 @@
 ;; # Brief introduction into Wolfram Language for Clojure developers {#sec-wolfram-for-clojurians}
 
 (ns for-developers.wolfram-for-clojurians
-  (:require [scicloj.kindly.v4.kind :as k]
-            [wolframite.core :as wl]
-            [wolframite.wolfram :as w :refer :all
-             :exclude [* + - -> / < <= = == > >= fn
-                       Byte Character Integer Number Short String Thread]]))
+  (:require
+    [scicloj.kindly.v4.kind :as k]
+    [wolframite.core :as wl]
+    [wolframite.wolfram :as w :refer :all :exclude [* + - -> / < <= = == > >= Byte Character Integer Number Short String Thread fn]]))
 
 (wl/start!)
 
@@ -55,7 +54,6 @@ may use `#, #1, #2, ...` or `(Slot 1), (Slot 1), (Slot 2), ...` equivalent to Cl
 
 In Wolframite, you'll typically use `w/fn` or leverage the _operator form_ of functions (see @sec-operator-form).
 ")
-
 
 (k/md "#### [Lists](https://www.wolfram.com/language/fast-introduction-for-programmers/en/lists/)
 ")
@@ -141,16 +139,16 @@ See [Functionals & Operators](https://www.wolfram.com/language/fast-introduction
 (k/md "#### Clojure <-> Wolfram
 ")
 ^:kindly/hide-code
-(k/table {:column-names [:Clojure :Wolfram :Comments],
-          :row-vectors [["apply" "Apply"]
-                        ["comp" "Composition"]
-                        ["count" "Length"]
-                        ["filter" "Select"]
-                        ["nth" "Part" "1-based indexing"]
-                        ["map" "Map"]
-                        ["partial" "operator form" "(see above)"]
-                        ["reduce" "Fold"]
-                        ["take" "Part"]]})
+(k/table {:column-names [:Clojure :Wolfram :Comments]
+          ,:row-vectors [["apply" "Apply"]
+                         ["comp" "Composition"]
+                         ["count" "Length"]
+                         ["filter" "Select"]
+                         ["nth" "Part" "1-based indexing"]
+                         ["map" "Map"]
+                         ["partial" "operator form" "(see above)"]
+                         ["reduce" "Fold"]
+                         ["take" "Part"]]})
 
 (k/md "#### Additional resources
 

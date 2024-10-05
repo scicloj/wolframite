@@ -13,14 +13,12 @@
   (:require
     [clojure.set :as set]
     [clojure.string :as str]
+    [scicloj.kindly.v4.kind :as k]
     [wolframite.core :as wl]
     [wolframite.lib.helpers :as h]
     [wolframite.runtime.defaults :as defaults]
     [wolframite.tools.hiccup :as wh]
-    [wolframite.wolfram :as w :refer :all
-     :exclude [* + - -> / < <= = == > >= fn
-               Byte Character Integer Number Short String Thread]]
-    [scicloj.kindly.v4.kind :as k]))
+    [wolframite.wolfram :as w :refer :all :exclude [* + - -> / < <= = == > >= Byte Character Integer Number Short String Thread fn]]))
 
 (k/md "## Init
 
@@ -101,21 +99,21 @@ In a nutshell, this is how Wolframite is normally used, but, of course, this bar
 In particular, the flagship product of Wolfram, the one you've probably heard of, is Mathematica. And, as the name suggests, this entire system was built around the performance of abstract calculation and the manipulation of equations, e.g.
 ")
 (k/tex
- (-> (w/== 'E (w/* 'm (Power 'c 2)))
-     TeXForm
-     ToString
-     wl/eval))
+  (-> (w/== 'E (w/* 'm (Power 'c 2)))
+      TeXForm
+      ToString
+      wl/eval))
 
 (k/md "originally answered the question 'what is mass?'")
 
 (k/tex
- (-> (w/== 'E (w/* 'm (Power 'c 2)))
-     (Solve 'm)
-     First First
+  (-> (w/== 'E (w/* 'm (Power 'c 2)))
+      (Solve 'm)
+      First First
 
-     TeXForm
-     ToString
-     wl/eval))
+      TeXForm
+      ToString
+      wl/eval))
 
 (k/md "This is where Wolfram, and so Wolframite, really shines. And if you're interested in exploring this further, have a look at one of our longer tutorials.
 ")

@@ -1,11 +1,11 @@
 (ns lowlevel
   "Documenting operations that are carried out at a low level of abstraction."
   (:require
-   [wolframite.core :as wl]
-   [wolframite.wolfram :as w]
-   [wolframite.impl.jlink-instance :as jlink-instance]
-   [wolframite.base.parse :as parse]
-   [scicloj.kindly.v4.kind :as k]))
+    [scicloj.kindly.v4.kind :as k]
+    [wolframite.base.parse :as parse]
+    [wolframite.core :as wl]
+    [wolframite.impl.jlink-instance :as jlink-instance]
+    [wolframite.wolfram :as w]))
 
 (k/md "# Low level interoperation
 
@@ -18,7 +18,7 @@ Although it shouldn't normally be necessary, we can also intern Wolfram function
 The standard way of doing this is something like")
 (def greetings
   (wl/eval
-   (w/fn [x] (w/StringJoin "Hello, " x "! This is a Mathematica function's output."))))
+    (w/fn [x] (w/StringJoin "Hello, " x "! This is a Mathematica function's output."))))
 (greetings "Stephen")
 
 (k/md "But this can also be done at a lower level, e.g.")

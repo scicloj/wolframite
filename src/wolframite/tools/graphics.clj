@@ -3,14 +3,16 @@
   ;; Wolfram has You use MathCanvas when you want an AWT component and MathGraphicsJPanel when you
   ;; want a Swing component - see https://reference.wolfram.com/language/JLink/tutorial/CallingJavaFromTheWolframLanguage.html#20608
   ;; Notice that KernelLink also has evaluateToImage() and evaluateToTypeset() methods
-  (:require [wolframite.impl.jlink-instance :as jlink-instance]
-            [wolframite.impl.protocols :as proto]
-            [wolframite.core :as wl])
-  (:import (java.awt Color Component Frame)
-           (java.awt.image BufferedImage)
-           (javax.imageio ImageIO)
-           (java.io ByteArrayInputStream)
-           (java.awt.event WindowAdapter ActionEvent)))
+  (:require
+    [wolframite.core :as wl]
+    [wolframite.impl.jlink-instance :as jlink-instance]
+    [wolframite.impl.protocols :as proto])
+  (:import
+    (java.awt Color Component Frame)
+    (java.awt.event ActionEvent WindowAdapter)
+    (java.awt.image BufferedImage)
+    (java.io ByteArrayInputStream)
+    (javax.imageio ImageIO)))
 
 (defn scaled
   [x factor]
@@ -79,4 +81,3 @@
                (ImageIO/read (ByteArrayInputStream. (.evaluateToImage (proto/kernel-link (jlink-instance/get)) "GeoGraphics[]" (int width) (int height) 600 true))))))
 
   ;; doesn't make much difference (maybe a bit), seems like we can go lower dpi, but we already get maximum by default (?)
-
