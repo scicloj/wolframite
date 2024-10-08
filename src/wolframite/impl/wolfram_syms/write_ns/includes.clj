@@ -1,18 +1,18 @@
 (ns wolframite.impl.wolfram-syms.write-ns.includes
   "The content is to be included in the generated `wolframite.wolfram` ns."
+  (:refer-clojure :only [defmacro let list])
   (:require
-    clojure.walk
-    wolframite.impl.wolfram-syms.intern)
-  (:refer-clojure :only [defmacro let list]))
+    [clojure.walk]
+    [wolframite.impl.wolfram-syms.intern]))
 
 ;; Cursive: resolve as defn; Kondo: TBD
 ;; TODO: Do we want to enable specs?!
-;(s/fdef fn
+; (s/fdef fn
 ;        :args (s/cat :params :clojure.core.specs.alpha/params+body
 ;                     :body any?)
 ;        :ret any?)
 
-;;--INCLUDE-START--
+;; --INCLUDE-START--
 (defmacro fn
   "Creates a Wolfram anonymous function with the given arguments and single expression body.
   Example usage: `(wl/eval (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))`"

@@ -1,6 +1,7 @@
 (ns wolframite.lib.helpers
-  (:require [clojure.java.browse :refer [browse-url]]
-            [wolframite.impl.wolfram-syms.intern :as intern]))
+  (:require
+    [clojure.java.browse :refer [browse-url]]
+    [wolframite.impl.wolfram-syms.intern :as intern]))
 
 (defn help-link [fn-sym]
   (format "https://reference.wolfram.com/language/ref/%s.html" fn-sym))

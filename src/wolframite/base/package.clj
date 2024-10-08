@@ -2,10 +2,10 @@
   "The place to be for loading and manipulating Wolfram packages.
 "
   (:require
-   [babashka.fs :as fs]
-   [clojure.string :as str]
-   [wolframite.impl.wolfram-syms.intern :as wi]
-   [wolframite.wolfram :as w]))
+    [babashka.fs :as fs]
+    [clojure.string :as str]
+    [wolframite.impl.wolfram-syms.intern :as wi]
+    [wolframite.wolfram :as w]))
 
 (defn intern-context!
   "Finds all the public symbols in the given Wolfram `context` (a string) and interns them to a Clojure namespace named by the given`alias` (a symbol; default: the context's name). The namespace is created
@@ -37,7 +37,7 @@
  - `alias` - Clojure symbol to be used for accessing the Wolfram context. This will effectively become a Clojure namespace
  
 See [[intern-context!]] for details of turning the Wolfram context into a Clojure namespace."
-;; TODO: Should check that the symbol isn't already being used.
+  ;; TODO: Should check that the symbol isn't already being used.
   ([wl-eval path]
    (let [context (-> path fs/file-name fs/strip-ext)]
      (load! wl-eval path context (symbol context))))

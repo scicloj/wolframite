@@ -1,6 +1,7 @@
 (ns wolframite.impl.wolfram-syms.wolfram-syms
   "Support for loading available symbols (fns & more) from Wolfram"
-  (:require [wolframite.impl.wolfram-syms.intern :as intern]))
+  (:require
+    [wolframite.impl.wolfram-syms.intern :as intern]))
 
 (defn fetch-all-wolfram-symbols [wl-eval]
   (doall (->> (wl-eval '(EntityValue (WolframLanguageData) ["Name", "PlaintextUsage"] "EntityPropertyAssociation"))
@@ -32,7 +33,7 @@
   (doall (->> (fetch-all-wolfram-symbols wl-eval)
               (map (fn [{:keys [sym doc]}]
                      (intern/clj-intern
-                      sym
-                      {:intern/ns-sym     ns-sym
-                       :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
-                                                  doc)}}))))))
+                       sym
+                       {:intern/ns-sym     ns-sym
+                        :intern/extra-meta {:doc (when (string? doc) ; could be `(Missing "NotAvailable")`
+                                                   doc)}}))))))

@@ -113,10 +113,10 @@
   Requires [[start!]] to be called first."
   []
   (zipmap
-   [:wolfram-version :wolfram-kernel-name :max-license-processes]
-   (eval '[$VersionNumber
-           (SystemInformation "Kernel", "ProductKernelName")
-           (SystemInformation "Kernel", "MaxLicenseProcesses")])))
+    [:wolfram-version :wolfram-kernel-name :max-license-processes]
+    (eval '[$VersionNumber
+            (SystemInformation "Kernel", "ProductKernelName")
+            (SystemInformation "Kernel", "MaxLicenseProcesses")])))
 
 (defn start!
   "Initialize Wolframite and start! the underlying Wolfram Kernel - required once before you make any eval calls.
@@ -247,7 +247,7 @@
  - `alias` - Clojure symbol to be used for accessing the Wolfram context. This will effectively become a Clojure namespace
 
 See `package/intern-context!` for details of turning the Wolfram context into a Clojure namespace."
-;; TODO: Should check that the symbol isn't already being used.
+  ;; TODO: Should check that the symbol isn't already being used.
   ([path]
    (let [context (-> path fs/file-name fs/strip-ext)]
      (package/load! eval path context (symbol context))))

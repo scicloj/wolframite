@@ -1,7 +1,8 @@
 (ns wolframite.runtime.defaults
   "Flags and aliases for the Wolfram runtime."
-  (:require clojure.set
-            [clojure.walk :as walk]))
+  (:require
+    [clojure.set]
+    [clojure.walk :as walk]))
 
 "TODO:
 - Consider function that finds all non-numeric symbols (and not '- ') that start with a '-' and replace them with Minus[<symbol>]
@@ -13,14 +14,14 @@
                 #{:parse :no-parse}         :parse
                 #{:evaluate :no-evaluate}   :evaluate
                 #{:convert :no-convert}     :convert
-                ;#{:hash-maps :no-hash-maps} :hash-maps
-                ;#{:functions :no-functions} :functions ;; ?? parse (Function ...) into our parse-fn instance?!
+                ; #{:hash-maps :no-hash-maps} :hash-maps
+                ; #{:functions :no-functions} :functions ;; ?? parse (Function ...) into our parse-fn instance?!
                 #{:aliases :no-aliases}     :aliases
                 #{:N :no-N}                 :no-N ; :N -> use Expr.asArray on matrix' rows
-                ;#{:verbose :no-verbose}     :no-verbose
-                ;#{:as-function
+                ; #{:verbose :no-verbose}     :no-verbose
+                ; #{:as-function
                 ;  :as-expression}           :as-expression
-                ;#{:restore-defaults
+                ; #{:restore-defaults
                 ;  :no-restore-defaults}     :no-restore-defaults
                 #{:full-form
                   :clojure-form}            :clojure-form})
@@ -104,7 +105,7 @@
      :parse        true
      :functions    true
      :aliases      true
-     ;:as-expression true
+     ; :as-expression true
      :clojure-form true ;; FIXME: better name
      :N false})
 
@@ -140,9 +141,9 @@
                     (tree-seq list? seq)
                     (remove (some-fn list? nil?))
                     (filter #(when (symbol? %)
-                               (->> %
-                                    str
-                                    (re-matches #"-.+"))))
+                              (->> %
+                                   str
+                                   (re-matches #"-.+"))))
                     distinct)
 
           syms-base (map (fn [sym] (-> sym str char-array rest (#(apply str %)) symbol)) syms)]

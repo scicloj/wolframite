@@ -1,6 +1,6 @@
 (ns gotchas
-  [:require
-   [scicloj.kindly.v4.kind :as k]])
+  (:require
+    [scicloj.kindly.v4.kind :as k]))
 
 (k/md "# Gotchas... {#sec-gotchas}
 Although we try to avoid such things, sometimes, when you're fighting the host language, it's just not practical to carry over the original conventions. Here we will try to keep an up-to-date list of possible surprises, when coming from Wolfram to Wolframite (that are not easy to 'fix').

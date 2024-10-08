@@ -8,16 +8,15 @@
 ;;
 ;; First, we need some namespaces:
 (ns understanding-wolframite
-  (:require [scicloj.kindly.v4.api :as kindly]
-            [scicloj.kindly.v4.kind :as kind]
-            [scicloj.kindly.v4.kind :as k]
-            [clojure.repl :as repl]
-            [wolframite.core :as wl]
-            [wolframite.lib.helpers :as h]
-            [wolframite.wolfram :as w :refer :all
-             :exclude [* + - -> / < <= = == > >= fn
-                       Byte Character Integer Number Short String Thread]]
-            wolframite.runtime.defaults))
+  (:require
+    [clojure.repl :as repl]
+    [scicloj.kindly.v4.api :as kindly]
+    [scicloj.kindly.v4.kind :as kind]
+    [scicloj.kindly.v4.kind :as k]
+    [wolframite.core :as wl]
+    [wolframite.lib.helpers :as h]
+    [wolframite.runtime.defaults]
+    [wolframite.wolfram :as w :refer :all :exclude [* + - -> / < <= = == > >= Byte Character Integer Number Short String Thread fn]]))
 
 (k/md "Next, we need to actually start a [Wolfram Kernel](https://reference.wolfram.com/language/ref/program/WolframKernel.html)
 and connect to it:")
@@ -139,11 +138,11 @@ There is one more form, the _Wolfram string form_, which is the raw Wolfram code
 ^:kindly/hide-code
 (k/hidden (def recommended-exclusions (set (wl/ns-exclusions))))
 
-(k/table {:column-names [:Alias :Wolfram "Can be used without `w/` prefix?"],
-          :row-vectors (-> wolframite.runtime.defaults/all-aliases
-                           (dissoc '-)
-                           (assoc '- "Minus or Subtract")
-                           (->> (map (fn [[k v]] [k v (when-not (contains? recommended-exclusions k) "✅")]))))})
+(k/table {:column-names [:Alias :Wolfram "Can be used without `w/` prefix?"]
+          ,:row-vectors (-> wolframite.runtime.defaults/all-aliases
+                            (dissoc '-)
+                            (assoc '- "Minus or Subtract")
+                            (->> (map (fn [[k v]] [k v (when-not (contains? recommended-exclusions k) "✅")]))))})
 
 (k/md "Thus, the following two expressions are equivalent")
 
@@ -190,8 +189,8 @@ convenience functions of the evaluated form:
 ^:kindly/hide-code
 (quote
   (wl/eval (Import "demo.csv.gz"
-                    ["Data" (Span 1 3)],
-                    (w/-> "HeaderLines" 1))))
+                    ["Data" (Span 1 3)]
+                    ,(w/-> "HeaderLines" 1))))
 
 (k/md "## Errors
 
@@ -238,7 +237,7 @@ We could instead ask for the link(s):")
 #_"TODO(Jakub) the below shall replace the above when https://github.com/scicloj/clay/issues/171 fixed"
 #_
 (kindly/hide-code
-    (k/md (h/help! w/ArithmeticGeometricMean :links true))
+  (k/md (h/help! w/ArithmeticGeometricMean :links true))
   false)
 
 (k/md "`h/help!` also works on whole expressions, providing docs for each symbol:")

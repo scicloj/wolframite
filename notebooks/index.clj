@@ -2,8 +2,8 @@
 (ns index
   "Entrypoint for the Clay-generated docs -> docs/generated/index.htm"
   (:require
-    [scicloj.kindly.v4.kind :as kind]
-    [scicloj.kindly.v4.api :as kindly]))
+    [scicloj.kindly.v4.api :as kindly]
+    [scicloj.kindly.v4.kind :as kind]))
 
 ^:kindly/hide-code
 (defmacro slurp-markdown [path]

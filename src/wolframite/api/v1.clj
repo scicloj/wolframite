@@ -1,7 +1,8 @@
 (ns wolframite.api.v1
   (:refer-clojure :exclude [eval])
-  (:require [wolframite.core :as core]
-            [wolframite.lib.helpers :as helper]))
+  (:require
+    [wolframite.core :as core]
+    [wolframite.lib.helpers :as helper]))
 
 (def start!
   "Initialize Wolframite and start! the underlying Wolfram Kernel - required once before you make any eval calls.
@@ -88,5 +89,4 @@
 (comment
   (start!)
   (! '(+ 1 1))
-  (help! '(+ 1 1)) ;; => Doesn't seem to be opening a browser for me?
-  )
+  (help! '(+ 1 1))) ;; => Doesn't seem to be opening a browser for me?

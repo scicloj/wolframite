@@ -1,12 +1,10 @@
 (ns wolframite.base.cep
   (:require
-    [wolframite.lib.options :as options]
     [wolframite.base.convert :as convert]
     [wolframite.base.evaluate :as evaluate]
-    [wolframite.base.parse :as parse]))
-
+    [wolframite.base.parse :as parse]
+    [wolframite.lib.options :as options]))
 (defn- identity-first [x & _] x)
-
 (defn cep
   "Convert-Evaluate-Parse pipeline.
   Convert:  from clj data to jlink Expr

@@ -1,5 +1,6 @@
 (ns wolframite.impl.protocols
-  (:import (java.awt Component)))
+  (:import
+    (java.awt Component)))
 
 (defprotocol JLink
   "A protocol to divorce the code from a direct dependency on JLink, so that it can be loaded
@@ -60,4 +61,4 @@
   (^Component make-math-canvas! [this kernel-link]
     (throw (IllegalStateException. "JLink not loaded!")))
   (jlink-package-name [this]
-      (throw (IllegalStateException. "JLink not loaded!"))))
+    (throw (IllegalStateException. "JLink not loaded!"))))

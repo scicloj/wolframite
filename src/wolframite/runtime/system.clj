@@ -1,10 +1,10 @@
 (ns wolframite.runtime.system
   "For dealing with the runtime system, primarily the operating system specific default paths."
   (:require
-   [babashka.fs :as fs]
-   [clojure.string :as str])
+    [babashka.fs :as fs]
+    [clojure.string :as str])
   (:import
-   (java.lang System)))
+    (java.lang System)))
 
 (def supported-OS #{:linux :mac :windows})
 
@@ -69,7 +69,7 @@
        distinct
        (some #(let [paths (-> (fs/glob "/"
                                        (format "**/%s" %)))]
-                (when (seq paths) paths)))
+               (when (seq paths) paths)))
        first
        str))
 
@@ -135,8 +135,8 @@
       (#{"osx" "macos" "Mac OS X" "mac"} os-str) :mac
       (or (#{"win" "windows"} os-str) (str/starts-with? os-str "Windows")) :windows
       :else (throw
-             (ex-info (str "Did not recognise " os-str " as a supported OS.")
-                      {:os os-str})))))
+              (ex-info (str "Did not recognise " os-str " as a supported OS.")
+                       {:os os-str})))))
 
 (defn detect-os
   "Tries to determine the current operating system.
@@ -191,7 +191,7 @@
   The longest parental directory path that is common to both input paths.
   "
            [path1 path2]
-  ;; TODO: This should be moved to some utility library.
+           ;; TODO: This should be moved to some utility library.
            (let  [sep "/"
                   rx-sep (re-pattern sep)]
              (->> [path1 path2]

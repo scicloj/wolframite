@@ -1,8 +1,9 @@
 (ns wolframite.specs
-  (:require  [wolframite.runtime.defaults :as defaults]
-             [clojure.spec.alpha :as s]
-             [clojure.spec.test.alpha :as st]
-             clojure.set))
+  (:require
+    [clojure.set]
+    [clojure.spec.alpha :as s]
+    [clojure.spec.test.alpha :as st]
+    [wolframite.runtime.defaults :as defaults]))
 
 (s/def :wl/flag  defaults/all-flags)
 (s/def :wl/flags (s/coll-of :wl/flag))
@@ -13,8 +14,8 @@
 (s/def :wl/opts-map (s/keys :opt [:wl/flags :wl/aliases]))
 
 (s/def :wl/args (s/alt
-                 :no-options   (s/cat :body any?)
-                 :with-options (s/cat :opts-kw? :wl/opts-kw :opts-map (s/nilable :wl/opts-map) :body any?)))
+                  :no-options   (s/cat :body any?)
+                  :with-options (s/cat :opts-kw? :wl/opts-kw :opts-map (s/nilable :wl/opts-map) :body any?)))
 
 (comment ;; spec examples
 
@@ -33,12 +34,8 @@
 
   (s/conform :wl/args [:opts {:flags [:parse/as-function :debug/verbose :convert/hash-maps]} '(Dot [1 3 4] [5 4 6])])
 
-
   (let [args #_['(Dot [1 3 4] [5 4 6])] [:opts {:flags [:parse/as-function :debug/verbose :convert/hash-maps]} '(Dot [1 3 4] [5 4 6])]
         [options-flag {:keys [opts-map body]}] (s/conform :wl/args args)]
     (if (= :with-options options-flag)
       [opts-map body]
-      [body]))
-
-
-  )
+      [body])))

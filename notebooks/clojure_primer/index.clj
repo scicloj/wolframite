@@ -1,10 +1,11 @@
 ^:kindly/hide-code
 (ns clojure-primer.index
   "A very brief introduction to Clojure for a would-be users of Wolframite not familiar with the language"
-  (:require [scicloj.kindly.v4.kind :as k]
-            [clojure.math :as math]
-            [wolframite.core :as wl]
-            [wolframite.wolfram :as w]))
+  (:require
+    [clojure.math :as math]
+    [scicloj.kindly.v4.kind :as k]
+    [wolframite.core :as wl]
+    [wolframite.wolfram :as w]))
 
 (k/md "# Clojure primer {#sec-clojure-primer}
 
@@ -132,9 +133,9 @@ that can be evaluated fully on the Clojure side and replaced with the result, be
 ;; Notice that you may nest Clojure-only expression, which does not depend on the surrounding Wolfram context, inside a Wolframite expression,
 ;; but you cannot do the opposite, i.e. nest a Wolframite expression inside a Clojure expression:
 (try
- (wl/eval (+ (w/* 3 (w/Power (+ 1 1) 2))))
- (catch Exception e
-   (str e)))
+  (wl/eval (+ (w/* 3 (w/Power (+ 1 1) 2))))
+  (catch Exception e
+    (str e)))
 
 ;; This fails because we are passing a Wolframite expression (a list) to the Clojure `+` function, but it only works with numbers. We'd need to evaluate the expression first:
 

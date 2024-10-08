@@ -1,11 +1,10 @@
 (ns wolframite.base.evaluate
   "The core of evaluation: send a converted JLink expression to a Wolfram Kernel for evaluation and return the result."
-  (:require [wolframite.impl.protocols :as proto]
-            [wolframite.lib.options :as options]
-            [wolframite.base.convert :as convert]))
-
+  (:require
+    [wolframite.base.convert :as convert]
+    [wolframite.impl.protocols :as proto]
+    [wolframite.lib.options :as options]))
 (declare evaluate)
-
 (defn process-state [pid-expr {:keys [flags] :as opts}]
   (assert (options/flag?' flags :serial))
   (let [state-expr    (evaluate (convert/convert (list 'ProcessState pid-expr) opts) opts)
@@ -15,7 +14,6 @@
           (= \q state-prefix) [:queued nil]
           :else
           (throw (Exception. (str "Error! State unrecognized: " state-expr))))))
-
 (defn queue-run-or-wait [{:keys [flags config] :as opts}]
   (assert (options/flag?' flags :serial))
   (let [lqr-atom (atom nil)
@@ -29,12 +27,10 @@
         (swap! lqr-atom (fn [_] (System/nanoTime))))
       ;; TODO: else branch: add debug logging "Sleeping for"
       (Thread/sleep ^long (quot run-in 1000000)))))
-
 (defn evaluate [expr {:keys [jlink-instance]
                       :as   opts}]
   {:pre [jlink-instance]}
   (assert (proto/expr? jlink-instance expr))
-
   (if (options/flag?' (:flags opts) :serial)
     (proto/evaluate! jlink-instance expr)
     (let [opts' (update opts :flags conj :serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code

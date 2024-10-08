@@ -1,11 +1,13 @@
 (ns wolframite.tools.experimental
   "Don't use. Subject to change without prior notice."
-  (:require [wolframite.core :as wl]
-            [wolframite.impl.jlink-instance :as jlink-instance]
-            [wolframite.impl.protocols :as proto])
-  (:import [javax.swing JFrame JPanel SwingUtilities]
-           [java.awt Dimension]
-           [com.wolfram.jlink MathGraphicsJPanel]))
+  (:require
+    [wolframite.core :as wl]
+    [wolframite.impl.jlink-instance :as jlink-instance]
+    [wolframite.impl.protocols :as proto])
+  (:import
+    (com.wolfram.jlink MathGraphicsJPanel)
+    (java.awt Dimension)
+    (javax.swing JFrame JPanel SwingUtilities)))
 
 (defonce ^:private app (promise))
 

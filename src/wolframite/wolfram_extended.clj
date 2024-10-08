@@ -1,4 +1,9 @@
-(ns wolframite.wolfram-extended "[GENERATED - see `...wolfram-syms.write-ns/write-ns!`]\n           Vars for all Wolfram functions (and their Clojurite aliases, where those exist).\n          These can be composed into expressions and passed to `wl/eval`.\n\n          BEWARE: This is based off a particular version of Wolfram and you may need to refresh it." (:require wolframite.impl.wolfram-syms.intern clojure.walk) (:refer-clojure :only [ns-unmap map let defmacro list]))
+(ns wolframite.wolfram-extended
+  "[GENERATED - see `...wolfram-syms.write-ns/write-ns!`]\n           Vars for all Wolfram functions (and their Clojurite aliases, where those exist).\n          These can be composed into expressions and passed to `wl/eval`.\n\n          BEWARE: This is based off a particular version of Wolfram and you may need to refresh it."
+  (:refer-clojure :only [defmacro let list map ns-unmap])
+  (:require
+    [clojure.walk]
+    [wolframite.impl.wolfram-syms.intern]))
 (do (clojure.core/ns-unmap clojure.core/*ns* (quote Byte)) (clojure.core/ns-unmap clojure.core/*ns* (quote Character)) (clojure.core/ns-unmap clojure.core/*ns* (quote Integer)) (clojure.core/ns-unmap clojure.core/*ns* (quote Number)) (clojure.core/ns-unmap clojure.core/*ns* (quote Short)) (clojure.core/ns-unmap clojure.core/*ns* (quote String)) (clojure.core/ns-unmap clojure.core/*ns* (quote Thread)))
 (def ^:dynamic *wolfram-version* 13.0)
 (def ^:dynamic *wolfram-kernel-name* "Mathematica 13.0.1 Kernel")

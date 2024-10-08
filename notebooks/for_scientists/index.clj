@@ -1,13 +1,11 @@
 (ns for-scientists.index
   "An introduction to the library, that might even be suitable for physicists."
   (:require
-   [scicloj.kindly.v4.kind :as k]
-   [wolframite.core :as wl]
-   [wolframite.impl.wolfram-syms.write-ns :as write]
-   [wolframite.tools.hiccup :as wh]
-   [wolframite.wolfram :as w :refer :all
-    :exclude [* + - -> / < <= = == > >= fn
-              Byte Character Integer Number Short String Thread]]))
+    [scicloj.kindly.v4.kind :as k]
+    [wolframite.core :as wl]
+    [wolframite.impl.wolfram-syms.write-ns :as write]
+    [wolframite.tools.hiccup :as wh]
+    [wolframite.wolfram :as w :refer :all :exclude [* + - -> / < <= = == > >= Byte Character Integer Number Short String Thread fn]]))
 
 (k/md "# Wolframite for scientists I (Introduction) {#sec-scientists}")
 (k/md "## Abstract
