@@ -267,8 +267,6 @@ For this, we will define a few utility functions, that also demonstrate Wolfram'
                (w/-> AxesLabel
                      ["Mirror transmission" "Phase" "Intracavity intensity"])))
 
-(+ 2 2)
-
 (k/md "And there you have it! It turns out that if you get the phase right and you buy high quality mirrors then you can massively amplify the laser light. In fact, if you add a 'gain' material in the middle then such light amplification by the stimulated emission of radiation has a catchier name: it's called a *Laser*!")
 
 (k/md "# Acknowledgements
