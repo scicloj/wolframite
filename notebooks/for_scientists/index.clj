@@ -2,7 +2,7 @@
   "An introduction to the library, that might even be suitable for physicists."
   (:require
    [scicloj.kindly.v4.kind :as k]
-   [wolframite.core :as wl]
+   [wolframite.api.v1 :as wl]
    [wolframite.impl.wolfram-syms.write-ns :as write]
    [wolframite.tools.hiccup :as wh]
    [wolframite.wolfram :as w :refer :all
@@ -189,6 +189,10 @@ In fact, a little Clojure goes a long way. Look how easily we can add UX conveni
   not realise that 'ToString' is necessary."
   [tex-form]
   (w/ToString (w/TeXForm tex-form)))
+
+(wl/! (-> (w/** 'x 2)
+          (w/∫ 'x)
+          wl/->TeX))
 
 (defmacro TeX->
   "Extends the thread-first macro to automatically eval and prepare the expression for TeX display."

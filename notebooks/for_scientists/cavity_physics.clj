@@ -4,7 +4,7 @@
   (:require
    [clojure.math :as math]
    [scicloj.kindly.v4.kind :as k]
-   [wolframite.core :as wl]
+   [wolframite.api.v1 :as wl]
    [wolframite.tools.hiccup :as wh]
    [wolframite.wolfram :as w :refer :all
     :exclude [* + - -> / < <= = == > >= fn
@@ -119,7 +119,7 @@ At position three, the field undergoes reflection and so now carries an addition
 (k/md "Substitution and simplification can then be used to arrive at the transmission and reflection, respectively.")
 
 (def T (-> (x>> (w/* E2 't2)
-                  e4)
+                e4)
            w/>>_<<))
 (TeX->> T (w/== 'T))
 
@@ -240,15 +240,19 @@ For this, we will define a few utility functions, that also demonstrate Wolfram'
 (defn Efield
   "For convenience, we build a clojure function over the Wolfram expression created earlier."
   [t1 t2 l1 l2 phi]
-  (wl/eval (Clear 'f))
-  (wl/eval (_= (list 'f
-                     (Pattern t1 (Blank))
-                     (Pattern t2 (Blank))
-                     (Pattern l1 (Blank))
-                     (Pattern l2 (Blank))
-                     (Pattern phi (Blank)))
-               I4--approx))
-  (wl/eval (list 'f t1 t2 l1 l2 phi)))
+
+  (-> (x>> I4--approx
+           [(w/-> 't1 t1)
+            (w/-> 't2 t2)
+            (w/-> 'l1 l1)
+            (w/-> 'l2 l2)
+            (w/-> 'phi phi)])
+      wl/!)
+
+  ;; (-> (w/do (_= 'f (list 'Function '[t1 t2 l1 l2 phi] I4--approx))
+  ;;           (list 'f t1 t2 l1 l2 phi))
+  ;;     wl/!)
+  )
 
 (defn Efield--transmission-phase
   "This is just a function to reduce the number of variables over which we plot. We can't (easily) plot in 4-D!"
@@ -268,6 +272,8 @@ For this, we will define a few utility functions, that also demonstrate Wolfram'
                (w/-> Boxed false)
                (w/-> AxesLabel
                      ["Mirror transmission" "Phase" "Intracavity intensity"])))
+
+(+ 2 2)
 
 (k/md "And there you have it! It turns out that if you get the phase right and you buy high quality mirrors then you can massively amplify the laser light. In fact, if you add a 'gain' material in the middle then such light amplification by the stimulated emission of radiation has a catchier name: it's called a *Laser*!")
 
