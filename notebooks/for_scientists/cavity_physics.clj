@@ -240,19 +240,13 @@ For this, we will define a few utility functions, that also demonstrate Wolfram'
 (defn Efield
   "For convenience, we build a clojure function over the Wolfram expression created earlier."
   [t1 t2 l1 l2 phi]
-
   (-> (x>> I4--approx
            [(w/-> 't1 t1)
             (w/-> 't2 t2)
             (w/-> 'l1 l1)
             (w/-> 'l2 l2)
             (w/-> 'phi phi)])
-      wl/!)
-
-  ;; (-> (w/do (_= 'f (list 'Function '[t1 t2 l1 l2 phi] I4--approx))
-  ;;           (list 'f t1 t2 l1 l2 phi))
-  ;;     wl/!)
-  )
+      wl/!))
 
 (defn Efield--transmission-phase
   "This is just a function to reduce the number of variables over which we plot. We can't (easily) plot in 4-D!"
