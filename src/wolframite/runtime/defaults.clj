@@ -16,7 +16,7 @@
                 ;#{:hash-maps :no-hash-maps} :hash-maps
                 ;#{:functions :no-functions} :functions ;; ?? parse (Function ...) into our parse-fn instance?!
                 #{:aliases :no-aliases}     :aliases
-                #{:N :no-N}                 :no-N ; :N -> use Expr.asArray on matrix' rows
+                #{:arrays :no-arrays}       :no-arrays ; arrays from Wolfram are returned as Java arrays, not Clj vectors (more efficient)
                 ;#{:verbose :no-verbose}     :no-verbose
                 ;#{:as-function
                 ;  :as-expression}           :as-expression

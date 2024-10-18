@@ -119,10 +119,11 @@
 ;; parameters list used to be: [expr & [type]] (??)
 (defn parse-simple-vector [expr type {:keys [flags] :as opts}]
   (let [type (or type (simple-vector-type expr))]
-    (if (and (options/flag?' flags :N)
+    (if (and (options/flag?' flags :arrays)
+             ;; TODO Why only these types? W. supports boolean, byte, char, short, int, long, float, double, String arrays;
+             ;; Though only byte, short, int, float, double have "fast" methods
              (some #{:Expr/INTEGER :Expr/BIGINTEGER :Expr/REAL :Expr/BIGDECIMAL} #{type}))
-      ((if (options/flag?' flags :vectors) vec seq)
-       (.asArray expr (proto/->expr-type (jlink-instance/get) :Expr/REAL) 1))
+      (.asArray expr (proto/->expr-type (jlink-instance/get) type) 1)
       (bound-map (fn [e _opts] (parse-simple-atom e type opts)) (.args expr) opts))))
 
 (defn parse-simple-matrix [expr type opts]
