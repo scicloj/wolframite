@@ -43,3 +43,15 @@ If you want to change the context name, *e.g.* to make it shorter, then this is 
 (wl/eval  (w/Information pck/additional "Usage"))
 
 (k/md "And so, you have the whole power of Wolfram packages at your fingertips. And to be honest, this is actually easier to work with than using Wolfram's contexts directly. Clojure does namespaces well.")
+
+(k/md "## Tip: Shareable packages
+
+It is fine to use the short version of Get when working in a notebook-like style, evaluating every expression as you go, but there is one problem with it:
+you won't be able to `require` the resulting namespace to use it from other namespaces. This is because it creates a namespace for the package's symbols on the fly, while the Clojure Reader expects all namespaces to exist already when it reads the code. One way to fix it is to manually create the target namespace, `declare` the symbols, and load the package there:")
+
+(ns my.package.demo
+  (:require [wolframite.core :as wl]))
+(declare additional tryIt)
+(wl/<<! "resources/WolframPackageDemo.wl" "WolframPackageDemo" (ns-name *ns*))
+
+;; Now you can safely `(require '[my.package.demo :as demo])` and `(demo/tryIt)` from any namespace.
