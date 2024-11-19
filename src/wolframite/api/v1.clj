@@ -14,7 +14,7 @@
         You may add your own ones, to be able to use them in your Wolfram expressions and get those
         translated into Wolfram ones. See Wolframite docs.
      -  `:flags [kwd ...]` - various on/off toggles for how Wolframite processes inputs/results,
-        passed e.g. to the `custom-parse` multimethod; see also wolframite.runtime.defaults/default-flags
+        passed e.g. to the `custom-parse` multimethod; see also wolframite.flags
 
   See also [[stop!]]"
   core/start!)
@@ -44,7 +44,7 @@
 
    Args:
    - `opts` - same as those for [[start!]], especially `:aliases` and `:flags` (see
-      wolframite.runtime.defaults/default-flags)
+      wolframite.flags)
 
     Example:
     ```clojure
@@ -62,7 +62,7 @@
 
    Args:
    - `opts` - same as those for [[start!]], especially `:aliases` and `:flags` (see
-      wolframite.runtime.defaults/default-flags)
+      wolframite.flags)
 
     Example:
     ```clojure

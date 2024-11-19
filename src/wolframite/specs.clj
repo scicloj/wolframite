@@ -1,10 +1,9 @@
 (ns wolframite.specs
-  (:require  [wolframite.runtime.defaults :as defaults]
-             [clojure.spec.alpha :as s]
-             [clojure.spec.test.alpha :as st]
-             clojure.set))
+  (:require [clojure.spec.alpha :as s]
+            clojure.set
+            [wolframite.runtime.defaults :as defaults]))
 
-(s/def :wl/flag  defaults/all-flags)
+(s/def :wl/flag defaults/all-flags)
 (s/def :wl/flags (s/coll-of :wl/flag))
 
 (s/def :wl/aliases (s/map-of symbol? symbol?))

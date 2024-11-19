@@ -41,6 +41,7 @@
     [wolframite.base.express :as express]
     [wolframite.base.package :as package]
     [wolframite.base.parse :as parse]
+    [wolframite.flags :as flags]
     [wolframite.impl.jlink-instance :as jlink-instance]
     [wolframite.impl.protocols :as proto]
     [wolframite.runtime.defaults :as defaults]
@@ -225,7 +226,7 @@
   [s]
   ;; A hack to force interpretation
   (eval (convert/->wolfram-str-expr s)
-        {:flags [:no-evaluate]})) ; the flag tells us to conver the string to Expr then parse to Clj
+        {:flags [flags/no-evaluate]})) ; the flag tells us to conver the string to Expr then parse to Clj
 
 (defn ->wl
   "Convert Clojure forms to instances of Wolfram's Expr class.
