@@ -13,7 +13,7 @@
         and used when converting symbols at _function position_ to Wolfram expressions.
         You may add your own ones, to be able to use them in your Wolfram expressions and get those
         translated into Wolfram ones. See Wolframite docs.
-     -  `:flags [kwd ...]` - various on/off toggles for how Wolframite processes inputs/results,
+     -  `:flags #{kwd ...}` - various on/off toggles for how Wolframite processes inputs/results,
         passed e.g. to the `custom-parse` multimethod; see also wolframite.flags
 
   See also [[stop!]]"

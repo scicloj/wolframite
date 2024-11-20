@@ -44,14 +44,14 @@
     (is (= [2 3]
            (wl/eval (Plus (into-array Integer/TYPE [1 2]) 1)))
         "Arrays may be sent from Wolframite instead of lists")
-    (let [res ^ints (wl/eval (Plus (into-array Integer/TYPE [1 2]) 1) {:flags [:arrays]})]
+    (let [res ^ints (wl/eval (Plus (into-array Integer/TYPE [1 2]) 1) {:flags #{:arrays}})]
       (is (= int/1 (type res)) "Should return as array of the same type.")
       (is (java.util.Arrays/equals (into-array Integer/TYPE [2 3]) res)
           (str "Should return as array of the same type. Got: " (seq res))))
     (is (= int/1
-           (type (wl/eval (Plus [1 2] 1) {:flags [:arrays]})))
+           (type (wl/eval (Plus [1 2] 1) {:flags #{:arrays}})))
         "Even if we send in a vector and not an array, we get an array back when the flag is on")
-    (let [res ^doubles (wl/eval (Plus (into-array Double/TYPE [1.0 2.0]) 1) {:flags [:arrays]})]
+    (let [res ^doubles (wl/eval (Plus (into-array Double/TYPE [1.0 2.0]) 1) {:flags #{:arrays}})]
       (is (= double/1 (type res)) "Should return as array of the same type.")
       (is (java.util.Arrays/equals (into-array Double/TYPE [2.0 3.0]) res)
           (str "Should return as array of the same type. Got: " (seq res))))))

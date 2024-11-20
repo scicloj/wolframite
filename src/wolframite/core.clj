@@ -129,7 +129,7 @@
         and used when converting symbols at _function position_ to Wolfram expressions.
         You may add your own ones, to be able to use them in your Wolfram expressions and get those
         translated into Wolfram ones. See Wolframite docs.
-     -  `:flags [kwd ...]` - various on/off toggles for how Wolframite processes inputs/results,
+     -  `:flags #{kwd ...}` - various on/off toggles for how Wolframite processes inputs/results,
         passed e.g. to the `custom-parse` multimethod; see also wolframite.runtime.defaults/default-flags
 
   See also [[stop!]]"
@@ -226,7 +226,7 @@
   [s]
   ;; A hack to force interpretation
   (eval (convert/->wolfram-str-expr s)
-        {:flags [flags/no-evaluate]})) ; the flag tells us to conver the string to Expr then parse to Clj
+        {:flags #{flags/no-evaluate}})) ; the flag tells us to conver the string to Expr then parse to Clj
 
 (defn ->wl
   "Convert Clojure forms to instances of Wolfram's Expr class.
