@@ -1,6 +1,9 @@
 (ns wolframite.flags
   "Options for modifying the behavior of converting and evaluating Wolframite code and parsing the response.
 
+  Flags can be changed for the whole session via `wolframite.core/start!` or for a particular evaluation
+  via `wolframite.core/eval`.
+
   Only the options described here are (currently) officially supported.")
 
 (def parallel
