@@ -120,10 +120,10 @@ that can be evaluated fully on the Clojure side and replaced with the result, be
 (+ (* 3 (math/pow 2 2))) ; 12.0
 
 ;; Wolfram-only:
-(wl/eval (w/+ (w/* 3 (w/Power 2 2))))
+(wl/! (w/+ (w/* 3 (w/Power 2 2))))
 
 ;; Mixed, with Clojure evaluated before sending the form to Wolfram:
-(wl/eval (w/+ (w/* 3 (w/Power (+ 1 1) 2))))
+(wl/! (w/+ (w/* 3 (w/Power (+ 1 1) 2))))
 
 ;; This is how the expression is evaluated before we resolve aliases and turn it into Wolfram and send it over to the kernel:
 
@@ -132,13 +132,13 @@ that can be evaluated fully on the Clojure side and replaced with the result, be
 ;; Notice that you may nest Clojure-only expression, which does not depend on the surrounding Wolfram context, inside a Wolframite expression,
 ;; but you cannot do the opposite, i.e. nest a Wolframite expression inside a Clojure expression:
 (try
-  (wl/eval (+ (w/* 3 (w/Power (+ 1 1) 2))))
+  (wl/! (+ (w/* 3 (w/Power (+ 1 1) 2))))
   (catch Exception e
     (str e)))
 
 ;; This fails because we are passing a Wolframite expression (a list) to the Clojure `+` function, but it only works with numbers. We'd need to evaluate the expression first:
 
-(+ (wl/eval (w/* 3 (w/Power (+ 1 1) 2))))
+(+ (wl/! (w/* 3 (w/Power (+ 1 1) 2))))
 
 (k/md "## How to work with Clojure: the REPL and interactive development {#sec-clojure-repl}
 
