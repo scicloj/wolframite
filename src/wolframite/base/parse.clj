@@ -2,6 +2,7 @@
   "Translate a jlink.Expr returned from an evaluation into Clojure data"
   (:require
     [clojure.set :as set]
+    [wolframite.flags :as flags]
     [wolframite.impl.jlink-instance :as jlink-instance]
     [wolframite.impl.protocols :as proto]
     [wolframite.lib.options :as options]
@@ -49,9 +50,9 @@
 
 ;; FIXME: change name (it's more of a concrete type map)
 (defn bound-map [f coll {:keys [flags] :as opts}]
-  (if (options/flag?' flags :vectors)
-    (mapv #(f % opts) coll)
-    (map  #(f % opts) coll)))
+  (if (options/flag?' flags :seqs)
+    (map  #(f % opts) coll)
+    (mapv #(f % opts) coll)))
 
 (defn parse-complex-list [expr opts]
   (bound-map parse (.args expr) opts))
@@ -119,10 +120,11 @@
 ;; parameters list used to be: [expr & [type]] (??)
 (defn parse-simple-vector [expr type {:keys [flags] :as opts}]
   (let [type (or type (simple-vector-type expr))]
-    (if (and (options/flag?' flags :N)
+    (if (and (options/flag?' flags flags/arrays)
+             ;; TODO Why only these types? W. supports boolean, byte, char, short, int, long, float, double, String arrays;
+             ;; Though only byte, short, int, float, double have "fast" methods
              (some #{:Expr/INTEGER :Expr/BIGINTEGER :Expr/REAL :Expr/BIGDECIMAL} #{type}))
-      ((if (options/flag?' flags :vectors) vec seq)
-       (.asArray expr (proto/->expr-type (jlink-instance/get) :Expr/REAL) 1))
+      (.asArray expr (proto/->expr-type (jlink-instance/get) type) 1)
       (bound-map (fn [e _opts] (parse-simple-atom e type opts)) (.args expr) opts))))
 
 (defn parse-simple-matrix [expr type opts]

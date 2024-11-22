@@ -1,5 +1,6 @@
 (ns wolframite.base.cep
   (:require
+    [wolframite.flags :as flags]
     [wolframite.lib.options :as options]
     [wolframite.base.convert :as convert]
     [wolframite.base.evaluate :as evaluate]
@@ -15,10 +16,10 @@
   Each stage can be skipped with appropriate `opts` `:flag` e.g. `:no-parse`"
   [expr {:keys [flags]
          :as   opts}]
-  (let [convert  (if (options/flag?' flags :convert)   convert/convert   identity-first)
-        evaluate (if (options/flag?' flags :evaluate)  evaluate/evaluate identity-first)
-        parse    (if (options/flag?' flags :parse)     parse/parse       identity-first)]
+  (let [convert (if (options/flag?' flags flags/convert) convert/convert identity-first)
+        evaluate (if (options/flag?' flags flags/evaluate) evaluate/evaluate identity-first)
+        parse (if (options/flag?' flags flags/parse) parse/parse identity-first)]
     (-> expr
-        (convert  opts)
+        (convert opts)
         (evaluate opts)
-        (parse    opts))))
+        (parse opts))))

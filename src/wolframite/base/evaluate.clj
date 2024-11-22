@@ -1,13 +1,14 @@
 (ns wolframite.base.evaluate
   "The core of evaluation: send a converted JLink expression to a Wolfram Kernel for evaluation and return the result."
-  (:require [wolframite.impl.protocols :as proto]
+  (:require [wolframite.flags :as flags]
+            [wolframite.impl.protocols :as proto]
             [wolframite.lib.options :as options]
             [wolframite.base.convert :as convert]))
 
 (declare evaluate)
 
 (defn process-state [pid-expr {:keys [flags] :as opts}]
-  (assert (options/flag?' flags :serial))
+  (assert (options/flag?' flags flags/serial))
   (let [state-expr    (evaluate (convert/convert (list 'ProcessState pid-expr) opts) opts)
         state-prefix  (first (.toString state-expr))]
     (cond (= \r state-prefix) [:running nil]
@@ -17,7 +18,7 @@
           (throw (Exception. (str "Error! State unrecognized: " state-expr))))))
 
 (defn queue-run-or-wait [{:keys [flags config] :as opts}]
-  (assert (options/flag?' flags :serial))
+  (assert (options/flag?' flags flags/serial))
   (let [lqr-atom (atom nil)
         lqr-time @lqr-atom
         nano-pi  (* 1000000 (:poll-interval config))
@@ -35,9 +36,9 @@
   {:pre [jlink-instance]}
   (assert (proto/expr? jlink-instance expr))
 
-  (if (options/flag?' (:flags opts) :serial)
+  (if (options/flag?' (:flags opts) flags/serial)
     (proto/evaluate! jlink-instance expr)
-    (let [opts' (update opts :flags conj :serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
+    (let [opts' (update opts :flags conj flags/serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
           ;; Generate a new, unique symbol for a ref to the submitted computation (~ Java Future?)
           pid-expr (evaluate (convert/convert
                                (list 'Unique
