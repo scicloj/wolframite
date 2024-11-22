@@ -190,10 +190,6 @@ In fact, a little Clojure goes a long way. Look how easily we can add UX conveni
   [tex-form]
   (w/ToString (w/TeXForm tex-form)))
 
-(wl/! (-> (w/** 'x 2)
-          (w/∫ 'x)
-          wl/->TeX))
-
 (defmacro TeX->
   "Extends the thread-first macro to automatically eval and prepare the expression for TeX display."
   [& xs]
