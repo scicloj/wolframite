@@ -167,16 +167,15 @@
                (wl/eval (w/FromDigits "-87.6")))
       "Should throw on invalid Wolfram expression"))
 
-#_
 (deftest kindly-support
   (wl/start!)
-  (let [res (wl/eval (w/Video "/tmp/fake-video.mp4"))
+  (let [res (wl/eval (w/Video "test/empty.mp4"))
         {:keys [kindly/options] :as m}
         (meta res)
         view-fn (:kindly/f options)]
     (is (= 'Video (first res)) "Sanity check: expect Wolfram to return (Video ..)")
     (is (= :kind/fn (:kindly/kind m)))
-    (is (= {:src "path/to/my-fake.mps"} (view-fn res))
+    (is (= {:src "test/empty.mp4"} (view-fn res))
         "Correct metadata is attached, including view fn to extract the video url")
     (is (-> (view-fn res) meta :kind/video))))
 
