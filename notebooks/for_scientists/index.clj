@@ -43,6 +43,11 @@ If you'd like to see why a physicist might be interested in Clojure then have a 
 ")
 (k/video {:youtube-id  "SE5Ge4QP4oY"})
 
+(k/md
+ "Or, to see what's available more generally for all kinds of science (including a brief overview of this library), look at this one.")
+
+(k/video {:youtube-id "_D5d6Ls6pBw"})
+
 (k/md "#### Clojure notation
 
 For those who are still fairly new to Clojure, the first thing to get used to is the style of notation. It might seem strange at first, but a functional LisP can be more efficient (symbolically) than a lot of object-oriented languages and even standard mathematical notation. For example, why write 1+1+1+2 and not (+ 1 1 1 2)? They have around the same number of characters and yet even here it's arguable that the signal to noise ratio is higher for the second one. Where the second form really shines however, is in it's scalability. As soon as you add another operator, e.g. 1+1+1+2/3, we have a problem. Okay so you made it through primary school and know that 1+1+1+2/3 is really 1+1+1+(2/3) and not (1+1+1+2)/3, but the mental complexity is still there, you're just used to it. If we introduce another operator, e.g. 1+1+1+2✝3, now what do you do? The truth is that if we stick to one simple rule, i.e. use brackets, then we completely solve a whole range of problems in advance, with the 'cost' of having to write two characters. In fact, although it might not be obvious, the Wolfram language is actually inspired by/built on the LisP syntax (underneath). The outer layer is just to make it look more like the inefficient notation that mathematicians already know and love...
