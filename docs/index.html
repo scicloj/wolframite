@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -381,7 +381,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h4 data-number="1.4.1.2" class="anchored" data-anchor-id="wolfram-mathematica-or-wolfram-engine"><span class="header-section-number">1.4.1.2</span> Wolfram Mathematica or Wolfram Engine</h4>
 <p>Next, obviously, you’ll need to ensure that you have Wolfram Engine or the Wolfram desktop application (formerly called Mathematica) installed and your license registered. Make sure you can run these tools on their own <em>before</em> trying Wolframite.</p>
 <p>First of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(wolframite.core/start!)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(wolframite.api.v1/start!)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This should also find and load the JLink JAR included with your installation. Watch stdout for an INFO log message (via clojure.tools.logging) like:</p>
 <blockquote class="blockquote">
 <p>=== Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar ===</p>
@@ -396,31 +396,31 @@ export WOLFRAM_INSTALL_PATH="/Applications/Wolfram Engine.app/Contents/Resources
 <p>Start a <a href="https://clojure.org/guides/repl/introduction">Clojure REPL</a> with Wolframite on the classpath:</p>
 <pre class="shell"><code>clj -Sdeps '{:deps {org.scicloj/wolframite {:mvn/version "1.0.0-SNAPSHOT"}}}'</code></pre>
 <p>and try it out:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">require</span> '[wolframite.core <span class="at">:as</span> wl] </span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">require</span> '[wolframite.api.v1 <span class="at">:as</span> wl] </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>         '[wolframite.wolfram <span class="at">:as</span> w <span class="at">:refer</span> <span class="at">:all</span>  <span class="co">; Wolfram symbols as Clojure vars / fns</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">:exclude</span> [<span class="kw">*</span> <span class="kw">+</span> <span class="kw">-</span> <span class="kw">-&gt;</span> <span class="kw">/</span> <span class="kw">&lt;</span> <span class="kw">&lt;=</span> <span class="kw">=</span> <span class="kw">==</span> <span class="kw">&gt;</span> <span class="kw">&gt;=</span> <span class="kw">fn</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                     Byte Character Integer Number Short String Thread]])</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">;; Initialize</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>(wl/start!) <span class="co">; =&gt; {:status :ok, :wolfram-version 14.1, :started? true}</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">;; Use it:</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>(wl/eval (Dot [<span class="dv">2</span> <span class="dv">2</span> <span class="dv">4</span>] [<span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span>]))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>(wl/! (Dot [<span class="dv">2</span> <span class="dv">2</span> <span class="dv">4</span>] [<span class="dv">4</span> <span class="dv">5</span> <span class="dv">6</span>]))</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; 42</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>More examples:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/eval (D (Power <span class="at">'x</span> <span class="dv">2</span>) <span class="at">'x</span>)) <span class="co">; derivative</span></span>
+<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/! (D (Power <span class="at">'x</span> <span class="dv">2</span>) <span class="at">'x</span>)) <span class="co">; derivative</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; (* 2 x)</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>(wl/eval (ChemicalData <span class="st">"Ethanol"</span> <span class="st">"MolarMass"</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>(wl/! (ChemicalData <span class="st">"Ethanol"</span> <span class="st">"MolarMass"</span>))</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; (Quantity 46.069M (* "Grams" (Power "Moles" -1)))</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">;; Accessing WolframAlpha (BEWARE: must be online)</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>(wl/eval (WolframAlpha <span class="st">"How many licks does it take to get to the center of a Tootsie Pop?"</span>))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>(wl/! (WolframAlpha <span class="st">"How many licks does it take to get to the center of a Tootsie Pop?"</span>))</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; [(-&gt; [["Input" 1] "Plaintext"] "How many licks does it take to get to the Tootsie Roll</span></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">;   center of a Tootsie Pop?") (-&gt; [["Result" 1] "Plaintext"] "3481\n(according to student</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">;   researchers at the University of Cambridge)")]</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>(wl/eval (N Pi <span class="dv">20</span>)) <span class="co">; numerical value with 20 digit precision</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>(wl/! (N Pi <span class="dv">20</span>)) <span class="co">; numerical value with 20 digit precision</span></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; 3.141592653589793238462643383279502884197169399375105820285M</span></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>(wl/eval (Map (w/fn [x] (Sqrt x)) [<span class="dv">4</span> <span class="dv">16</span>]))</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>(wl/! (Map (w/fn [x] (Sqrt x)) [<span class="dv">4</span> <span class="dv">16</span>]))</span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">;=&gt; [2 4]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>TIP: Cursive - teach it to resolve <code>w/fn</code> as <code>clojure.core/fn</code>.</p>
 <p>NOTE: The <code>wolframite.wolfram</code> (<code>w</code>) namespace has vars for all Wolfram symbols at the time of the last release of Wolframite. Check <code>w/*wolfram-kernel-name*</code> for kernel type/version and run <code>(wolframite.impl.wolfram-syms.write-ns/write-ns!)</code> to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematice has, and/or with custom “aliases”.</p>
