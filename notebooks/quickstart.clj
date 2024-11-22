@@ -14,6 +14,7 @@
    [clojure.set :as set]
    [clojure.string :as str]
    [wolframite.api.v1 :as wl]
+   [wolframite.core :as wc]
    [wolframite.lib.helpers :as h]
    [wolframite.runtime.defaults :as defaults]
    [wolframite.tools.hiccup :as wh]
@@ -136,7 +137,7 @@ and Java classes, which could lead to confusion and mistakes.
 
 With this, you can write:
 "
-              (pr-str (wl/ns-exclusions :assert-as-expected))))
+              (pr-str (wc/ns-exclusions :assert-as-expected))))
 
 (wl/! (Map (w/fn [x] (Power x 2)) (Table 'i ['i 1 3])))
 
