@@ -66,9 +66,9 @@
 
     Example:
     ```clojure
-    (wl/eval \"Plus[1,2]\")
+    (wl/! \"Plus[1,2]\")
     ; => 3
-    (wl/eval '(Plus 1 2))`
+    (wl/! '(Plus 1 2))`
     ; => 3
     ```
 

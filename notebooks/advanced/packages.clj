@@ -2,7 +2,7 @@
   "A notebook demonstrating how to import and use Wolfram packages in Wolframite."
   (:require
    [scicloj.kindly.v4.kind :as k]
-   [wolframite.core :as wl]
+   [wolframite.api.v1 :as wl]
    [wolframite.wolfram :as w]))
 
 (k/md "# Packages
@@ -28,18 +28,18 @@ additional[y_]:=3*y
 (wl/restart!)
 (wl/<<! "resources/WolframPackageDemo.wl")
 
-(wl/eval
+(wl/!
  (WolframPackageDemo/tryIt 10))
-(wl/eval
+(wl/!
  (WolframPackageDemo/additional 10))
-(wl/eval
+(wl/!
  (w/Information WolframPackageDemo/tryIt "Usage"))
 
 (k/md "That's it! As you can see, the functions are callable and the documentation is available too.
 
 If you want to change the context name, *e.g.* to make it shorter, then this is also simple. In general, we allow for the package name and context name to be different, so the full call is `(... path.wl context alias)`, *i.e.*")
 (wl/<<! "resources/WolframPackageDemo.wl" "WolframPackageDemo" 'pck)
-(wl/eval (pck/tryIt 10))
-(wl/eval  (w/Information pck/additional "Usage"))
+(wl/! (pck/tryIt 10))
+(wl/!  (w/Information pck/additional "Usage"))
 
 (k/md "And so, you have the whole power of Wolfram packages at your fingertips. And to be honest, this is actually easier to work with than using Wolfram's contexts directly. Clojure does namespaces well.")

@@ -49,7 +49,7 @@ Next, obviously, you'll need to ensure that you have Wolfram Engine or the Wolfr
 First of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:
 
 ```clojure
-(wolframite.core/start!)
+(wolframite.api.v1/start!)
 ```
 This should also find and load the JLink JAR included with your installation. Watch stdout for an INFO log message (via clojure.tools.logging) like:
 
@@ -73,35 +73,35 @@ clj -Sdeps '{:deps {org.scicloj/wolframite {:mvn/version "1.0.0-SNAPSHOT"}}}'
 and try it out:
 
 ```clojure
-(require '[wolframite.core :as wl] 
+(require '[wolframite.api.v1 :as wl] 
          '[wolframite.wolfram :as w :refer :all  ; Wolfram symbols as Clojure vars / fns
            :exclude [* + - -> / < <= = == > >= fn
                      Byte Character Integer Number Short String Thread]])
 ;; Initialize
 (wl/start!) ; => {:status :ok, :wolfram-version 14.1, :started? true}
 ;; Use it:
-(wl/eval (Dot [2 2 4] [4 5 6]))
+(wl/! (Dot [2 2 4] [4 5 6]))
 ;=> 42
 ```
 
 More examples:
 
 ```clojure
-(wl/eval (D (Power 'x 2) 'x)) ; derivative
+(wl/! (D (Power 'x 2) 'x)) ; derivative
 ;=> (* 2 x)
-(wl/eval (ChemicalData "Ethanol" "MolarMass"))
+(wl/! (ChemicalData "Ethanol" "MolarMass"))
 ;=> (Quantity 46.069M (* "Grams" (Power "Moles" -1)))
 
 ;; Accessing WolframAlpha (BEWARE: must be online)
-(wl/eval (WolframAlpha "How many licks does it take to get to the center of a Tootsie Pop?"))
+(wl/! (WolframAlpha "How many licks does it take to get to the center of a Tootsie Pop?"))
 ;=> [(-> [["Input" 1] "Plaintext"] "How many licks does it take to get to the Tootsie Roll
 ;   center of a Tootsie Pop?") (-> [["Result" 1] "Plaintext"] "3481\n(according to student
 ;   researchers at the University of Cambridge)")]
 
-(wl/eval (N Pi 20)) ; numerical value with 20 digit precision
+(wl/! (N Pi 20)) ; numerical value with 20 digit precision
 ;=> 3.141592653589793238462643383279502884197169399375105820285M
 
-(wl/eval (Map (w/fn [x] (Sqrt x)) [4 16]))
+(wl/! (Map (w/fn [x] (Sqrt x)) [4 16]))
 ;=> [2 4]
 ```
 

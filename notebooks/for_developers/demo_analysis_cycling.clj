@@ -2,15 +2,15 @@
 
 (ns for-developers.demo-analysis-cycling
   (:require
-    [clojure.java.io :as io]
-    [clojure.string :as str]
-    [wolframite.core :as wl]
-    [wolframite.lib.helpers :as h]
-    [wolframite.wolfram :as w :refer :all
-     :exclude [* + - -> / < <= = == > >= fn
-               Byte Character Integer Number Short String Thread]]
-    [wolframite.impl.wolfram-syms.intern :as intern]
-    [scicloj.kindly.v4.kind :as k])
+   [clojure.java.io :as io]
+   [clojure.string :as str]
+   [wolframite.api.v1 :as wl]
+   [wolframite.lib.helpers :as h]
+   [wolframite.wolfram :as w :refer :all
+    :exclude [* + - -> / < <= = == > >= fn
+              Byte Character Integer Number Short String Thread]]
+   [wolframite.impl.wolfram-syms.intern :as intern]
+   [scicloj.kindly.v4.kind :as k])
   (:import (java.util.zip GZIPInputStream)))
 
 (k/md "
@@ -42,10 +42,10 @@ shortened, 100k row file it wouldn't be much different. All the smartness and
 auto-detection costs \uD83E\uDD37. If we read only a few rows then it is fine (±2s for 10s - 100s of rows):")
 
 (k/table
-  {:row-vectors
-   (-> (w/Import (.getAbsolutePath (io/file "docs-buildtime-data/202304_divvy_tripdata_first100k.csv.gz"))
-                 ["Data" (w/Span 1 3)])
-       wl/eval)})
+ {:row-vectors
+  (-> (w/Import (.getAbsolutePath (io/file "docs-buildtime-data/202304_divvy_tripdata_first100k.csv.gz"))
+                ["Data" (w/Span 1 3)])
+      wl/!)})
 
 (k/md "
 Note: [Loading the ± 400k rows file with the awesome SciCloj tooling](https://github.com/scicloj/clojure-data-scrapbook/blob/bdc46d643ac5fcdba2fb21002e269897274d9be3/projects/geography/chicago-bikes/notebooks/index.clj#L84-L88) would take ± 3.5s. How amazing is that?!
@@ -57,10 +57,10 @@ Thus we will need a more DIY and lower-level approach to getting the data in, le
 Sadly, it cannot handle a gzpipped files (as far as I know) so we need to unzip it first:")
 
 (when-not (.exists (io/file "/tmp/huge.csv"))
- (let [zip (io/file "docs-buildtime-data/202304_divvy_tripdata_first100k.csv.gz")]
-   (with-open [zis (GZIPInputStream. (io/input-stream zip))]
-     (io/copy zis (io/file "/tmp/huge.csv"))))
- :extracted)
+  (let [zip (io/file "docs-buildtime-data/202304_divvy_tripdata_first100k.csv.gz")]
+    (with-open [zis (GZIPInputStream. (io/input-stream zip))]
+      (io/copy zis (io/file "/tmp/huge.csv"))))
+  :extracted)
 
 (k/md "
 Now we are ready to read the data in. We will store them into a Wolfram-side var so that we can work with them further.
@@ -72,17 +72,15 @@ For readability and auto-completion, we will define vars for the names of the Wo
 (def rawRows "Wolf var - unparsed data rows" 'rawRows)
 (def rows "Wolf var - parsed data rows" 'rows)
 
-
-(wl/eval (w/do (w/= 'f (w/OpenRead "/tmp/huge.csv"))
-               (w/= csv (w/ReadList 'f
-                                    w/Word
-                                    (w/-> w/WordSeparators [","])
-                                    (w/-> w/RecordSeparators ["\n" "\r\n" "\r"])
-                                    (w/-> w/NullWords true)
-                                    (w/-> w/RecordLists true)))
+(wl/! (w/do (w/= 'f (w/OpenRead "/tmp/huge.csv"))
+            (w/= csv (w/ReadList 'f
+                                 w/Word
+                                 (w/-> w/WordSeparators [","])
+                                 (w/-> w/RecordSeparators ["\n" "\r\n" "\r"])
+                                 (w/-> w/NullWords true)
+                                 (w/-> w/RecordLists true)))
                ;; Let's return only the length instead of all the large data:
-               (w/Length csv)))
-
+            (w/Length csv)))
 
 (k/md (str "We leverage the flexibility of [ReadList](" (first (h/help! w/ReadList :links true))
            "), instructing it to read \"Words\" separated by `,` (instead of applying the normal word separating characters),
@@ -96,14 +94,14 @@ For readability and auto-completion, we will define vars for the names of the Wo
 "))
 
 ;; Let's extract column names:
-(def headers (->> (wl/eval (w/Part csv 1))
+(def headers (->> (wl/! (w/Part csv 1))
                   (map #(str/replace % "\"" ""))))
 
 ;; Let's have a look at row 98,765 to verify we get the data correctly:
 (k/table
-  {:row-vectors (map vector
-                     headers
-                     (wl/eval (w/Part csv 98765)))})
+ {:row-vectors (map vector
+                    headers
+                    (wl/! (w/Part csv 98765)))})
 
 ;; Now, let's make a few helpers:
 (def header->idx
@@ -125,7 +123,7 @@ The recommended way is to use `ToExpression`, but it is too smart and thus slow.
 use the internal `StringToMReal` instead. I got [these performance tips](https://mathematica.stackexchange.com/a/94762) from SO.
 Let's see how it works:")
 
-(or (= 12.34 (wl/eval '(Internal/StringToMReal "12.34")))
+(or (= 12.34 (wl/! '(Internal/StringToMReal "12.34")))
     (throw (ex-info "StringToMReal doesn't work/exist anymore?!" {})))
 
 ;; Let's make our life easier by creating a wrapper var for this function. It is somewhat of a cheat, since it isn't a part
@@ -133,25 +131,25 @@ Let's see how it works:")
 (def StringToMReal (intern/wolfram-fn 'Internal/StringToMReal))
 
 ;; We can now get rid of the annoying quote, and it still works 🤞:
-(wl/eval (StringToMReal "12.34"))
+(wl/! (StringToMReal "12.34"))
 
 (k/md (str "Let's store the data without the header row as `" (name rawRows) "` (and again, ensure we do not return the whole data set):"))
-(wl/eval (w/Length (w/= rawRows (w/Drop csv 1))))
+(wl/! (w/Length (w/= rawRows (w/Drop csv 1))))
 
 (def loc-ks ["start_lat" "start_lng" "end_lat" "end_lng"])
 
 ;; Now we extract and parse the columns of interest (processing all but displaying only the first 3 here):
 (k/table
-  {:column-names ["Start latitude" "Start longitude"
-                  "End latitude" "End longitude"]
-   :row-vectors
-   (time ; 0.6s w/ Map only, ~2s with Select as well
-     (wl/eval (-> (w/= rows
-                       (->> (w/Select rawRows (w/AllTrue (w/fn [v] (w/Not (w/== v "")))))
-                            (w/Map (w/Composition
-                                     (w/Map StringToMReal)
-                                     (apply rowvals loc-ks)))))
-                  (w/Part (w/Range 1 3)))))})
+ {:column-names ["Start latitude" "Start longitude"
+                 "End latitude" "End longitude"]
+  :row-vectors
+  (time ; 0.6s w/ Map only, ~2s with Select as well
+   (wl/! (-> (w/= rows
+                  (->> (w/Select rawRows (w/AllTrue (w/fn [v] (w/Not (w/== v "")))))
+                       (w/Map (w/Composition
+                               (w/Map StringToMReal)
+                               (apply rowvals loc-ks)))))
+             (w/Part (w/Range 1 3)))))})
 
 ;; Notice few tricks here:
 ;; 1. We leverage the _operator form_ of `AllTrue` so we don't need to wrap it in a function
@@ -162,7 +160,6 @@ Let's see how it works:")
 (defn rowvals' [& col-names]
   (let [header->idx' (zipmap loc-ks (next (range)))]
     (w/fn [row] (mapv #(w/Part row (header->idx' %)) col-names))))
-
 
 ;; For me, it took ±0.8s to extract the 2 columns as text and 1.5s to parse them into numbers. With `ToExpression` it would take ±5s.
 
@@ -178,12 +175,12 @@ Let's see how it works:")
 ;; but for this web page, we want to export and include the graphic as an image:
 (let [file (io/file "notebooks" "start-locs.webp")]
   (when-not (.exists file)
-    (time (wl/eval (let [d (->> rows
-                                (w/Map (rowvals' "start_lat" "start_lng"))
-                                w/GeoHistogram)]
-                     (w/Export (.getAbsolutePath file) d
-                               (w/-> w/ImageSize 300)
-                               #_(w/-> w/ImageSize w/Large))))))
+    (time (wl/! (let [d (->> rows
+                             (w/Map (rowvals' "start_lat" "start_lng"))
+                             w/GeoHistogram)]
+                  (w/Export (.getAbsolutePath file) d
+                            (w/-> w/ImageSize 300)
+                            #_(w/-> w/ImageSize w/Large))))))
   (k/hiccup [:img {:src (.getPath file) #_#_:style {:width "50%" :height "50%"}}]))
 
 ;; **TO BE CONTINUED** - featuring GeoDistance & more!
