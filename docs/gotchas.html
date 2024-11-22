@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.56">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -219,7 +219,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Advanced topics</span></a>
+ <span class="menu-text">Clojure primer</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -227,8 +227,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./packages.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Packages</span></span></a>
+  <a href="./clojure_primer.index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Clojure primer</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Advanced topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./advanced.customizing_wolframite.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Customizing Wolframite</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./advanced.packages.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Packages</span></span></a>
   </div>
 </li>
       </ul>
@@ -236,7 +259,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./faq.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
   </div>
 </li>
     </ul>
@@ -287,17 +310,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   [scicloj.kindly.v4.kind <span class="at">:as</span> k]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Although we try to avoid such things, sometimes, when you’re fighting the host language, it’s just not practical to carry over the original conventions. Here we will try to keep an up-to-date list of possible surprises, when coming from Wolfram to Wolframite (that are not easy to ‘fix’).</p>
-<p><strong>^</strong> (<code>Power</code>) - Despite allowing a wider range of characters, we cannot use <code>^</code> in Wolframite because it is reserved for adding metadata to virtually all Clojure symbols. <code>(^ x 2)</code> will probably not do what you expect! Better to use <code>(w/Power 'x 2)</code> or a legal alias.</p>
+<p><strong>^</strong> (<code>Power</code>) - Despite allowing a wider range of characters, we cannot use <code>^</code> in Wolframite because it is reserved for adding metadata to virtually all Clojure symbols. <code>(^ x 2)</code> will probably not do what you expect! Thus we use <code>(w/** 'x 2)</code> instead.</p>
 <p><strong>:=</strong> (<code>SetDelayed</code>) - Is actually <code>_=</code> in Wolframite. This is because <code>:</code> is usually a reserved in Clojure for creating keywords. It’s worth noting though that this is possibly nicer, in a way, because <code>_</code> looks like a placeholder, and defining a placeholder for the expression is what it does. It also sort of implies a delay…</p>
 <p><strong>:&gt;</strong> (<code>RuleDelayed</code>) - Is <code>_&gt;</code> in Wolframite.</p>
 <p><strong>.</strong> (<code>Dot</code>) - Has been changed to <code>&lt;*&gt;</code>, in the spirit of the inner product, because <code>.</code> is a key character in Clojure, and most object-oriented systems, for namespacing.</p>
 <p><strong>/.</strong> (<code>ReplaceAll</code>) - Similarly, has been changed to <code>x&gt;&gt;</code> (and <code>Replace</code> to <code>x&gt;</code>) for consistency.</p>
 <p><strong>=.</strong> (<code>Unset</code>) - has also been changed to <code>=!</code>; be careful not to confuse this with <code>!=</code>!</p>
-<p>Symbols within threading macros. - After spending so much time playing with symbols, be careful of slipping into things like <code>(-&gt; 'x '(Power 1))</code> This will not work because <code>'(Power 1)</code> is not evaluated, and so will be treated like any other symbol.</p>
+<p>Symbols within threading macros. - After spending so much time playing with symbols, be careful of slipping into things like <code>(-&gt; 'x '(Power 1))</code> This will not work because <code>'(Power 1)</code> is not evaluated, and so will be treated like any other symbol. However, if you use <code>w/Power</code> and friends then you do not have this problem.</p>
 <p><em>Symbols passed to Wolfram must be alphanumeric</em> - In the end, when they get passed to the Wolfram kernel, symbols must be strictly alphanumeric (apart from forward slashes and dollar signs), <em>i.e.</em> <code>r_2</code> is currently not allowed. This is due to underlying limitations of the Wolfram language. Much like with Mathematica however, we can get around this in general by using Wolframite’s aliasing system (see the relevant tutorials).</p>
 <p><em>Vectors, <code>[]</code>, vs lists, <code>()</code>.</em> - Lists are used to represent function calls and so when combining Clojure and Wolfram expressions, make sure that data literals are vectors. For example, <code>(wh/view (w/ListLinePlot (range 10)))</code> will fail (otherwise unexpectedly), but <code>(wh/view (w/ListLinePlot (into [] (range 10))))</code> will give you what you expect.</p>
 <div style="background-color:grey;height:2px;width:100%;"></div>
-<div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/gotcha.clj">notebooks/gotcha.clj</a></small></small></pre></div>
+<div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/gotchas.clj">notebooks/gotchas.clj</a></small></small></pre></div>
 
 
 

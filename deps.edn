@@ -13,7 +13,7 @@
                               djblue/portal {:mvn/version "0.51.1"}
                               reagent/reagent {:mvn/version "1.1.0"}
                               aerial.hanami/aerial.hanami {:mvn/version "0.15.1"}
-                              org.scicloj/clay {:mvn/version "2-beta17"}
+                              org.scicloj/clay {:mvn/version "2-beta23"}
                               io.github.nextjournal/clerk {:mvn/version "0.3.233"}
                               borkdude/edamame {:mvn/version "0.0.19"}
                               clj-http/clj-http {:mvn/version "3.11.0"}
@@ -33,10 +33,9 @@
            ;; `env CLOJARS_USERNAME=<tbd> CLOJARS_PASSWORD=<clojars-token>  clojure -T:build deploy`
            {:deps {io.github.clojure/tools.build {:git/tag "v0.10.4" :git/sha "31388ff"}
                    slipset/deps-deploy {:mvn/version "0.2.2"}
-                   org.scicloj/clay {:mvn/version "2-beta17"} ; for the build
+                   org.scicloj/clay {:mvn/version "2-beta23"}
                    ;; We need wolframite + JLink to render Wolf code in the docs
                    org.scicloj/wolframite {:local/root "."}
                    wolfram/jlink {:local/root "./symlink-jlink.jar"}} ; FYI jlink only needed for build-site
             :extra-paths ["notebooks"]
-            :override-deps {io.github.nextjournal/markdown {:git/sha "6683c48dfdb23404a23057817b6ac3acf0310bca"}} ; see #wolframite/56
             :ns-default build}}}

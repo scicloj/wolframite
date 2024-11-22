@@ -1,7 +1,11 @@
 (ns wolframite.core-test
   (:require [clojure.test :refer [deftest testing is]]
             [wolframite.core :as wl]
+            [wolframite.flags :as flags]
             [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
+            [wolframite.wolfram :as w :refer :all
+             :exclude [* + - -> / < <= = == > >= fn
+                       Byte Character Integer Number Short String Thread]]
             [wolframite.wolfram :as w])
   (:import (clojure.lang ExceptionInfo)))
 
@@ -19,6 +23,39 @@
   (is (= 2 (wl/eval (w/Plus 1 1)))
       ;; see wolfram-test for more complex tests of the Wolf vars
       "A simple expression-as-var"))
+
+(deftest various-data-types
+  (wl/start!)
+  (is (= -1 (wl/eval '(Minus 1)))
+      "Number")
+  (is (= "1" (wl/eval (ToString 1)))
+      "String")
+  (is (= {"key" "value"}
+         (wl/eval (Association (w/-> "key" "value"))))
+      "Map")
+  (is (= [1 2]
+         (wl/eval (Join [1] [2])))
+      "Wolf List <-> Clj vector")
+  (testing "arrays of supported _fast_ types (byte, short, int, float, double)"
+    ;; NOTE: Arrays are supported for  (boolean, byte, char, short, int, long, float, double, String) but only the above have "fast" methods
+    ;; Note: Aside of nested lists, Wolfram has also other representations such as PackedArray, SparseArray and structured arrays
+    ;; "Representing matrices as structured arrays, whenever feasible, often leads to efficiencies in storage, computation time or both."
+    ;; TODO See Wolfram Videos: Structured Arrays https://shar.es/ag4By2
+    ;; TODO See Wolfram Videos: Everything Arrays https://shar.es/ag4ByE
+    (is (= [2 3]
+           (wl/eval (Plus (into-array Integer/TYPE [1 2]) 1)))
+        "Arrays may be sent from Wolframite instead of lists")
+    (let [res ^ints (wl/eval (Plus (into-array Integer/TYPE [1 2]) 1) {:flags #{flags/arrays}})]
+      (is (= int/1 (type res)) "Should return as array of the same type.")
+      (is (java.util.Arrays/equals (into-array Integer/TYPE [2 3]) res)
+          (str "Should return as array of the same type. Got: " (seq res))))
+    (is (= int/1
+           (type (wl/eval (Plus [1 2] 1) {:flags #{:arrays}})))
+        "Even if we send in a vector and not an array, we get an array back when the flag is on")
+    (let [res ^doubles (wl/eval (Plus (into-array Double/TYPE [1.0 2.0]) 1) {:flags #{flags/arrays}})]
+      (is (= double/1 (type res)) "Should return as array of the same type.")
+      (is (java.util.Arrays/equals (into-array Double/TYPE [2.0 3.0]) res)
+          (str "Should return as array of the same type. Got: " (seq res))))))
 
 ;; (deftest basic-string<->data-translation
 ;;   (testing "translating TO clj" (is (= '(GridGraph [5 5])
@@ -123,6 +160,12 @@
     (is (= [2 4]
            (wl/eval "Map[Function[{x}, x + 1],{1,3}]")
            (wl/eval (w/Map (w/fn [x] (w/+ x 1)) [1 3]))))))
+
+(deftest error-handling
+  (wl/start!)
+  (is (thrown? ExceptionInfo
+               (wl/eval (w/FromDigits "-87.6")))
+      "Should throw on invalid Wolfram expression"))
 
 (deftest kindly-support
   (wl/start!)

@@ -16,7 +16,7 @@
       (sequential? primitive-or-exprs)
       (Expr.
        ^Expr (first primitive-or-exprs)
-       ^"[Lcom.wolfram.jlink.Expr;" (into-array Expr (rest primitive-or-exprs)))
+       ^Expr/1 (into-array Expr (rest primitive-or-exprs)))
       ;; Here, primitive-or-exprs could be an int, a String, long[], or similar
 
       (array? primitive-or-exprs)
@@ -107,7 +107,6 @@
       (let [res (.getExpr link)
             messages (seq (first (reset-vals! packet-capture-atom nil)))
             messages-text (mapv :content messages)]
-        (def M messages)
         (cond
           (and (seq messages)
                (or (= res failed-expr)
@@ -149,7 +148,7 @@
       (let [res
             (try (let [opts-array (into-array String kernel-link-opts)
                        kernel-link
-                       (->> (doto (MathLinkFactory/createKernelLink ^"[Ljava.lang.String;" opts-array)
+                       (->> (doto (MathLinkFactory/createKernelLink ^String/1 opts-array)
                               (.addPacketListener packet-listener) ; TBD doesn't get anything when link fails due to e.g. # kernels > license
                               ;; Note: The call below ensures we actually try to connect to the kernel
                               (.discardAnswer))

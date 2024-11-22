@@ -2,7 +2,7 @@
   "A demo ns used for explaining the basics of using Wolframite.
   See also the demo ns." ;; FIXME how does demo and this one differ?
   (:require
-   [wolframite.core :as wl]
+   [wolframite.api.v1 :as wl]
    [wolframite.wolfram :as w]
    [wolframite.tools.graphics :as graphics]
    [wolframite.base.parse :as parse :refer [custom-parse]]
@@ -31,9 +31,9 @@
 
 (eval    '(map (fn [x] (+ x 1)) [1 2 3])) ; clojure eval
 
-(wl/eval (w/Map (fn [x] (w/+ x 1)) [1 2 3])) ; Wolframite eval ;; FIXME(jakub) broken, doesn't call +; likely b/c we send fail to process the fn body correctly
+(wl/! (w/Map (fn [x] (w/+ x 1)) [1 2 3])) ; Wolframite eval ;; FIXME(jakub) broken, doesn't call +; likely b/c we send fail to process the fn body correctly
 
-(wl/eval "Map[Function[{x}, x + 1], {1, 2, 3}]") ; can also pass in Wolfram as string
+(wl/! "Map[Function[{x}, x + 1], {1, 2, 3}]") ; can also pass in Wolfram as string
 
 ;; |/////////////////////////|
 ;; |Convert >> Eval >> Parse |
@@ -44,18 +44,18 @@
 ;; ** define a Clojure fn, which will evaluate Wolfram code:
 
 (def greetings
-  (wl/eval
+  (wl/!
    (w/fn [x] (w/StringJoin "Hello, " x "! This is a Mathematica function's output."))))
 
 (greetings, "folks") ; => "Hello, folks! This is a Mathematica function's output."
 
-;; ** create a var for each Wolfram symbol, with docstrings, which resolves into a symbol suitable for `wl/eval`:
+;; ** create a var for each Wolfram symbol, with docstrings, which resolves into a symbol suitable for `wl/!`:
 
 (def age 42)
 ;; Without symbols loaded, when we need interpolation, we need to deal with ` and prevent namespacing of symbols:
-(wl/eval `(~'Floor (~'Plus ~age ~'Pi))) ; => 45
+(wl/! `(~'Floor (~'Plus ~age ~'Pi))) ; => 45
 ;; But better to use loaded symbols:
-(wl/eval (w/Floor (w/Plus age w/Pi))) ; => 45
+(wl/! (w/Floor (w/Plus age w/Pi))) ; => 45
 
 ;; *** REPL - load-all-symbols includes docstrings, so we can use repl to show them
 
@@ -88,9 +88,9 @@
           'n)
          :return-links true)
 
-(wl/eval (w/Information w/GenomeData))
+(wl/! (w/Information w/GenomeData))
 
-(wl/eval '((WolframLanguageData "GenomeData") "Association")) ; FIXME broken? returns a few 'Missing "NotAvailable'
+(wl/! '((WolframLanguageData "GenomeData") "Association")) ; FIXME broken? returns a few 'Missing "NotAvailable'
 
 ;; * Graphics
 
@@ -106,26 +106,26 @@
 
 ;; * Custom Parse
 
-(wl/eval (w/Hyperlink "foo" "https://www.google.com"))
+(wl/! (w/Hyperlink "foo" "https://www.google.com"))
 
 (defmethod custom-parse 'Hyperlink [expr opts]
   (-> (second (.args expr))
       (parse/parse opts)
       java.net.URI.))
 
-(wl/eval (w/Hyperlink "foo" "https://www.google.com"))
+(wl/! (w/Hyperlink "foo" "https://www.google.com"))
 ;; * More
 
 ;; WordFrequency[ExampleData[{"Text", "AliceInWonderland"}], {"a", "an", "the"}, "CaseVariants"]
 
-(wl/eval (w/WordFrequency (w/ExampleData ["Text" "AliceInWonderland"]) ["a" "an" "the"] "CaseVariants"))
+(wl/! (w/WordFrequency (w/ExampleData ["Text" "AliceInWonderland"]) ["a" "an" "the"] "CaseVariants"))
 
 ;; Wrapping in a function
 (defn wf [& {:keys [prop]
              :or   {prop "CaseVariants"}}]
-  (wl/eval (w/WordFrequency (w/ExampleData (conj ["Text"] "AliceInWonderland"))
-                            (vector "a" "an" "the")
-                            prop)))
+  (wl/! (w/WordFrequency (w/ExampleData (conj ["Text"] "AliceInWonderland"))
+                         (vector "a" "an" "the")
+                         prop)))
 
 (wf :prop "Total")
 

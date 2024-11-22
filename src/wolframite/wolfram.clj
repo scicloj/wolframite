@@ -1,7 +1,7 @@
-(ns wolframite.wolfram "[GENERATED - see `...wolfram-syms.write-ns/write-ns!`]\n           Vars for all Wolfram functions (and their Clojurite aliases, where those exist).\n          These can be composed into expressions and passed to `wl/eval`.\n\n          BEWARE: This is based off a particular version of Wolfram and you may need to refresh it." (:require wolframite.impl.wolfram-syms.intern clojure.walk) (:refer-clojure :only [ns-unmap map let defmacro list]))
+(ns wolframite.wolfram "[GENERATED - see `...wolfram-syms.write-ns/write-ns!`]\n           Vars for all Wolfram functions (and their Clojurite aliases, where those exist).\n          These can be composed into expressions and passed to `wl/!`.\n\n          BEWARE: This is based off a particular version of Wolfram and you may need to refresh it." (:require wolframite.impl.wolfram-syms.intern clojure.walk) (:refer-clojure :only [ns-unmap map let defmacro list]))
 (do (clojure.core/ns-unmap clojure.core/*ns* (quote Byte)) (clojure.core/ns-unmap clojure.core/*ns* (quote Character)) (clojure.core/ns-unmap clojure.core/*ns* (quote Integer)) (clojure.core/ns-unmap clojure.core/*ns* (quote Number)) (clojure.core/ns-unmap clojure.core/*ns* (quote Short)) (clojure.core/ns-unmap clojure.core/*ns* (quote String)) (clojure.core/ns-unmap clojure.core/*ns* (quote Thread)))
-(def ^:dynamic *wolfram-version* 14.1)
-(def ^:dynamic *wolfram-kernel-name* "Wolfram Language 14.1.0 Engine")
+(def ^:dynamic *wolfram-version* 14.0)
+(def ^:dynamic *wolfram-kernel-name* "Mathematica 14.0.0 Kernel")
 (def $Aborted "$Aborted is a special symbol that is returned as the result from a calculation that has been aborted." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote $Aborted)))
 (def $ActivationKey "$ActivationKey is a string that gives the activation key under which the Wolfram System is being run." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote $ActivationKey)))
 (def $AllowDataUpdates "$AllowDataUpdates controls whether the Wolfram System is allowed to automatically update certain types of content." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote $AllowDataUpdates)))
@@ -6436,6 +6436,7 @@
 (def >= "x>=y or x≥y yields True if x is determined to be greater than or equal to y. \nx1≥x2≥x3 yields True if the xi form a nonincreasing sequence." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote >=)))
 (def >>_<< "FullSimplify[expr] tries a wide range of transformations on expr involving elementary and special functions and returns the simplest form it finds. \nFullSimplify[expr, assum] does simplification using assumptions." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote >>_<<)))
 (def >_< "Simplify[expr] performs a sequence of algebraic and other transformations on expr and returns the simplest form it finds. \nSimplify[expr, assum] does simplification using assumptions." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote >_<)))
+(def ?? "Information[expr] gives information about the expression expr. \nInformation[expr, prop] gives the value of the property prop for expr.\nInformation[{expr1, expr2, …}, …] gives information about all of the expri." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote ??)))
 (def _= "lhs:=rhs assigns rhs to be the delayed value of lhs. rhs is maintained in an unevaluated form. When lhs appears, it is replaced by rhs, evaluated afresh each time." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote _=)))
 (def _> "lhs:>rhs or lhsrhs represents a rule that transforms lhs to rhs, evaluating rhs only after the rule is used." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote _>)))
 (def do "expr1;expr2;… evaluates the expri in turn, giving the last one as the result." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote do)))
@@ -6447,7 +6448,7 @@
 (def ⮾ "a**b**c is a general associative, but non‐commutative, form of multiplication." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote ⮾)))
 (defmacro fn
   "Creates a Wolfram anonymous function with the given arguments and single expression body.
-  Example usage: `(wl/eval (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))`"
+  Example usage: `(wl/! (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))`"
   ([body-sexp]
    ;; A pure lambda with anonymous args (#, #1, ... = Slot[1], ...) or possibly no args at all
    `(list (quote ~'Function) ~(wolframite.impl.wolfram-syms.intern/quote-args body-sexp [])))

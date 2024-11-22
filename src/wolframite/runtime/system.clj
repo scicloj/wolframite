@@ -23,6 +23,10 @@
     :kernel "Executables/MathKernel"
     :product :mathematica ; alternative location
     :os :linux}
+   {:root  "/opt/WolframEngine"
+    :kernel "Executables/MathKernel"
+    :product :wolfram-engine
+    :os :linux}
    {:root  "/usr/local/Wolfram/WolframEngine"
     :kernel "Executables/WolframKernel"
     :product :wolfram-engine

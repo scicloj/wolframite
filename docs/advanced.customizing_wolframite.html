@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>13&nbsp; FAQ – Wolframite Documentation</title>
+<title>11&nbsp; Customizing Wolframite – Wolframite Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,7 +64,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./advanced.packages.html" rel="prev">
+<link href="./advanced.packages.html" rel="next">
+<link href="./clojure_primer.index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -102,35 +103,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -143,7 +115,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./faq.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">FAQ</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./advanced.customizing_wolframite.html">Advanced topics</a></li><li class="breadcrumb-item"><a href="./advanced.customizing_wolframite.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Customizing Wolframite</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -272,7 +244,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./advanced.customizing_wolframite.html" class="sidebar-item-text sidebar-link">
+  <a href="./advanced.customizing_wolframite.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Customizing Wolframite</span></span></a>
   </div>
 </li>
@@ -286,7 +258,7 @@ window.Quarto = {
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./faq.html" class="sidebar-item-text sidebar-link active">
+  <a href="./faq.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
   </div>
 </li>
@@ -295,15 +267,21 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-custom-aliases" id="toc-sec-custom-aliases" class="nav-link active" data-scroll-target="#sec-custom-aliases"><span class="header-section-number">11.0.1</span> Custom aliases</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./advanced.customizing_wolframite.html">Advanced topics</a></li><li class="breadcrumb-item"><a href="./advanced.customizing_wolframite.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Customizing Wolframite</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-FAQ" class="quarto-section-identifier"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">FAQ</span></span></h1>
+<h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Customizing Wolframite</span></h1>
 </div>
 
 
@@ -330,74 +308,49 @@ window.Quarto = {
 .clay-side-by-side .sourceCode {margin: 0}
 .clay-side-by-side {margin: 1em 0}
 </style>
-<script src="faq_files/md-default0.js" type="text/javascript"></script>
-<script src="faq_files/md-default1.js" type="text/javascript"></script>
-<script src="faq_files/katex2.js" type="text/javascript"></script>
-<p><link href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" rel="stylesheet" type="text/css"></p>
+<script src="advanced.customizing_wolframite_files/md-default0.js" type="text/javascript"></script>
+<script src="advanced.customizing_wolframite_files/md-default1.js" type="text/javascript"></script>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">ns</span> faq</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Anticipated and, potentially literally, frequently asked questions."</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  (<span class="at">:require</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>   [scicloj.kindly.v4.kind <span class="at">:as</span> k]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>   [wolframite.core <span class="at">:as</span> wl]</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   [wolframite.wolfram <span class="at">:as</span> w <span class="at">:refer</span> <span class="at">:all</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">:exclude</span> [<span class="kw">*</span> <span class="kw">+</span> <span class="kw">-</span> <span class="kw">-&gt;</span> <span class="kw">/</span> <span class="kw">&lt;</span> <span class="kw">&lt;=</span> <span class="kw">=</span> <span class="kw">==</span> <span class="kw">&gt;</span> <span class="kw">&gt;=</span> <span class="kw">fn</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>              Byte Character Integer Number Short String Thread]]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">ns</span> advanced.customizing-wolframite</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  (<span class="at">:require</span> [scicloj.kindly.v4.kind <span class="at">:as</span> k]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>            [wolframite.core <span class="at">:as</span> wl]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>There are several ways to customize Wolframite to your liking.</p>
+<section id="sec-custom-aliases" class="level3" data-number="11.0.1">
+<h3 data-number="11.0.1" class="anchored" data-anchor-id="sec-custom-aliases"><span class="header-section-number">11.0.1</span> Custom aliases</h3>
+<p>We’ve discussed Wolframite’s built-in aliases in <a href="understanding_wolframite.html#sec-aliases-table" class="quarto-xref"><span>Section 3.2.7</span></a>. However, Wolframite allows you to individually tailor the user experience at the level of initialization:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb2"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(wl/start!)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(wl/restart! {<span class="at">:aliases</span> '{🔋 Power}})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb3"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:status</span> <span class="at">:ok</span>, <span class="at">:wolfram-version</span> <span class="fl">14.0</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:status</span> <span class="at">:ok</span>, <span class="at">:wolfram-version</span> <span class="fl">14.0</span>, <span class="at">:started</span>? <span class="va">true</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>Why Wolfram?</strong> - From the horse’s <a href="https://www.wolfram.com/language/">mouth</a>:</p>
-<blockquote class="blockquote">
-<p>Wolfram Language is a symbolic language, deliberately designed with the breadth and unity needed to develop powerful programs quickly. By integrating high-level forms—like Image, GeoPolygon or Molecule—along with advanced superfunctions—such as ImageIdentify or ApplyReaction—Wolfram Language makes it possible to quickly express complex ideas in computational form.</p>
-</blockquote>
-<p>More concretely, the Wolfram language, and associated ecosystem, is a powerful way of getting stuff done. As a high-level functional programming language, with <a href="https://reference.wolfram.com/language/">more than 6000 functions from across mathematics and data processing</a>, it is sometimes the only practical way of of getting things done. Particularly in explicitly scientific fields. What makes it potentially unique is its place in the Venn diagram of symbolic manipulation, built-in factual and computational knowledge and niche, fully implemented algorithms.</p>
-<p>Check out the <a href="https://www.wolfram.com/language/gallery/">Wolfram Language Code Gallery</a> for some amazing examples of what you can achieve with Wolfram much more easily than with any other programming language under the sun.</p>
-<p><strong>Why Wolframite?</strong></p>
-<p>‘Why Wolframite?’ is really just the combination of ‘Why Wolfram?’ (above) and ‘<a href="https://clojure.org/about/rationale">Why Clojure?</a>’.</p>
-<p>In a nutshell, the Wolfram programming language is ‘best-in-class’ for certain specialist tasks, like manipulating equations, but, to paraphrase <a href="https://xkcd.com/1270/">Randall Munroe</a>, &gt; Wolfram combines the flexibility and power of abstract mathematics with the intuitive clarity of abstract mathematics.</p>
-<p>Clojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don’t we call Wolfram from Clojure? It seems like the atypical ‘best of both worlds’.</p>
-<p>To put it another way, Wolfram is <em>a powerful tool in need of a toolbox</em>. And so what language is best placed to be that ‘box’? Well, Wolfram is, underneath, built on LisP and so will naturally work better with a similar design philosophy (and way of thinking) than, say, with an object-oriented or scripting language. Furthermore, somewhat ironically, it has a very good ‘link’ to the Java ecosystem. In <a href="https://reference.wolfram.com/language/JLink/tutorial/Introduction.html#25629">fact</a>,</p>
-<blockquote class="blockquote">
-<p>For all types of WSTP programs, J/Link provides a higher-level layer of functionality than the traditional C WSTP programming interface. This makes Java the easiest and most convenient language for writing programs to interact with the Wolfram Language.</p>
-</blockquote>
-<p>Even at a fundamental level therefore, our toolbox language should be a LisP with strong Java interop: mmm…!</p>
-<p>At the <em>usability</em> layer, Clojure is a well-designed, ergonomic language that leaves its users <a href="https://www.computerworld.com/article/1379902/clojure-developers-are-the-happiest-developers.html">happy</a>! When it comes to working with mathematical expressions specifically, there are a few key features. First of all, for many people, Clojure was the first language to introduce ergonomic chaining of function expressions, <em>e.g.</em></p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">-&gt;</span> (w/* <span class="at">'x</span> I)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    (w/+ <span class="at">'y</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    Abs</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    (** <span class="dv">2</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    ComplexExpand</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    TeXForm</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    ToString</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    wl/eval</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    k/tex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(wl/eval '(🔋 <span class="dv">2</span> <span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><span class="math display">\[x^2+y^2\]</span></p>
-<p>. In my view, chaining Wolfram function calls together with <a href="https://clojure.org/guides/threading_macros">threading macros</a> (<em>e.g.</em> <code>-&gt;</code> and <code>-&gt;&gt;</code> etc.) is actually a big usability improvement. Wolfram expressions can get pretty involved (it’s common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read and manipulate these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, <code>@</code>, to help with function composition, <em>e.g.</em> <code>f@g@h</code>. Unfortunately however, this doesn’t work with multiple arguments. It is possible to do things like <code>f@@args</code>, and even things like <code>f@@@{{a, b}, {c, d}}</code>, but the readability quickly becomes dire. On the other hand, Clojure’s threading is simple, clear and scalable. Secondly, by using a LisP, you are automatically thinking (and evaluating) at the level of the <em>symbolic expression</em> (a.k.a. s-expression). This is in contrast to thinking at the level of ‘files’, lines or ‘cells’ of a notebook. This maps very well to the exploration of <em>mathematical</em> expressions. In fact, it’s almost surprising that Wolfram had such a big influence on the idea of <em>notebook</em>-style programming, considering that, at heart, it’s all LisP. In our view, Wolframite brings Wolfram back to a more fundamental form of <strong>literate programming</strong>.</p>
-<p><strong>Why literate programming?</strong></p>
-<p>One of the key motivations of Wolframite is to integrate the power of Wolfram within a more general, more ergonomic programming environment. When it comes to solving complex problems however, it is also important to be able to document and visualise the process. In fact, this is a core part of the academic sciences and consumes a lot of time. Largely however, solving problems and documenting the results have been considered orthogonal processes: duplicating huge amounts of work</p>
-<p>In contrast, what if</p>
-<blockquote class="blockquote">
-<p>Programs are meant to be read by humans and only incidentally for computers to execute. [<em>D. Knuth</em>]?</p>
-</blockquote>
-<p>This is the heart of <em>literate programming</em>.</p>
-<p>The immediate question that flows from this however, is <em>how</em>? In TeX systems, the answer was to include executable code within running text. In Mathematica, which largely popularized the <em>notebook</em> model, a fully integrated IDE product was built around the underlying language. Jupyter carried on this idea, but universalized the concept by bringing the interaction into the browser.</p>
-<p>And yet, for programmers, both of these systems are the wrong way around. The core content and information is in the namespaces and the right level of abstraction is not at arbitrarily chosen <em>cells</em>, but rather evaluation at the level of <em>expressions</em>. Such is the case, a LisP-style evaluation model is one of the biggest advantages of Woframite, particularly when paired with <em>notebooks as a namespace</em>-style literate programming, <em>e.g.</em> <a href="https://github.com/scicloj/clay">clay</a> and <a href="https://github.com/nextjournal/clerk">clerk</a>. When it comes to analysis, being able to interrogate data interactively is often as, if not more, important than being able to run long simulations. With LisP-style literate programming this becomes even more powerful and the other thing to bear in mind is that with literate programming, the docs double as tests!</p>
-<p>For more information about the downsides of the <em>notebook</em>-model, have a look at this <a href="https://www.microsoft.com/en-us/research/uploads/prod/2020/03/chi20c-sub8173-cam-i16.pdf">paper</a>, as cited by the Clerk document system.</p>
-<p><strong>Why not Emmy?</strong></p>
-<p>You <em>should</em> use <a href="https://github.com/mentat-collective/emmy">Emmy</a>! Emmy is a fully Clojure(script) symbolic algebra engine that is built on the <a href="https://groups.csail.mit.edu/mac/users/gjs/6946/refman.txt">SCMUTILS</a> system, orginally developed by G.J. Sussman and J. Wisdom. Emmy is a very exciting prospect for symbolic manipulation, but is only a subset of what Wolfram is capable of. In the future, we hope to integrate the two more closely. Our current advice though, is that where you have to do a lot of <code>Solve</code>-ing (<em>i.e.</em> rearranging of equations), or where you need a more powerful simplifier, use Wolframite.</p>
-<p><strong>How do I translate Mathematica’s syntax sugar?</strong></p>
-<p>Since <em>Mathematica</em> hides the internals of the <em>Wolfram Language</em> by default, it can sometimes be difficult to work out what functions are being called. If you’re in Mathematica, you can use <code>FullForm@Unevaluated[...]</code> to get a more understandable (if less concise) expression. Of course, you can also use Wolframite, <em>i.e.</em> <code>(wl/-&gt;clj ...)</code> !</p>
+<div class="printedClojure">
+<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dv">32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>, and function call,</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(wl/restart!)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb7"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:status</span> <span class="at">:ok</span>, <span class="at">:wolfram-version</span> <span class="fl">14.0</span>, <span class="at">:started</span>? <span class="va">true</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb8"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>(wl/eval '(🔋🔋 <span class="dv">2</span> <span class="dv">5</span>) {<span class="at">:aliases</span> '{🔋🔋 Power}})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb9"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dv">32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Use it how you want to!</p>
+<p>TIP: You can also get convenience vars for your aliases in <code>wolframite.wolfram</code> by running something like <code>(wolframite.impl.wolfram-syms.write-ns/write-ns! &lt;path&gt; {:aliases '{🔋 Power}})</code>. After you load the file, you’ll be able to use <code>(wl/eval (w/🔋 2 5) {:aliases '{🔋 Power}})</code>.</p>
 <div style="background-color:grey;height:2px;width:100%;"></div>
-<div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/faq.clj">notebooks/faq.clj</a></small></small></pre></div>
+<div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/advanced/customizing_wolframite.clj">notebooks/advanced/customizing_wolframite.clj</a></small></small></pre></div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -822,11 +775,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./advanced.packages.html" class="pagination-link" aria-label="Packages">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Packages</span></span>
+      <a href="./clojure_primer.index.html" class="pagination-link" aria-label="Clojure primer">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Clojure primer</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./advanced.packages.html" class="pagination-link" aria-label="Packages">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Packages</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

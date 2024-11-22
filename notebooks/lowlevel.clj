@@ -1,7 +1,7 @@
 (ns lowlevel
   "Documenting operations that are carried out at a low level of abstraction."
   (:require
-   [wolframite.core :as wl]
+   [wolframite.api.v1 :as wl]
    [wolframite.wolfram :as w]
    [wolframite.impl.jlink-instance :as jlink-instance]
    [wolframite.base.parse :as parse]
@@ -17,7 +17,7 @@ Although it shouldn't normally be necessary, we can also intern Wolfram function
 
 The standard way of doing this is something like")
 (def greetings
-  (wl/eval
+  (wl/!
    (w/fn [x] (w/StringJoin "Hello, " x "! This is a Mathematica function's output."))))
 (greetings "Stephen")
 
