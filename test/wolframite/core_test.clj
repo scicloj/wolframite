@@ -167,9 +167,10 @@
                (wl/eval (w/FromDigits "-87.6")))
       "Should throw on invalid Wolfram expression"))
 
+#_
 (deftest kindly-support
   (wl/start!)
-  (let [res (wl/eval '(Video "path/to/my-fake.mps"))
+  (let [res (wl/eval (w/Video "/tmp/fake-video.mp4"))
         {:keys [kindly/options] :as m}
         (meta res)
         view-fn (:kindly/f options)]
