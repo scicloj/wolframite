@@ -3,7 +3,7 @@
   "A very brief introduction to Clojure for a would-be users of Wolframite not familiar with the language"
   (:require [scicloj.kindly.v4.kind :as k]
             [clojure.math :as math]
-            [wolframite.core :as wl]
+            [wolframite.api.v1 :as wl]
             [wolframite.wolfram :as w]))
 
 (k/md "# Clojure primer {#sec-clojure-primer}
@@ -28,13 +28,13 @@ looks like in Wolfram, Python, and Clojure:
 
 ^:kindly/hide-code
 (k/table
-  [["Wolfram" (k/md "```wolfram
+ [["Wolfram" (k/md "```wolfram
   Join[{}, {\"first\", 2, <|\"name\" -> \"Ava\"|>}]
   ```")]
-   ["Python" (k/md "```python
+  ["Python" (k/md "```python
   []+[\"first\",2,{\"name\": \"Ava\"}]
   ```")]
-   ["Clojure" '(conj [] "first" 2 {"name" "Ava"})]])
+  ["Clojure" '(conj [] "first" 2 {"name" "Ava"})]])
 
 ;; We see here a few basic data structures: a `[vector]`, similar to Wolfram/Python lists, and a map `{"key": "value"}`,
 ;; similar to Python dictionaries / Wolfram associations. One interesting difference is that `,` commas in Clojure are optional.
@@ -45,14 +45,14 @@ looks like in Wolfram, Python, and Clojure:
 
 ^:kindly/hide-code
 (k/table
-  [["Wolfram" (k/md "```wolfram
+ [["Wolfram" (k/md "```wolfram
   plus[x_, y_] := Plus[x, y]
   ```")]
-   ["Python" (k/md "```python
+  ["Python" (k/md "```python
   def plus(x, y):
       return x + y
   ```")]
-   ["Clojure" '(defn plus [x y] (+ x y))]])
+  ["Clojure" '(defn plus [x y] (+ x y))]])
 
 ;; Now we are ready to learn a little more about how to read Clojure code.
 
@@ -132,9 +132,9 @@ that can be evaluated fully on the Clojure side and replaced with the result, be
 ;; Notice that you may nest Clojure-only expression, which does not depend on the surrounding Wolfram context, inside a Wolframite expression,
 ;; but you cannot do the opposite, i.e. nest a Wolframite expression inside a Clojure expression:
 (try
- (wl/eval (+ (w/* 3 (w/Power (+ 1 1) 2))))
- (catch Exception e
-   (str e)))
+  (wl/eval (+ (w/* 3 (w/Power (+ 1 1) 2))))
+  (catch Exception e
+    (str e)))
 
 ;; This fails because we are passing a Wolframite expression (a list) to the Clojure `+` function, but it only works with numbers. We'd need to evaluate the expression first:
 

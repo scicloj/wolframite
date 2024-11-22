@@ -2,7 +2,7 @@
   "Anticipated and, potentially literally, frequently asked questions."
   (:require
    [scicloj.kindly.v4.kind :as k]
-   [wolframite.core :as wl]
+   [wolframite.api.v1 :as wl]
    [wolframite.wolfram :as w :refer :all
     :exclude [* + - -> / < <= = == > >= fn
               Byte Character Integer Number Short String Thread]]))
@@ -44,7 +44,7 @@ At the *usability* layer, Clojure is a well-designed, ergonomic language that le
 
     TeXForm
     ToString
-    wl/eval
+    wl/!
     k/tex)
 
 (k/md ". In my view, chaining Wolfram function calls together with [threading macros](https://clojure.org/guides/threading_macros) (*e.g.* `->` and `->>` etc.) is actually a big usability improvement. Wolfram expressions can get pretty involved (it's common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read and manipulate these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, `@`, to help with function composition, *e.g.* `f@g@h`. Unfortunately however, this doesn't work with multiple arguments. It is possible to do things like `f@@args`, and even things like `f@@@{{a, b}, {c, d}}`, but the readability quickly becomes dire. On the other hand, Clojure's threading is simple, clear and scalable.

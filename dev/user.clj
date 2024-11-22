@@ -1,5 +1,5 @@
 (ns user
-  (:require [wolframite.core :as wl]
+  (:require [wolframite.api.v1 :as wl]
             [wolframite.wolfram :as w]))
 
 (defn dev
@@ -11,7 +11,7 @@
 
 (comment
   (wl/init)
-  (wl/eval (w/Subtract 4 3))
+  (wl/! (w/Subtract 4 3))
 
   (require '[scicloj.clay.v2.api :as clay])
   (clay/make! {:source-path "notebooks/index.clj"}))

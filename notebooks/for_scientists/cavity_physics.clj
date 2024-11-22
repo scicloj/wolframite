@@ -4,7 +4,7 @@
   (:require
    [clojure.math :as math]
    [scicloj.kindly.v4.kind :as k]
-   [wolframite.core :as wl]
+   [wolframite.api.v1 :as wl]
    [wolframite.tools.hiccup :as wh]
    [wolframite.wolfram :as w :refer :all
     :exclude [* + - -> / < <= = == > >= fn
@@ -38,7 +38,7 @@ First of all, we redefine the shortcuts that we used in the previous part, befor
 (defmacro eval->
   "Extends the threading macro to automatically pass the result to wolframite eval."
   [& xs]
-  `(-> ~@xs wl/eval))
+  `(-> ~@xs wl/!))
 
 (defn TeX
   "UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might not realise that 'ToString' is necessary."
@@ -48,15 +48,15 @@ First of all, we redefine the shortcuts that we used in the previous part, befor
 (defmacro TeX->
   "Extends the thread-first macro to automatically eval and prepare the expression for TeX display."
   [& xs]
-  `(-> ~@xs TeX wl/eval k/tex))
+  `(-> ~@xs TeX wl/! k/tex))
 (defmacro eval->>
   "Extends the threading macro to automatically pass the result to wolframite eval."
   [& xs]
-  `(->> ~@xs wl/eval))
+  `(->> ~@xs wl/!))
 (defmacro TeX->>
   "Extends the thread-last macro to automatically eval and prepare the expression for TeX display."
   [& xs]
-  `(->> ~@xs TeX wl/eval k/tex))
+  `(->> ~@xs TeX wl/! k/tex))
 
 (defn ||2
   "The intensity: the value times the conjugate of the value or, equivalently, the absolute value squared."
@@ -119,7 +119,7 @@ At position three, the field undergoes reflection and so now carries an addition
 (k/md "Substitution and simplification can then be used to arrive at the transmission and reflection, respectively.")
 
 (def T (-> (x>> (w/* E2 't2)
-                  e4)
+                e4)
            w/>>_<<))
 (TeX->> T (w/== 'T))
 
@@ -240,27 +240,27 @@ For this, we will define a few utility functions, that also demonstrate Wolfram'
 (defn Efield
   "For convenience, we build a clojure function over the Wolfram expression created earlier."
   [t1 t2 l1 l2 phi]
-  (wl/eval (Clear 'f))
-  (wl/eval (_= (list 'f
-                     (Pattern t1 (Blank))
-                     (Pattern t2 (Blank))
-                     (Pattern l1 (Blank))
-                     (Pattern l2 (Blank))
-                     (Pattern phi (Blank)))
-               I4--approx))
-  (wl/eval (list 'f t1 t2 l1 l2 phi)))
+  (wl/! (Clear 'f))
+  (wl/! (_= (list 'f
+                  (Pattern t1 (Blank))
+                  (Pattern t2 (Blank))
+                  (Pattern l1 (Blank))
+                  (Pattern l2 (Blank))
+                  (Pattern phi (Blank)))
+            I4--approx))
+  (wl/! (list 'f t1 t2 l1 l2 phi)))
 
 (defn Efield--transmission-phase
   "This is just a function to reduce the number of variables over which we plot. We can't (easily) plot in 4-D!"
   [[t1 phase]]
   [t1 phase (Efield t1 t1 20E-6 20E-6 phase)])
 
-(wl/eval (w/_= 'nums (mapv Efield--transmission-phase
-                           (coordinates
-                            (math/sqrt 50E-6)
-                            (math/sqrt 700E-6)
-                            -0.001
-                            0.001))))
+(wl/! (w/_= 'nums (mapv Efield--transmission-phase
+                        (coordinates
+                         (math/sqrt 50E-6)
+                         (math/sqrt 700E-6)
+                         -0.001
+                         0.001))))
 
 (wh/view
  (w/ListPlot3D 'nums

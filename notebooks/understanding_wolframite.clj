@@ -12,7 +12,7 @@
             [scicloj.kindly.v4.kind :as kind]
             [scicloj.kindly.v4.kind :as k]
             [clojure.repl :as repl]
-            [wolframite.core :as wl]
+            [wolframite.api.v1 :as wl]
             [wolframite.lib.helpers :as h]
             [wolframite.wolfram :as w :refer :all
              :exclude [* + - -> / < <= = == > >= fn
@@ -52,8 +52,8 @@ namespace as proxies for the actual Wolfram functions and symbols. It is the mos
 ; Notice that we have convenience vars for both Wolfram symbols and Wolframite aliases (see below) and thus both of the following work:
 
 (=
-  (wl/eval (w/+ 1 (w/- 1)))
-  (wl/eval (Plus 1 (Minus 1))))
+ (wl/eval (w/+ 1 (w/- 1)))
+ (wl/eval (Plus 1 (Minus 1))))
 
 ;; We can also mix Clojure and Wolfram - but the Clojure parts are evaluated on our side,
 ;; before the rest of the expression is translated and sent to Wolfram.
@@ -127,8 +127,8 @@ There is one more form, the _Wolfram string form_, which is the raw Wolfram code
 ;; explicitly tell Wolframite to treat it as an expression and not just as a primitive string, by passing it through `wl/wolfram-expr`:
 
 (wl/eval (w/Plus
-           '(Internal/StringToMReal "-1.5")
-           (wl/wolfram-expr "Minus[3]")))
+          '(Internal/StringToMReal "-1.5")
+          (wl/wolfram-expr "Minus[3]")))
 
 ;; ### Aside: Wolframite aliases {#sec-aliases-table}
 ;;
@@ -189,9 +189,9 @@ convenience functions of the evaluated form:
 
 ^:kindly/hide-code
 (quote
-  (wl/eval (Import "demo.csv.gz"
-                    ["Data" (Span 1 3)],
-                    (w/-> "HeaderLines" 1))))
+ (wl/eval (Import "demo.csv.gz"
+                  ["Data" (Span 1 3)],
+                  (w/-> "HeaderLines" 1))))
 
 (k/md "## Errors
 
@@ -219,7 +219,7 @@ We can leverage Clojure repl's documentation support with the Wolfram convenienc
                           (str (subs s# 0 (min 500 (count s#))) "...")))]))
 
 (show-stdout
-  (repl/doc GeoGraphics))
+ (repl/doc GeoGraphics))
 
 ;; Search for symbols (case-insensitive):
 (->> (repl/apropos #"(?i)geo")
@@ -228,7 +228,7 @@ We can leverage Clojure repl's documentation support with the Wolfram convenienc
 
 ;; Search complete docstrings for a pattern:
 (show-stdout
-  (repl/find-doc "two-dimensional"))
+ (repl/find-doc "two-dimensional"))
 
 (k/md "
 If we evaluate `(h/help! 'ArithmeticGeometricMean)` then it will open the Wolfram documentation page for `ArithmeticGeometricMean`.
@@ -236,10 +236,9 @@ If we evaluate `(h/help! 'ArithmeticGeometricMean)` then it will open the Wolfra
 We could instead ask for the link(s):")
 (h/help! w/ArithmeticGeometricMean :links true)
 #_"TODO(Jakub) the below shall replace the above when https://github.com/scicloj/clay/issues/171 fixed"
-#_
-(kindly/hide-code
-    (k/md (h/help! w/ArithmeticGeometricMean :links true))
-  false)
+#_(kindly/hide-code
+   (k/md (h/help! w/ArithmeticGeometricMean :links true))
+   false)
 
 (k/md "`h/help!` also works on whole expressions, providing docs for each symbol:")
 

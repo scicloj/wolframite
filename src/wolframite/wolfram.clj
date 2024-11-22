@@ -1,4 +1,4 @@
-(ns wolframite.wolfram "[GENERATED - see `...wolfram-syms.write-ns/write-ns!`]\n           Vars for all Wolfram functions (and their Clojurite aliases, where those exist).\n          These can be composed into expressions and passed to `wl/eval`.\n\n          BEWARE: This is based off a particular version of Wolfram and you may need to refresh it." (:require wolframite.impl.wolfram-syms.intern clojure.walk) (:refer-clojure :only [ns-unmap map let defmacro list]))
+(ns wolframite.wolfram "[GENERATED - see `...wolfram-syms.write-ns/write-ns!`]\n           Vars for all Wolfram functions (and their Clojurite aliases, where those exist).\n          These can be composed into expressions and passed to `wl/!`.\n\n          BEWARE: This is based off a particular version of Wolfram and you may need to refresh it." (:require wolframite.impl.wolfram-syms.intern clojure.walk) (:refer-clojure :only [ns-unmap map let defmacro list]))
 (do (clojure.core/ns-unmap clojure.core/*ns* (quote Byte)) (clojure.core/ns-unmap clojure.core/*ns* (quote Character)) (clojure.core/ns-unmap clojure.core/*ns* (quote Integer)) (clojure.core/ns-unmap clojure.core/*ns* (quote Number)) (clojure.core/ns-unmap clojure.core/*ns* (quote Short)) (clojure.core/ns-unmap clojure.core/*ns* (quote String)) (clojure.core/ns-unmap clojure.core/*ns* (quote Thread)))
 (def ^:dynamic *wolfram-version* 14.0)
 (def ^:dynamic *wolfram-kernel-name* "Mathematica 14.0.0 Kernel")
@@ -6448,7 +6448,7 @@
 (def ⮾ "a**b**c is a general associative, but non‐commutative, form of multiplication." (wolframite.impl.wolfram-syms.intern/wolfram-fn (quote ⮾)))
 (defmacro fn
   "Creates a Wolfram anonymous function with the given arguments and single expression body.
-  Example usage: `(wl/eval (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))`"
+  Example usage: `(wl/! (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))`"
   ([body-sexp]
    ;; A pure lambda with anonymous args (#, #1, ... = Slot[1], ...) or possibly no args at all
    `(list (quote ~'Function) ~(wolframite.impl.wolfram-syms.intern/quote-args body-sexp [])))

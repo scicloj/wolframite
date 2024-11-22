@@ -1,8 +1,8 @@
 (ns wolframite.impl.wolfram-syms.write-ns.includes
   "The content is to be included in the generated `wolframite.wolfram` ns."
   (:require
-    clojure.walk
-    wolframite.impl.wolfram-syms.intern)
+   clojure.walk
+   wolframite.impl.wolfram-syms.intern)
   (:refer-clojure :only [defmacro let list]))
 
 ;; Cursive: resolve as defn; Kondo: TBD
@@ -15,7 +15,7 @@
 ;;--INCLUDE-START--
 (defmacro fn
   "Creates a Wolfram anonymous function with the given arguments and single expression body.
-  Example usage: `(wl/eval (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))`"
+  Example usage: `(wl/! (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))`"
   ([body-sexp]
    ;; A pure lambda with anonymous args (#, #1, ... = Slot[1], ...) or possibly no args at all
    `(list (quote ~'Function) ~(wolframite.impl.wolfram-syms.intern/quote-args body-sexp [])))

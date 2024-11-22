@@ -11,16 +11,16 @@
 ;; First, let's require few Wolframite namespaces
 (ns quickstart
   (:require
-    [clojure.set :as set]
-    [clojure.string :as str]
-    [wolframite.core :as wl]
-    [wolframite.lib.helpers :as h]
-    [wolframite.runtime.defaults :as defaults]
-    [wolframite.tools.hiccup :as wh]
-    [wolframite.wolfram :as w :refer :all
-     :exclude [* + - -> / < <= = == > >= fn
-               Byte Character Integer Number Short String Thread]]
-    [scicloj.kindly.v4.kind :as k]))
+   [clojure.set :as set]
+   [clojure.string :as str]
+   [wolframite.api.v1 :as wl]
+   [wolframite.lib.helpers :as h]
+   [wolframite.runtime.defaults :as defaults]
+   [wolframite.tools.hiccup :as wh]
+   [wolframite.wolfram :as w :refer :all
+    :exclude [* + - -> / < <= = == > >= fn
+              Byte Character Integer Number Short String Thread]]
+   [scicloj.kindly.v4.kind :as k]))
 
 (k/md "## Init
 
@@ -34,12 +34,12 @@ which will perform the computations:")
 (k/md "## First things first
 
 To check that the kernel is working, try the following command:")
-(wl/eval (w/Dot [1 2 3] [4 5 6]))
+(wl/! (w/Dot [1 2 3] [4 5 6]))
 
 (k/md "
-`wl/eval` asks Wolframite to translate the following expression to Wolfram and send it to a Wolfram kernel for evaluation. ")
+`wl/!` asks Wolframite to translate the following expression to Wolfram and send it to a Wolfram kernel for evaluation. ")
 (k/md "We could also use one of our fancy aliases,")
-(wl/eval (w/<*> [1 2 3] [4 5 6]))
+(wl/! (w/<*> [1 2 3] [4 5 6]))
 (k/md ", which may be more familiar to the Mathematically inclined. If you're interested in adding your own aliases, then have a look at
 @sec-wolfram-basics.
 
@@ -49,7 +49,7 @@ Here, the `w` namespace is a preconfigured, but configurable, intermediary to Wo
 
 The above examples are the preferred ways for Clojure and Wolfram to interoperate. You can however, use Wolfram command strings directly, e.g.")
 
-(wl/eval "{1 , 2, 3} . {4, 5, 6}")
+(wl/! "{1 , 2, 3} . {4, 5, 6}")
 
 (k/md "More info in Understanding Wolframite > Wolfram string form @sec-wolfram-string-form")
 
@@ -89,7 +89,7 @@ This can be accessed by many functions directly, ")
 (wh/view (w/GeoNearest (w/Entity "Ocean") w/Here))
 (k/md ", or by posting a request to its online platform, Wolfram Alpha.")
 
-(wl/eval (w/WolframAlpha "number of moons of Saturn" "Result"))
+(wl/! (w/WolframAlpha "number of moons of Saturn" "Result"))
 
 (wh/view (w/WolframAlpha "number of moons of Saturn" "Result"))
 (k/md "Here, we've shown a response with and without the view function, for reference.")
@@ -104,7 +104,7 @@ In particular, the flagship product of Wolfram, the one you've probably heard of
  (-> (w/== 'E (w/* 'm (Power 'c 2)))
      TeXForm
      ToString
-     wl/eval))
+     wl/!))
 
 (k/md "originally answered the question 'what is mass?'")
 
@@ -115,7 +115,7 @@ In particular, the flagship product of Wolfram, the one you've probably heard of
 
      TeXForm
      ToString
-     wl/eval))
+     wl/!))
 
 (k/md "This is where Wolfram, and so Wolframite, really shines. And if you're interested in exploring this further, have a look at one of our longer tutorials.
 ")
@@ -138,7 +138,7 @@ With this, you can write:
 "
               (pr-str (wl/ns-exclusions :assert-as-expected))))
 
-(wl/eval (Map (w/fn [x] (Power x 2)) (Table 'i ['i 1 3])))
+(wl/! (Map (w/fn [x] (Power x 2)) (Table 'i ['i 1 3])))
 
 (k/md "## Wolfram has a lot to offer
 

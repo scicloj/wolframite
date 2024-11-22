@@ -3,7 +3,7 @@
   See also the explainer ns."
   ;; FIXME Why do we have both demo and explainer? Could we settle on one? If not then clarify the difference!
   (:require
-   [wolframite.core :as wl]
+   [wolframite.api.v1 :as wl]
    [wolframite.impl.jlink-instance :as jlink-instance]
    [wolframite.wolfram :as w]
    [wolframite.tools.graphics :as graphics]
@@ -19,7 +19,7 @@
   (wl/start!)
 
   ;; Low-level evaluate of a Wolfram expression (here, `Plus[1,2]`)
-  ;; You normally don't want this - just use wl/eval. Notice that all the connection details explicitly specified.
+  ;; You normally don't want this - just use wl/!. Notice that all the connection details explicitly specified.
   ((parse/parse-fn 'Plus (merge {:jlink-instance (jlink-instance/get)}
                                 defaults/default-options))
    1 2))
@@ -65,11 +65,11 @@
 ;; * Wolframite (nee Clojuratica) -- name is a WIP
 ;; ** Init (base example)
 
-(wl/eval (w/Dot [1 2 3] [4 5 6]))
+(wl/! (w/Dot [1 2 3] [4 5 6]))
 
 ;; ** Strings of WL code
 
-(wl/eval "{1 , 2, 3} . {4, 5, 6}")
+(wl/! "{1 , 2, 3} . {4, 5, 6}")
 ;; (convert/convert "{1 , 2, 3} . {4, 5, 6}" {:jlink-instance (wolframite.impl.jlink-instance/get)}) ;; FIXME: this doesn't work, probably shouldn't, maybe there is a path to remove in `convert/convert`
 ;; You should use this
 ;; (express/express "{1 , 2, 3} . {4, 5, 6}" {:jlink-instance (wolframite.impl.jlink-instance/get)})
@@ -83,7 +83,7 @@
 (W:Plus 1 2 3) ; ... and call it (delegating its evaluation to the Wolfram kernel)
 
 (def greetings
-  (wl/eval
+  (wl/!
    (w/fn [x] (w/StringJoin "Hello, " x "! This is a Mathematica function's output."))))
 
 (greetings "Stephen")
@@ -119,14 +119,14 @@
 
 ;; ** More Working Examples
 
-(wl/eval (w/GeoNearest (w/Entity "Ocean") 'Here))
+(wl/! (w/GeoNearest (w/Entity "Ocean") 'Here))
 
-(wl/eval (w/TextStructure "The cat sat on the mat."))
+(wl/! (w/TextStructure "The cat sat on the mat."))
 
 ;; - Wolfram Alpha
 
-(wl/eval (w/WolframAlpha "number of moons of Saturn" "Result"))
+(wl/! (w/WolframAlpha "number of moons of Saturn" "Result"))
 
 ;; - more interesting examples...
 
-(wl/eval (w/TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs")) ; returns a graph as data
+(wl/! (w/TextStructure "You can do so much with the Wolfram Language." "ConstituentGraphs")) ; returns a graph as data

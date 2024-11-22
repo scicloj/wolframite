@@ -2,7 +2,7 @@
 
 (ns for-developers.wolfram-for-clojurians
   (:require [scicloj.kindly.v4.kind :as k]
-            [wolframite.core :as wl]
+            [wolframite.api.v1 :as wl]
             [wolframite.wolfram :as w :refer :all
              :exclude [* + - -> / < <= = == > >= fn
                        Byte Character Integer Number Short String Thread]]))
@@ -39,7 +39,7 @@ In Wolfram, everything is global by default and you need to take care to avoid t
 (wl/->clj "Plus[Power[x, 2], Times[3, Power[y, 3]]]")
 
 ; And if we try to evaluate this:
-(wl/eval (w/+ (w/** 'x 2) (w/* 3 (w/** 'y 3))))
+(wl/! (w/+ (w/** 'x 2) (w/* 3 (w/** 'y 3))))
 ; we get the same expression back, because x and y aren't defined (yet).
 ;
 ; An expression's _head_ identifies the type of data or operation being represented - f.ex. `List` or `Plus`.
@@ -56,22 +56,21 @@ may use `#, #1, #2, ...` or `(Slot 1), (Slot 1), (Slot 2), ...` equivalent to Cl
 In Wolframite, you'll typically use `w/fn` or leverage the _operator form_ of functions (see @sec-operator-form).
 ")
 
-
 (k/md "#### [Lists](https://www.wolfram.com/language/fast-introduction-for-programmers/en/lists/)
 ")
 ; A Wolfram List `{1, "hello", 3.14}` becomes a vector in Wolframite: `[1, "hello", 3.14]`.
 ;
 ; List access by indexing (from 1) via `[[idx or a range a.k.a. Span]]`. Here we access the first element:
 (wl/->clj "{1,2,3}[[1]]")
-(wl/eval (Part [1 2 3] 1))
+(wl/! (Part [1 2 3] 1))
 
 ; Here we extract a sublist:
 (wl/->clj "{1,2,3}[[1 ;; 2]]")
 ; →
-(wl/eval (Part [1 2 3] (Span 1 2)))
+(wl/! (Part [1 2 3] (Span 1 2)))
 
 ; Many operations "thread" over lists, applying to each element:
-(wl/eval (Plus [1 2 3] 10))
+(wl/! (Plus [1 2 3] 10))
 
 (k/md "#### [Iterators](https://www.wolfram.com/language/fast-introduction-for-programmers/en/iterators/) simplify repetitive operations
 ")
@@ -96,7 +95,7 @@ Similar to Clojure maps, with a unique syntax using Rules (see @sec-rules). Fort
 ")
 ; are used to transform symbolic expressions into other symbolic expressions. F.ex. here we replace anything that matches
 ; `f[singleArg]` with the arg + 5:
-(wl/eval "Replace[f[100], f[x_] -> x + 5]")
+(wl/! "Replace[f[100], f[x_] -> x + 5]")
 ;  Here, `_` a.k.a. Blank is a pattern that matches any expression and a double blank `__` matches any sequence of expressions.
 ; We can name the captured value by prepending a name, as in `x_`.
 ; There is also `|` for alternatives, `_h` to capture expressions with the head `h`, `:>` for delayed rules.
@@ -111,14 +110,14 @@ Similar to Clojure maps, with a unique syntax using Rules (see @sec-rules). Fort
 ;
 ; We have two ways to represent entities in Wolframite, which both may be useful:
 (def LA-expr (Entity "City" ["LosAngeles" "California" "UnitedStates"]))
-(wl/eval (EntityValue LA-expr "Population"))
-(def LA-evaled (wl/eval LA-expr))
-(wl/eval (EntityValue LA-evaled "Population"))
+(wl/! (EntityValue LA-expr "Population"))
+(def LA-evaled (wl/! LA-expr))
+(wl/! (EntityValue LA-evaled "Population"))
 
 ;; To get entity properties, we need a small workaround - Wolfram allows `someEntity["Properties"]` but in our case it would mean
 ;; trying to use the list `(Entity ...)` as a function, which wouldn't work. So we construct an expression list explicitly:
-(take 3 (wl/eval (list (Entity "City" ["LosAngeles" "California" "UnitedStates"])
-                       "Properties")))
+(take 3 (wl/! (list (Entity "City" ["LosAngeles" "California" "UnitedStates"])
+                    "Properties")))
 
 (k/md "#### Various
 ")
