@@ -126,13 +126,13 @@ In this library, there are two approaches. For all official functions, the clean
 (-> 2
     (Power 1)
     (Subtract 2)
-    wl/eval)
+    wl/!)
 
 (k/md "To deal with general symbols, we return to one of LisPs' strengths: controlled evaluation. Historically necessitated by LisPs' 'code-as-data' paradigm, all LisPs can deal with general symbols by simply not evaluating them. This makes it easy to create and manipulate arbitrary Wolfram expressions, as we can simply treat them as unevaluated symbols (note our use of the new aliases too). ")
 (-> 'x
     (** 1)
     (w/- '5)
-    wl/eval)
+    wl/!)
 
 (k/md "This comes at the cost of having to 'mark' symbols, lists and functions manually, but it's a choice between being unevaluated by default (e.g. Wolfram, Maple), unevaluated when marked (LisPs) or no easy way to work with symbols (the vast majority of programming languages). It also comes at the cost of some 'gotchas' (see @sec-gotchas), but these are avoided for the most part by using a `wolframite.wolfram` namespace (and 'write-ns!' function), as introduced in the beginning.")
 
@@ -141,20 +141,20 @@ Functions are slightly more complicated. Functions can be defined in many differ
 
 If you're used to using Wolfram/Mathematica, then `f[x_]:=x^2` is simply
 ")
-(defn f [x] (wl/eval (** x 2)))
+(defn f [x] (wl/! (** x 2)))
 (f 2)
 (f 'x)
 
 (k/md ". If instead you want to define functions inside the Wolfram kernel, and attach them to arbitrary symbols, then the most ergonomic way is")
-(wl/eval (_= 'f (w/fn [x] (** x 2))))
-(wl/eval '(f 5))
-(wl/eval (list 'f 5))
+(wl/! (_= 'f (w/fn [x] (** x 2))))
+(wl/! '(f 5))
+(wl/! (list 'f 5))
 (k/md ", where `_=` is the Wolframite version of `:=` (SetDelayed). See the 'Gotchas' section (@sec-gotchas) for why. Rather than a direct alias, `w/fn` is a special form that allows you to define Wolfram functions in a convenient way. Note that `f` is a new symbol and therefore cannot be expected to be part of `wolframite.wolfram` or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.
 
 In my opinion, this mixes the best of Wolfram and Clojure: and scales well. The most explicitly Wolfram way of doing it however, is to write")
-(wl/eval (Clear 'f))
-(wl/eval (_= (list 'f (Pattern 'x (Blank))) (** 'x 2)))
-(wl/eval '(f 5))
+(wl/! (Clear 'f))
+(wl/! (_= (list 'f (Pattern 'x (Blank))) (** 'x 2)))
+(wl/! '(f 5))
 (k/md ", where we first removed all definitions from 'f' before reassigning the function.
 
 
@@ -175,7 +175,7 @@ Such is the case, we can demonstrate a new workflow. As noted above, it is strai
 (-> (w/* 3 w/I)
     (w/+ 5)
     ||2
-    wl/eval)
+    wl/!)
 
 (k/md "Here we make a shorthand, the absolute value squared. Defined as a Clojure function, it simply abstracts two Wolfram operations, which can then be used alongside others.
 
@@ -187,7 +187,7 @@ In fact, a little Clojure goes a long way. Look how easily we can add UX conveni
 (defmacro eval->
   "Extends the threading macro to automatically pass the result to wolframite eval."
   [& xs]
-  `(-> ~@xs wl/eval))
+  `(-> ~@xs wl/!))
 
 (defn TeX
   "UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might
@@ -198,12 +198,12 @@ In fact, a little Clojure goes a long way. Look how easily we can add UX conveni
 (defmacro TeX->
   "Extends the thread-first macro to automatically eval and prepare the expression for TeX display."
   [& xs]
-  `(-> ~@xs TeX wl/eval k/tex))
+  `(-> ~@xs TeX wl/! k/tex))
 
 (k/md "N.B. for those who're still new, `&` introduces the [rest](https://clojure.org/reference/special_forms) parameter. This collects together all of the arguments given to the function after this point into a list called `xs`, *i.e.* all of the arguments in these cases. Another special form is `~@xs`. This is what [splices](https://clojuredocs.org/clojure.core/unquote-splicing) the arguments into the symbol expression.
 
 With our new code, suddenly Wolfram-like nesting, *e.g.*")
-(k/tex (wl/eval (TeX (||2 (w/+ (w/* 'x w/I) 'y)))))
+(k/tex (wl/! (TeX (||2 (w/+ (w/* 'x w/I) 'y)))))
 
 (k/md "becomes")
 

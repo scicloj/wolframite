@@ -38,7 +38,7 @@ First of all, we redefine the shortcuts that we used in the previous part, befor
 (defmacro eval->
   "Extends the threading macro to automatically pass the result to wolframite eval."
   [& xs]
-  `(-> ~@xs wl/eval))
+  `(-> ~@xs wl/!))
 
 (defn TeX
   "UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might not realise that 'ToString' is necessary."
@@ -48,15 +48,15 @@ First of all, we redefine the shortcuts that we used in the previous part, befor
 (defmacro TeX->
   "Extends the thread-first macro to automatically eval and prepare the expression for TeX display."
   [& xs]
-  `(-> ~@xs TeX wl/eval k/tex))
+  `(-> ~@xs TeX wl/! k/tex))
 (defmacro eval->>
   "Extends the threading macro to automatically pass the result to wolframite eval."
   [& xs]
-  `(->> ~@xs wl/eval))
+  `(->> ~@xs wl/!))
 (defmacro TeX->>
   "Extends the thread-last macro to automatically eval and prepare the expression for TeX display."
   [& xs]
-  `(->> ~@xs TeX wl/eval k/tex))
+  `(->> ~@xs TeX wl/! k/tex))
 
 (defn ||2
   "The intensity: the value times the conjugate of the value or, equivalently, the absolute value squared."
@@ -253,12 +253,12 @@ For this, we will define a few utility functions, that also demonstrate Wolfram'
   [[t1 phase]]
   [t1 phase (Efield t1 t1 20E-6 20E-6 phase)])
 
-(wl/eval (w/_= 'nums (mapv Efield--transmission-phase
-                           (coordinates
-                            (math/sqrt 50E-6)
-                            (math/sqrt 700E-6)
-                            -0.001
-                            0.001))))
+(wl/! (w/_= 'nums (mapv Efield--transmission-phase
+                        (coordinates
+                         (math/sqrt 50E-6)
+                         (math/sqrt 700E-6)
+                         -0.001
+                         0.001))))
 
 (wh/view
  (w/ListPlot3D 'nums

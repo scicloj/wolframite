@@ -12,7 +12,8 @@
             [scicloj.kindly.v4.kind :as kind]
             [scicloj.kindly.v4.kind :as k]
             [clojure.repl :as repl]
-            [wolframite.core :as wl]
+            [wolframite.api.v1 :as wl]
+            [wolframite.core :as wc]
             [wolframite.lib.helpers :as h]
             [wolframite.wolfram :as w :refer :all
              :exclude [* + - -> / < <= = == > >= fn
@@ -43,23 +44,23 @@ There are three ways of writing these expressions.
 
 The primary form you will encounter is the _evaluated form_, which uses vars from the [`wolframite.wolfram`](https://github.com/scicloj/wolframite/blob/main/src/wolframite/wolfram.clj)
 namespace as proxies for the actual Wolfram functions and symbols. It is the most convenient form, with support for code completion and mixing with evaluated Clojure code:")
-(wl/eval (w/+ (clojure.core/- 5 4) (w/Minus 1)))
+(wl/! (w/+ (clojure.core/- 5 4) (w/Minus 1)))
 
 ; When requiring `wolframite.wolfram`, we can "refer" most of its symbols, excluding those that conflict with Clojure or Java (such as `+`;
 ; have a look at the `require` at the top of this page), and thus we can also write:
-(wl/eval (w/+ (- 5 4) (Minus 1)))
+(wl/! (w/+ (- 5 4) (Minus 1)))
 
 ; Notice that we have convenience vars for both Wolfram symbols and Wolframite aliases (see below) and thus both of the following work:
 
 (=
-  (wl/eval (w/+ 1 (w/- 1)))
-  (wl/eval (Plus 1 (Minus 1))))
+ (wl/! (w/+ 1 (w/- 1)))
+ (wl/! (Plus 1 (Minus 1))))
 
 ;; We can also mix Clojure and Wolfram - but the Clojure parts are evaluated on our side,
 ;; before the rest of the expression is translated and sent to Wolfram.
 ;;
 ;; The evaluated form is actually translated into the _raw form_ (see @sec-raw-form) before being evaluated, as we can see if
-;; we run it on its own, without passing it to `wl/eval`:
+;; we run it on its own, without passing it to `wl/!`:
 (w/Plus (- 5 4) (w/Minus 1))
 
 ;; You can see here that the convenience functions from the `w/` namespace essentially evaluate to
@@ -78,16 +79,16 @@ This is what Wolframite uses internally.
 
 Notice the `'` quote in front of the expression, telling Clojure not to evaluate it but return it as-is:")
 
-(wl/eval '(+ 1 (Minus 1)))
+(wl/! '(+ 1 (Minus 1)))
 
 ;; We could also be more explicit and replace `'` with the `quote` that it turns into under the hood:
 
-(wl/eval (quote (+ 1 (Minus 1))))
+(wl/! (quote (+ 1 (Minus 1))))
 
 ;; However, quoting the whole form does not allow us to have any evaluations inside the expression.
 ;; We can instead build the form manually, quoting only the symbols:
 
-(wl/eval (list 'Plus 1 (list 'Minus 1)))
+(wl/! (list 'Plus 1 (list 'Minus 1)))
 
 ;; Notice that you will leverage quoting also with the evaluated form, namely when you create and refer to Wolfram-side
 ;; variables, such as those created by `(w/= 'myVar ...)`.
@@ -113,7 +114,7 @@ Notice the `'` quote in front of the expression, telling Clojure not to evaluate
 
 There is one more form, the _Wolfram string form_, which is the raw Wolfram code in a string:")
 
-(wl/eval "Plus[1,Minus[1]]")
+(wl/! "Plus[1,Minus[1]]")
 
 ;; This is useful when you just want to paste in some Wolfram of when you need to use a feature that
 ;; we don't yet support.
@@ -124,11 +125,11 @@ There is one more form, the _Wolfram string form_, which is the raw Wolfram code
 ;; does not (yet) support that which you are trying to do.
 ;;
 ;; When nesting a Wolfram string form, we need to
-;; explicitly tell Wolframite to treat it as an expression and not just as a primitive string, by passing it through `wl/wolfram-expr`:
+;; explicitly tell Wolframite to treat it as an expression and not just as a primitive string, by passing it through `wc/wolfram-expr`:
 
-(wl/eval (w/Plus
-           '(Internal/StringToMReal "-1.5")
-           (wl/wolfram-expr "Minus[3]")))
+(wl/! (w/Plus
+       '(Internal/StringToMReal "-1.5")
+       (wc/wolfram-expr "Minus[3]")))
 
 ;; ### Aside: Wolframite aliases {#sec-aliases-table}
 ;;
@@ -137,7 +138,7 @@ There is one more form, the _Wolfram string form_, which is the raw Wolfram code
 ;; all the built-in aliases that we currently support:
 
 ^:kindly/hide-code
-(k/hidden (def recommended-exclusions (set (wl/ns-exclusions))))
+(k/hidden (def recommended-exclusions (set (wc/ns-exclusions))))
 
 (k/table {:column-names [:Alias :Wolfram "Can be used without `w/` prefix?"],
           :row-vectors (-> wolframite.runtime.defaults/all-aliases
@@ -147,9 +148,9 @@ There is one more form, the _Wolfram string form_, which is the raw Wolfram code
 
 (k/md "Thus, the following two expressions are equivalent")
 
-(wl/eval '(+ 1 (- 1)))
+(wl/! '(+ 1 (- 1)))
 
-(wl/eval '(Plus 1 (Minus 1)))
+(wl/! '(Plus 1 (Minus 1)))
 
 ;; You can even add your own aliases, as discussed in @sec-custom-aliases.
 
@@ -158,9 +159,9 @@ There is one more form, the _Wolfram string form_, which is the raw Wolfram code
 Most Wolfram functions are global, but they can also be placed inside modules and need to be referred to by their
 fully qualified names. While Wolfram uses `` ` `` to separate the module and the symbol, we write it as `/`. Thus, these two are equivalent:")
 
-(wl/eval "Internal`StringToMReal[\"-1.5\"]")
+(wl/! "Internal`StringToMReal[\"-1.5\"]")
 
-(wl/eval '(Internal/StringToMReal "-1.5"))
+(wl/! '(Internal/StringToMReal "-1.5"))
 
 ;; (Of course, you normally do not want to use the Internal/* functions, as they may disappear or change between Wolfram versions.)
 
@@ -189,9 +190,9 @@ convenience functions of the evaluated form:
 
 ^:kindly/hide-code
 (quote
-  (wl/eval (Import "demo.csv.gz"
-                    ["Data" (Span 1 3)],
-                    (w/-> "HeaderLines" 1))))
+ (wl/! (Import "demo.csv.gz"
+               ["Data" (Span 1 3)],
+               (w/-> "HeaderLines" 1))))
 
 (k/md "## Errors
 
@@ -200,12 +201,12 @@ we are not able to detect that. In such cases, the failure will often be indicat
 
 Here it works as designed:")
 
-(try (wl/eval (FromDigits "-87.6"))
+(try (wl/! (FromDigits "-87.6"))
      (catch Exception e
        (k/hiccup [:blockquote (ex-message e)])))
 
 ;; Correct:
-(wl/eval (FromDigits "87"))
+(wl/! (FromDigits "87"))
 
 (k/md "## Documentation
 
@@ -219,7 +220,7 @@ We can leverage Clojure repl's documentation support with the Wolfram convenienc
                           (str (subs s# 0 (min 500 (count s#))) "...")))]))
 
 (show-stdout
-  (repl/doc GeoGraphics))
+ (repl/doc GeoGraphics))
 
 ;; Search for symbols (case-insensitive):
 (->> (repl/apropos #"(?i)geo")
@@ -228,7 +229,7 @@ We can leverage Clojure repl's documentation support with the Wolfram convenienc
 
 ;; Search complete docstrings for a pattern:
 (show-stdout
-  (repl/find-doc "two-dimensional"))
+ (repl/find-doc "two-dimensional"))
 
 (k/md "
 If we evaluate `(h/help! 'ArithmeticGeometricMean)` then it will open the Wolfram documentation page for `ArithmeticGeometricMean`.
@@ -236,10 +237,9 @@ If we evaluate `(h/help! 'ArithmeticGeometricMean)` then it will open the Wolfra
 We could instead ask for the link(s):")
 (h/help! w/ArithmeticGeometricMean :links true)
 #_"TODO(Jakub) the below shall replace the above when https://github.com/scicloj/clay/issues/171 fixed"
-#_
-(kindly/hide-code
-    (k/md (h/help! w/ArithmeticGeometricMean :links true))
-  false)
+#_(kindly/hide-code
+   (k/md (h/help! w/ArithmeticGeometricMean :links true))
+   false)
 
 (k/md "`h/help!` also works on whole expressions, providing docs for each symbol:")
 
