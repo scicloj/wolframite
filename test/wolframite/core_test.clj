@@ -25,7 +25,7 @@
 
 (deftest various-data-types
   (wl/start!)
-  (is (= -1(wl/eval '(Minus 1)))
+  (is (= -1 (wl/eval '(Minus 1)))
       "Number")
   (is (= "1" (wl/eval (ToString 1)))
       "String")
