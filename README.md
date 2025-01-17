@@ -6,7 +6,7 @@ An interface between Clojure and the Wolfram Language (Supports [Mathematica](ht
 
 ## Status
 
-**We are working on wrapping up version 1.0, focusing on documentation. You can [keep track of what is happening in this discussion](https://github.com/scicloj/wolframite/discussions/17).**
+Stable
 
 ## What is Wolframite? ##
 
