@@ -6,7 +6,7 @@
         babashka/fs {:mvn/version "0.5.20"}}
 
  :aliases {:neil {:project {:name org.scicloj/wolframite
-                            :version "1.0.0-SNAPSHOT"}}
+                            :version "1.0.0"}}
            :dev {:extra-paths ["dev" "test" "notebooks"]
                  :jvm-opts ["-Djdk.attach.allowAttachSelf"]
                  :extra-deps {com.clojure-goes-fast/clj-memory-meter {:mvn/version "0.1.3"}
