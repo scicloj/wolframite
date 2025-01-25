@@ -145,3 +145,7 @@ With this, you can write:
 
 You may also want to browse the [thousands of functions from various domains that Wolfram provides](https://www.wolfram.com/language/core-areas/).
 These domains include Machine Learning, Calculus & Algebra, Optimization, Geography, and many more.")
+
+(k/md "## Beware gotchas
+
+@sec-gotchas describes some traps you want to avoid. It may be a good time to quickly scan it.")

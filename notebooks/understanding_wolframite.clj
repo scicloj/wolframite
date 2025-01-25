@@ -208,7 +208,7 @@ Here it works as designed:")
 ;; Correct:
 (wl/! (FromDigits "87"))
 
-(k/md "## Documentation
+(k/md "## Function documentation
 
 We can leverage Clojure repl's documentation support with the Wolfram convenience vars:")
 
@@ -246,3 +246,11 @@ We could instead ask for the link(s):")
 (h/help! '(GeoImage (Entity "City" ["NewYork" "NewYork" "UnitedStates"])) :links true)
 
 ;; (Notice that help! works both with symbols and our convenience vars.)
+
+(k/md "## Further reading
+       
+Congratulations, you have now a basic understanding of Wolframite. Feel free to explore the rest of the documentation. We'd especially point out some:
+
+* @sec-gotchas - Gotchas
+* ...
+")

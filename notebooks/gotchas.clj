@@ -1,8 +1,36 @@
+;; # Gotchas... {#sec-gotchas}
 (ns gotchas
   [:require
-   [scicloj.kindly.v4.kind :as k]])
+   [scicloj.kindly.v4.kind :as k]
+   [wolframite.api.v1 :as wl]
+   [wolframite.wolfram :as w :refer :all
+    :exclude [* + - -> / < <= = == > >= fn
+              Byte Character Integer Number Short String Thread]]])
 
-(k/md "# Gotchas... {#sec-gotchas}
+
+(wl/start!)
+
+(k/md "
+## What _not_ to do when using Wolfram via Wolframite
+
+### Don't: Transfer huge data unnecessarily
+ 
+ By default, `(wl/! <expr>)` will transfer the return value back to Clojure side and turn it into Clojure data.
+ You _don't_ want to do that if the data is big.
+ 
+ **Do**: Keep the data on Wolfram-side, assigning it to a symbol. Example:
+")
+
+(def csv 'csv) ; Make the Wolfram-side symbol easier to use in Clojure
+(wl/! (w/do  (w/= csv "some really big value, read from a file...") ; <2>
+             (w/Length csv))) ; <3>
+
+;; We use `w/=` to assign the value to a Wolfram-side name, so that we can use it in subsequent expression.
+;; This also returns the value, which we want to ignore, so we wrap it in `w/do` and return something else - length,
+;; a small subset, ... .
+
+(k/md "## Language differences between Wolfram and Wolframite to be aware of
+
 Although we try to avoid such things, sometimes, when you're fighting the host language, it's just not practical to carry over the original conventions. Here we will try to keep an up-to-date list of possible surprises, when coming from Wolfram to Wolframite (that are not easy to 'fix').
 
 **^** (`Power`) - Despite allowing a wider range of characters, we cannot use `^` in Wolframite because it is reserved for adding metadata to virtually all Clojure symbols. `(^ x 2)` will probably not do what you expect! Thus we use `(w/** 'x 2)` instead.
