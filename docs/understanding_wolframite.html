@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-626149efe8f5d16e1d391ba177679bf0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -286,7 +286,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#aside-translating-wolfram-to-wolframite" id="toc-aside-translating-wolfram-to-wolframite" class="nav-link" data-scroll-target="#aside-translating-wolfram-to-wolframite"><span class="header-section-number">3.3</span> Aside: Translating Wolfram to Wolframite</a></li>
   <li><a href="#errors" id="toc-errors" class="nav-link" data-scroll-target="#errors"><span class="header-section-number">3.4</span> Errors</a></li>
-  <li><a href="#documentation" id="toc-documentation" class="nav-link" data-scroll-target="#documentation"><span class="header-section-number">3.5</span> Documentation</a></li>
+  <li><a href="#function-documentation" id="toc-function-documentation" class="nav-link" data-scroll-target="#function-documentation"><span class="header-section-number">3.5</span> Function documentation</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading"><span class="header-section-number">3.6</span> Further reading</a></li>
   </ul>
 </nav>
     </div>
@@ -741,8 +742,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb41"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="dv">87</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="documentation" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="documentation"><span class="header-section-number">3.5</span> Documentation</h2>
+<section id="function-documentation" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="function-documentation"><span class="header-section-number">3.5</span> Function documentation</h2>
 <p>We can leverage Clojure repl’s documentation support with the Wolfram convenience vars:</p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb42"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>(show-stdout</span>
@@ -793,6 +794,14 @@ wolframite.wolfram/AstroGraphics
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a> <span class="st">"https://reference.wolfram.com/language/ref/Entity.html"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>(Notice that help! works both with symbols and our convenience vars.)</p>
+</section>
+<section id="further-reading" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="further-reading"><span class="header-section-number">3.6</span> Further reading</h2>
+<p>Congratulations, you have now a basic understanding of Wolframite. Feel free to explore the rest of the documentation. We’d especially point out some:</p>
+<ul>
+<li><a href="gotchas.html" class="quarto-xref"><span>Chapter 4</span></a> - Gotchas</li>
+<li>…</li>
+</ul>
 <div style="background-color:grey;height:2px;width:100%;"></div>
 <div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/understanding_wolframite.clj">notebooks/understanding_wolframite.clj</a></small></small></pre></div>
 

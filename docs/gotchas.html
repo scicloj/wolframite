@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-626149efe8f5d16e1d391ba177679bf0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -267,8 +267,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#what-not-to-do-when-using-wolfram-via-wolframite" id="toc-what-not-to-do-when-using-wolfram-via-wolframite" class="nav-link active" data-scroll-target="#what-not-to-do-when-using-wolfram-via-wolframite"><span class="header-section-number">4.1</span> What <em>not</em> to do when using Wolfram via Wolframite</a>
+  <ul>
+  <li><a href="#dont-transfer-huge-data-unnecessarily" id="toc-dont-transfer-huge-data-unnecessarily" class="nav-link" data-scroll-target="#dont-transfer-huge-data-unnecessarily"><span class="header-section-number">4.1.1</span> Don’t: Transfer huge data unnecessarily</a></li>
+  </ul></li>
+  <li><a href="#language-differences-between-wolfram-and-wolframite-to-be-aware-of" id="toc-language-differences-between-wolfram-and-wolframite-to-be-aware-of" class="nav-link" data-scroll-target="#language-differences-between-wolfram-and-wolframite-to-be-aware-of"><span class="header-section-number">4.2</span> Language differences between Wolfram and Wolframite to be aware of</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -307,8 +317,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceClojure">
 <div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">ns</span> gotchas</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  [<span class="at">:require</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   [scicloj.kindly.v4.kind <span class="at">:as</span> k]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   [scicloj.kindly.v4.kind <span class="at">:as</span> k]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>   [wolframite.api.v1 <span class="at">:as</span> wl]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>   [wolframite.wolfram <span class="at">:as</span> w <span class="at">:refer</span> <span class="at">:all</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">:exclude</span> [<span class="kw">*</span> <span class="kw">+</span> <span class="kw">-</span> <span class="kw">-&gt;</span> <span class="kw">/</span> <span class="kw">&lt;</span> <span class="kw">&lt;=</span> <span class="kw">=</span> <span class="kw">==</span> <span class="kw">&gt;</span> <span class="kw">&gt;=</span> <span class="kw">fn</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>              Byte Character Integer Number Short String Thread]]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb2"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(wl/start!)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb3"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:status</span> <span class="at">:ok</span>, <span class="at">:wolfram-version</span> <span class="fl">14.1</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="what-not-to-do-when-using-wolfram-via-wolframite" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="what-not-to-do-when-using-wolfram-via-wolframite"><span class="header-section-number">4.1</span> What <em>not</em> to do when using Wolfram via Wolframite</h2>
+<section id="dont-transfer-huge-data-unnecessarily" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="dont-transfer-huge-data-unnecessarily"><span class="header-section-number">4.1.1</span> Don’t: Transfer huge data unnecessarily</h3>
+<p>By default, <code>(wl/! &lt;expr&gt;)</code> will transfer the return value back to Clojure side and turn it into Clojure data. You <em>don’t</em> want to do that if the data is big.</p>
+<p><strong>Do</strong>: Keep the data on Wolfram-side, assigning it to a symbol. Example:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> csv </span><span class="at">'csv</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Make the Wolfram-side symbol easier to use in Clojure</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/! (w/do  (w/= csv <span class="st">"some really big value, read from a file..."</span>) <span class="co">; &lt;2&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>             (w/Length csv)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>&lt;3&gt;</p>
+<p>We use <code>w/=</code> to assign the value to a Wolfram-side name, so that we can use it in subsequent expression. This also returns the value, which we want to ignore, so we wrap it in <code>w/do</code> and return something else - length, a small subset, … .</p>
+</section>
+</section>
+<section id="language-differences-between-wolfram-and-wolframite-to-be-aware-of" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="language-differences-between-wolfram-and-wolframite-to-be-aware-of"><span class="header-section-number">4.2</span> Language differences between Wolfram and Wolframite to be aware of</h2>
 <p>Although we try to avoid such things, sometimes, when you’re fighting the host language, it’s just not practical to carry over the original conventions. Here we will try to keep an up-to-date list of possible surprises, when coming from Wolfram to Wolframite (that are not easy to ‘fix’).</p>
 <p><strong>^</strong> (<code>Power</code>) - Despite allowing a wider range of characters, we cannot use <code>^</code> in Wolframite because it is reserved for adding metadata to virtually all Clojure symbols. <code>(^ x 2)</code> will probably not do what you expect! Thus we use <code>(w/** 'x 2)</code> instead.</p>
 <p><strong>:=</strong> (<code>SetDelayed</code>) - Is actually <code>_=</code> in Wolframite. This is because <code>:</code> is usually a reserved in Clojure for creating keywords. It’s worth noting though that this is possibly nicer, in a way, because <code>_</code> looks like a placeholder, and defining a placeholder for the expression is what it does. It also sort of implies a delay…</p>
@@ -323,6 +366,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/gotchas.clj">notebooks/gotchas.clj</a></small></small></pre></div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
