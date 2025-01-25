@@ -23,7 +23,7 @@
 
 (def csv 'csv) ; Make the Wolfram-side symbol easier to use in Clojure
 (wl/! (w/do  (w/= csv "some really big value, read from a file...")
-             (w/Length csv)))
+             nil))
 
 ;; We use `w/=` to assign the value to a Wolfram-side name, so that we can use it in subsequent expression.
 ;; This also returns the value, which we want to ignore, so we wrap it in `w/do` and return something else - length,
