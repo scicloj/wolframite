@@ -24,7 +24,8 @@
   (let [wl-str (wl/->wl graphics-form {:output-fn str})
         input-img    (.evaluateToImage (proto/kernel-link (jlink-instance/get)) wl-str 0 0 0 true)
         b64img (bytes->b64encodedString input-img)]
-    (with-meta (img b64img) {:wolfram wl-str})))
+    (with-meta (img b64img) {:kind/hiccup true
+                             :wolfram wl-str})))
 
 (defn view* [graphics-form folded?]
   (let [wl-str (wl/->wl graphics-form {:output-fn str})]
