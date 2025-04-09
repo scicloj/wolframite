@@ -141,7 +141,9 @@ clojure -X:run-tests
 
 ### Deployment
 
-Build the jar with `clojure -T:build jar` then deploy with
+If required, update version in `deps.edn` under `:aliases - :neil - :project - :version` (possibly using `neil`).
+
+then build the jar with `clojure -T:build jar` then deploy with
 `env CLOJARS_USERNAME=<tbd> CLOJARS_PASSWORD=<clojars-token> clojure -T:build deploy`.
 
 Note: You need to log in to Clojars and generate a deployment token. You also need to be added to
