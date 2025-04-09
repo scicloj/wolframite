@@ -90,6 +90,11 @@ Yes!
 
 (wh/view (w/GridGraph [5 5]))
 
+(comment
+  ;; We could also show it in a Java window:
+  ((requiring-resolve 'wolframite.tools.experimental/show!)
+   (w/GridGraph [5 5])))
+
 (wh/view (w/ChemicalData "Ethanol" "StructureDiagram"))
 
 (wh/view (w/TextStructure "The cat sat on the mat."))
