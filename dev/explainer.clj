@@ -4,7 +4,7 @@
   (:require
    [wolframite.api.v1 :as wl]
    [wolframite.wolfram :as w]
-   [wolframite.tools.graphics :as graphics]
+   [wolframite.tools.graphics-legacy-awt :as graphics]
    [wolframite.base.parse :as parse :refer [custom-parse]]
    [wolframite.lib.helpers :as h]))
 

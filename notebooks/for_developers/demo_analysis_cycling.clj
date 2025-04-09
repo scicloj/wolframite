@@ -171,7 +171,7 @@ Let's see how it works:")
 (comment (->> rows
               (w/Map (rowvals' "start_lat" "start_lng"))
               w/GeoHistogram
-              ((requiring-resolve 'wolframite.tools.experimental/show!))))
+              ((requiring-resolve 'wolframite.tools.graphics/show!))))
 ;; but for this web page, we want to export and include the graphic as an image:
 (let [file (io/file "notebooks" "start-locs.webp")]
   (when-not (.exists file)

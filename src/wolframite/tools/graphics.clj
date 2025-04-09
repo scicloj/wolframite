@@ -1,82 +1,48 @@
 (ns wolframite.tools.graphics
-  "Displaying WL graphics with java.awt"
-  ;; Wolfram has You use MathCanvas when you want an AWT component and MathGraphicsJPanel when you
-  ;; want a Swing component - see https://reference.wolfram.com/language/JLink/tutorial/CallingJavaFromTheWolframLanguage.html#20608
-  ;; Notice that KernelLink also has evaluateToImage() and evaluateToTypeset() methods
-  (:require [wolframite.impl.jlink-instance :as jlink-instance]
-            [wolframite.impl.protocols :as proto]
-            [wolframite.core :as wl])
-  (:import (java.awt Color Component Frame)
-           (java.awt.image BufferedImage)
-           (javax.imageio ImageIO)
-           (java.io ByteArrayInputStream)
-           (java.awt.event WindowAdapter ActionEvent)))
+  "Displaying WL graphics with Java Swing"
+  (:require [wolframite.core :as wl]
+            [wolframite.impl.jlink-instance :as jlink-instance]
+            [wolframite.impl.protocols :as proto])
+  (:import [javax.swing JFrame JPanel SwingUtilities]
+           [java.awt Dimension]
+           [com.wolfram.jlink MathGraphicsJPanel]))
 
-(defn scaled
-  [x factor]
-  (* x (or factor 1)))
+(defonce ^:private app (promise))
 
-(defn make-math-canvas!
-  ([] (make-math-canvas! (jlink-instance/get)))
-  ([jlink-instance & {:keys [scale-factor]}]
-   (doto (proto/make-math-canvas! jlink-instance)
-     (.setBounds 25, 25, (scaled 280 scale-factor), (scaled 240 scale-factor)))))
-
-(defn make-app! [^Component math-canvas & {:keys [scale-factor]}]
-  (.evaluateToInputForm
-    (proto/kernel-link (jlink-instance/get))
-    (str "Needs[\"" (proto/jlink-package-name (jlink-instance/get)) "\"]")
-    0)
-  (.evaluateToInputForm (proto/kernel-link (jlink-instance/get)) "ConnectToFrontEnd[]" 0)
-  (let [app (Frame.)]
-    (doto app
-      (.setLayout nil)
-      (.setTitle "Wolframite Graphics")
-      (.add math-canvas)
-      (.setBackground Color/white)
-      (.setSize (scaled 300 scale-factor) (scaled 400 scale-factor))
-      (.setLocation 50 50)
-      (.setVisible true)
-      (.addWindowListener (proxy [WindowAdapter] []
-                            (windowClosing [^ActionEvent e]
-                              (.dispose app)))))))
+(defn- make-app! []
+  (JFrame/setDefaultLookAndFeelDecorated true)
+  (let [math ^JPanel (MathGraphicsJPanel.)
+        frame (doto (JFrame. "Wolframite")
+                (.setDefaultCloseOperation JFrame/DISPOSE_ON_CLOSE)
+                (-> .getContentPane (.add math))
+                (.setLocation 100 100)
+                (.setMinimumSize (Dimension. 300 300)))]
+    {:math math, :frame frame}))
 
 (defn show!
-  [math-canvas wl-form]
-  (.setMathCommand math-canvas wl-form))
+  "Display a graphical Wolfram expression result in a window - such as that of  `Plot[...]`.
+  - `wl-expr` - string or Wolframite expression"
+  ;; Contrary to tool.graphics, this uses the newer Swing and JLink's own math canvas component
+  ;; TODO Sometimes, the graphics is scaled to the frame, sometimes not; why/when?!
+  ([wl-expr] (show! (jlink-instance/get) wl-expr))
+  ([jlink-instance wl-expr]
+   (when-not (realized? app)
+     (deliver app (make-app!)))
+   (let [{:keys [math frame]} @app
+         wl-expr-str (if (string? wl-expr)
+                       wl-expr
+                       (str (wl/->wl wl-expr {:jlink-instance jlink-instance})))]
+     (doto math
+       (.setLink (proto/kernel-link jlink-instance))
+       (.setMathCommand wl-expr-str))
+     (doto frame
+       ;(.pack) ; we'd want this, if the MathCanvas had any size info :'(
+       (.setVisible true)
+       ;; TODO The window does not jump to the front, despite .toFront
+       ;; (depends on win. managers; may only work for windows in the same app...)
+       (.toFront)))))
 
 (comment
-
-  (def canvas (make-math-canvas! (jlink-instance/get) :scale-factor 1.5))
-  (def app (make-app! canvas :scale-factor 1.5))
-
-  (show! canvas "GeoGraphics[]")
-
-  (.dispose app))
-
-  ;; TODO: improve
-  ;; - better api (?)
-  ;; - accept options
-  ;; TODO: patch WL macro adding :show option
-  ;; e.g.
-  ;;
-  ;; (WL :show (GeoGraphics))
-
-(comment ;; fun is good
-
-  (show! canvas "GeoGraphics[]")
-  (show! canvas "Graph3D[GridGraph[{3, 3, 3}, VertexLabels -> Automatic]]")
-  (show! canvas "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]"))
-
-(comment ;; better quality images
-
-  (.evaluateToImage (proto/kernel-link (jlink-instance/get)) "GeoGraphics[]" 300 300) ;; this has another arity where you can set `dpi`
-  ;; then byte array -> java.awt.Image
-  ;; and (.setImage canvas)
-
-  (let [{:keys [height width]} (bean (.getSize app))]
-    (.setImage canvas
-               (ImageIO/read (ByteArrayInputStream. (.evaluateToImage (proto/kernel-link (jlink-instance/get)) "GeoGraphics[]" (int width) (int height) 600 true))))))
-
-  ;; doesn't make much difference (maybe a bit), seems like we can go lower dpi, but we already get maximum by default (?)
-
+  (-> (seq (java.awt.Frame/getFrames)) first (.dispose))
+  (show! (jlink-instance/get) "Plot[Sin[x], {x, 0, 6 Pi}]")
+  (show! (jlink-instance/get) "Plot[Sin[x], {x, 0, 4 Pi}]"))

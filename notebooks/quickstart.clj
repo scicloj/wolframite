@@ -92,7 +92,7 @@ Yes!
 
 (comment
   ;; We could also show it in a Java window:
-  ((requiring-resolve 'wolframite.tools.experimental/show!)
+  ((requiring-resolve 'wolframite.tools.graphics/show!)
    (w/GridGraph [5 5])))
 
 (wh/view (w/ChemicalData "Ethanol" "StructureDiagram"))
