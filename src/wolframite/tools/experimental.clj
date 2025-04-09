@@ -15,7 +15,8 @@
         frame (doto (JFrame. "Wolframite")
                 (.setDefaultCloseOperation JFrame/DISPOSE_ON_CLOSE)
                 (-> .getContentPane (.add math))
-                (.setLocation 100 100))]
+                (.setLocation 100 100)
+                (.setMinimumSize (Dimension. 300 300)))]
     {:math math, :frame frame}))
 
 (defn show!
@@ -31,12 +32,12 @@
                        wl-expr
                        (str (wl/->wl wl-expr {:jlink-instance jlink-instance})))]
      (doto math
-       (.setMinimumSize (Dimension. 200 200)) ; TODO Does not seem to have any effect?! We get a tiny window...
        (.setLink (proto/kernel-link jlink-instance))
        (.setMathCommand wl-expr-str))
      (doto frame
+       (.pack)
        (.setVisible true)
-       ;; TODO The window does not jumpt to the front, despite .toFront
+       ;; TODO The window does not jump to the front, despite .toFront
        (.toFront)))))
 
 (comment
