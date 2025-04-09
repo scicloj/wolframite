@@ -1,4 +1,11 @@
 (ns wolframite.api.v1
+  "The main user-facing namespace of Wolframite (in conjunction with wolframite.wolfram).
+
+  Public functions to start! and stop! the kernel, load packages, and
+  perform conversions to and from the Wolfram language.
+
+  See also `wolframite.tools.hiccup/view`
+  "
   (:refer-clojure :exclude [eval])
   (:require [wolframite.core :as core]
             [wolframite.lib.helpers :as helper]))
