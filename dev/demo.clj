@@ -6,7 +6,7 @@
    [wolframite.api.v1 :as wl]
    [wolframite.impl.jlink-instance :as jlink-instance]
    [wolframite.wolfram :as w]
-   [wolframite.tools.graphics :as graphics]
+   [wolframite.tools.graphics-legacy-awt :as graphics]
    [wolframite.base.parse :as parse]
    [wolframite.runtime.defaults :as defaults]
    [wolframite.base.convert :as convert]
