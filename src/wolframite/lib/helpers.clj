@@ -12,8 +12,8 @@
   "Get web based help for a given symbol or form.
   If a form is given this will operate on all symbols found in the form.
   By default, opens web browser with relevant reference documentation.
-  You can pass `links true` if you just want URLs."
-  [sym-or-form & {:keys [return-links links]}]
+  You can append `:return-links true` if you just want URLs."
+  [sym-or-form & {:keys [return-links links]}] ; :links is legacy
   (let [return-links? (or return-links links)
         sym-or-form' (or (intern/interned-var-val->symbol sym-or-form)
                          sym-or-form)

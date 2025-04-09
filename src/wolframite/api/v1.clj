@@ -80,9 +80,9 @@
   core/load-package!)
 
 (def help!
-  "Get web-based help for a given symbol or form.
+  "Get web-based help for a given _symbol_ or _form_.
 
-  If a form is given, this will operate on all symbols found in the form and, by default, opens a web browser with relevant documentation. You can pass `links true` if you just want URLs."
+  If a form is given, this will operate on all symbols found in the form and, by default, opens a web browser with relevant documentation. You can append `:return-links true` if you just want URLs."
   helper/help!)
 
 (comment

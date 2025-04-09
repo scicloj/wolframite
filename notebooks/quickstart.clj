@@ -28,7 +28,7 @@
 Before we do anything else, we must initialize Wolframite and connect it to a Wolfram kernel,
 which will perform the computations:")
 
-(wl/start!)
+(wl/start!) ; (Assuming you've downloaded and activated Wolfram Engine / Mathematica.)
 
 (k/md "If you get an error then please refer to the [Wolframite README](https://github.com/scicloj/wolframite/blob/main/README.md) for further instructions. Your Wolfram installation is probably just in an unusual place and so you will have to provide the correct path.")
 
@@ -62,6 +62,24 @@ Code translation in both directions is more difficult and is still somewhat frag
 (wl/->wl (w/GridGraph [5 5]))
 
 (k/md "Both these functions may be helpful when writing and troubleshooting your Wolframite code.")
+
+(k/md "## Help!
+
+To learn more about Wolfram symbols, use docstrings attached to their vars, either in your IDE or manually:
+")
+
+(comment
+  ;; Commented out b/c clojure.repl is only available in the REPL
+  (clojure.repl/doc w/Dot))
+; =>
+^:kindly/hide-code
+(k/hiccup [:code "-------------------------\nwolframite.wolfram/Dot\n  a.b.c or Dot[a, b, c] gives products of vectors, matrices, and tensors.\n"])
+
+;; You can also open Wolfram documentation of the function, or just print its URL:
+(wl/help! w/Dot :return-links true)
+
+;; We can even pass it a whole form, and get a link for each symbol:
+(wl/help! (w/Plus (w/Sqrt 1600) 2) :return-links true)
 
 (k/md "## Graphics
 
