@@ -40,7 +40,7 @@
         [:hr]
         (view-graphics-unadorned graphics-form)]]])))
 
-(defn view
+(defn show
   "View a given Wolframite `form` as Hiccup, Kindly compatible.
   `:folded true` will fold the view.
 
@@ -55,6 +55,6 @@
 
   See also [[view-graphics-unadorned]]"
   ([graphics-form]
-   (view graphics-form nil))
+   (show graphics-form nil))
   ([graphics-form {:keys [folded?]}]
    (view* graphics-form folded?)))

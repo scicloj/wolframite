@@ -7,7 +7,7 @@
             [clojure.java.io :as io]
             [wolframite.tools.hiccup :as h]))
 
-(defn view [form & {:keys [folded?]}]
+(defn show [form & {:keys [folded?]}]
   (clerk/html (h/view* form folded?)))
 
 (defn stream->bytes [is]

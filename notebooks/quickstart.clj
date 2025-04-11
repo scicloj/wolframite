@@ -88,18 +88,18 @@ The above code however, within Mathematica, actually produces graphics. Does Wol
 Yes!
 ")
 
-(wh/view (w/GridGraph [5 5]))
+(wh/show (w/GridGraph [5 5]))
 
+;; We could also show it in a Java window (commented out, because we're building a web page):
 (comment
-  ;; We could also show it in a Java window:
   ((requiring-resolve 'wolframite.tools.graphics/show!)
    (w/GridGraph [5 5])))
 
-(wh/view (w/ChemicalData "Ethanol" "StructureDiagram"))
+(wh/show (w/ChemicalData "Ethanol" "StructureDiagram"))
 
-(wh/view (w/TextStructure "The cat sat on the mat."))
+(wh/show (w/TextStructure "The cat sat on the mat."))
 
-(k/md "The above graphics were created using the `view` function from `wolframite.tools.hiccup`, as required above, and assumes that graphics are to be displayed in a browser.
+(k/md "The above graphics were created using the `show` function from `wolframite.tools.hiccup`, as required above, and assumes that graphics are to be displayed in a browser.
 
 There are other also ways to display graphics, for example using `wolframite.tools.graphics` to display it in a Java window,
 or using `wl/Export` to export it into an image file.")
@@ -110,13 +110,13 @@ Wolfram is also known for its dynamic or 'computational knowledge' engine.
 
 This can be accessed by many functions directly, ")
 
-(wh/view (w/GeoNearest (w/Entity "Ocean") w/Here))
+(wh/show (w/GeoNearest (w/Entity "Ocean") w/Here))
 (k/md ", or by posting a request to its online platform, Wolfram Alpha.")
 
 (wl/! (w/WolframAlpha "number of moons of Saturn" "Result"))
 
-(wh/view (w/WolframAlpha "number of moons of Saturn" "Result"))
-(k/md "Here, we've shown a response with and without the view function, for reference.")
+(wh/show (w/WolframAlpha "number of moons of Saturn" "Result"))
+(k/md "Here, we've shown a response with and without the show function, for reference.")
 
 (k/md "## Mathematics and beyond
 

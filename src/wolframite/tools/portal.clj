@@ -3,6 +3,6 @@
   (:require [portal.api :as p]
             [wolframite.tools.hiccup :as h]))
 
-(defn view [form & {:keys [folded?]}]
+(defn show [form & {:keys [folded?]}]
   (p/submit (with-meta (h/view* form folded?)
               {:portal.viewer/default :portal.viewer/hiccup})))
