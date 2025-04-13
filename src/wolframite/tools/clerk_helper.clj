@@ -10,6 +10,10 @@
 (defn show [form & {:keys [folded?]}]
   (clerk/html (h/view* form folded?)))
 
+(def ^:deprecated view
+  "DEPRECATED - for backwards compatibility with Wolframite <= v1.0.1"
+  show)
+
 (defn stream->bytes [is]
   (let [baos (java.io.ByteArrayOutputStream.)]
     (io/copy is baos)

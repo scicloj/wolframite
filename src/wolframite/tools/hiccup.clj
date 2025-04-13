@@ -58,3 +58,7 @@
    (show graphics-form nil))
   ([graphics-form {:keys [folded?]}]
    (view* graphics-form folded?)))
+
+(def ^:deprecated view
+  "DEPRECATED - for backwards compatibility with Wolframite <= v1.0.1"
+  show)
