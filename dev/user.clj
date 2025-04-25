@@ -10,8 +10,9 @@
   :loaded)
 
 (comment
-  (wl/init)
+  (wl/start!)
   (wl/! (w/Subtract 4 3))
+  (wl/! (w/- 4 3))
 
   (require '[scicloj.clay.v2.api :as clay])
   (clay/make! {:source-path "notebooks/index.clj"}))
