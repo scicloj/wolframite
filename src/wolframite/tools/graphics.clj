@@ -5,9 +5,9 @@
    [wolframite.impl.jlink-instance :as jlink-instance]
    [wolframite.impl.protocols :as proto])
   (:import
-   [com.wolfram.jlink MathGraphicsJPanel]
-   [java.awt Dimension]
-   [javax.swing JFrame JPanel Timer]))
+    [com.wolfram.jlink MathGraphicsJPanel]
+    [java.awt Component Dimension]
+    [javax.swing JFrame JPanel JScrollPane Timer]))
 
 (defonce ^:private default-app (promise))
 
@@ -15,8 +15,8 @@
 
 (defn- make-app! []
   (JFrame/setDefaultLookAndFeelDecorated true)
-  (let [math ^JPanel (MathGraphicsJPanel.)
-        scroll-pane (javax.swing.JScrollPane. math)
+  (let [math ^JPanel (MathGraphicsJPanel.) ; sadly, this provides no preferred size ino :'(
+        scroll-pane (JScrollPane. math)
         frame (doto (JFrame. "Wolframite")
                 (.setDefaultCloseOperation JFrame/DISPOSE_ON_CLOSE)
                 (-> .getContentPane (.add scroll-pane "Center"))
@@ -28,6 +28,30 @@
   (when-not (realized? default-app)
     (deliver default-app (make-app!)))
   @default-app)
+
+(defn- fit-graphic-expr-to-frame ^String [^String wl-expr-str ^Component container]
+  (let [size (.getSize container)]
+    (str "Show[" wl-expr-str ", ImageSize -> {" (.width size) "," (.height size) "}]")))
+
+(defn set-resize-timer [{:keys [^JFrame frame, ^MathGraphicsJPanel math] :as _app} wl-expr-str]
+  (let [resize-timer (atom nil)]
+   (.addComponentListener
+     frame
+     (proxy [java.awt.event.ComponentAdapter] []
+       (componentResized [_]
+         (swap! resize-timer
+                (fn start-new-timer [^Timer prev-timer]
+                  (some-> prev-timer .stop)
+                  (doto (Timer. 200 ; wait 200ms before resizing, to make sure the user is done dragging
+                                (proxy [java.awt.event.ActionListener] []
+                                  (actionPerformed [_]
+                                    (doto math
+                                      ;(.setLink kernel-link) ; unnecessary, we've set it already at start
+                                      (.setMathCommand (fit-graphic-expr-to-frame wl-expr-str math))
+                                      (.revalidate)
+                                      (.repaint)))))
+                    (.setRepeats false)
+                    (.start)))))))))
 
 (defn show!
   "Display a graphical Wolfram expression result in a window - such as that of  `Plot[...]`.
@@ -58,47 +82,27 @@
          wl-expr-str (if (string? wl-expr)
                        wl-expr
                        (str (wl/->wl wl-expr {:jlink-instance jlink-instance'})))]
-     (doto math
-       (.setLink (proto/kernel-link jlink-instance'))
-       (.setMathCommand wl-expr-str)
-       (.revalidate)
-       (.repaint))
+
+     (do
+       ;; Essential: this ensures sizes are >= min. size and thus non-zero, which we
+       ;; need for the resizing call below
+       (.pack frame)
+       (doto math
+         (.setLink (proto/kernel-link jlink-instance'))
+         (.setMathCommand (fit-graphic-expr-to-frame wl-expr-str math))
+         (.revalidate)
+         (.repaint)))
 
      (doto frame
-       ;(.pack) ; we'd want this, if the MathCanvas had any size info :'(
        (.setVisible true)
        ;; TODO The window does not jump to the front, despite .toFront
        ;; (depends on win. managers; may only work for windows in the same app...)
        (.toFront))
 
-     (let [resize-timer (atom nil)
-           kernel-link (proto/kernel-link jlink-instance')
-           base-expr wl-expr]
+     (when scale-with-window?
+       (set-resize-timer app wl-expr-str))
 
-       (when scale-with-window?
-         (.addComponentListener
-          frame
-          (proxy [java.awt.event.ComponentAdapter] []
-            (componentResized [_]
-              (when-let [t @resize-timer]
-                (.stop t))
-              (reset! resize-timer
-                      (doto (Timer. 200
-                                    (proxy [java.awt.event.ActionListener] []
-                                      (actionPerformed [_]
-                                        (let [size (.getSize frame)
-                                              w (.width size)
-                                              h (.height size)
-                                              resized-expr (str "Show[" base-expr ", ImageSize -> {" w "," h "}]")]
-                                          (doto math
-                                            (.setLink kernel-link)
-                                            (.setMathCommand (str resized-expr))
-                                            (.revalidate)
-                                            (.repaint))))))
-                        (.setRepeats false)
-                        (.start)))))))
-
-       app))))
+     app)))
 
 (comment
   (-> (seq (java.awt.Frame/getFrames)) first (.dispose))
@@ -110,4 +114,5 @@
   (def win (show! "Plot[Sin[x], {x, 0, 2 Pi}]"))
   (show! win "Plot[Cos[x], {x, 0, 2 Pi}]")
   (show! win "Plot[Sin[x], {x, 0, 2 Pi}]")
-  (show! nil "Plot[Sin[x], {x, 0, 4 Pi}]"))
+  (show! nil "Plot[Sin[x], {x, 0, 4 Pi}]")
+  )
