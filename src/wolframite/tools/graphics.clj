@@ -1,13 +1,17 @@
 (ns wolframite.tools.graphics
   "Displaying WL graphics with Java Swing"
   (:require
-   [wolframite.core :as wl]
-   [wolframite.impl.jlink-instance :as jlink-instance]
-   [wolframite.impl.protocols :as proto])
+    [clojure.java.io :as io]
+    [wolframite.core :as wl]
+    [wolframite.impl.jlink-instance :as jlink-instance]
+    [wolframite.impl.protocols :as proto])
   (:import
     [com.wolfram.jlink MathGraphicsJPanel]
-    [java.awt Component Dimension]
-    [javax.swing JFrame JPanel JScrollPane Timer]))
+    [java.awt Component Dimension Image]
+    (java.awt.event ActionListener ComponentAdapter MouseAdapter)
+    (java.awt.image BufferedImage)
+    (javax.imageio ImageIO)
+    [javax.swing JFileChooser JFrame JMenuItem JOptionPane JPanel JPopupMenu JScrollPane Timer]))
 
 (defonce ^:private default-app (promise))
 
@@ -37,13 +41,13 @@
   (let [resize-timer (atom nil)]
    (.addComponentListener
      frame
-     (proxy [java.awt.event.ComponentAdapter] []
+     (proxy [ComponentAdapter] []
        (componentResized [_]
          (swap! resize-timer
                 (fn start-new-timer [^Timer prev-timer]
                   (some-> prev-timer .stop)
                   (doto (Timer. 200 ; wait 200ms before resizing, to make sure the user is done dragging
-                                (proxy [java.awt.event.ActionListener] []
+                                (proxy [ActionListener] []
                                   (actionPerformed [_]
                                     (doto math
                                       ;(.setLink kernel-link) ; unnecessary, we've set it already at start
@@ -52,6 +56,56 @@
                                       (.repaint)))))
                     (.setRepeats false)
                     (.start)))))))))
+
+(defn add-save-menu [{:keys [^JFrame frame, ^MathGraphicsJPanel math] :as _app}]
+  (let [popup (JPopupMenu.)
+        save-item (JMenuItem. "Save Image...")
+        file-chooser (JFileChooser.)]
+
+    (.addActionListener
+      save-item
+      (proxy [ActionListener] []
+        (actionPerformed [_]
+          (try
+            (let [result (.showSaveDialog file-chooser frame)]
+              (when (= result JFileChooser/APPROVE_OPTION)
+                (let [file (.getSelectedFile file-chooser)
+                      file-path (str file)
+                      png-file (if (.endsWith file-path ".png")
+                                 file
+                                 (io/file (str file-path ".png")))
+                      img ^Image (.getImage math)]
+                  (if img
+                    (let [w (.getWidth img nil)
+                          h (.getHeight img nil)
+                          buffered-img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
+                          g (.createGraphics buffered-img)]
+                      (.drawImage g img 0 0 nil)
+                      (.dispose g)
+                      (ImageIO/write buffered-img "png" png-file))
+                    (JOptionPane/showMessageDialog
+                      frame
+                      "No image available to save."
+                      "Save Error"
+                      JOptionPane/ERROR_MESSAGE)))))
+            (catch Exception e
+              (JOptionPane/showMessageDialog
+                frame
+                (str "Failed to save image: " (.getMessage e))
+                "Save Error"
+                JOptionPane/ERROR_MESSAGE))))))
+
+    (.add popup save-item)
+
+    (.addMouseListener
+      math
+      (proxy [MouseAdapter] []
+        (mousePressed [e]
+          (when (.isPopupTrigger e)
+            (.show popup math (.getX e) (.getY e))))
+        (mouseReleased [e]
+          (when (.isPopupTrigger e)
+            (.show popup math (.getX e) (.getY e))))))))
 
 (defn show!
   "Display a graphical Wolfram expression result in a window - such as that of  `Plot[...]`.
@@ -91,7 +145,9 @@
          (.setLink (proto/kernel-link jlink-instance'))
          (.setMathCommand (fit-graphic-expr-to-frame wl-expr-str math))
          (.revalidate)
-         (.repaint)))
+         (.repaint)
+         (.setFocusable true)
+         (.requestFocusInWindow)))
 
      (doto frame
        (.setVisible true)
@@ -101,6 +157,8 @@
 
      (when scale-with-window?
        (set-resize-timer app wl-expr-str))
+
+     (add-save-menu app)
 
      app)))
 
