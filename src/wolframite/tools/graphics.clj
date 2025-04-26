@@ -46,18 +46,20 @@
   ;; NOTE: Contrary to the legacy graphics, this uses the newer Swing and JLink's own math canvas component
   ;; TODO Sometimes, the graphics is scaled to the frame, sometimes not; why/when?!
   ;; TODO: When we've multiple windows, should we try to position them not all at the same place?!
-  ;; TODO: consistent call signature
-  ([wl-expr] (show! (ensure-default-app!) (jlink-instance/get) wl-expr {}))
-  ([window wl-expr] (show! window (jlink-instance/get) wl-expr {}))
-  ([window wl-expr opts] (show! window (jlink-instance/get) wl-expr opts))
-  ([window jlink-instance wl-expr {:keys [scale-with-window?] :or {scale-with-window? true}}]
-
-   (let [{:keys [math frame] :as app} (or window (make-app!))
+  ([wl-expr] (show! (ensure-default-app!) wl-expr nil))
+  ([window wl-expr] (show! window wl-expr nil))
+  ([window
+    wl-expr
+    {:keys [jlink-instance scale-with-window?]
+     :or {scale-with-window? true}
+     :as _opts}]
+   (let [jlink-instance' (or jlink-instance (jlink-instance/get))
+         {:keys [math frame] :as app} (or window (make-app!))
          wl-expr-str (if (string? wl-expr)
                        wl-expr
-                       (str (wl/->wl wl-expr {:jlink-instance jlink-instance})))]
+                       (str (wl/->wl wl-expr {:jlink-instance jlink-instance'})))]
      (doto math
-       (.setLink (proto/kernel-link jlink-instance))
+       (.setLink (proto/kernel-link jlink-instance'))
        (.setMathCommand wl-expr-str)
        (.revalidate)
        (.repaint))
@@ -70,7 +72,7 @@
        (.toFront))
 
      (let [resize-timer (atom nil)
-           kernel-link (proto/kernel-link jlink-instance)
+           kernel-link (proto/kernel-link jlink-instance')
            base-expr wl-expr]
 
        (when scale-with-window?
