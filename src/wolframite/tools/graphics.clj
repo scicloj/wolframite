@@ -38,6 +38,10 @@
     (str "Show[" wl-expr-str ", ImageSize -> {" (.width size) "," (.height size) "}]")))
 
 (defn set-resize-timer [{:keys [^JFrame frame, ^MathGraphicsJPanel math] :as _app} wl-expr-str]
+  (doseq [l (.getComponentListeners frame)]
+    ;; Heavy-handed, not trying to find _this_ listener, just remove them all; there is surely a better way...
+    (.removeComponentListener frame l))
+
   (let [resize-timer (atom nil)]
    (.addComponentListener
      frame
@@ -53,11 +57,20 @@
                                       ;(.setLink kernel-link) ; unnecessary, we've set it already at start
                                       (.setMathCommand (fit-graphic-expr-to-frame wl-expr-str math))
                                       (.revalidate)
-                                      (.repaint)))))
+                                      (.repaint))
+                                    ;; We need to adjust the preferred size so that next time we call show! and thus
+                                    ;; frame.pack, we won't reset to the default preferred size but keep the size
+                                    ;; we've
+                                    (.setPreferredSize math (.getSize frame))
+                                    )))
                     (.setRepeats false)
                     (.start)))))))))
 
 (defn add-save-menu [{:keys [^JFrame frame, ^MathGraphicsJPanel math] :as _app}]
+  (doseq [l (.getMouseListeners math)]
+    ;; Heavy-handed, not trying to find _this_ listener, just remove them all; there is surely a better way..
+    (.removeMouseListener frame l))
+
   (let [popup (JPopupMenu.)
         save-item (JMenuItem. "Save Image...")
         file-chooser (JFileChooser.)]
@@ -166,6 +179,8 @@
 
 (comment
   (-> (seq (java.awt.Frame/getFrames)) first (.dispose))
+
+  (-> @default-app :math ) ; 564x654
   ;; Display in the default window
   (show! "Plot[Sin[x], {x, 0, 6 Pi}]")
   (show! "Plot[Sin[x], {x, 0, 4 Pi}]")
