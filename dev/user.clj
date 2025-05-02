@@ -1,6 +1,7 @@
 (ns user
   (:require [wolframite.api.v1 :as wl]
-            [wolframite.wolfram :as w]))
+            [wolframite.wolfram :as w]
+            [wolframite.runtime.system :as system]))
 
 (defn dev
   "Load and switch to the 'dev' namespace."
@@ -11,6 +12,10 @@
 
 (comment
   (wl/start!)
+  (wl/stop!)
+
+  (system/info)
+
   (wl/! (w/Subtract 4 3))
   (wl/! (w/- 4 3))
 

@@ -7,6 +7,7 @@
 
  :aliases {:neil {:project {:name org.scicloj/wolframite
                             :version "1.1.0"}}
+           :test-java-property {:jvm-opts ["-DWOLFRAM_INSTALL_PATH=/usr/local/Wolfram/WolframEngine/"]}
            :dev {:extra-paths ["dev" "test" "notebooks"]
                  :jvm-opts ["-Djdk.attach.allowAttachSelf"]
                  :extra-deps {com.clojure-goes-fast/clj-memory-meter {:mvn/version "0.1.3"}
