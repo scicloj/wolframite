@@ -27,7 +27,7 @@
     (with-meta (img b64img) {:kind/hiccup true
                              :wolfram wl-str})))
 
-(defn view* [graphics-form folded?]
+(defn- show* [graphics-form folded?]
   (let [wl-str (wl/->wl graphics-form {:output-fn str})]
     (kind/hiccup
       [:div
@@ -57,7 +57,7 @@
   ([graphics-form]
    (show graphics-form nil))
   ([graphics-form {:keys [folded?]}]
-   (view* graphics-form folded?)))
+   (show* graphics-form folded?)))
 
 (def ^:deprecated view
   "DEPRECATED - for backwards compatibility with Wolframite <= v1.0.1"

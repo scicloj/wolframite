@@ -8,7 +8,7 @@
             [wolframite.tools.hiccup :as h]))
 
 (defn show [form & {:keys [folded?]}]
-  (clerk/html (h/view* form folded?)))
+  (clerk/html (h/show form {:folded? folded?})))
 
 (def ^:deprecated view
   "DEPRECATED - for backwards compatibility with Wolframite <= v1.0.1"

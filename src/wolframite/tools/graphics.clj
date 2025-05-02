@@ -109,10 +109,12 @@
 
 (defn show!
   "Display a graphical Wolfram expression result in a window - such as that of  `Plot[...]`.
+  - `wl-expr` - Wolfram in a string or a Wolframite expression
   - `window` - pass `nil` to visualize the expression in a new window, or pass in the return value
                from a previous call to show it in that same window. The former is useful e.g. if
                you want to display multiple plots at the same time for comparison.
-  - `wl-expr` - Wolfram in a string or a Wolframite expression
+  - `_opts` - options map:
+    - `:scale-with-window?` - whether to scale the graphics when you resize the window
 
   NOTE: It can take few seconds to prepare and render the graphics.
 
@@ -124,10 +126,10 @@
   ;; NOTE: Contrary to the legacy graphics, this uses the newer Swing and JLink's own math canvas component
   ;; TODO Sometimes, the graphics is scaled to the frame, sometimes not; why/when?!
   ;; TODO: When we've multiple windows, should we try to position them not all at the same place?!
-  ([wl-expr] (show! (ensure-default-app!) wl-expr nil))
-  ([window wl-expr] (show! window wl-expr nil))
-  ([window
-    wl-expr
+  ([wl-expr] (show! wl-expr (ensure-default-app!) nil))
+  ([wl-expr window] (show! wl-expr window nil))
+  ([wl-expr
+    window
     {:keys [jlink-instance scale-with-window?]
      :or {scale-with-window? true}
      :as _opts}]
@@ -170,7 +172,7 @@
   (show! '(Plot (Sin x) [x 0 (* 6 Math/PI)]))
 
   (def win (show! "Plot[Sin[x], {x, 0, 2 Pi}]"))
-  (show! win "Plot[Cos[x], {x, 0, 2 Pi}]")
-  (show! win "Plot[Sin[x], {x, 0, 2 Pi}]")
-  (show! nil "Plot[Sin[x], {x, 0, 4 Pi}]")
+  (show! "Plot[Cos[x], {x, 0, 2 Pi}]" win)
+  (show! "Plot[Sin[x], {x, 0, 2 Pi}]" win)
+  (show! "Plot[Sin[x], {x, 0, 4 Pi}]" nil)
   )

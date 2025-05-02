@@ -1,4 +1,4 @@
-(ns wolframite.tools.graphics-legacy-awt
+(ns wolframite.legacy.tools.graphics-awt
   "Displaying WL graphics with java.awt"
   ;; Wolfram has You use MathCanvas when you want an AWT component and MathGraphicsJPanel when you
   ;; want a Swing component - see https://reference.wolfram.com/language/JLink/tutorial/CallingJavaFromTheWolframLanguage.html#20608
