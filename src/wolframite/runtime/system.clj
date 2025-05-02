@@ -158,8 +158,18 @@
             first)
        (update :root ->version-path))))
 
+(defn root
+  "The root directory under which the kernel and JLink path can be found."
+  [info]
+  (let [{:keys [user-paths defaults]} info
+        {:strs [JLINK_JAR_PATH WOLFRAM_INSTALL_PATH]} user-paths]
+    (->version-path (or JLINK_JAR_PATH
+                        WOLFRAM_INSTALL_PATH
+                        (:root defaults)))))
+
 (defn info
-  "Publicly available way of guessing the defaults."
+  "Publicly available way of guessing path defaults."
+  ;; TODO: Update how things are labeled. Distinguish between system information and 'detections'?
   []
   (let [user (not-empty (user-paths))
         default (not-empty (choose-defaults))]
@@ -170,7 +180,9 @@
      :defaults default}))
 
 (defn path--kernel
-  "Using the given base path, checks if any of the wolfram binaries can be found. If not, perform a 'glob' search and if that doesn't work either then throw an error!
+  "Using the given base path, or by guessing, checks if any of the wolfram binaries can be found.
+
+  Throws an error otherwise.
   "
   ([] (path--kernel (:root (choose-defaults))))
   ([base-path]

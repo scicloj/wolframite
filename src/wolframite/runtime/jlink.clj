@@ -24,14 +24,17 @@
   "The full path to jlink.
 
   NOTE: Returns a string."
-  ([info]
-   (let [{:keys [user-paths defaults]} info
-         {:strs [JLINK_JAR_PATH WOLFRAM_INSTALL_PATH]} user-paths]
-     (or JLINK_JAR_PATH
-         (-> (or WOLFRAM_INSTALL_PATH
-                 (:root defaults))
-             (fs/path default-jlink-path-under-root)
-             str)))))
+
+  ;; TODO: Should WOLFRAM_INSTALL_PATH take priority over JLINK_JAR_PATH?
+
+  ([] (path--jlink (system/root (system/info))))
+  ([base-path]
+   (->  base-path
+        (fs/path default-jlink-path-under-root)
+        str)))
+
+(comment (-> (path--jlink)
+             fs/exists?))
 
 (defn find-jlink-jar
   "Searches the machine for an instance of JLink.jar
@@ -43,11 +46,13 @@
        str))
 
 (defn add-jlink-to-classpath!
-  "Checks for valid locations of the jar file. If one is not found based on the system defaults, then performs a machine search. If that doesn't work either, then 'throws'."
+  "Checks for valid locations of the jar file and 'throws' is unsuccessful.
+
+  If one is not found based on the system defaults, then you can perform a machine-wide search using `find-jlink-jar`. "
 
   ([]
    (let [info (system/info)
-         path (path--jlink info)
+         path (path--jlink)
          add-path (fn [p]
                     (when (neg? (compare ((juxt :major :minor) *clojure-version*) [1 12]))
                       (throw (UnsupportedOperationException. "Adding Wolfram's JLink lib to the REPL dynamically requires Clojure 1.12 or later. Alternatively, ensure it is already on the classpath")))
@@ -59,6 +64,7 @@
      (cond
        (try (Class/forName "com.wolfram.jlink.Expr") (catch ClassNotFoundException _)) false ; skip, already loaded
        (fs/exists? path) (do (add-path path) true)
+
        :else (throw (ex-info (str "Unable to find JLink jar at the expected path " path
                                   " Consider setting one of the supported environment variables;"
                                   " currently: " (into [] (:user-paths info)) ".")
@@ -66,4 +72,6 @@
                               :path path
                               :env (:user-paths info)}))))))
 
-(comment (println (find-jlink-jar)))
+(comment
+  (add-jlink-to-classpath!)
+  (println (find-jlink-jar)))

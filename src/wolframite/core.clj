@@ -32,34 +32,34 @@
   "
   (:refer-clojure :exclude [eval])
   (:require
-    [babashka.fs :as fs]
-    [clojure.set :as set]
-    [clojure.tools.logging :as log]
-    [wolframite.base.cep :as cep]
-    [wolframite.base.convert :as convert]
-    [wolframite.base.evaluate :as evaluate]
-    [wolframite.base.express :as express]
-    [wolframite.base.package :as package]
-    [wolframite.base.parse :as parse]
-    [wolframite.flags :as flags]
-    [wolframite.impl.jlink-instance :as jlink-instance]
-    [wolframite.impl.kindly-support :as kindly-support]
-    [wolframite.impl.protocols :as proto]
-    [wolframite.runtime.defaults :as defaults]
-    [wolframite.runtime.jlink :as jlink]
-    [wolframite.runtime.system :as system]
-    [wolframite.wolfram :as w]))
+   [babashka.fs :as fs]
+   [clojure.set :as set]
+   [clojure.tools.logging :as log]
+   [wolframite.base.cep :as cep]
+   [wolframite.base.convert :as convert]
+   [wolframite.base.evaluate :as evaluate]
+   [wolframite.base.express :as express]
+   [wolframite.base.package :as package]
+   [wolframite.base.parse :as parse]
+   [wolframite.flags :as flags]
+   [wolframite.impl.jlink-instance :as jlink-instance]
+   [wolframite.impl.kindly-support :as kindly-support]
+   [wolframite.impl.protocols :as proto]
+   [wolframite.runtime.defaults :as defaults]
+   [wolframite.runtime.jlink :as jlink]
+   [wolframite.runtime.system :as system]
+   [wolframite.wolfram :as w]))
 
 (defonce ^{:deprecated true, :private true} kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
 
-(defn- kernel-link-opts [{:keys [platform mathlink-path]}]
+(defn- kernel-link-opts [{:keys [path--root mathlink-path]}]
   ;; See https://reference.wolfram.com/language/JLink/ref/java/com/wolfram/jlink/MathLinkFactory.html#createKernelLink(java.lang.String%5B%5D)
   ;; and https://reference.wolfram.com/language/tutorial/RunningTheWolframSystemFromWithinAnExternalProgram.html for the options
   ["-linkmode" "launch"
    "-linkname"
    (format "\"/%s\" -mathlink"
            (or mathlink-path
-               (system/path--kernel)
+               (system/path--kernel path--root)
                (throw (IllegalStateException. "mathlink path neither provided nor auto-detected"))))])
 
 (defn-
@@ -84,9 +84,8 @@
 
 (defn- init-kernel!
   ([jlink-impl]
-   (init-kernel! jlink-impl {:os (system/detect-os)}))
-  ([jlink-impl {:keys [os] :as init-opts}]
-   {:pre [(some-> os system/supported-OS) jlink-impl]}
+   (init-kernel! jlink-impl {:path--root (system/root (system/info))}))
+  ([jlink-impl {:keys [path--root] :as init-opts}]
    (->> (kernel-link-opts init-opts)
         (proto/create-kernel-link jlink-impl))))
 
@@ -142,6 +141,7 @@
       :wolfram-version (:wolfram-version (deref kernel-info 1 :N/A))}
      (let [jlink-inst (or (jlink-instance/get)
                           (init-jlink! kernel-link-atom opts))]
+
        (init-kernel! jlink-inst)
        (evaluator-init (merge {:jlink-instance jlink-inst}
                               opts))
@@ -279,13 +279,13 @@ See `package/intern-context!` for details of turning the Wolfram context into a 
   ([assert-as-expected]
    (let [exclusions
          (->
-           (set/intersection
-             (-> (ns-publics 'clojure.core) keys set)
-             (-> defaults/all-aliases keys set))
-           sort
+          (set/intersection
+           (-> (ns-publics 'clojure.core) keys set)
+           (-> defaults/all-aliases keys set))
+          sort
            ;; Add java.lang classes:
-           (concat '[Byte Character Integer Number Short String Thread])
-           vec)]
+          (concat '[Byte Character Integer Number Short String Thread])
+          vec)]
      (when assert-as-expected
        (assert (= exclusions
                   '[* + - -> / < <= = == > >= fn

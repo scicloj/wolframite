@@ -8,7 +8,7 @@
    [wolframite.base.convert :as cv]
    [wolframite.runtime.jlink :as jlink]
    [wolframite.lib.helpers :refer [help!]]
-   [wolframite.tools.clerk-helper :refer [view]]
+   [wolframite.tools.clerk-helper :refer [show]]
    [aerial.hanami.common :as hc]
    [aerial.hanami.templates :as ht]
    [nextjournal.clerk :as nb]
@@ -24,11 +24,11 @@
 
 ;; ## Numbers
 
-(view (w/BarChart (w/EntityValue (w/EntityClass "Planet" w/All) "Radius")))
+(show (w/BarChart (w/EntityValue (w/EntityClass "Planet" w/All) "Radius")))
 
 ;; ## Time
 
-(view (w/TimelinePlot
+(show (w/TimelinePlot
        [(w/Entity "HistoricalEvent" "WorldWar1")
         (w/Entity "HistoricalEvent" "WorldWar2")
         (w/Entity "HistoricalEvent" "VietnamWar")
@@ -36,12 +36,12 @@
 
 ;; ## Geo
 
-(view (w/GeoGraphics))
+(show (w/GeoGraphics))
 
-(view '(GeoImage
+(show '(GeoImage
         (Entity "City" ["NewYork" "NewYork" "UnitedStates"])))
 
-(view '(GeoGraphics
+(show '(GeoGraphics
         [Red (GeoPath [(Entity "City" ["Portland" "Oregon" "UnitedStates"])
                        (Entity "City" ["Orlando" "Florida" "UnitedStates"])
                        (Entity "City" ["Boston" "Massachusetts" "UnitedStates"])]
@@ -49,7 +49,7 @@
 
 ;; ## 3D
 
-(view '(MoleculePlot3D (Molecule "O=C(C1CCC1)S[C@@H]1CCC1(C)C")))
+(show '(MoleculePlot3D (Molecule "O=C(C1CCC1)S[C@@H]1CCC1(C)C")))
 
 ;; # Clojure Graphs
 
@@ -94,12 +94,12 @@
                   [:img {:src (image mdata)}]]])
               movie-ents))])
 
-(view '(Animate (Plot (Sin (+ x a)) [x 0 10]) [a 0 5] (-> AnimationRunning true))
+(show '(Animate (Plot (Sin (+ x a)) [x 0 10]) [a 0 5] (-> AnimationRunning true))
       :folded? true)
 
 (wl/->clj "Plot[Evaluate[Table[BesselJ[n, x], {n, 4}]], {x, 0, 10},
                Filling -> Axis]")
 
-(view '(Plot (Evaluate (Table (BesselJ n x) [n 4]))
+(show '(Plot (Evaluate (Table (BesselJ n x) [n 4]))
              [x 0 10]
              (-> Filling Axis)))

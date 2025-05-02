@@ -260,7 +260,7 @@ For this, we will define a few utility functions, that also demonstrate Wolfram'
                          -0.001
                          0.001))))
 
-(wh/view
+(wh/show
  (w/ListPlot3D 'nums
                (w/-> PlotRange All)
                (w/-> Boxed false)

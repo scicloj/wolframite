@@ -1,82 +1,193 @@
 (ns wolframite.tools.graphics
-  "Displaying WL graphics with java.awt"
-  ;; Wolfram has You use MathCanvas when you want an AWT component and MathGraphicsJPanel when you
-  ;; want a Swing component - see https://reference.wolfram.com/language/JLink/tutorial/CallingJavaFromTheWolframLanguage.html#20608
-  ;; Notice that KernelLink also has evaluateToImage() and evaluateToTypeset() methods
-  (:require [wolframite.impl.jlink-instance :as jlink-instance]
-            [wolframite.impl.protocols :as proto]
-            [wolframite.core :as wl])
-  (:import (java.awt Color Component Frame)
-           (java.awt.image BufferedImage)
-           (javax.imageio ImageIO)
-           (java.io ByteArrayInputStream)
-           (java.awt.event WindowAdapter ActionEvent)))
+  "Displaying WL graphics with Java Swing"
+  (:require
+    [clojure.java.io :as io]
+    [wolframite.core :as wl]
+    [wolframite.impl.jlink-instance :as jlink-instance]
+    [wolframite.impl.protocols :as proto])
+  (:import
+    [com.wolfram.jlink MathGraphicsJPanel]
+    [java.awt Component Dimension Image]
+    (java.awt.event ActionListener ComponentAdapter MouseAdapter)
+    (java.awt.image BufferedImage)
+    (javax.imageio ImageIO)
+    [javax.swing JFileChooser JFrame JMenuItem JOptionPane JPanel JPopupMenu JScrollPane Timer]))
 
-(defn scaled
-  [x factor]
-  (* x (or factor 1)))
+(defonce ^:private default-app (promise))
 
-(defn make-math-canvas!
-  ([] (make-math-canvas! (jlink-instance/get)))
-  ([jlink-instance & {:keys [scale-factor]}]
-   (doto (proto/make-math-canvas! jlink-instance)
-     (.setBounds 25, 25, (scaled 280 scale-factor), (scaled 240 scale-factor)))))
+(defrecord GraphicsWindow [math frame])
 
-(defn make-app! [^Component math-canvas & {:keys [scale-factor]}]
-  (.evaluateToInputForm
-    (proto/kernel-link (jlink-instance/get))
-    (str "Needs[\"" (proto/jlink-package-name (jlink-instance/get)) "\"]")
-    0)
-  (.evaluateToInputForm (proto/kernel-link (jlink-instance/get)) "ConnectToFrontEnd[]" 0)
-  (let [app (Frame.)]
-    (doto app
-      (.setLayout nil)
-      (.setTitle "Wolframite Graphics")
-      (.add math-canvas)
-      (.setBackground Color/white)
-      (.setSize (scaled 300 scale-factor) (scaled 400 scale-factor))
-      (.setLocation 50 50)
-      (.setVisible true)
-      (.addWindowListener (proxy [WindowAdapter] []
-                            (windowClosing [^ActionEvent e]
-                              (.dispose app)))))))
+(defn- make-app! []
+  (JFrame/setDefaultLookAndFeelDecorated true)
+  (let [math ^JPanel (MathGraphicsJPanel.) ; sadly, this provides no preferred size ino :'(
+        scroll-pane (JScrollPane. math)
+        frame (doto (JFrame. "Wolframite")
+                (.setDefaultCloseOperation JFrame/DISPOSE_ON_CLOSE)
+                (-> .getContentPane (.add scroll-pane "Center"))
+                (.setLocation 100 100)
+                (.setMinimumSize (Dimension. 300 300)))]
+    (->GraphicsWindow math frame)))
+
+(defn ensure-default-app! []
+  (when-not (realized? default-app)
+    (deliver default-app (make-app!)))
+  @default-app)
+
+(defn- fit-graphic-expr-to-frame ^String [^String wl-expr-str ^Component container]
+  (let [size (.getSize container)]
+    (str "Show[" wl-expr-str ", ImageSize -> {" (.width size) "," (.height size) "}]")))
+
+(defn set-resize-timer [{:keys [^JFrame frame, ^MathGraphicsJPanel math] :as _app} wl-expr-str]
+  (doseq [l (.getComponentListeners frame)]
+    ;; Heavy-handed, not trying to find _this_ listener, just remove them all; there is surely a better way...
+    (.removeComponentListener frame l))
+
+  (let [resize-timer (atom nil)]
+   (.addComponentListener
+     frame
+     (proxy [ComponentAdapter] []
+       (componentResized [_]
+         (swap! resize-timer
+                (fn start-new-timer [^Timer prev-timer]
+                  (some-> prev-timer .stop)
+                  (doto (Timer. 200 ; wait 200ms before resizing, to make sure the user is done dragging
+                                (proxy [ActionListener] []
+                                  (actionPerformed [_]
+                                    (doto math
+                                      ;(.setLink kernel-link) ; unnecessary, we've set it already at start
+                                      (.setMathCommand (fit-graphic-expr-to-frame wl-expr-str math))
+                                      (.revalidate)
+                                      (.repaint))
+                                    ;; We need to adjust the preferred size so that next time we call show! and thus
+                                    ;; frame.pack, we won't reset to the default preferred size but keep the size
+                                    ;; we've
+                                    (.setPreferredSize math (.getSize frame))
+                                    )))
+                    (.setRepeats false)
+                    (.start)))))))))
+
+(defn add-save-menu [{:keys [^JFrame frame, ^MathGraphicsJPanel math] :as _app}]
+  (doseq [l (.getMouseListeners math)]
+    ;; Heavy-handed, not trying to find _this_ listener, just remove them all; there is surely a better way..
+    (.removeMouseListener frame l))
+
+  (let [popup (JPopupMenu.)
+        save-item (JMenuItem. "Save Image...")
+        file-chooser (JFileChooser.)]
+
+    (.addActionListener
+      save-item
+      (proxy [ActionListener] []
+        (actionPerformed [_]
+          (try
+            (let [result (.showSaveDialog file-chooser frame)]
+              (when (= result JFileChooser/APPROVE_OPTION)
+                (let [file (.getSelectedFile file-chooser)
+                      file-path (str file)
+                      png-file (if (.endsWith file-path ".png")
+                                 file
+                                 (io/file (str file-path ".png")))
+                      img ^Image (.getImage math)]
+                  (if img
+                    (let [w (.getWidth img nil)
+                          h (.getHeight img nil)
+                          buffered-img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
+                          g (.createGraphics buffered-img)]
+                      (.drawImage g img 0 0 nil)
+                      (.dispose g)
+                      (ImageIO/write buffered-img "png" png-file))
+                    (JOptionPane/showMessageDialog
+                      frame
+                      "No image available to save."
+                      "Save Error"
+                      JOptionPane/ERROR_MESSAGE)))))
+            (catch Exception e
+              (JOptionPane/showMessageDialog
+                frame
+                (str "Failed to save image: " (.getMessage e))
+                "Save Error"
+                JOptionPane/ERROR_MESSAGE))))))
+
+    (.add popup save-item)
+
+    (.addMouseListener
+      math
+      (proxy [MouseAdapter] []
+        (mousePressed [e]
+          (when (.isPopupTrigger e)
+            (.show popup math (.getX e) (.getY e))))
+        (mouseReleased [e]
+          (when (.isPopupTrigger e)
+            (.show popup math (.getX e) (.getY e))))))))
 
 (defn show!
-  [math-canvas wl-form]
-  (.setMathCommand math-canvas wl-form))
+  "Display a graphical Wolfram expression result in a window - such as that of  `Plot[...]`.
+  - `wl-expr` - Wolfram in a string or a Wolframite expression
+  - `window` - pass `nil` to visualize the expression in a new window, or pass in the return value
+               from a previous call to show it in that same window. The former is useful e.g. if
+               you want to display multiple plots at the same time for comparison.
+  - `_opts` - options map:
+    - `:scale-with-window?` - whether to scale the graphics when you resize the window
+
+  NOTE: It can take few seconds to prepare and render the graphics.
+
+  You can dispose of the window by closing it.
+
+  NOTE: The 1-arg version uses a single default window for all displays.
+
+  Returns a 'window' thing representing the window displaying the expression."
+  ;; NOTE: Contrary to the legacy graphics, this uses the newer Swing and JLink's own math canvas component
+  ;; TODO Sometimes, the graphics is scaled to the frame, sometimes not; why/when?!
+  ;; TODO: When we've multiple windows, should we try to position them not all at the same place?!
+  ([wl-expr] (show! wl-expr (ensure-default-app!) nil))
+  ([wl-expr window] (show! wl-expr window nil))
+  ([wl-expr
+    window
+    {:keys [jlink-instance scale-with-window?]
+     :or {scale-with-window? true}
+     :as _opts}]
+   (let [jlink-instance' (or jlink-instance (jlink-instance/get))
+         {:keys [math frame] :as app} (or window (make-app!))
+         wl-expr-str (if (string? wl-expr)
+                       wl-expr
+                       (str (wl/->wl wl-expr {:jlink-instance jlink-instance'})))]
+
+     (do
+       ;; Essential: this ensures sizes are >= min. size and thus non-zero, which we
+       ;; need for the resizing call below
+       (.pack frame)
+       (doto math
+         (.setLink (proto/kernel-link jlink-instance'))
+         (.setMathCommand (fit-graphic-expr-to-frame wl-expr-str math))
+         (.revalidate)
+         (.repaint)
+         (.setFocusable true)
+         (.requestFocusInWindow)))
+
+     (doto frame
+       (.setVisible true)
+       ;; TODO The window does not jump to the front, despite .toFront
+       ;; (depends on win. managers; may only work for windows in the same app...)
+       (.toFront))
+
+     (when scale-with-window?
+       (set-resize-timer app wl-expr-str))
+
+     (add-save-menu app)
+
+     app)))
 
 (comment
+  (-> (seq (java.awt.Frame/getFrames)) first (.dispose))
 
-  (def canvas (make-math-canvas! (jlink-instance/get) :scale-factor 1.5))
-  (def app (make-app! canvas :scale-factor 1.5))
+  (-> @default-app :math ) ; 564x654
+  ;; Display in the default window
+  (show! "Plot[Sin[x], {x, 0, 6 Pi}]")
+  (show! "Plot[Sin[x], {x, 0, 4 Pi}]")
+  (show! '(Plot (Sin x) [x 0 (* 6 Math/PI)]))
 
-  (show! canvas "GeoGraphics[]")
-
-  (.dispose app))
-
-  ;; TODO: improve
-  ;; - better api (?)
-  ;; - accept options
-  ;; TODO: patch WL macro adding :show option
-  ;; e.g.
-  ;;
-  ;; (WL :show (GeoGraphics))
-
-(comment ;; fun is good
-
-  (show! canvas "GeoGraphics[]")
-  (show! canvas "Graph3D[GridGraph[{3, 3, 3}, VertexLabels -> Automatic]]")
-  (show! canvas "GeoImage[Entity[\"City\", {\"NewYork\", \"NewYork\", \"UnitedStates\"}]]"))
-
-(comment ;; better quality images
-
-  (.evaluateToImage (proto/kernel-link (jlink-instance/get)) "GeoGraphics[]" 300 300) ;; this has another arity where you can set `dpi`
-  ;; then byte array -> java.awt.Image
-  ;; and (.setImage canvas)
-
-  (let [{:keys [height width]} (bean (.getSize app))]
-    (.setImage canvas
-               (ImageIO/read (ByteArrayInputStream. (.evaluateToImage (proto/kernel-link (jlink-instance/get)) "GeoGraphics[]" (int width) (int height) 600 true))))))
-
-  ;; doesn't make much difference (maybe a bit), seems like we can go lower dpi, but we already get maximum by default (?)
-
+  (def win (show! "Plot[Sin[x], {x, 0, 2 Pi}]"))
+  (show! "Plot[Cos[x], {x, 0, 2 Pi}]" win)
+  (show! "Plot[Sin[x], {x, 0, 2 Pi}]" win)
+  (show! "Plot[Sin[x], {x, 0, 4 Pi}]" nil)
+  )

@@ -450,7 +450,8 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 </section>
 <section id="deployment" class="level3" data-number="1.5.2">
 <h3 data-number="1.5.2" class="anchored" data-anchor-id="deployment"><span class="header-section-number">1.5.2</span> Deployment</h3>
-<p>Build the jar with <code>clojure -T:build jar</code> then deploy with <code>env CLOJARS_USERNAME=&lt;tbd&gt; CLOJARS_PASSWORD=&lt;clojars-token&gt; clojure -T:build deploy</code>.</p>
+<p>If required, update version in <code>deps.edn</code> under <code>:aliases - :neil - :project - :version</code> (possibly using <code>neil</code>).</p>
+<p>then build the jar with <code>clojure -T:build jar</code> then deploy with <code>env CLOJARS_USERNAME=&lt;tbd&gt; CLOJARS_PASSWORD=&lt;clojars-token&gt; clojure -T:build deploy</code>.</p>
 <p>Note: You need to log in to Clojars and generate a deployment token. You also need to be added to the SciCloj group there by an admin.</p>
 <p>Consider studying Wolfram’s guide <a href="https://reference.wolfram.com/language/JLink/tutorial/WritingJavaProgramsThatUseTheWolframLanguage.html">Writing Java Programs That Use the Wolfram Language</a> and <a href="https://reference.wolfram.com/language/tutorial/WSTPAndExternalProgramCommunicationOverview.html">WSTP and External Program Communication</a> when you want to dig into the JVM ↔︎ Wolfram communication.</p>
 <section id="writing-documentation" class="level4" data-number="1.5.2.1">

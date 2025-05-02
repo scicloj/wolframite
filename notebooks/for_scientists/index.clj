@@ -104,8 +104,8 @@ With the recent emergence of ChatGPT and similar AI systems, direct access to kn
 
 For example, we can make both knowledge-based requests and perform complicated calculations on demand (requires internet access).")
 
-(wh/view (WolframAlpha "What is the mass of 5 rubidium atoms?" "Result"))
-(wh/view (WolframAlpha "What is the relativistic momentum of a 0.8c electron?" "Result"))
+(wh/show (WolframAlpha "What is the mass of 5 rubidium atoms?" "Result"))
+(wh/show (WolframAlpha "What is the relativistic momentum of a 0.8c electron?" "Result"))
 
 (k/md "In each case, Wolfram does not just provide the answer, but returns the data in different formats and units in an attempt to anticipate different usecases. This verbosity might seem frustrating, but of course adds flexibility: leaving the user free to filter or present the results in any way that they wish. Here, we have used the last argument to simply display the core 'Result'.")
 
