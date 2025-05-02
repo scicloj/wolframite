@@ -177,9 +177,7 @@
       (throw (ex-info "Could not find a Wolfram or Mathematica kernel at a default location and no custom one was provided. Please check the installation and provide a path according to the user guide."
                       {})))
     {:user-paths user
-     :defaults default
-     :root (root {:user-paths user
-                  :defaults default})}))
+     :defaults default}))
 
 (defn path--kernel
   "Using the given base path, or by guessing, checks if any of the wolfram binaries can be found.

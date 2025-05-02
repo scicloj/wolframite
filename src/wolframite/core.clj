@@ -84,7 +84,7 @@
 
 (defn- init-kernel!
   ([jlink-impl]
-   (init-kernel! jlink-impl {:path--root (:root (system/info))}))
+   (init-kernel! jlink-impl {:path--root (system/root (system/info))}))
   ([jlink-impl {:keys [path--root] :as init-opts}]
    (->> (kernel-link-opts init-opts)
         (proto/create-kernel-link jlink-impl))))

@@ -27,7 +27,7 @@
 
   ;; TODO: Should WOLFRAM_INSTALL_PATH take priority over JLINK_JAR_PATH?
 
-  ([] (path--jlink (:root (system/info))))
+  ([] (path--jlink (system/root (system/info))))
   ([base-path]
    (->  base-path
         (fs/path default-jlink-path-under-root)
