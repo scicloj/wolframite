@@ -55,12 +55,18 @@ This should also find and load the JLink JAR included with your installation. Wa
 
 > === Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar ===
 
-However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the `WOLFRAM_INSTALL_PATH` environment variable or Java system property (the latter takes priority) to point to the correct location. Examples:
-
+However, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the `WOLFRAM_INSTALL_PATH` environment variable, 
 ```shell
 export WOLFRAM_INSTALL_PATH=/opt/mathematica/13.1
 export WOLFRAM_INSTALL_PATH="/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents"
 ```
+, or Java system property, 
+```shell
+aliases {... :alias-name  {:jvm-opts ["-DWOLFRAM_INSTALL_PATH=/usr/local/Wolfram/WolframEngine/14.2"]}
+```
+, (the latter takes priority) to point to the correct location. 
+
+
 
 ### Getting started
 
