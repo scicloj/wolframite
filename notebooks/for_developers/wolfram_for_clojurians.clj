@@ -88,8 +88,11 @@ Similar to Clojure maps, with a unique syntax using Rules (see @sec-rules). Fort
 ")
 ; Rules, or rewrite rules, of the form `key -> value` predate associations and are used where you'd have expected a map,
 ; often to define [options to functions](https://www.wolfram.com/language/fast-introduction-for-programmers/en/options/),
-; as in here: `Import["demo.csv.gz", {"Data", 1}]) ;; 3}, "HeaderLines" -> 1]`
+; as in here: `Import["demo.csv.gz", {"Data", 1 ;; 3}, "HeaderLines" -> 1]`
 ; (Think of this as saying "when evaluating the operation, replace HeaderLines with a truthy value.)
+;
+; In Wolframite, we would write this as:
+(w/Import "demo.csv.gz" ["Data" (w/Span 1 3)] (w/-> w/HeaderLines 1))
 
 (k/md "#### Patterns {#sec-patterns}
 ")
@@ -147,6 +150,7 @@ See [Functionals & Operators](https://www.wolfram.com/language/fast-introduction
                         ["filter" "Select"]
                         ["nth" "Part" "1-based indexing"]
                         ["map" "Map"]
+                        ["(map f c1 c2)" "(MapThread f [c1 c2])"]
                         ["partial" "operator form" "(see above)"]
                         ["reduce" "Fold"]
                         ["take" "Part"]]})
