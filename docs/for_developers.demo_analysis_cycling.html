@@ -485,47 +485,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>      (io/copy zis (io/file <span class="st">"/tmp/huge.csv"</span>))))</span>
 <span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">:extracted</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="printedClojure">
-<div class="sourceCode" id="cb29"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="at">:extracted</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <p>Now we are ready to read the data in. We will store them into a Wolfram-side var so that we can work with them further.</p>
 <p>For readability and auto-completion, we will define vars for the names of the Wolfram-side vars that we need (notice Wolfram only supports alphanumeric names):</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb30"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> csv </span><span class="st">"Wolf var - whole content"</span> <span class="at">'csv</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> csv </span><span class="st">"Wolf var - whole content"</span> <span class="at">'csv</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb31"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> rawRows </span><span class="st">"Wolf var - unparsed data rows"</span> <span class="at">'rawRows</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> rawRows </span><span class="st">"Wolf var - unparsed data rows"</span> <span class="at">'rawRows</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb32"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> rows </span><span class="st">"Wolf var - parsed data rows"</span> <span class="at">'rows</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> rows </span><span class="st">"Wolf var - parsed data rows"</span> <span class="at">'rows</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb33"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>(wl/! (w/do (w/= <span class="at">'f</span> (w/OpenRead <span class="st">"/tmp/huge.csv"</span>))</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>            (w/= csv (w/ReadList <span class="at">'f</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                                 w/Word</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>                                 (w/-&gt; w/WordSeparators [<span class="st">","</span>])</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                                 (w/-&gt; w/RecordSeparators [<span class="st">"</span><span class="sc">\n</span><span class="st">"</span> <span class="st">"</span><span class="sc">\r\n</span><span class="st">"</span> <span class="st">"</span><span class="sc">\r</span><span class="st">"</span>])</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                                 (w/-&gt; w/NullWords <span class="va">true</span>)</span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>                                 (w/-&gt; w/RecordLists <span class="va">true</span>)))</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>               <span class="co">;; Let's return only the length instead of all the large data:</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>            (w/Length csv)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>(wl/! (w/do (w/= <span class="at">'f</span> (w/OpenRead <span class="st">"/tmp/huge.csv"</span>))</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>            (w/= csv (w/ReadList <span class="at">'f</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>                                 w/Word</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                                 (w/-&gt; w/WordSeparators [<span class="st">","</span>])</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                                 (w/-&gt; w/RecordSeparators [<span class="st">"</span><span class="sc">\n</span><span class="st">"</span> <span class="st">"</span><span class="sc">\r\n</span><span class="st">"</span> <span class="st">"</span><span class="sc">\r</span><span class="st">"</span>])</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                                 (w/-&gt; w/NullWords <span class="va">true</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>                                 (w/-&gt; w/RecordLists <span class="va">true</span>)))</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>               <span class="co">;; Let's return only the length instead of all the large data:</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>            (w/Length csv)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb34"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="dv">100000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="dv">100000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We leverage the flexibility of <a href="https://reference.wolfram.com/language/ref/ReadList.html">ReadList</a>, instructing it to read “Words” separated by <code>,</code> (instead of applying the normal word separating characters), thus reading individual column values. It reads them as records, separated by the given separators (which are the same as the default, shown here for clarity). I.e. each line is considered to be a record. And with <code>RecordLists -&gt; True</code> we instruct it to put each record into a separate list and each row will thus become a list of values (instead of a single long list of all the column values in the whole file). Finally, we set <code>NullWords -&gt; True</code> not to skip empty column values, so that all rows will have the same number of elements.)</p>
 <p>(We could have instead used <code>ReadList</code> with something like <code>(w/ReadList 'f (w/Table w/Record [13]) (w/-&gt; 'RecordSeparators ["," "\n"]))</code>, telling it we have sequences of 13 records, where each record is separated by <code>,</code> (column separator) or <code>\n</code> (row separator). But this requires us to count the number of columns up-front.)</p>
 <p>Let’s extract column names:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb35"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> headers </span>(<span class="kw">-&gt;&gt;</span> (wl/! (w/Part csv <span class="dv">1</span>))</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>                  (<span class="kw">map</span> #(str/replace <span class="va">%</span> <span class="st">"</span><span class="sc">\"</span><span class="st">"</span> <span class="st">""</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> headers </span>(<span class="kw">-&gt;&gt;</span> (wl/! (w/Part csv <span class="dv">1</span>))</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                  (<span class="kw">map</span> #(str/replace <span class="va">%</span> <span class="st">"</span><span class="sc">\"</span><span class="st">"</span> <span class="st">""</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s have a look at row 98,765 to verify we get the data correctly:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb36"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>(k/table</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a> {<span class="at">:row-vectors</span> (<span class="kw">map</span> <span class="kw">vector</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                    headers</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                    (wl/! (w/Part csv <span class="dv">98765</span>)))})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>(k/table</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a> {<span class="at">:row-vectors</span> (<span class="kw">map</span> <span class="kw">vector</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                    headers</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                    (wl/! (w/Part csv <span class="dv">98765</span>)))})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="clay-table">
 <div class="table-responsive">
@@ -589,63 +586,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Now, let’s make a few helpers:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb37"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> header-&gt;idx</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Header -&gt; column index (1-based)"</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">zipmap</span> headers (<span class="kw">next</span> (<span class="kw">range</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> header-&gt;idx</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Header -&gt; column index (1-based)"</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">zipmap</span> headers (<span class="kw">next</span> (<span class="kw">range</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb38"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> col </span>[row-sym col-name]</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  (w/Part row-sym (header-&gt;idx col-name)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> col </span>[row-sym col-name]</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  (w/Part row-sym (header-&gt;idx col-name)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb39"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> rowvals</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Return a Wolfram fn extracting values of the named columns and returning them as a Wolf list / Clj vector"</span></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  [&amp; col-names]</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  (w/fn [row] (<span class="kw">mapv</span> #(col row <span class="va">%</span>) col-names)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> rowvals</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Return a Wolfram fn extracting values of the named columns and returning them as a Wolf list / Clj vector"</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  [&amp; col-names]</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  (w/fn [row] (<span class="kw">mapv</span> #(col row <span class="va">%</span>) col-names)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, let’s parse strings into numbers so that we can use them in computations.</p>
 <p>The recommended way is to use <code>ToExpression</code>, but it is too smart and thus slow. We will need to cheat and use the internal <code>StringToMReal</code> instead. I got <a href="https://mathematica.stackexchange.com/a/94762">these performance tips</a> from SO. Let’s see how it works:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb40"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">or</span> (<span class="kw">=</span> <span class="fl">12.34</span> (wl/! '(Internal/StringToMReal <span class="st">"12.34"</span>)))</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">throw</span> (ex-info <span class="st">"StringToMReal doesn't work/exist anymore?!"</span> {})))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">or</span> (<span class="kw">=</span> <span class="fl">12.34</span> (wl/! '(Internal/StringToMReal <span class="st">"12.34"</span>)))</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">throw</span> (ex-info <span class="st">"StringToMReal doesn't work/exist anymore?!"</span> {})))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb41"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="va">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="va">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s make our life easier by creating a wrapper var for this function. It is somewhat of a cheat, since it isn’t a part of the public api (<a href="https://github.com/scicloj/wolframite/issues/129">yet</a>):</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb42"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> StringToMReal </span>(intern/wolfram-fn <span class="at">'Internal/StringToMReal</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> StringToMReal </span>(intern/wolfram-fn <span class="at">'Internal/StringToMReal</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can now get rid of the annoying quote, and it still works 🤞:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb43"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>(wl/! (StringToMReal <span class="st">"12.34"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>(wl/! (StringToMReal <span class="st">"12.34"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb44"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fl">12.34</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fl">12.34</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s store the data without the header row as <code>rawRows</code> (and again, ensure we do not return the whole data set):</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb45"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>(wl/! (w/Length (w/= rawRows (w/Drop csv <span class="dv">1</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>(wl/! (w/Length (w/= rawRows (w/Drop csv <span class="dv">1</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="printedClojure">
-<div class="sourceCode" id="cb46"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="dv">99999</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="dv">99999</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb47"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> loc-ks </span>[<span class="st">"start_lat"</span> <span class="st">"start_lng"</span> <span class="st">"end_lat"</span> <span class="st">"end_lng"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> loc-ks </span>[<span class="st">"start_lat"</span> <span class="st">"start_lng"</span> <span class="st">"end_lat"</span> <span class="st">"end_lng"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we extract and parse the columns of interest (processing all but displaying only the first 3 here):</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb48"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>(k/table</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a> {<span class="at">:column-names</span> [<span class="st">"Start latitude"</span> <span class="st">"Start longitude"</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"End latitude"</span> <span class="st">"End longitude"</span>]</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">:row-vectors</span></span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">time</span> <span class="co">; 0.6s w/ Map only, ~2s with Select as well</span></span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>   (wl/! (<span class="kw">-&gt;</span> (w/= rows</span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>                  (<span class="kw">-&gt;&gt;</span> (w/Select rawRows (w/AllTrue (w/fn [v] (w/Not (w/== v <span class="st">""</span>)))))</span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>                       (w/Map (w/Composition</span>
-<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>                               (w/Map StringToMReal)</span>
-<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>                               (<span class="kw">apply</span> rowvals loc-ks)))))</span>
-<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>             (w/Part (w/Range <span class="dv">1</span> <span class="dv">3</span>)))))})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>(k/table</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a> {<span class="at">:column-names</span> [<span class="st">"Start latitude"</span> <span class="st">"Start longitude"</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"End latitude"</span> <span class="st">"End longitude"</span>]</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">:row-vectors</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">time</span> <span class="co">; 0.6s w/ Map only, ~2s with Select as well</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>   (wl/! (<span class="kw">-&gt;</span> (w/= rows</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>                  (<span class="kw">-&gt;&gt;</span> (w/Select rawRows (w/AllTrue (w/fn [v] (w/Not (w/== v <span class="st">""</span>)))))</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>                       (w/Map (w/Composition</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>                               (w/Map StringToMReal)</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>                               (<span class="kw">apply</span> rowvals loc-ks)))))</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>             (w/Part (w/Range <span class="dv">1</span> <span class="dv">3</span>)))))})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="clay-table">
 <div class="table-responsive">
@@ -684,9 +681,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Notice few tricks here: 1. We leverage the <em>operator form</em> of <code>AllTrue</code> so we don’t need to wrap it in a function 2. We use <code>Composition</code> so that we can leverage our already defined <code>rowvals</code> to extract the values we care about, and then to parse them.</p>
 <p>Let’s update our helper to reflect the new columns of rows:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb49"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> rowvals' </span>[&amp; col-names]</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">let</span> [header-&gt;idx' (<span class="kw">zipmap</span> loc-ks (<span class="kw">next</span> (<span class="kw">range</span>)))]</span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    (w/fn [row] (<span class="kw">mapv</span> #(w/Part row (header-&gt;idx' <span class="va">%</span>)) col-names))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">defn</span><span class="fu"> rowvals' </span>[&amp; col-names]</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">let</span> [header-&gt;idx' (<span class="kw">zipmap</span> loc-ks (<span class="kw">next</span> (<span class="kw">range</span>)))]</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    (w/fn [row] (<span class="kw">mapv</span> #(w/Part row (header-&gt;idx' <span class="va">%</span>)) col-names))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>For me, it took ±0.8s to extract the 2 columns as text and 1.5s to parse them into numbers. With <code>ToExpression</code> it would take ±5s.</p>
 <section id="starting-positions-in-a-map" class="level4" data-number="9.0.0.1">
@@ -694,22 +691,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>One interesting thing to look at is how the starting positions of the trips are distributed.</p>
 <p>In a REPL session, we could have used the following, to show the graphic in a Java Swing window:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb50"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">comment</span> (<span class="kw">-&gt;&gt;</span> rows</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>              (w/Map (rowvals' <span class="st">"start_lat"</span> <span class="st">"start_lng"</span>))</span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>              w/GeoHistogram</span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>              ((requiring-resolve <span class="at">'wolframite.tools.graphics/show!</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">comment</span> (<span class="kw">-&gt;&gt;</span> rows</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>              (w/Map (rowvals' <span class="st">"start_lat"</span> <span class="st">"start_lng"</span>))</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>              w/GeoHistogram</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>              ((requiring-resolve <span class="at">'wolframite.tools.graphics/show!</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>but for this web page, we want to export and include the graphic as an image:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb51"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">let</span> [file (io/file <span class="st">"notebooks"</span> <span class="st">"start-locs.webp"</span>)]</span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">when-not</span> (.exists file)</span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">time</span> (wl/! (<span class="kw">let</span> [d (<span class="kw">-&gt;&gt;</span> rows</span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>                             (w/Map (rowvals' <span class="st">"start_lat"</span> <span class="st">"start_lng"</span>))</span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>                             w/GeoHistogram)]</span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>                  (w/Export (.getAbsolutePath file) d</span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>                            (w/-&gt; w/ImageSize <span class="dv">300</span>)</span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#_</span>(w/-&gt; w/ImageSize w/Large))))))</span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  (k/hiccup [<span class="at">:img</span> {<span class="at">:src</span> (.getPath file) <span class="co">#_#_</span><span class="at">:style</span> {<span class="at">:width</span> <span class="st">"50%"</span> <span class="at">:height</span> <span class="st">"50%"</span>}}]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">let</span> [file (io/file <span class="st">"notebooks"</span> <span class="st">"start-locs.webp"</span>)]</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  (<span class="kw">when-not</span> (.exists file)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    (<span class="kw">time</span> (wl/! (<span class="kw">let</span> [d (<span class="kw">-&gt;&gt;</span> rows</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>                             (w/Map (rowvals' <span class="st">"start_lat"</span> <span class="st">"start_lng"</span>))</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>                             w/GeoHistogram)]</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>                  (w/Export (.getAbsolutePath file) d</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>                            (w/-&gt; w/ImageSize <span class="dv">300</span>)</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>                            <span class="co">#_</span>(w/-&gt; w/ImageSize w/Large))))))</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>  (k/hiccup [<span class="at">:img</span> {<span class="at">:src</span> (.getPath file) <span class="co">#_#_</span><span class="at">:style</span> {<span class="at">:width</span> <span class="st">"50%"</span> <span class="at">:height</span> <span class="st">"50%"</span>}}]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <img src="notebooks/start-locs.webp">
 <p><strong>TO BE CONTINUED</strong> - featuring GeoDistance &amp; more!</p>
