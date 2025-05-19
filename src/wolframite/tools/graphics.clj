@@ -34,8 +34,13 @@
   @default-app)
 
 (defn- fit-graphic-expr-to-frame ^String [^String wl-expr-str ^Component container]
-  (let [size (.getSize container)]
-    (str "Show[" wl-expr-str ", ImageSize -> {" (.width size) "," (.height size) "}]")))
+  (let [size (.getSize container)
+        scaled-expr
+        (format "With[{g=%s}, If[MatchQ[g, _Graphics | _Graphics3D],Show[g,ImageSize -> {%d,%d}],g]]" ; should include also Image | Image3D ?
+                wl-expr-str
+                (.width size)
+                (.height size))]
+    scaled-expr))
 
 (defn set-resize-timer [{:keys [^JFrame frame, ^MathGraphicsJPanel math] :as _app} wl-expr-str]
   (doseq [l (.getComponentListeners frame)]
