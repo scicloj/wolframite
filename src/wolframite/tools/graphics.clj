@@ -11,7 +11,7 @@
     (java.awt.event ActionListener ComponentAdapter MouseAdapter)
     (java.awt.image BufferedImage)
     (javax.imageio ImageIO)
-    [javax.swing JFileChooser JFrame JMenuItem JOptionPane JPanel JPopupMenu JScrollPane Timer]))
+    [javax.swing JFileChooser JFrame JMenuItem JOptionPane JPanel JPopupMenu JScrollPane SwingUtilities Timer]))
 
 (defonce ^:private default-app (promise))
 
@@ -125,6 +125,30 @@
           (when (.isPopupTrigger e)
             (.show popup math (.getX e) (.getY e))))))))
 
+(defn- show-on-swing-thread [wl-expr-str {:keys [math frame] :as app} {:keys [jlink-instance scale-with-window?] :as _opts}]
+  (do
+    ;; Essential: this ensures sizes are >= min. size and thus non-zero, which we
+    ;; need for the resizing call below
+    (.pack frame)
+    (doto math
+      (.setLink (proto/kernel-link jlink-instance))
+      (.setMathCommand (fit-graphic-expr-to-frame wl-expr-str math))
+      (.revalidate)
+      (.repaint)
+      (.setFocusable true)
+      (.requestFocusInWindow)))
+
+  (doto frame
+    (.setVisible true)
+    ;; TODO The window does not jump to the front, despite .toFront
+    ;; (depends on win. managers; may only work for windows in the same app...)
+    (.toFront))
+
+  (when scale-with-window?
+    (set-resize-timer app wl-expr-str))
+
+  (add-save-menu app))
+
 (defn show!
   "Display a graphical Wolfram expression result in a window - such as that of  `Plot[...]`.
   - `wl-expr` - Wolfram in a string or a Wolframite expression
@@ -142,7 +166,6 @@
 
   Returns a 'window' thing representing the window displaying the expression."
   ;; NOTE: Contrary to the legacy graphics, this uses the newer Swing and JLink's own math canvas component
-  ;; TODO Sometimes, the graphics is scaled to the frame, sometimes not; why/when?!
   ;; TODO: When we've multiple windows, should we try to position them not all at the same place?!
   ([wl-expr] (show! wl-expr (ensure-default-app!) nil))
   ([wl-expr window] (show! wl-expr window nil))
@@ -152,33 +175,14 @@
      :or {scale-with-window? true}
      :as _opts}]
    (let [jlink-instance' (or jlink-instance (jlink-instance/get))
-         {:keys [math frame] :as app} (or window (make-app!))
+         app (or window (make-app!))
          wl-expr-str (if (string? wl-expr)
                        wl-expr
                        (str (wl/->wl wl-expr {:jlink-instance jlink-instance'})))]
-
-     (do
-       ;; Essential: this ensures sizes are >= min. size and thus non-zero, which we
-       ;; need for the resizing call below
-       (.pack frame)
-       (doto math
-         (.setLink (proto/kernel-link jlink-instance'))
-         (.setMathCommand (fit-graphic-expr-to-frame wl-expr-str math))
-         (.revalidate)
-         (.repaint)
-         (.setFocusable true)
-         (.requestFocusInWindow)))
-
-     (doto frame
-       (.setVisible true)
-       ;; TODO The window does not jump to the front, despite .toFront
-       ;; (depends on win. managers; may only work for windows in the same app...)
-       (.toFront))
-
-     (when scale-with-window?
-       (set-resize-timer app wl-expr-str))
-
-     (add-save-menu app)
+     (SwingUtilities/invokeAndWait
+       ;; Swing is not thread-safe and changes to its components must be done on the Event Dispatch Thread (EDT)
+       (fn []
+         (show-on-swing-thread wl-expr-str app {:jlink-instance jlink-instance' :scale-with-window? scale-with-window?})))
 
      app)))
 
@@ -190,6 +194,14 @@
   (show! "Plot[Sin[x], {x, 0, 6 Pi}]")
   (show! "Plot[Sin[x], {x, 0, 4 Pi}]")
   (show! '(Plot (Sin x) [x 0 (* 6 Math/PI)]))
+
+  (def *G *1)
+  (.pack (:frame *G))
+  (.repaint (:frame *G))
+  (.repaint (.getParent (:math *G)))
+  (.repaint (:math *G))
+
+  (:math *G)
 
   (def win (show! "Plot[Sin[x], {x, 0, 2 Pi}]"))
   (show! "Plot[Cos[x], {x, 0, 2 Pi}]" win)
