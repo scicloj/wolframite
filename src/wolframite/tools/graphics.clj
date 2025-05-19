@@ -33,17 +33,37 @@
     (deliver default-app (make-app!)))
   @default-app)
 
-(defn- fit-graphic-expr-to-frame ^String [^String wl-expr-str ^Component container]
-  (let [parent (.getParent container)
-        size (if (instance? JViewport parent)
-               (.getExtentSize ^JViewport parent)
-               (.getSize container))
-        scaled-expr
-        (format "With[{g=%s}, If[MatchQ[g, _Graphics | _Graphics3D],Show[g,ImageSize -> {%d,%d}],g]]" ; should include also Image | Image3D ?
-                wl-expr-str
-                (.width size)
-                (.height size))]
-    scaled-expr))
+; It seems that `Show[..]` has no effect on the resulting size, contrary to math.setSize
+;(defn- fit-graphic-expr-to-frame ^String [^String wl-expr-str ^Dimension size]
+;  (let [scaled-expr
+;        ;; With ImageSize->{w,h}, an object will always be drawn in a w×h region and will be sized to fit in the region.
+;        ;; If the object has a definite aspect ratio that is not h/w, then space will be left around it.
+;        (format "With[{g=%s}, If[MatchQ[g, _Graphics | _Graphics3D],Show[g,ImageSize -> {%d,%d}],g]]"
+;                wl-expr-str
+;                (- (.width size) 10)
+;                (- (.height size) 10))]
+;    scaled-expr))
+
+(defn- available-math-size [^JFrame _frame, ^Component math]
+  ;; BEWARE: In `componentResized`, it is likely that only the _frame_ & ScrollPane have been resized, not the math
+  (let [scroll-pane-viewport ^JViewport (.getParent math)]
+    (.getSize scroll-pane-viewport)))
+
+(defn- ensure-math-sized-to-frame!
+  ([math frame]
+   (let [new-math-size (available-math-size frame math)]
+     (doto math
+       ;; The next two are essential to resizing, in this particular order:
+       (.setSize new-math-size) ; this makes the content fit the new size
+       (.setMathCommand (.getMathCommand math)) ; seems pointless but it is necessary :'(
+       ;; And some supporting code
+       ;; We need to adjust the preferred size so that next time we call show! and thus
+       ;; frame.pack, we won't reset to the default preferred size but keep the size
+       ;; we've
+       (.setPreferredSize new-math-size)
+       ;; Not 100% sure we need all the following ones:
+       (.revalidate)
+       (.repaint)))))
 
 (defn set-resize-timer [{:keys [^JFrame frame, ^MathGraphicsJPanel math] :as _app} wl-expr-str]
   (doseq [l (.getComponentListeners frame)]
@@ -60,17 +80,7 @@
                   (some-> prev-timer .stop)
                   (doto (Timer. 200 ; wait 200ms before resizing, to make sure the user is done dragging
                                 (proxy [ActionListener] []
-                                  (actionPerformed [_]
-                                    (doto math
-                                      ;(.setLink kernel-link) ; unnecessary, we've set it already at start
-                                      (.setMathCommand (fit-graphic-expr-to-frame wl-expr-str math))
-                                      (.revalidate)
-                                      (.repaint))
-                                    ;; We need to adjust the preferred size so that next time we call show! and thus
-                                    ;; frame.pack, we won't reset to the default preferred size but keep the size
-                                    ;; we've
-                                    (.setPreferredSize math (.getSize frame))
-                                    )))
+                                  (actionPerformed [_] (ensure-math-sized-to-frame! math frame))))
                     (.setRepeats false)
                     (.start)))))))))
 
@@ -131,13 +141,12 @@
 (defn- show-on-swing-thread [wl-expr-str {:keys [math frame] :as app} {:keys [jlink-instance scale-with-window?] :as _opts}]
   (do
     ;; Essential: this ensures sizes are >= min. size and thus non-zero, which we
-    ;; need for the resizing call below
+    ;; need for the size-related call(s) below
     (.pack frame)
     (doto math
       (.setLink (proto/kernel-link jlink-instance))
-      (.setMathCommand (fit-graphic-expr-to-frame wl-expr-str math))
-      (.revalidate)
-      (.repaint)
+      (.setMathCommand wl-expr-str #_(fit-graphic-expr-to-frame wl-expr-str (available-math-size frame math)))
+      (ensure-math-sized-to-frame! frame)
       (.setFocusable true)
       (.requestFocusInWindow)))
 
@@ -202,4 +211,17 @@
   (show! "Plot[Cos[x], {x, 0, 2 Pi}]" win)
   (show! "Plot[Sin[x], {x, 0, 2 Pi}]" win)
   (show! "Plot[Sin[x], {x, 0, 4 Pi}]" nil)
+
+  (apply available-math-size ((juxt :frame :math) @default-app))
+
+  (-> @default-app :math .repaint)
+  (-> @default-app :math .revalidate)
+  (-> @default-app :frame .getInsets)
+  (-> @default-app :math .getParent .getInsets)
+  ;; NOTE: Code changing components must be run on the Swing thread:
+  (SwingUtilities/invokeAndWait (fn [] (-> @default-app :frame .revalidate)))
+  (SwingUtilities/invokeAndWait (fn [] (-> @default-app :frame .repaint)))
+  (SwingUtilities/invokeAndWait (fn []
+                                  (let [{:keys [frame math]} @default-app]
+                                   (ensure-math-sized-to-frame! math frame))))
   )
