@@ -11,7 +11,7 @@
     (java.awt.event ActionListener ComponentAdapter MouseAdapter)
     (java.awt.image BufferedImage)
     (javax.imageio ImageIO)
-    [javax.swing JFileChooser JFrame JMenuItem JOptionPane JPanel JPopupMenu JScrollPane SwingUtilities Timer]))
+    [javax.swing JFileChooser JFrame JMenuItem JOptionPane JPanel JPopupMenu JScrollPane JViewport SwingUtilities Timer]))
 
 (defonce ^:private default-app (promise))
 
@@ -34,7 +34,10 @@
   @default-app)
 
 (defn- fit-graphic-expr-to-frame ^String [^String wl-expr-str ^Component container]
-  (let [size (.getSize container)
+  (let [parent (.getParent container)
+        size (if (instance? JViewport parent)
+               (.getExtentSize ^JViewport parent)
+               (.getSize container))
         scaled-expr
         (format "With[{g=%s}, If[MatchQ[g, _Graphics | _Graphics3D],Show[g,ImageSize -> {%d,%d}],g]]" ; should include also Image | Image3D ?
                 wl-expr-str
@@ -194,14 +197,6 @@
   (show! "Plot[Sin[x], {x, 0, 6 Pi}]")
   (show! "Plot[Sin[x], {x, 0, 4 Pi}]")
   (show! '(Plot (Sin x) [x 0 (* 6 Math/PI)]))
-
-  (def *G *1)
-  (.pack (:frame *G))
-  (.repaint (:frame *G))
-  (.repaint (.getParent (:math *G)))
-  (.repaint (:math *G))
-
-  (:math *G)
 
   (def win (show! "Plot[Sin[x], {x, 0, 2 Pi}]"))
   (show! "Plot[Cos[x], {x, 0, 2 Pi}]" win)
