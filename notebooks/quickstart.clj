@@ -92,8 +92,11 @@ Yes!
 
 ;; We could also show it in a Java window (commented out, because we're building a web page):
 (comment
-  ((requiring-resolve 'wolframite.tools.graphics/show!)
-   (w/GridGraph [5 5])))
+  (def jshow! (requiring-resolve 'wolframite.tools.graphics/show!))
+  (jshow! (w/GridGraph [5 5]))
+  (jshow! (w/ChemicalData "Ethanol" "StructureDiagram"))
+  (jshow! (w/TextStructure "The cat sat on the mat."))
+  ,)
 
 (wh/show (w/ChemicalData "Ethanol" "StructureDiagram"))
 
