@@ -38,6 +38,8 @@
 
   (if (options/flag?' (:flags opts) flags/serial)
     (proto/evaluate! jlink-instance expr)
+    ;; Run expression on the next available parallel kernel
+    ;; see https://reference.wolfram.com/language/ParallelTools/tutorial/ConcurrencyManagingParallelProcesses.html
     (let [opts' (update opts :flags conj flags/serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
           ;; Generate a new, unique symbol for a ref to the submitted computation (~ Java Future?)
           pid-expr (evaluate (convert/convert
@@ -57,3 +59,8 @@
             (do
               (evaluate (convert/convert (list 'Remove pid-expr) opts') opts)
               result)))))))
+
+;; Explanation, in Wolfram:
+;; pid-expr = Unique["Wolframite/Concurrent/process"] ; create a symbol
+;; pid-expr = ParallelSubmit[expr] ; submits expr for evaluation on the next available parallel
+;; Check QueueRun[] in a loop, using ProcessState[pid-expr] to check for queued/running/finished and to get the result
