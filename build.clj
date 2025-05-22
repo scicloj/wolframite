@@ -60,7 +60,7 @@
           opts))
   opts)
 
-(defn build-site [opts]
+(defn site [opts]
   (println "Going to build docs ...")
   ((requiring-resolve 'scicloj.clay.v2.api/make!)
    (assoc build-config/config
