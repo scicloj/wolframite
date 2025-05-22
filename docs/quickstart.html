@@ -469,8 +469,11 @@ wolframite.wolfram/Dot
 <p>We could also show it in a Java window (commented out, because we’re building a web page):</p>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb20"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">comment</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  ((requiring-resolve <span class="at">'wolframite.tools.graphics/show!</span>)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>   (w/GridGraph [<span class="dv">5</span> <span class="dv">5</span>])))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  (<span class="bu">def</span><span class="fu"> jshow! </span>(requiring-resolve <span class="at">'wolframite.tools.graphics/show!</span>))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  (jshow! (w/GridGraph [<span class="dv">5</span> <span class="dv">5</span>]))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  (jshow! (w/ChemicalData <span class="st">"Ethanol"</span> <span class="st">"StructureDiagram"</span>))</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  (jshow! (w/TextStructure <span class="st">"The cat sat on the mat."</span>))</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  ,)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb21"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>(wh/show (w/ChemicalData <span class="st">"Ethanol"</span> <span class="st">"StructureDiagram"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
