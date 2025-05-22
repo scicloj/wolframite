@@ -56,5 +56,10 @@
   Opposite of [[arrays]]."
   :no-arrays)
 
+(def allow-large-data
+  "When set then Wolframite will return any result from Wolfram, no matter how large.
+  Normally, Wolframite would return `:wolframite/large-data` if the result is too large."
+  :allow-large-data)
+
 ;; #{:vectors :seqs #_:seq-fn} :vectors ;; **DEPRECATED**: this is not really a flag, not sure how useful at all
 ;; #{:full-form :clojure-form} ; TODO Not sure what this is

@@ -1,11 +1,12 @@
 ;; # Gotchas... - on avoiding pitfalls and confusion {#sec-gotchas}
 (ns gotchas
   [:require
-   [scicloj.kindly.v4.kind :as k]
-   [wolframite.api.v1 :as wl]
-   [wolframite.wolfram :as w :refer :all
-    :exclude [* + - -> / < <= = == > >= fn
-              Byte Character Integer Number Short String Thread]]])
+    [scicloj.kindly.v4.kind :as k]
+    [wolframite.api.v1 :as wl]
+    [wolframite.flags :as flags]
+    [wolframite.wolfram :as w :refer :all
+     :exclude [* + - -> / < <= = == > >= fn
+               Byte Character Integer Number Short String Thread]]])
 
 (wl/start!)
 
@@ -19,8 +20,14 @@ Make sure not to use `w/!` (logical negation in Wolfram) when you actually want 
 ### Don't: Transfer huge data unnecessarily
  
  By default, `(wl/! <expr>)` will transfer the return value back to Clojure side and turn it into Clojure data.
- You _don't_ want to do that if the data is big.
- 
+ You _don't_ want to do that if the data is \"big\". Wolframite will try to detect large data
+ and will return `:wolframite/large-data` instead of the actual result in such a case. If you really want the
+ actual result then set the flag
+ ")
+
+flags/allow-large-data
+
+(k/md "
  **Do**: Keep the data on Wolfram-side, assigning it to a symbol.
 
  Example:
@@ -28,11 +35,11 @@ Make sure not to use `w/!` (logical negation in Wolfram) when you actually want 
 
 (def csv "Make the Wolfram-side symbol easier to use in Clojure" 'csv)
 (wl/! (w/do  (w/= csv "some really big value, read from a file...")
-             nil))
+             (w/Length csv)))
 
 ;; We use `w/=` to assign the value to a Wolfram-side name, so that we can use it in subsequent expressions.
-;; This also returns the value, which we want to ignore, so we wrap it with `w/do` and return something else - length,
-;; a small subset, or, as we do here, `nil`.
+;; Notice that `=` also returns the value, and Wolframite would normally turn that into `:wolframite/large-data`.
+;; But in this case, we want instead to see how long the data is.
 
 (k/md "## Language differences between Wolfram and Wolframite
 
@@ -65,4 +72,10 @@ This will not work because `'(Power 1)` is not evaluated, and so will be treated
 *Symbols passed to Wolfram must be alphanumeric* - In the end, when they get passed to the Wolfram kernel, symbols must be strictly alphanumeric (apart from forward slashes and dollar signs), *i.e.* `r_2` is currently not allowed. This is due to underlying limitations of the Wolfram language. Much like with Mathematica however, we can get around this in general by using Wolframite's aliasing system (see the relevant tutorials).
 
 *Vectors, `[]`, vs lists, `()`.* - Lists are used to represent function calls and so when combining Clojure and Wolfram expressions, make sure that data literals are vectors. For example, `(wh/show (w/ListLinePlot (range 10)))` will fail (otherwise unexpectedly), but `(wh/show (w/ListLinePlot (into [] (range 10))))` will give you what you expect.
+
+## Wolframite quirks
+
+### Limitations of `w/fn`
+
+* No destructuring (yet)
 ")

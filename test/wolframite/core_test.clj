@@ -3,6 +3,7 @@
             [wolframite.core :as wl]
             [wolframite.flags :as flags]
             [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
+            [wolframite.runtime.defaults :as defaults]
             [wolframite.wolfram :as w :refer :all
              :exclude [* + - -> / < <= = == > >= fn
                        Byte Character Integer Number Short String Thread]]
@@ -179,6 +180,28 @@
         "Correct metadata is attached, including view fn to extract the video url")
     (is (-> (view-fn res) meta :kind/video))))
 
+(deftest prevent-large-data-test
+  (wl/start!)
+  (is (= :wolframite/large-data
+         (wl/eval (w/ConstantArray 0 (inc defaults/default-large-data-threshold))))
+      "Should return :wolframite/large-data when the result is too large")
+  (is (= (inc defaults/default-large-data-threshold)
+         (count (wl/eval (w/ConstantArray 0 (inc defaults/default-large-data-threshold))
+                         {:flags #{flags/allow-large-data}})))
+      "Should return too large when explicitly requested")
+  (testing "unwrapping in error responses"
+   (is (= '(+ x y)
+          (wl/eval '(+ x y)))
+       "We don't 'leak' the size-limiting fn call to the user when the expression cannot be fully
+       evaluated (v1).")
+   (is (= '(+ 3 z)
+          (wl/eval '(+ 1 2 z)))
+       "We don't 'leak' the size-limiting fn call to the user when the expression cannot be fully
+       evaluated (v2)."))
+  (testing "unwrapping in ->clj"
+    (is (= '(+ 1 2)
+           (wl/->clj "Plus[1,2]"))
+        "We don't 'leak' the size-limiting fn call to the user when converting Wolfram to Wolframite")))
 
 (comment
   (wl/->wl (w/Map (w/fn [] (w/+ (w/Slot 1) 1)) [1 3]))

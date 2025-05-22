@@ -1,9 +1,11 @@
 (ns wolframite.impl.wolfram-syms.wolfram-syms
   "Support for loading available symbols (fns & more) from Wolfram"
-  (:require [wolframite.impl.wolfram-syms.intern :as intern]))
+  (:require [wolframite.flags :as flags]
+            [wolframite.impl.wolfram-syms.intern :as intern]))
 
 (defn fetch-all-wolfram-symbols [wl-eval]
-  (doall (->> (wl-eval '(EntityValue (WolframLanguageData) ["Name", "PlaintextUsage"] "EntityPropertyAssociation"))
+  (doall (->> (wl-eval '(EntityValue (WolframLanguageData) ["Name", "PlaintextUsage"] "EntityPropertyAssociation")
+                       {:flags #{flags/allow-large-data}})
               vals ; keys ~ `(Entity "WolframLanguageSymbol" "ImageCorrelate")`
               (map (fn [{sym "Name", doc "PlaintextUsage"}]
                      {:sym (symbol sym), :doc doc})))))
