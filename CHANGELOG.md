@@ -1,6 +1,14 @@
 Changelog
 =========
 
+WIP
+---
+
+1.1.1
+-----
+
+* Fix `graphics/show!` when rendering new content in the same window, and to scale content correctly
+
 1.1.0
 -----
 
