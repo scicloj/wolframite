@@ -53,6 +53,9 @@
    - `opts` - same as those for [[start!]], especially `:aliases` and `:flags` (see
       wolframite.flags)
 
+   Returns the result of the evaluation as Clojure data, ± in the Wolfram Input Form
+   (see https://reference.wolfram.com/language/tutorial/TextualInputAndOutput.html). May throw.
+
     Example:
     ```clojure
     (wl/eval \"Plus[1,2]\")
@@ -70,6 +73,9 @@
    Args:
    - `opts` - same as those for [[start!]], especially `:aliases` and `:flags` (see
       wolframite.flags)
+
+   Returns the result of the evaluation as Clojure data, ± in the Wolfram Input Form
+   (see https://reference.wolfram.com/language/tutorial/TextualInputAndOutput.html). May throw.
 
     Example:
     ```clojure

@@ -180,6 +180,9 @@
    - `opts` - same as those for [[start!]], especially `:aliases` and `:flags` (see
       wolframite.runtime.defaults/default-flags)
 
+   Returns the result of the evaluation as Clojure data, ± in the Wolfram Input Form
+   (see https://reference.wolfram.com/language/tutorial/TextualInputAndOutput.html). May throw.
+
     Example:
     ```clojure
     (wl/eval \"Plus[1,2]\")
@@ -188,7 +191,7 @@
     ; => 3
     ```
 
-    Tip: Use [[->wl]] to look at the final expression that would be sent to Wolfram for evaluation."
+    Tip: Use [[->wl]] to look at the final expression that would be sent to Wolfram for evaluation." ; BEWARE: Keep in sync w/ wolframite.api.v1/eval. !
   ([expr] (eval expr {}))
   ([expr eval-opts]
    (if-let [jlink-inst (jlink-instance/get)]
