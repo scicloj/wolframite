@@ -76,4 +76,10 @@ You *should* use [Emmy](https://github.com/mentat-collective/emmy)! Emmy is a fu
 **How do I translate Mathematica's syntax sugar?**
 
 Since *Mathematica* hides the internals of the *Wolfram Language* by default, it can sometimes be difficult to work out what functions are being called. If you're in Mathematica, you can use `FullForm@Unevaluated[...]` to get a more understandable (if less concise) expression. Of course, you can also use Wolframite, *i.e.* `(wl/->clj ...)` !
+
+**How to transfer large data between Wolframite and Wolfram?**
+
+The only large-ish data that can be transferred relatively efficiently is homogenous arrays (see `wolframite.base.convert/supported-primitive-array?`).
+
+Wolfram 14.2 and newer have added feature to support handling enormous data sets, such as support for the [Apache Arrow and Parquet](https://reference.wolfram.com/language/guide/SummaryOfNewFeaturesIn142.html#103248741), and out-of-core processing for bigger-than-memory processing, and more is on its way in the future.
 ")
