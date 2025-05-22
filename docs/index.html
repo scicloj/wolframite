@@ -461,7 +461,7 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 <h4 data-number="1.5.2.1" class="anchored" data-anchor-id="writing-documentation"><span class="header-section-number">1.5.2.1</span> Writing documentation</h4>
 <p>Documentation is written as literal programming sources in the <code>notebooks</code> directory and turned into HTML under <code>docs</code> using <a href="https://scicloj.github.io/clay/">Clay</a> and <a href="https://quarto.org/">Quarto</a>.</p>
 <p>To render a single namespace/page, require Clay and run <code>(clay/make! {:source-path "&lt;path to the file&gt;""})</code>. Tip: You can also do this without quarto - just add <code>:run-quarto false</code> to the options.</p>
-<p>To build the whole site, run <code>clojure -T:build build-site</code> (remembering to ensure that you have the <code>./symlink-jlink.jar</code> symlink).</p>
+<p>To build the whole site, run <code>clojure -T:build site</code> (remembering to ensure that you have the <code>./symlink-jlink.jar</code> symlink).</p>
 </section>
 </section>
 </section>
