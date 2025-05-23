@@ -96,6 +96,10 @@ Yes!
   (jshow! (w/GridGraph [5 5]))
   (jshow! (w/ChemicalData "Ethanol" "StructureDiagram"))
   (jshow! (w/TextStructure "The cat sat on the mat."))
+  ;;(jshow! (w/ImageSynthesize "animal head hybrid zebra + monkey")) ; LLM subscription needed :'(
+  (jshow! (Graphics [(PatternFilling (list (Entity "Country", "Ukraine") "Flag"), 600),
+                     (FilledCurve (Line (Part (list (Entity "PlaneCurve", "HeartCurve1") "Graphics") 1 1 1)))]))
+  ;; src: https://blog.wolfram.com/2022/10/28/winners-of-the-2022-one-liner-and-get-visual-competitions/
   ,)
 
 (wh/show (w/ChemicalData "Ethanol" "StructureDiagram"))
