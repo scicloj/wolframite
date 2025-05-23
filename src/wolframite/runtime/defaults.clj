@@ -91,7 +91,7 @@
   unless `wolframite.flags/allow-large-data` is set.
 
   BEWARE: Changing the value requires that you restart the kernel for it to take effect."
-  100000)
+  1000000) ; somewhat arbitrary, but should be large enough to not trigger on most normal cases
 
 ;; * Full config options
 
