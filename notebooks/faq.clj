@@ -10,7 +10,7 @@
 (wl/start!)
 
 (k/md "# FAQ {#sec-FAQ}
-**Why Wolfram?** - From the horse's [mouth](https://www.wolfram.com/language/):
+### Why Wolfram? - From the horse's [mouth](https://www.wolfram.com/language/):
 
 > Wolfram Language is a symbolic language, deliberately designed with the breadth and unity needed to develop powerful programs quickly. By integrating high-level forms—like Image, GeoPolygon or Molecule—along with advanced superfunctions—such as ImageIdentify or ApplyReaction—Wolfram Language makes it possible to quickly express complex ideas in computational form.
 
@@ -18,7 +18,7 @@ More concretely, the Wolfram language, and associated ecosystem, is a powerful w
 
 Check out the [Wolfram Language Code Gallery](https://www.wolfram.com/language/gallery/) for some amazing examples of what you can achieve with Wolfram much more easily than with any other programming language under the sun.
 
-**Why Wolframite?**
+### Why Wolframite?
 
 'Why Wolframite?' is really just the combination of 'Why Wolfram?' (above) and '[Why Clojure?](https://clojure.org/about/rationale)'.
 
@@ -51,7 +51,7 @@ At the *usability* layer, Clojure is a well-designed, ergonomic language that le
 Secondly, by using a LisP, you are automatically thinking (and evaluating) at the level of the *symbolic expression* (a.k.a. s-expression). This is in contrast to thinking at the level of 'files', lines or 'cells' of a notebook. This maps very well to the exploration of *mathematical* expressions. In fact, it's almost surprising that Wolfram had such a big influence on the idea of *notebook*-style programming, considering that, at heart, it's all LisP. In our view, Wolframite brings Wolfram back to a more fundamental form of **literate programming**.
 
 
-**Why literate programming?**
+### Why literate programming?
 
 One of the key motivations of Wolframite is to integrate the power of Wolfram within a more general, more ergonomic programming environment. When it comes to solving complex problems however, it is also important to be able to document and visualise the process. In fact, this is a core part of the academic sciences and consumes a lot of time. Largely however, solving problems and documenting the results have been considered orthogonal processes: duplicating huge amounts of work
 
@@ -68,12 +68,22 @@ And yet, for programmers, both of these systems are the wrong way around. The co
 For more information about the downsides of the *notebook*-model, have a look at this [paper](https://www.microsoft.com/en-us/research/uploads/prod/2020/03/chi20c-sub8173-cam-i16.pdf), as cited by the Clerk document system.
 
 
-**Why not Emmy?**
+### Why not Emmy?
 
 You *should* use [Emmy](https://github.com/mentat-collective/emmy)! Emmy is a fully Clojure(script) symbolic algebra engine that is built on the [SCMUTILS](https://groups.csail.mit.edu/mac/users/gjs/6946/refman.txt) system, orginally developed by G.J. Sussman and J. Wisdom. Emmy is a very exciting prospect for symbolic manipulation, but is only a subset of what Wolfram is capable of. In the future, we hope to integrate the two more closely. Our current advice though, is that where you have to do a lot of `Solve`-ing (*i.e.* rearranging of equations), or where you need a more powerful simplifier, use Wolframite.
 
 
-**How do I translate Mathematica's syntax sugar?**
+### How do I translate Mathematica's syntax sugar?
 
 Since *Mathematica* hides the internals of the *Wolfram Language* by default, it can sometimes be difficult to work out what functions are being called. If you're in Mathematica, you can use `FullForm@Unevaluated[...]` to get a more understandable (if less concise) expression. Of course, you can also use Wolframite, *i.e.* `(wl/->clj ...)` !
+
+### How to transfer large data between Wolframite and Wolfram?
+
+The only large-ish data that can be transferred relatively efficiently is homogenous arrays (see `wolframite.base.convert/supported-primitive-array?`).
+
+Wolfram 14.2 and newer have added feature to support handling enormous data sets, such as support for the [Apache Arrow and Parquet](https://reference.wolfram.com/language/guide/SummaryOfNewFeaturesIn142.html#103248741), and out-of-core processing for bigger-than-memory processing, and more is on its way in the future.
+
+### Where does Wolfram store intermediate files?
+
+It depends. There is couple of vars you can check, such as `$WolframDocumentsDirectory` (used e.g. during video processing). See also `$UserBaseDirectory`, `$UserDocumentsDirectory` etc.
 ")
