@@ -53,8 +53,12 @@
    - `opts` - same as those for [[start!]], especially `:aliases` and `:flags` (see
       wolframite.flags)
 
-   Returns the result of the evaluation as Clojure data, ± in the Wolfram Input Form
-   (see https://reference.wolfram.com/language/tutorial/TextualInputAndOutput.html). May throw.
+   Returns one of:
+   1. The result of the evaluation as Clojure data, ± in the Wolfram Input Form
+   (see https://reference.wolfram.com/language/tutorial/TextualInputAndOutput.html). Also:
+   2. May throw an exception if the evaluation fails
+   3. May return `:wolframite/large-data` if the result is larger than the threshold, unless
+    the flag `wolframite.flags/allow-large-data` is set.
 
     Example:
     ```clojure
@@ -74,8 +78,12 @@
    - `opts` - same as those for [[start!]], especially `:aliases` and `:flags` (see
       wolframite.flags)
 
-   Returns the result of the evaluation as Clojure data, ± in the Wolfram Input Form
-   (see https://reference.wolfram.com/language/tutorial/TextualInputAndOutput.html). May throw.
+   Returns one of:
+   1. The result of the evaluation as Clojure data, ± in the Wolfram Input Form
+   (see https://reference.wolfram.com/language/tutorial/TextualInputAndOutput.html). Also:
+   2. May throw an exception if the evaluation fails
+   3. May return `:wolframite/large-data` if the result is larger than the threshold, unless
+    the flag `wolframite.flags/allow-large-data` is set.
 
     Example:
     ```clojure

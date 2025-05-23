@@ -32,23 +32,24 @@
   "
   (:refer-clojure :exclude [eval])
   (:require
-   [babashka.fs :as fs]
-   [clojure.set :as set]
-   [clojure.tools.logging :as log]
-   [wolframite.base.cep :as cep]
-   [wolframite.base.convert :as convert]
-   [wolframite.base.evaluate :as evaluate]
-   [wolframite.base.express :as express]
-   [wolframite.base.package :as package]
-   [wolframite.base.parse :as parse]
-   [wolframite.flags :as flags]
-   [wolframite.impl.jlink-instance :as jlink-instance]
-   [wolframite.impl.kindly-support :as kindly-support]
-   [wolframite.impl.protocols :as proto]
-   [wolframite.runtime.defaults :as defaults]
-   [wolframite.runtime.jlink :as jlink]
-   [wolframite.runtime.system :as system]
-   [wolframite.wolfram :as w]))
+    [babashka.fs :as fs]
+    [clojure.set :as set]
+    [clojure.tools.logging :as log]
+    [wolframite.base.cep :as cep]
+    [wolframite.base.convert :as convert]
+    [wolframite.base.evaluate :as evaluate]
+    [wolframite.base.express :as express]
+    [wolframite.base.package :as package]
+    [wolframite.base.parse :as parse]
+    [wolframite.flags :as flags]
+    [wolframite.impl.internal-constants :as internal-constants]
+    [wolframite.impl.jlink-instance :as jlink-instance]
+    [wolframite.impl.kindly-support :as kindly-support]
+    [wolframite.impl.protocols :as proto]
+    [wolframite.runtime.defaults :as defaults]
+    [wolframite.runtime.jlink :as jlink]
+    [wolframite.runtime.system :as system]
+    [wolframite.wolfram :as w]))
 
 (defonce ^{:deprecated true, :private true} kernel-link-atom (atom nil)) ; FIXME (jakub) DEPRECATED, access it via the jlink-instance instead
 
@@ -62,16 +63,24 @@
                (system/path--kernel path--root)
                (throw (IllegalStateException. "mathlink path neither provided nor auto-detected"))))])
 
-(defn-
-  evaluator-init [opts]
+(defn- evaluator-init [{:keys [large-data-threshold] :as opts}]
+  {:pre [(pos-int? large-data-threshold)]}
   (let [wl-convert #(convert/convert   % opts)
         wl-eval    #(evaluate/evaluate % opts)]
-    (wl-eval (wl-convert 'init))
-    (wl-eval (wl-convert '(Needs "Parallel`Developer`")))
+    (wl-eval (wl-convert 'init)) ; Not sure what's the purpose of this?!
+    (wl-eval (wl-convert '(Needs "Parallel`Developer`"))) ; needed for flags/parallel execution
     (wl-eval (wl-convert '(Needs "Developer`")))
-    (wl-eval (wl-convert '(ParallelNeeds "Developer`")))))
+    (wl-eval (wl-convert '(ParallelNeeds "Developer`")))
+    (wl-eval (wl-convert (w/= internal-constants/wolframiteLimitSize
+                              (w/fn [expr] (w/If (w/> (w/ByteCount expr) large-data-threshold)
+                                                 internal-constants/WolframiteLargeData
+                                                 expr)))))
+    ;; Make sure the custom definitions that we've added are available in all parallel kernels
+    ;; (essential when using flags/parallel evaluation)
+    (wl-eval (wl-convert (w/DistributeDefinitions internal-constants/wolframiteLimitSize))))) ; TODO Check that this works
 
 (comment
+  (convert/convert 'init {})
   (evaluator-init (merge {:kernel/link @kernel-link-atom} defaults/default-options)))
 
 (defn- init-jlink! [kernel-link-atom opts]
@@ -123,8 +132,8 @@
 (defn start!
   "Initialize Wolframite and start! the underlying Wolfram Kernel - required once before you make any eval calls.
 
-  - `opts` - a map that is passed to `eval` and other functions used in the convert-evaluate-parse
-             cycle, which may contain, among others:
+  - `extra-opts` - a map that is merged with `defaults/default-options` and passed to `eval` and
+         other functions used in the convert-evaluate-parse cycle, which may contain, among others:
      - `:aliases` - a map from a custom symbol to a symbol Wolfram understands, such as the built-in
         `{'* 'Times, ...}` - added to the default aliases from `wolframite.runtime.defaults/all-aliases`
         and used when converting symbols at _function position_ to Wolfram expressions.
@@ -135,28 +144,29 @@
 
   See also [[stop!]]"
   ([] (start! defaults/default-options))
-  ([opts]
-   (if (some-> (jlink-instance/get) (proto/kernel-link?)) ; need both, b/c some tests only init jlink
-     {:status :ok
-      :wolfram-version (:wolfram-version (deref kernel-info 1 :N/A))}
-     (let [jlink-inst (or (jlink-instance/get)
-                          (init-jlink! kernel-link-atom opts))]
+  ([extra-opts]
+   (let [opts (merge defaults/default-options extra-opts)]
+    (if (some-> (jlink-instance/get) (proto/kernel-link?)) ; need both, b/c some tests only init jlink
+      {:status :ok
+       :wolfram-version (:wolfram-version (deref kernel-info 1 :N/A))}
+      (let [jlink-inst (or (jlink-instance/get)
+                           (init-jlink! kernel-link-atom opts))]
 
-       (init-kernel! jlink-inst)
-       (evaluator-init (merge {:jlink-instance jlink-inst}
-                              opts))
-       (let [{:keys [wolfram-version]}
-             (doto (kernel-info!)
-               (->> (deliver kernel-info)))]
-         (when (and (number? wolfram-version)
-                    (number? w/*wolfram-version*)
-                    (> wolfram-version w/*wolfram-version*))
-           (log/warnf "You have a newer Wolfram version %s than the %s used to generate wolframite.wolfram
+        (init-kernel! jlink-inst)
+        (evaluator-init (merge {:jlink-instance jlink-inst}
+                               opts))
+        (let [{:keys [wolfram-version]}
+              (doto (kernel-info!)
+                (->> (deliver kernel-info)))]
+          (when (and (number? wolfram-version)
+                     (number? w/*wolfram-version*)
+                     (> wolfram-version w/*wolfram-version*))
+            (log/warnf "You have a newer Wolfram version %s than the %s used to generate wolframite.wolfram
            and may want to re-create it with (wolframite.impl.wolfram-syms.write-ns/write-ns!)"
-                      wolfram-version w/*wolfram-version*)))
-       {:status :ok
-        :wolfram-version (:wolfram-version (deref kernel-info 1 :N/A))
-        :started? true}))))
+                       wolfram-version w/*wolfram-version*)))
+        {:status :ok
+         :wolfram-version (:wolfram-version (deref kernel-info 1 :N/A))
+         :started? true})))))
 
 (defn stop!
   "Sends a request to the kernel to shut down.
@@ -180,8 +190,12 @@
    - `opts` - same as those for [[start!]], especially `:aliases` and `:flags` (see
       wolframite.runtime.defaults/default-flags)
 
-   Returns the result of the evaluation as Clojure data, ± in the Wolfram Input Form
-   (see https://reference.wolfram.com/language/tutorial/TextualInputAndOutput.html). May throw.
+   Returns one of:
+   1. The result of the evaluation as Clojure data, ± in the Wolfram Input Form
+   (see https://reference.wolfram.com/language/tutorial/TextualInputAndOutput.html). Also:
+   2. May throw an exception if the evaluation fails
+   3. May return `:wolframite/large-data` if the result is larger than the threshold, unless
+    the flag `wolframite.flags/allow-large-data` is set.
 
     Example:
     ```clojure
@@ -232,7 +246,8 @@
   [s]
   ;; A hack to force interpretation
   (eval (convert/->wolfram-str-expr s)
-        {:flags #{flags/no-evaluate}})) ; the flag tells us to conver the string to Expr then parse to Clj
+        {:flags #{flags/no-evaluate}
+         :wolframite.core/no-wolframite-wrapping true})) ; the flag tells us to convert the string to Expr then parse to Clj
 
 (defn ->wl
   "Convert Clojure forms to instances of Wolfram's Expr class.

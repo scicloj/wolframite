@@ -1,8 +1,8 @@
 (ns wolframite.lib.options
   (:require [wolframite.runtime.defaults :as defaults]))
 
-(defn filter-params [current-options]
-  (into {} (filter #(keyword? (key %)) current-options)))
+;(defn filter-params [current-options]
+;  (into {} (filter #(keyword? (key %)) current-options)))
 
 (defn filter-flags  [current-options]
   (into {} (filter #(set? (first %)) current-options)))
@@ -20,23 +20,21 @@
           active-set (filter-flag-sets flag current-options)]
       [active-set flag])))
 
-(defn params-into
-  "Conjoins each key-value pair in options into hash-map *options*, conjoining each such pair
-  only if options-keys contains that key."
-  [current-options params]
-  (into current-options
-    (filter #(some #{(first %)} (keys (filter-params current-options))) params)))
+;(defn params-into
+;  "Conjoins each key-value pair in options into hash-map *options*, conjoining each such pair
+;  only if options-keys contains that key."
+;  [current-options params]
+;  (into current-options
+;    (filter #(some #{(first %)} (keys (filter-params current-options))) params)))
 
-(defn options-into [current-options params flags]
-  (flags-into (params-into current-options params) flags))
+;(defn options-into [current-options params flags]
+;  (flags-into (params-into current-options params) flags))
 
 (defn flag? [current-options flag]
   (not (nil? (some #{flag} (vals (filter-flags current-options))))))
 
 (defn flag?' [user-flags flag]
   (flag? (flags-into defaults/default-options user-flags) flag))
-
-;;
 
 (defn set-flag [flags f]
   (flags-into flags [f]))

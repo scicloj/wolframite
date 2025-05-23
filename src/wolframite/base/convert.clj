@@ -1,6 +1,8 @@
 (ns wolframite.base.convert
   "Convert a Clojure expression into a Wolfram JLink expression"
-  (:require [wolframite.impl.jlink-instance :as jlink-instance]
+  (:require [wolframite.flags :as flags]
+            [wolframite.impl.internal-constants :as internal-constants]
+            [wolframite.impl.jlink-instance :as jlink-instance]
             [wolframite.impl.protocols :as proto]
             [wolframite.impl.wolfram-syms.intern :as intern]
             [wolframite.lib.options :as options]
@@ -37,8 +39,25 @@
         :else nil))
 
 (defmulti convert
-  "Convert a Wolframite clj expression into a JLink object representation"
+  "Convert a Wolframite clj (sub)expression into a JLink object representation.
+  You likely want to use [[wrapping-convert]] instead."
   (fn [clj-expr _opts] (dispatch clj-expr))) ; TODO Pass jlink-instance in explicitly inst. of fetching from the global
+
+(defn- wrap-limit-size [clj-expr {:keys [flags] :wolframite.core/keys [no-wolframite-wrapping] :as _opts}]
+  ;; See also wolframite.base.parse/unwrap-limit-size
+  (if (or (options/flag?' flags flags/allow-large-data)
+          no-wolframite-wrapping)
+    clj-expr
+    (list internal-constants/wolframiteLimitSize clj-expr)))
+
+(defn wrapping-convert
+  "Convert the symbolic Clojure expression to jlink.Expr, after wrapping it in extra Wolframite code.
+  See also `wolframite.base.parse/unwrapping-parse`."
+  [clj-expr opts]
+  ;; NOTE Error detection is handled in wolframite.impl.jlink-proto-impl/evaluate!
+  (-> clj-expr
+      (wrap-limit-size opts)
+      (convert opts)))
 
 ;; * Helpers
 

@@ -22,8 +22,14 @@
     * [type name] where type=:Expr/SYMBOL - create a Wolfram symbol")
   (->expr [this obj] "Turn the given obj into a jlink Expr via the loopback link 🤷")
   (expr? [this x])
-  (expr-element-type [this container-type expr])
-  (->expr-type [this type-kw])
+  (expr-element-type [this container-type expr]
+    "Return the type of elements in the given vector/matrix `container`, as a keyword. See also [[expr-primitive-type]].")
+  (expr-primitive-type [this expr]
+    "Return the type of the expression as a keyword, such as `:Expr/SYMBOL` for `com.wolfram.jlink.Expr/SYMBOL`.
+    Only works for primitive expressions and not lists and other containers.
+    See also [[->expr-type]], which turns such keyword into the corresponding constant in Expr.")
+  (->expr-type [this type-kw]
+    "Return one of the primitive type constants in Expr, given corresponding keyword, such as `com.wolfram.jlink.Expr/SYMBOL` for `:Expr/SYMBOL`.")
   (kernel-link [_this])
   (kernel-link? [_this])
   (^Component make-math-canvas!
@@ -48,6 +54,8 @@
   (expr? [this x]
     (throw (IllegalStateException. "JLink not loaded!")))
   (expr-element-type [this container-type expr]
+    (throw (IllegalStateException. "JLink not loaded!")))
+  (expr-primitive-type [this expr]
     (throw (IllegalStateException. "JLink not loaded!")))
   (->expr-type [this type-kw]
     (throw (IllegalStateException. "JLink not loaded!")))

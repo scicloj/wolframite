@@ -2,6 +2,7 @@
   "The 'real' implementation of JLink, which does depend on JLink classes and thus
   cannot be loaded/required until JLink is on the classpath."
   (:require [clojure.tools.logging :as log]
+            [wolframite.impl.internal-constants :as internal-constants]
             [wolframite.impl.protocols :as proto])
   (:import (clojure.lang BigInt)
            [com.wolfram.jlink Expr KernelLink MathCanvas MathLink MathLinkException MathLinkFactory
@@ -96,6 +97,14 @@
 ;; Wolfram sometimes indicates failure by returning the symbol $Failed
 (defonce failed-expr (Expr. Expr/SYMBOL "$Failed"))
 
+(defn- unchanged-expression? [^Expr input, ^Expr output]
+  (let [size-wrapper? (= (some-> input (.head) str)
+                         (name internal-constants/wolframiteLimitSize))
+        unwrapped-input (if size-wrapper?
+                          (-> input (.args) first)
+                          input)]
+   (= unwrapped-input output)))
+
 (defn- evaluate! [^KernelLink link packet-capture-atom ^Expr expr]
   (assert link "Kernel link not initialized?!")
   (io!
@@ -110,7 +119,7 @@
         (cond
           (and (seq messages)
                (or (= res failed-expr)
-                   (= res expr)))
+                   (unchanged-expression? expr res)))
           ;; If input expr == output expr, this usually means the evaluation failed
           ;; (or there was nothing to do); if there are also any extra text/message packets
           ;; then it most likely has failed, and those messages explain what was wrong
@@ -219,14 +228,23 @@
             (.matrixQ expr Expr/RATIONAL)    :Expr/RATIONAL
             (.matrixQ expr Expr/SYMBOL)      :Expr/SYMBOL
             :else                            nil)))
+  (expr-primitive-type [_this expr]
+    (cond (.bigDecimalQ expr) :Expr/BIGDECIMAL
+          (.bigIntegerQ expr) :Expr/BIGINTEGER
+          (.integerQ expr) :Expr/INTEGER
+          (.rationalQ expr) :Expr/RATIONAL
+          (.realQ expr) :Expr/REAL
+          (.stringQ expr) :Expr/STRING
+          (.symbolQ expr) :Expr/SYMBOL
+          :else nil))
   (->expr-type [_this type-kw]
     (case type-kw
-      :Expr/INTEGER Expr/INTEGER
-      :Expr/BIGINTEGER Expr/BIGINTEGER
-      :Expr/REAL Expr/REAL
       :Expr/BIGDECIMAL Expr/BIGDECIMAL
-      :Expr/STRING Expr/STRING
+      :Expr/BIGINTEGER Expr/BIGINTEGER
+      :Expr/INTEGER Expr/INTEGER
       :Expr/RATIONAL Expr/RATIONAL
+      :Expr/REAL Expr/REAL
+      :Expr/STRING Expr/STRING
       :Expr/SYMBOL Expr/SYMBOL))
 
   (kernel-link [_this] @kernel-link-atom)
