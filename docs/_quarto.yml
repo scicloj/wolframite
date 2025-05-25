@@ -1,0 +1,20 @@
+format:
+  html: {toc: true, toc-depth: 4, theme: cosmo}
+  revealjs: {theme: solarized, navigation-mode: vertical, transition: slide, background-transition: fade, incremental: true}
+project: {type: book}
+book:
+  chapters:
+  - index.qmd
+  - quickstart.qmd
+  - understanding_wolframite.qmd
+  - gotchas.qmd
+  - part: Tutorials for scientists
+    chapters: [for_scientists.index.qmd, for_scientists.cavity_physics.qmd]
+  - part: Tutorials for developers
+    chapters: [for_developers.index.qmd, for_developers.wolfram_for_clojurians.qmd, for_developers.demo_analysis_cycling.qmd]
+  - part: Clojure primer
+    chapters: [clojure_primer.index.qmd]
+  - part: Advanced topics
+    chapters: [advanced.customizing_wolframite.qmd, advanced.packages.qmd]
+  - faq.qmd
+  title: Wolframite Documentation

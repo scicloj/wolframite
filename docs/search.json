@@ -1,0 +1,661 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Wolframite Documentation",
+    "section": "",
+    "text": "1 Wolframite\nWolframite sources\nAn interface between Clojure and the Wolfram Language (Supports Mathematica and Wolfram Engine).",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#status",
+    "href": "index.html#status",
+    "title": "Wolframite Documentation",
+    "section": "1.1 Status",
+    "text": "1.1 Status\nStable",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#what-is-wolframite",
+    "href": "index.html#what-is-wolframite",
+    "title": "Wolframite Documentation",
+    "section": "1.2 What is Wolframite?",
+    "text": "1.2 What is Wolframite?\nWolframite (formerly Clojuratica) brings together two of today’s most exciting tools for high-performance, parallel computation.\nClojure is a dynamic functional programming language with a compelling approach to concurrency and state, a strong cast of persistent immutable data structures, and a growing reputation for doing all the right things. Wolfram Mathematica is arguably the world’s most powerful integrated tool for numerical computation, symbolic mathematics, optimization, and visualization and is build on top of its own splendid functional programming language, Wolfram Language.\nBy linking the two:\n\nWolframite lets you write and evaluate Wolfram/Mathematica code in Clojure with full syntactic integration. Now Clojure programs can take advantage of Wolfram’s enormous range of numerical and symbolic mathematics algorithms and fast matrix algebra routines.\nWolframite provides the seamless and transparent translation of native data structures between Clojure and Wolfram. This includes high-precision numbers, matricies, N-dimensional arrays, and evaluated and unevaluated Mathematica expressions and formulae.\nWolframite lets you write Wolfram as if it was Clojure by providing Clojure functions and vars for all Wolfram symbols, including docstrings and autocompletion in your favorite IDE\n[Tentative] Wolframite facilitates the “Clojurization” of Wolfram’s existing parallel-computing capabilities. Wolfram is not designed for threads or concurrency. It has excellent support for parallel computation, but parallel evaluations are initiated from a single-threaded master kernel which blocks until all parallel evaluations return. By contrast, Wolframite includes a concurrency framework that lets multiple Clojure threads execute Wolfram expressions without blocking others. Now it is easy to run a simulation in Clojure with 1,000 independent threads asynchronously evaluating processor-intensive expressions in Wolfram. The computations will be farmed out adaptively and transparently to however many Wolfram kernels are available on any number of processor cores, either locally or across a cluster, grid, or network.\n\nNotice that you cannot run more Wolfram kernels than your license allows (see the function (wolframite.core/kernel-info!))\n\n\nWolframite is open-source and targeted at applications in scientific computing, computational economics, finance, and other fields that rely on the combination of parallelized simulation and high-performance number-crunching. Wolframite gives the programmer access to Clojure’s most cutting-edge features–easy concurrency and multithreading, immutable persistent data structures, and software transactional memory—alongside Wolfram’s easy-to-use algorithms for numerics, symbolic mathematics, optimization, statistics, visualization, and image-processing.\nWolfram / Mathematica itself is a commercial product and requires a license. Though Wolfram Engine is free to use in development.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#documentation",
+    "href": "index.html#documentation",
+    "title": "Wolframite Documentation",
+    "section": "1.3 Documentation",
+    "text": "1.3 Documentation\nNo matter what is your level of experience with either Clojure or Wolfram, we have you covered!\nWhile this page provides a brief overview of Wolframite assuming some level of knowledge of each of the systems, we have also tutorials targeted at scientists new to Clojure and at Clojure developers new to Wolfram. However, you should try to read through this page, the Quickstart, and browse through Understanding Wolframite before diving into the tutorials. If you have never seen Clojure before, you may want to start with a quick look at our Clojure Primer to understand better the rest of the documentation. Remember: you don’t need to learn or remember all at once.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "Wolframite Documentation",
+    "section": "1.4 Usage",
+    "text": "1.4 Usage\n\n1.4.1 Prerequisites:\n\n1.4.1.1 Clojure\nFirst, if you haven’t already, install the Clojure CLI toolchain (homebrew is a great way to do this if you’re on Mac or Linux, but you can just as easily use the installation scripts if you prefer).\n\n\n1.4.1.2 Wolfram Mathematica or Wolfram Engine\nNext, obviously, you’ll need to ensure that you have Wolfram Engine or the Wolfram desktop application (formerly called Mathematica) installed and your license registered. Make sure you can run these tools on their own before trying Wolframite.\nFirst of all, you need to initialize a connection to a Wolfram/Mathematica kernel, like this:\n(wolframite.api.v1/start!)\nThis should also find and load the JLink JAR included with your installation. Watch stdout for an INFO log message (via clojure.tools.logging) like:\n\n=== Adding path to classpath: /Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents/SystemFiles/Links/JLink/JLink.jar ===\n\nHowever, sometimes Wolframite may fail to find the correct path automatically and needs your help. You can set the WOLFRAM_INSTALL_PATH environment variable,\nexport WOLFRAM_INSTALL_PATH=/opt/mathematica/13.1\nexport WOLFRAM_INSTALL_PATH=\"/Applications/Wolfram Engine.app/Contents/Resources/Wolfram Player.app/Contents\"\n, or Java system property,\naliases {... :alias-name  {:jvm-opts [\"-DWOLFRAM_INSTALL_PATH=/usr/local/Wolfram/WolframEngine/14.2\"]}\n, (the latter takes priority) to point to the correct location.\n\n\n\n1.4.2 Getting started\nStart a Clojure REPL with Wolframite on the classpath:\nclj -Sdeps '{:deps {org.scicloj/wolframite {:mvn/version \"1.0.0-SNAPSHOT\"}}}'\nand try it out:\n(require '[wolframite.api.v1 :as wl] \n         '[wolframite.wolfram :as w :refer :all  ; Wolfram symbols as Clojure vars / fns\n           :exclude [* + - -&gt; / &lt; &lt;= = == &gt; &gt;= fn\n                     Byte Character Integer Number Short String Thread]])\n;; Initialize\n(wl/start!) ; =&gt; {:status :ok, :wolfram-version 14.1, :started? true}\n;; Use it:\n(wl/! (Dot [2 2 4] [4 5 6]))\n;=&gt; 42\nMore examples:\n(wl/! (D (Power 'x 2) 'x)) ; derivative\n;=&gt; (* 2 x)\n(wl/! (ChemicalData \"Ethanol\" \"MolarMass\"))\n;=&gt; (Quantity 46.069M (* \"Grams\" (Power \"Moles\" -1)))\n\n;; Accessing WolframAlpha (BEWARE: must be online)\n(wl/! (WolframAlpha \"How many licks does it take to get to the center of a Tootsie Pop?\"))\n;=&gt; [(-&gt; [[\"Input\" 1] \"Plaintext\"] \"How many licks does it take to get to the Tootsie Roll\n;   center of a Tootsie Pop?\") (-&gt; [[\"Result\" 1] \"Plaintext\"] \"3481\\n(according to student\n;   researchers at the University of Cambridge)\")]\n\n(wl/! (N Pi 20)) ; numerical value with 20 digit precision\n;=&gt; 3.141592653589793238462643383279502884197169399375105820285M\n\n(wl/! (Map (w/fn [x] (Sqrt x)) [4 16]))\n;=&gt; [2 4]\nTIP: Cursive - teach it to resolve w/fn as clojure.core/fn.\nNOTE: The wolframite.wolfram (w) namespace has vars for all Wolfram symbols at the time of the last release of Wolframite. Check w/*wolfram-kernel-name* for kernel type/version and run (wolframite.impl.wolfram-syms.write-ns/write-ns!) to generate your own wolfram ns with whatever additional symbols your Wolfram/Mathematice has, and/or with custom “aliases”.\n\n\n1.4.3 Clerk Integration\nWe primarily use Clay as our notebook tool, but there is also experimental support for Clerk.\nExample usage: (watching for changes in a folder)\nuser&gt; (require '[wolframite.tools.clerk-helper :as ch])\nuser&gt; (ch/clerk-watch! [\"dev/notebook\"])\n\nOpen dev/notebook/quickstart.clj, make a change and save.\nOpen localhost:7777 in the browser\n\n\n\n1.4.4 How does it work?\nYou compose Wolfram expressions using the convenience functions and vars from wolframite.wolfram. These are then turned first into a symbolic representation of themselves and later into a tree of JLink Expr objects and sent to a Wolfram kernel subprocess (started by wl/start!) for evaluation. The result is translated back from jlink.Expr into a Clojure form. This translation allows for some additional convenience logic, such as supporting w/* instead of Times.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#development",
+    "href": "index.html#development",
+    "title": "Wolframite Documentation",
+    "section": "1.5 Development",
+    "text": "1.5 Development\n\n1.5.1 Running tests\nTo run tests from the command line, you need to add JLink to the classpath (only REPL supports dynamically loading jars) - create a ./symlink-jlink.jar symlink and then run the tests:\nclojure -X:run-tests\n\n\n1.5.2 Deployment\nIf required, update version in deps.edn under :aliases - :neil - :project - :version (possibly using neil).\nthen build the jar with clojure -T:build jar then deploy with env CLOJARS_USERNAME=&lt;tbd&gt; CLOJARS_PASSWORD=&lt;clojars-token&gt; clojure -T:build deploy.\nNote: You need to log in to Clojars and generate a deployment token. You also need to be added to the SciCloj group there by an admin.\nConsider studying Wolfram’s guide Writing Java Programs That Use the Wolfram Language and WSTP and External Program Communication when you want to dig into the JVM ↔︎ Wolfram communication.\n\n1.5.2.1 Writing documentation\nDocumentation is written as literal programming sources in the notebooks directory and turned into HTML under docs using Clay and Quarto.\nTo render a single namespace/page, require Clay and run (clay/make! {:source-path \"&lt;path to the file&gt;\"\"}). Tip: You can also do this without quarto - just add :run-quarto false to the options.\nTo build the whole site, run clojure -T:build site (remembering to ensure that you have the ./symlink-jlink.jar symlink).",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#authors",
+    "href": "index.html#authors",
+    "title": "Wolframite Documentation",
+    "section": "1.6 Authors",
+    "text": "1.6 Authors\nThe original Clojuratica, Wolframite’s predecessor, was created by Garth Sheldon-Coulson, a graduate student at the Massachusetts Institute of Technology and Harvard Law School.\nOngoing maintenance and development over the years have been thanks to\n\nSteve Chan,\nDan Farmer,\nNorman Richards and others.\n\nMost recently, Clojuratica has been transformed into Wolframite by\n\nPawel Ceranka,\nThomas Clark and\nJakub Holý;\n\nand is now being maintained as part of the SciCloj project. Wolframite is free, open-source software, but if you would like to support our work then please cite us.\n@software{Holý_2024},\nauthor = {Holý, Jakub and Clark, Thomas and Ceranka, Pawel and Richards, Norman and Farmer, Dan and Chan, Steve and Sheldon-Coulon, Garth},\nlicense = {Mozilla Public License},\ntitle = {{Wolframite: }},\nurl = {https://github.com/scicloj/wolframite},\nversion = {1.0.0-SNAPSHOT},\nyear = {2024}",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#sponsorship",
+    "href": "index.html#sponsorship",
+    "title": "Wolframite Documentation",
+    "section": "1.7 Sponsorship",
+    "text": "1.7 Sponsorship\nWe are grateful for the financial support of Clojurists Together, who supported this work for a quarter in 2024.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#contact",
+    "href": "index.html#contact",
+    "title": "Wolframite Documentation",
+    "section": "1.8 Contact",
+    "text": "1.8 Contact\nIf you would like to contact the maintainers or otherwise seek help from the community then please drop a message into our zulip channel, the #wolframite channel in Clojurians Slack, or contact the team at SciCloj.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#license",
+    "href": "index.html#license",
+    "title": "Wolframite Documentation",
+    "section": "1.9 License",
+    "text": "1.9 License\nDistributed under the Mozilla Public License either version 2.0 or (at your option) any later version.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#legal",
+    "href": "index.html#legal",
+    "title": "Wolframite Documentation",
+    "section": "1.10 Legal",
+    "text": "1.10 Legal\nThe product names used in this website are for identification purposes only. All trademarks and registered trademarks, including “Wolfram Mathematica,” are the property of their respective owners. Wolframite is not a product of Wolfram Research. The software on this site is provided “as-is,” without any express or implied warranty.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#further-documentation",
+    "href": "index.html#further-documentation",
+    "title": "Wolframite Documentation",
+    "section": "1.11 Further documentation",
+    "text": "1.11 Further documentation\nSee the book content menu on the left side\n\nsource: notebooks/index.clj",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html",
+    "href": "quickstart.html",
+    "title": "2  Quickstart",
+    "section": "",
+    "text": "2.1 Init\nA brief demonstration of what Wolframite can do. It’s a quick read, but you can also jump to any section of interest.\nTo be extra ‘meta’, this page is itself a demonstration of a literate programming workflow and, as such, is simply a Clojure namespace annotated using the Kindly system. Currently, this is the recommended way of using Wolframite: for the ability to clearly display equations and plots. To use this system, simply look at the relevant source. It is not necessary however; it is still possible, and productive, to use the Clojure REPL (→ Section 10.5) directly.\nFirst, let’s require few Wolframite namespaces\nBefore we do anything else, we must initialize Wolframite and connect it to a Wolfram kernel, which will perform the computations:\n(Assuming you’ve downloaded and activated Wolfram Engine / Mathematica.)\nIf you get an error then please refer to the Wolframite README for further instructions. Your Wolfram installation is probably just in an unusual place and so you will have to provide the correct path.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html#init",
+    "href": "quickstart.html#init",
+    "title": "2  Quickstart",
+    "section": "",
+    "text": "(wl/start!)\n\n\n{:status :ok, :wolfram-version 14.2, :started? true}",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html#first-things-first",
+    "href": "quickstart.html#first-things-first",
+    "title": "2  Quickstart",
+    "section": "2.2 First things first",
+    "text": "2.2 First things first\nTo check that the kernel is working, try the following command:\n\n(wl/! (w/Dot [1 2 3] [4 5 6]))\n\n\n32\n\nwl/! asks Wolframite to translate the following expression to Wolfram and send it to a Wolfram kernel for evaluation.\nWe could also use one of our fancy aliases,\n\n(wl/! (w/&lt;*&gt; [1 2 3] [4 5 6]))\n\n\n32\n\n, which may be more familiar to the Mathematically inclined. If you’re interested in adding your own aliases, then have a look at Section 5.4.\nHere, the w namespace is a preconfigured, but configurable, intermediary to Wolfram’s built-in symbols. This allows you to manipulate Wolfram functions just like any other Clojure symbol (and get reliable editor autocompletion).",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html#code-strings",
+    "href": "quickstart.html#code-strings",
+    "title": "2  Quickstart",
+    "section": "2.3 Code strings",
+    "text": "2.3 Code strings\nThe above examples are the preferred ways for Clojure and Wolfram to interoperate. You can however, use Wolfram command strings directly, e.g.\n\n(wl/! \"{1 , 2, 3} . {4, 5, 6}\")\n\n\n32\n\nMore info in Understanding Wolframite &gt; Wolfram string form Section 3.2.5",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html#bidirectional-translation-experimental",
+    "href": "quickstart.html#bidirectional-translation-experimental",
+    "title": "2  Quickstart",
+    "section": "2.4 Bidirectional translation (experimental)",
+    "text": "2.4 Bidirectional translation (experimental)\nCode translation in both directions is more difficult and is still somewhat fragile (especially in the wl-&gt;clj direction), but the basics work as expected, e.g.\n\n(wl/-&gt;clj \"GridGraph[{5, 5}]\")\n\n\n(GridGraph [5 5])\n\n\n(wl/-&gt;wl (w/GridGraph [5 5]))\n\n\n\"GridGraph[{5, 5}]\"\n\nBoth these functions may be helpful when writing and troubleshooting your Wolframite code.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html#help",
+    "href": "quickstart.html#help",
+    "title": "2  Quickstart",
+    "section": "2.5 Help!",
+    "text": "2.5 Help!\nTo learn more about Wolfram symbols, use docstrings attached to their vars, either in your IDE or manually:\n\n(comment\n  ;; Commented out b/c clojure.repl is only available in the REPL\n  (clojure.repl/doc w/Dot))\n\n=&gt;\n-------------------------\nwolframite.wolfram/Dot\n  a.b.c or Dot[a, b, c] gives products of vectors, matrices, and tensors.\n\nYou can also open Wolfram documentation of the function, or just print its URL:\n\n(wl/help! w/Dot :return-links true)\n\n\n[\"https://reference.wolfram.com/language/ref/Dot.html\"]\n\nWe can even pass it a whole form, and get a link for each symbol:\n\n(wl/help! (w/Plus (w/Sqrt 1600) 2) :return-links true)\n\n\n(\"https://reference.wolfram.com/language/ref/Plus.html\"\n \"https://reference.wolfram.com/language/ref/Sqrt.html\")",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html#graphics",
+    "href": "quickstart.html#graphics",
+    "title": "2  Quickstart",
+    "section": "2.6 Graphics",
+    "text": "2.6 Graphics\nThe above code however, within Mathematica, actually produces graphics. Does Wolframite support this?\nYes!\n\n(wh/show (w/GridGraph [5 5]))\n\nGridGraph[{5, 5}]\nWe could also show it in a Java window (commented out, because we’re building a web page):\n\n(comment\n  (def jshow! (requiring-resolve 'wolframite.tools.graphics/show!))\n  (jshow! (w/GridGraph [5 5]))\n  (jshow! (w/ChemicalData \"Ethanol\" \"StructureDiagram\"))\n  (jshow! (w/TextStructure \"The cat sat on the mat.\"))\n  (jshow! (w/ImageSynthesize \"animal head hybrid zebra + monkey\")) ; LLM subscription needed :'(\n  (jshow! (Graphics [(PatternFilling (list (Entity \"Country\", \"Ukraine\") \"Flag\"), 600),\n                     (FilledCurve (Line (Part (list (Entity \"PlaneCurve\", \"HeartCurve1\") \"Graphics\") 1 1 1)))]))\n  ;; src: https://blog.wolfram.com/2022/10/28/winners-of-the-2022-one-liner-and-get-visual-competitions/\n  ,)\n\n\n(wh/show (w/ChemicalData \"Ethanol\" \"StructureDiagram\"))\n\nChemicalData[\"Ethanol\", \"StructureDiagram\"]\n\n(wh/show (w/TextStructure \"The cat sat on the mat.\"))\n\nTextStructure[\"The cat sat on the mat.\"]\nThe above graphics were created using the show function from wolframite.tools.hiccup, as required above, and assumes that graphics are to be displayed in a browser.\nThere are other also ways to display graphics, for example using wolframite.tools.graphics to display it in a Java window, or using wl/Export to export it into an image file.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html#computational-knowledge",
+    "href": "quickstart.html#computational-knowledge",
+    "title": "2  Quickstart",
+    "section": "2.7 Computational knowledge",
+    "text": "2.7 Computational knowledge\nWolfram is also known for its dynamic or ‘computational knowledge’ engine.\nThis can be accessed by many functions directly,\n\n(wh/show (w/GeoNearest (w/Entity \"Ocean\") w/Here))\n\nGeoNearest[Entity[\"Ocean\"], Here]\n, or by posting a request to its online platform, Wolfram Alpha.\n\n(wl/! (w/WolframAlpha \"number of moons of Saturn\" \"Result\"))\n\n\n(Quantity 274 (IndependentUnit \"moons\"))\n\n\n(wh/show (w/WolframAlpha \"number of moons of Saturn\" \"Result\"))\n\nWolframAlpha[\"number of moons of Saturn\", \"Result\"]\nHere, we’ve shown a response with and without the show function, for reference.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html#mathematics-and-beyond",
+    "href": "quickstart.html#mathematics-and-beyond",
+    "title": "2  Quickstart",
+    "section": "2.8 Mathematics and beyond",
+    "text": "2.8 Mathematics and beyond\nIn a nutshell, this is how Wolframite is normally used, but, of course, this barely scratches the surface.\nIn particular, the flagship product of Wolfram, the one you’ve probably heard of, is Mathematica. And, as the name suggests, this entire system was built around the performance of abstract calculation and the manipulation of equations, e.g.\n\n(k/tex\n (-&gt; (w/== 'E (w/* 'm (Power 'c 2)))\n     TeXForm\n     ToString\n     wl/!))\n\n\\[e=c^2 m\\]\noriginally answered the question ‘what is mass?’\n\n(k/tex\n (-&gt; (w/== 'E (w/* 'm (Power 'c 2)))\n     (Solve 'm)\n     First First\n\n     TeXForm\n     ToString\n     wl/!))\n\n\\[m\\to \\frac{e}{c^2}\\]\nThis is where Wolfram, and so Wolframite, really shines. And if you’re interested in exploring this further, have a look at one of our longer tutorials.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html#productivity-tip",
+    "href": "quickstart.html#productivity-tip",
+    "title": "2  Quickstart",
+    "section": "2.9 Productivity tip",
+    "text": "2.9 Productivity tip\nWhen you write a lot of Wolframite, it may be a little annoying with all the w/ prefixes. Therefore, we recommend to use this require form instead:\n(ns whatever\n  (:require [wolframite.wolfram :as w :refer :all\n             :exclude [* + - -&gt; / &lt; &lt;= = == &gt; &gt;= fn Byte Character Integer Number Short String Thread]]))\nThen you can refer to most symbols directly, with the exception of those that conflict with Clojure’s core functions and Java classes, which could lead to confusion and mistakes.\nWith this, you can write:\n\n(wl/! (Map (w/fn [x] (Power x 2)) (Table 'i ['i 1 3])))\n\n\n[1 4 9]",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html#wolfram-has-a-lot-to-offer",
+    "href": "quickstart.html#wolfram-has-a-lot-to-offer",
+    "title": "2  Quickstart",
+    "section": "2.10 Wolfram has a lot to offer",
+    "text": "2.10 Wolfram has a lot to offer\nYou may also want to browse the thousands of functions from various domains that Wolfram provides. These domains include Machine Learning, Calculus & Algebra, Optimization, Geography, and many more.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "quickstart.html#beware-gotchas",
+    "href": "quickstart.html#beware-gotchas",
+    "title": "2  Quickstart",
+    "section": "2.11 Beware gotchas",
+    "text": "2.11 Beware gotchas\nChapter 4 describes some traps you want to avoid. It may be a good time to quickly scan it.\n\nsource: notebooks/quickstart.clj",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Quickstart</span>"
+    ]
+  },
+  {
+    "objectID": "understanding_wolframite.html",
+    "href": "understanding_wolframite.html",
+    "title": "3  Understanding Wolframite",
+    "section": "",
+    "text": "3.1 How it all works\nWhere you learn a little more about how Wolframite works, so that you can use it effectively.\nIf you are in a hurry, you can just skim through this to know what answers you can find here when you need them. Though make sure to learn about the three types of expressions → Section 3.2 that Wolframite supports. We will refer to this chapter from other parts of the documentation.\nFirst, we need some namespaces:\nNext, we need to actually start a Wolfram Kernel and connect to it:\nWolframite works by translating Clojure data into Wolfram JLink Expr(essions) and sending them to an external, Wolframite-managed Wolfram process for evaluation, then translating the response back into data.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Understanding Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "understanding_wolframite.html#sec-expressions",
+    "href": "understanding_wolframite.html#sec-expressions",
+    "title": "3  Understanding Wolframite",
+    "section": "3.2 Expressions",
+    "text": "3.2 Expressions\nWolframite expressions consist of stuff that can be translated to Wolfram: data structures ([] for Lists and {} for Associations), constants, and Wolfram symbols (plus Wolframite aliases → Section 3.2.7). There are also some “Wolframite-isms” that we support, namely w/fn for defining ad-hoc functions, primarily for use with Map.\nThere are three ways of writing these expressions.\n\n3.2.1 Evaluated form\nThe primary form you will encounter is the evaluated form, which uses vars from the wolframite.wolfram namespace as proxies for the actual Wolfram functions and symbols. It is the most convenient form, with support for code completion and mixing with evaluated Clojure code:\n\n(wl/! (w/+ (clojure.core/- 5 4) (w/Minus 1)))\n\n\n0\n\nWhen requiring wolframite.wolfram, we can “refer” most of its symbols, excluding those that conflict with Clojure or Java (such as +; have a look at the require at the top of this page), and thus we can also write:\n\n(wl/! (w/+ (- 5 4) (Minus 1)))\n\n\n0\n\nNotice that we have convenience vars for both Wolfram symbols and Wolframite aliases (see below) and thus both of the following work:\n\n(=\n (wl/! (w/+ 1 (w/- 1)))\n (wl/! (Plus 1 (Minus 1))))\n\n\ntrue\n\nWe can also mix Clojure and Wolfram - but the Clojure parts are evaluated on our side, before the rest of the expression is translated and sent to Wolfram.\nThe evaluated form is actually translated into the raw form (see Section 3.2.3) before being evaluated, as we can see if we run it on its own, without passing it to wl/!:\n\n(w/Plus (- 5 4) (w/Minus 1))\n\n\n(Plus 1 (Minus 1))\n\nYou can see here that the convenience functions from the w/ namespace essentially evaluate to themselves in the symbolic, raw form - (w/Plus arguments...) becomes '(Plus arguments...).\n\n\n3.2.2 A word on aliases\nWhen we come back to our original expression, '(+ 1 (Minus 1)), you may notice that + is not actually a Wolfram function. It is a Wolframite alias, which we replace with Plus before we send it to Wolfram. You can read about it further down this document, in Section 3.2.7.\n\n\n3.2.3 Raw form\nThe second form is the raw (quoted) data form, using actual Clojure symbols corresponding to Wolfram symbols or Wolframite aliases. This is what Wolframite uses internally.\nNotice the ' quote in front of the expression, telling Clojure not to evaluate it but return it as-is:\n\n(wl/! '(+ 1 (Minus 1)))\n\n\n0\n\nWe could also be more explicit and replace ' with the quote that it turns into under the hood:\n\n(wl/! (quote (+ 1 (Minus 1))))\n\n\n0\n\nHowever, quoting the whole form does not allow us to have any evaluations inside the expression. We can instead build the form manually, quoting only the symbols:\n\n(wl/! (list 'Plus 1 (list 'Minus 1)))\n\n\n0\n\nNotice that you will leverage quoting also with the evaluated form, namely when you create and refer to Wolfram-side variables, such as those created by (w/= 'myVar ...).\n\n\n3.2.4 Advanced: Syntax quote\nAs mentioned, quoting a form makes it impossible to refer to any vars or evaluate any code within the form. We can bypass the problem by not quoting the whole form but replacing (...) with (list ...) and quoting each symbol. But there is yet another way, used by Clojure macros - namely the syntax quote `. It makes it possible to evaluate things within the quoted form by prefixing them with the “unquote” ~ (or “splicing unquote” ~@). The only problem here is that ` automatically fully qualifies all symbols, as we can see here:\n\n(do `(Minus 42))\n\n\n(wolframite.wolfram/Minus 42)\n\nThis would of course break our translation to Wolfram. This expression would be converted to wolframite.wolfram`Minus[42] and Wolfram knows no module called wolframite.wolfram. There is fortunately one trick to tell the Clojure Reader to keep a symbol unqualified by combining ~', essentially telling it “evaluate this expression, which returns a simple symbol”:\n\n(do `(~'Minus 42))\n\n\n(Minus 42)\n\n\n\n3.2.5 Wolfram string form\nThere is one more form, the Wolfram string form, which is the raw Wolfram code in a string:\n\n(wl/! \"Plus[1,Minus[1]]\")\n\n\n0\n\nThis is useful when you just want to paste in some Wolfram of when you need to use a feature that we don’t yet support.\n\n\n3.2.6 Mixing different kinds of forms\nThe evaluated form may also contain sections in the other forms. You’d typically need that when the Wolframite evaluated form does not (yet) support that which you are trying to do.\nWhen nesting a Wolfram string form, we need to explicitly tell Wolframite to treat it as an expression and not just as a primitive string, by passing it through wc/wolfram-expr:\n\n(wl/! (w/Plus\n       '(Internal/StringToMReal \"-1.5\")\n       (wc/wolfram-expr \"Minus[3]\")))\n\n\n-4.5\n\n\n\n3.2.7 Aside: Wolframite aliases\nAside of symbols that directly correspond to Wolfram symbols, you can also use Wolframite aliases. The aliases provide alternative names for Wolfram symbols. We have used above +, which is an alias for Plus. Here are all the built-in aliases that we currently support:\n\n(k/table {:column-names [:Alias :Wolfram \"Can be used without `w/` prefix?\"],\n          :row-vectors (-&gt; wolframite.runtime.defaults/all-aliases\n                           (dissoc '-)\n                           (assoc '- \"Minus or Subtract\")\n                           (-&gt;&gt; (map (fn [[k v]] [k v (when-not (contains? recommended-exclusions k) \"✅\")]))))})\n\n\n\n\n\n\nAlias\nWolfram\nCan be used without `w/` prefix?\n\n\n\n\n&gt;_&lt;\nSimplify\n✅\n\n\n!\nNot\n✅\n\n\n=\nSet\n\n\n\n&lt;*&gt;\nDot\n✅\n\n\n&lt;\nLess\n\n\n\n=!\nUnset\n✅\n\n\n||\nOr\n✅\n\n\n&lt;=\nLessEqual\n\n\n\n**\nPower\n✅\n\n\n*\nTimes\n\n\n\n-&gt;\nRule\n\n\n\nx&gt;\nReplace\n✅\n\n\nfn\nFunction\n\n\n\ndo\nCompoundExpression\n✅\n\n\n&gt;&gt;_&lt;&lt;\nFullSimplify\n✅\n\n\n&lt;&lt;_&gt;&gt;\nExpandAll\n✅\n\n\n&gt;\nGreater\n\n\n\n_&gt;\nRuleDelayed\n✅\n\n\n&lt;_&gt;\nExpand\n✅\n\n\n-\nMinus or Subtract\n\n\n\n&&\nAnd\n✅\n\n\nx&gt;&gt;\nReplaceAll\n✅\n\n\n===\nSameQ\n✅\n\n\n/\nDivide\n\n\n\n&gt;=\nGreaterEqual\n\n\n\n++&lt;_&gt;\nComplexExpand\n✅\n\n\n⮾\nNonCommutativeMultiply\n✅\n\n\n&lt;&gt;\nStringJoin\n✅\n\n\n∫\nIntegrate\n✅\n\n\n+\nPlus\n\n\n\n+=\nAddTo\n✅\n\n\n??\nInformation\n✅\n\n\n==\nEqual\n\n\n\n_=\nSetDelayed\n✅\n\n\n-=\nSubtractFrom\n✅\n\n\n√\nSqrt\n✅\n\n\n++\nConjugate\n✅\n\n\n\n\n\nThus, the following two expressions are equivalent\n\n(wl/! '(+ 1 (- 1)))\n\n\n0\n\n\n(wl/! '(Plus 1 (Minus 1)))\n\n\n0\n\nYou can even add your own aliases, as discussed in Section 11.0.1.\n\n\n3.2.8 Aside: Wolfram modules and fully qualified names\nMost Wolfram functions are global, but they can also be placed inside modules and need to be referred to by their fully qualified names. While Wolfram uses ` to separate the module and the symbol, we write it as /. Thus, these two are equivalent:\n\n(wl/! \"Internal`StringToMReal[\\\"-1.5\\\"]\")\n\n\n-1.5\n\n\n(wl/! '(Internal/StringToMReal \"-1.5\"))\n\n\n-1.5\n\n(Of course, you normally do not want to use the Internal/* functions, as they may disappear or change between Wolfram versions.)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Understanding Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "understanding_wolframite.html#aside-translating-wolfram-to-wolframite",
+    "href": "understanding_wolframite.html#aside-translating-wolfram-to-wolframite",
+    "title": "3  Understanding Wolframite",
+    "section": "3.3 Aside: Translating Wolfram to Wolframite",
+    "text": "3.3 Aside: Translating Wolfram to Wolframite\nWhen asking the internets or ChatGPT how to do a certain thing in Wolfram, you will get a Wolfram answer. Thus you need to know how to translate it from Wolfram to Wolframite. Let’s say you have this Wolfram snippet:\nImport[\"demo.csv.gz\", {\"Data\", 1 ;; 3}, \"HeaderLines\" -&gt; 1]\nHow do you turn it into Wolframite Clojure? Let’s ask for help!\n\n(wl/-&gt;clj \"Import[\\\"demo.csv.gz\\\", {\\\"Data\\\", 1 ;; 3}, \\\"HeaderLines\\\" -&gt; 1]\")\n\n\n(Import \"demo.csv.gz\" [\"Data\" (Span 1 3)] (-&gt; \"HeaderLines\" 1))\n\nNow, we either need to quote that to turn it into the raw form, or rewrite it using the convenience functions of the evaluated form:\n\n(wl/! (Import \"demo.csv.gz\" [\"Data\" (Span 1 3)] (w/-&gt; \"HeaderLines\" 1)))",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Understanding Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "understanding_wolframite.html#errors",
+    "href": "understanding_wolframite.html#errors",
+    "title": "3  Understanding Wolframite",
+    "section": "3.4 Errors",
+    "text": "3.4 Errors\nWe try to detect when Wolfram wasn’t able to evaluate your expression and throw an exception. However, sometimes we are not able to detect that. In such cases, the failure will often be indicated by the fact that you get the same, unevaluated expression back.\nHere it works as designed:\n\n(try (wl/! (FromDigits \"-87.6\"))\n     (catch Exception e\n       (k/hiccup [:blockquote (ex-message e)])))\n\nEvaluation seems to have failed. Result: FromDigits[\"-87.6\"] Details: FromDigits::nlst: \n   The expression -87.6 is not a list of digits or a string of valid digits.\nCorrect:\n\n(wl/! (FromDigits \"87\"))\n\n\n87",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Understanding Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "understanding_wolframite.html#function-documentation",
+    "href": "understanding_wolframite.html#function-documentation",
+    "title": "3  Understanding Wolframite",
+    "section": "3.5 Function documentation",
+    "text": "3.5 Function documentation\nWe can leverage Clojure repl’s documentation support with the Wolfram convenience vars:\n\n(show-stdout\n (repl/doc GeoGraphics))\n\n-------------------------\nwolframite.wolfram/GeoGraphics\n  GeoGraphics[primitives, options] represents a two-dimensional geographical image.\n\nSearch for symbols (case-insensitive):\n\n(-&gt;&gt; (repl/apropos #\"(?i)geo\")\n     (drop 2)\n     (take 3))\n\n\n(wolframite.wolfram/$GeoLocationCountry\n wolframite.wolfram/$GeoLocationSource\n wolframite.wolfram/ArithmeticGeometricMean)\n\nSearch complete docstrings for a pattern:\n\n(show-stdout\n (repl/find-doc \"two-dimensional\"))\n\n-------------------------\nwolframite.wolfram/Area\n  Area[reg] gives the area of the two-dimensional region reg.\nArea[{x1, …, xn}, {s, smin, smax}, {t, tmin, tmax}] gives the area of the parametrized surface whose Cartesian coordinates xi are functions of s and t.\nArea[{x1, …, xn}, {s, smin, smax}, {t, tmin, tmax}, chart] interprets the xi as coordinates in the specified coordinate chart.\n-------------------------\nwolframite.wolfram/AstroGraphics\n  AstroGraphics[primitives, options] represents a ...\nIf we evaluate (h/help! 'ArithmeticGeometricMean) then it will open the Wolfram documentation page for ArithmeticGeometricMean.\nWe could instead ask for the link(s):\n\n(h/help! w/ArithmeticGeometricMean :links true)\n\n\n[\"https://reference.wolfram.com/language/ref/ArithmeticGeometricMean.html\"]\n\nh/help! also works on whole expressions, providing docs for each symbol:\n\n(h/help! '(GeoImage (Entity \"City\" [\"NewYork\" \"NewYork\" \"UnitedStates\"])) :links true)\n\n\n(\"https://reference.wolfram.com/language/ref/GeoImage.html\"\n \"https://reference.wolfram.com/language/ref/Entity.html\")\n\n(Notice that help! works both with symbols and our convenience vars.)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Understanding Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "understanding_wolframite.html#further-reading",
+    "href": "understanding_wolframite.html#further-reading",
+    "title": "3  Understanding Wolframite",
+    "section": "3.6 Further reading",
+    "text": "3.6 Further reading\nCongratulations, you have now a basic understanding of Wolframite. Feel free to explore the rest of the documentation. We’d especially point out some:\n\nChapter 4 - Gotchas\n…\n\n\nsource: notebooks/understanding_wolframite.clj",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Understanding Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "gotchas.html",
+    "href": "gotchas.html",
+    "title": "4  Gotchas… - on avoiding pitfalls and confusion",
+    "section": "",
+    "text": "4.1 What not to do when using Wolfram via Wolframite",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Gotchas... - on avoiding pitfalls and confusion</span>"
+    ]
+  },
+  {
+    "objectID": "gotchas.html#what-not-to-do-when-using-wolfram-via-wolframite",
+    "href": "gotchas.html#what-not-to-do-when-using-wolfram-via-wolframite",
+    "title": "4  Gotchas… - on avoiding pitfalls and confusion",
+    "section": "",
+    "text": "4.1.1 Don’t: mix up wl/! and w/! 😅\nMake sure not to use w/! (logical negation in Wolfram) when you actually want to evaluate your expression with wl/!.\n\n\n4.1.2 Don’t: Transfer huge data unnecessarily\nBy default, (wl/! &lt;expr&gt;) will transfer the return value back to Clojure side and turn it into Clojure data. You don’t want to do that if the data is big.\nDo: Keep the data on Wolfram-side, assigning it to a symbol.\nExample:\n\n(def csv \"Make the Wolfram-side symbol easier to use in Clojure\" 'csv)\n\n\n(wl/! (w/do  (w/= csv \"some really big value, read from a file...\")\n             nil))\n\nWe use w/= to assign the value to a Wolfram-side name, so that we can use it in subsequent expressions. This also returns the value, which we want to ignore, so we wrap it with w/do and return something else - length, a small subset, or, as we do here, nil.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Gotchas... - on avoiding pitfalls and confusion</span>"
+    ]
+  },
+  {
+    "objectID": "gotchas.html#language-differences-between-wolfram-and-wolframite",
+    "href": "gotchas.html#language-differences-between-wolfram-and-wolframite",
+    "title": "4  Gotchas… - on avoiding pitfalls and confusion",
+    "section": "4.2 Language differences between Wolfram and Wolframite",
+    "text": "4.2 Language differences between Wolfram and Wolframite\nAlthough we try to avoid such things, sometimes, when you’re fighting the host language, it’s just not practical to carry over the original conventions. Here we will try to keep an up-to-date list of possible surprises, when coming from Wolfram to Wolframite (that are not easy to ‘fix’).\n\n4.2.1 Usage\nDifferent output display in Wolframite and Wolfram - Wolfram has different display forms and thus what you get to see in Wolframite (the Input Form) may differ from what you would see in the Wolfram Engine CLI or a notebook (typically, the Output or Standard Form).\n\n\n4.2.2 Function names\n^ (Power) - Despite allowing a wider range of characters, we cannot use ^ in Wolframite because it is reserved for adding metadata to virtually all Clojure symbols. (^ x 2) will probably not do what you expect! Thus we use (w/** 'x 2) instead.\n:= (SetDelayed) - Is actually _= in Wolframite. This is because : is usually a reserved in Clojure for creating keywords. It’s worth noting though that this is possibly nicer, in a way, because _ looks like a placeholder, and defining a placeholder for the expression is what it does. It also sort of implies a delay…\n:&gt; (RuleDelayed) - Is _&gt; in Wolframite.\n. (Dot) - Has been changed to &lt;*&gt;, in the spirit of the inner product, because . is a key character in Clojure, and most object-oriented systems, for namespacing.\n/. (ReplaceAll) - Similarly, has been changed to x&gt;&gt; (and Replace to x&gt;) for consistency.\n=. (Unset) - has also been changed to =!; be careful not to confuse this with !=!\n\n\n4.2.3 Other\nSymbols within threading macros. - After spending so much time playing with symbols, be careful of slipping into things like (-&gt; 'x '(Power 1)) This will not work because '(Power 1) is not evaluated, and so will be treated like any other symbol. However, if you use w/Power and friends then you do not have this problem.\nSymbols passed to Wolfram must be alphanumeric - In the end, when they get passed to the Wolfram kernel, symbols must be strictly alphanumeric (apart from forward slashes and dollar signs), i.e. r_2 is currently not allowed. This is due to underlying limitations of the Wolfram language. Much like with Mathematica however, we can get around this in general by using Wolframite’s aliasing system (see the relevant tutorials).\nVectors, [], vs lists, (). - Lists are used to represent function calls and so when combining Clojure and Wolfram expressions, make sure that data literals are vectors. For example, (wh/show (w/ListLinePlot (range 10))) will fail (otherwise unexpectedly), but (wh/show (w/ListLinePlot (into [] (range 10)))) will give you what you expect.\n\nsource: notebooks/gotchas.clj",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Gotchas... - on avoiding pitfalls and confusion</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.index.html",
+    "href": "for_scientists.index.html",
+    "title": "5  Wolframite for scientists I (Introduction)",
+    "section": "",
+    "text": "5.1 Abstract\nWe introduce you, the motivated scientist (likely the mathematical sort), to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and getting started notes, we then outline a ‘real’ workflow using the example of optical cavities.",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Wolframite for scientists I (Introduction)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.index.html#motivation---why-on-earth",
+    "href": "for_scientists.index.html#motivation---why-on-earth",
+    "title": "5  Wolframite for scientists I (Introduction)",
+    "section": "5.2 Motivation - Why on earth?",
+    "text": "5.2 Motivation - Why on earth?\nThe Wolfram programming language is ‘best-in-class’ for certain specialist tasks, like manipulating equations, but, as Randall Munroe might have said,\n\nWolfram combines the flexibility and power of abstract mathematics with the intuitive clarity of abstract mathematics.\n\nClojure, on the other-hand, is a first-class, general-purpose, programming language whose core functions and dynamical, functional, paradigm are well suited to data exploration and manipulation. So why don’t we call Wolfram from Clojure? It seems like the atypical ‘best of both worlds’.",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Wolframite for scientists I (Introduction)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.index.html#getting-started-for-scientists",
+    "href": "for_scientists.index.html#getting-started-for-scientists",
+    "title": "5  Wolframite for scientists I (Introduction)",
+    "section": "5.3 Getting Started (for scientists)",
+    "text": "5.3 Getting Started (for scientists)\nThis tutorial aims to be as comprehensive a reference as possible for the average scientist and, as such, is not concise (and will probably only get longer). For a quick-fire introduction, see Chapter 2. If the demo is too short and this is too long however, you can always run a ‘search’ on the text for the relevant examples. We won’t judge you!\n\n5.3.1 Clojure\nThere are many useful online tools for getting started with Clojure. If you’d like to jump straight-in with interactive examples then try the koans.\nFor an overview of the language itself, have a look at some of these references:\n\nEric Normand’s materials (Guides and video courses for the uninitiated)\nClojure is in fact a trinity… (A short blog post where Jakub argues that to really get Clojure, you have to learn and embrace interactive (REPL-driven) development and structural editing)\nGetting started… (More blog posts from Jakub!)\nClojure for the Brave and True (An excellent free online, or paid paper, book for learning Clojure)\nGrokking Simplicity: Taming complex software with functional thinking (Makes no mention of Clojure but is an excellent tool to master functional thinking, which is essential for writing Clojure)\nSyntax (A quick reminder of the key syntax.)\n\n\n5.3.1.1 Clojure physics\nIf you’d like to see why a physicist might be interested in Clojure then have a look at the video below.\n\nOr, to see what’s available more generally for all kinds of science (including a brief overview of this library), look at this one.\n\n\n\n5.3.1.2 Clojure notation\nFor those who are still fairly new to Clojure, the first thing to get used to is the style of notation. It might seem strange at first, but a functional LisP can be more efficient (symbolically) than a lot of object-oriented languages and even standard mathematical notation. For example, why write 1+1+1+2 and not (+ 1 1 1 2)? They have around the same number of characters and yet even here it’s arguable that the signal to noise ratio is higher for the second one. Where the second form really shines however, is in it’s scalability. As soon as you add another operator, e.g. 1+1+1+2/3, we have a problem. Okay so you made it through primary school and know that 1+1+1+2/3 is really 1+1+1+(2/3) and not (1+1+1+2)/3, but the mental complexity is still there, you’re just used to it. If we introduce another operator, e.g. 1+1+1+2✝3, now what do you do? The truth is that if we stick to one simple rule, i.e. use brackets, then we completely solve a whole range of problems in advance, with the ‘cost’ of having to write two characters. In fact, although it might not be obvious, the Wolfram language is actually inspired by/built on the LisP syntax (underneath). The outer layer is just to make it look more like the inefficient notation that mathematicians already know and love…\nIn summary, BODMAS is six rules and incomplete. (function argument …) is a single rule and complete. Be kind to yourself, just write (+ 1 1 1 (/ 2 3)) :).\nIf you’re still unconvinced about the benefits of a simple syntax then remember that LisP is a programmable programming language: and it’s the syntax that delivers macros.\n\n\n\n5.3.2 Data science\nIf you’re sold on Clojure and interested in problems close to data science then an overview of some of the key analysis libraries can be found here. Be careful though, this is a rapidly evolving area! For up-to-date recommendations, consider the scicloj website and the data science zulip channel.\n\nIf you’re really ready to use Wolfram though, then read on!",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Wolframite for scientists I (Introduction)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.index.html#sec-wolfram-basics",
+    "href": "for_scientists.index.html#sec-wolfram-basics",
+    "title": "5  Wolframite for scientists I (Introduction)",
+    "section": "5.4 Wolfram basics",
+    "text": "5.4 Wolfram basics\n\n5.4.1 Let’s define our terms!\nOne of the really nice things about using Wolfram as a library is that our middle man (Wolframite) can provide default substitutions to simplify verbose terms, e.g. (Power x 2) can become (** x 2) or even '(**2 x), for readability. What’s even nicer however, is that we can make our own aliases at runtime (see Section 11.0.1): the choice is ours!\nWe mention this now because the best time to define our terms is before we start. The first few aliases give us an insight into how I would have designed Wolfram. The last two go a step further. Here, we make use of Clojure’s modernity and decision to support a much wider character set than Wolfram. Depending on your editor, it can be just as easy to enter these unicode characters as typing the long function name, but the real win is in the readability. Remember, we read our documents far more often than we write them (even if it’s just peer review…).\nTherefore, we enter the following.\n\n(def aliases ; NOTE: These aliases are already included by default\n  '{** Power\n    ++ Conjugate\n\n    x&gt; Replace\n    x&gt;&gt; ReplaceAll\n    &lt;_&gt; Expand\n    &lt;&lt;_&gt;&gt; ExpandAll\n    ++&lt;_&gt; ComplexExpand\n    &gt;_&lt; Simplify\n    &gt;&gt;_&lt;&lt; FullSimplify\n\n    ⮾ NonCommutativeMultiply\n    √ Sqrt\n    ∫ Integrate})\n\n\n(wl/restart! {:aliases aliases})\n\n\n{:status :ok, :wolfram-version 14.2, :started? true}\n\nWe can define new aliases by simply listing any Clojure-allowed symbol in the above map, with a corresponding symbol that represents a Wofram value (function or constant). This works fine, but these are only symbol replacements and so you would need to use them as symbols, e.g. '(** 2 3). Here, 'x is simpler syntax for (quote x), which simply creates and uses a ‘literal’ symbol x, i.e. 'x is not evaluated to anything else.\nIn this case however, we can’t benefit from using these entities in threading macros (e.g. (-&gt; 'x '(Power 2)) would fail) or from editor autocompletion. In general, we would rather have dedicated Clojure functions for these symbols (c.f. (-&gt; 'x (w/Power 2))). For the best experience therefore, we recommend using write-ns!, which helps us to more deeply Clojure-ize these Wolfram functions.\n\n(comment\n  (write/write-ns! \"src/wolframite/wolfram.clj\"\n                   {:aliases aliases}))\n\nUsing this command, we can generate a full namespace at the given location in your project (shadowing the one from Wolframite) and so refer to the new symbol aliases more directly. The command appears here in a comment block to avoid unnecessary recomputation. See the ‘Literate programming’ section for an explanation.\n\n\n5.4.2 Access to knowledge\nWith the recent emergence of ChatGPT and similar AI systems, direct access to knowledge from free-form linguistic input is in demand. Wolfram was an early pioneer of this, launching its product, Wolfram|Alpha, in 2009. Wolfram occupies a different space however, focusing mainly on what it describes as ‘computational knowledge’. Rather than strictly using an LLM, it combines its knowledge databases with the ability to perform Wolfram operations on the retrieved data, before returning the result.\nFor example, we can make both knowledge-based requests and perform complicated calculations on demand (requires internet access).\n\n(wh/show (WolframAlpha \"What is the mass of 5 rubidium atoms?\" \"Result\"))\n\nWolframAlpha[\"What is the mass of 5 rubidium atoms?\", \"Result\"]\n\n(wh/show (WolframAlpha \"What is the relativistic momentum of a 0.8c electron?\" \"Result\"))\n\nWolframAlpha[\"What is the relativistic momentum of a 0.8c electron?\", \"Result\"]\nIn each case, Wolfram does not just provide the answer, but returns the data in different formats and units in an attempt to anticipate different usecases. This verbosity might seem frustrating, but of course adds flexibility: leaving the user free to filter or present the results in any way that they wish. Here, we have used the last argument to simply display the core ‘Result’.\n\n\n5.4.3 Defining expressions\nRather than just querying the Wolfram servers however, the vast majority of people who use this library will want to write their own programs.\nFor those coming from Mathematica (the official, graphical front-end for the Wolfram language), a good place to start is defining expressions.\nThis is where the main cost of ‘Wolfram as a library’ lies. In a Wolfram environment, all non-language characters are treated as global symbols by default. This works well for symbol and expression manipulation (Mathematica’s assumed raison d’être), but not for any other purpose. To successfully embed Wolfram expressions into a general purpose programming language we must make choices.\nIn this library, there are two approaches. For all official functions, the cleanest way of referring to them is to import the base symbol namespace, i.e. wolframite.wolfram, or a customized one, e.g. wolframite.wolfram-extended. This allows the user to manipulate expressions like other Clojure functions (and to access the associated Wolfram documentation from your editor) e.g.\n\n(-&gt; 2\n    (Power 1)\n    (Subtract 2))\n\n\n(Subtract (Power 2 1) 2)\n\nTo calculate/retrieve the result we then simply add eval from the Wolframite core namespace:\n\n(-&gt; 2\n    (Power 1)\n    (Subtract 2)\n    wl/!)\n\n\n0\n\nTo deal with general symbols, we return to one of LisPs’ strengths: controlled evaluation. Historically necessitated by LisPs’ ‘code-as-data’ paradigm, all LisPs can deal with general symbols by simply not evaluating them. This makes it easy to create and manipulate arbitrary Wolfram expressions, as we can simply treat them as unevaluated symbols (note our use of the new aliases too).\n\n(-&gt; 'x\n    (** 1)\n    (w/- '5)\n    wl/!)\n\n\n(+ -5 x)\n\nThis comes at the cost of having to ‘mark’ symbols, lists and functions manually, but it’s a choice between being unevaluated by default (e.g. Wolfram, Maple), unevaluated when marked (LisPs) or no easy way to work with symbols (the vast majority of programming languages). It also comes at the cost of some ‘gotchas’ (see Chapter 4), but these are avoided for the most part by using a wolframite.wolfram namespace (and ‘write-ns!’ function), as introduced in the beginning.\n\n\n5.4.4 Defining functions\nFunctions are slightly more complicated. Functions can be defined in many different ways. The easiest way is to keep functions, where appropriate, as standard Clojure expressions.\nIf you’re used to using Wolfram/Mathematica, then f[x_]:=x^2 is simply\n\n(defn f [x] (wl/! (** x 2)))\n\n\n(f 2)\n\n\n4\n\n\n(f 'x)\n\n\n(** x 2)\n\n. If instead you want to define functions inside the Wolfram kernel, and attach them to arbitrary symbols, then the most ergonomic way is\n\n(wl/! (_= 'f (w/fn [x] (** x 2))))\n\n\n(wl/! '(f 5))\n\n\n25\n\n\n(wl/! (list 'f 5))\n\n\n25\n\n, where _= is the Wolframite version of := (SetDelayed). See the ‘Gotchas’ section (Chapter 4) for why. Rather than a direct alias, w/fn is a special form that allows you to define Wolfram functions in a convenient way. Note that f is a new symbol and therefore cannot be expected to be part of wolframite.wolfram or similar namespaces. Therefore, we must call the function using an unevaluated Clojure list.\nIn my opinion, this mixes the best of Wolfram and Clojure: and scales well. The most explicitly Wolfram way of doing it however, is to write\n\n(wl/! (Clear 'f))\n\n\n(wl/! (_= (list 'f (Pattern 'x (Blank))) (** 'x 2)))\n\n\n(wl/! '(f 5))\n\n\n25\n\n, where we first removed all definitions from ‘f’ before reassigning the function.\nOnce you can define your own aliases and create arbitrary expressions and functions, then you’re basically good to go.",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Wolframite for scientists I (Introduction)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.index.html#mixing-functions",
+    "href": "for_scientists.index.html#mixing-functions",
+    "title": "5  Wolframite for scientists I (Introduction)",
+    "section": "5.5 Mixing functions",
+    "text": "5.5 Mixing functions\nWolframite is not just a different way to typeset Wolfram functions. Indeed, there would be very little point in building an entire library around this. Instead, Wolframite wants to help the user bring Wolfram’s functions into a general Clojure workflow, i.e. to mix Clojure and Wolfram together, such that there is another, potentially better way, to do science.\nSuch is the case, we can demonstrate a new workflow. As noted above, it is straightforward to define functions in Wolframite, as in Wolfram/Mathematica.\n\n(defn ||2\n  \"The intensity: the value times the conjugate of the value or, equivalently, the absolute value squared.\"\n  [x]\n  (w/* x (w/++ x)))\n\n\n(-&gt; (w/* 3 w/I)\n    (w/+ 5)\n    ||2\n    wl/!)\n\n\n34\n\nHere we make a shorthand, the absolute value squared. Defined as a Clojure function, it simply abstracts two Wolfram operations, which can then be used alongside others.\nAnd yet there are two meaningful improvements already. First of all, we can, currently, use more mathematical characters in Clojure, such that even the raw code can approach familiar symbolic maths. Second of all, we can exploit Clojure’s ‘threading’ features. In my view, chaining Wolfram function calls together with threading macros is actually a big usability improvement. Wolfram expressions can get pretty involved (it’s common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, @, to help with function composition, e.g. f@g@h. Unfortunately however, this doesn’t work with multiple arguments. It is possible to do things like f@@args, and even things like f@@@{{a, b}, {c, d}}, but the readability quickly becomes dire. On the other hand, Clojure’s threading is simple, clear and scalable.\nIn fact, a little Clojure goes a long way. Look how easily we can add UX conveniences to our workflow.\n\n(defmacro eval-&gt;\n  \"Extends the threading macro to automatically pass the result to wolframite eval.\"\n  [& xs]\n  `(-&gt; ~@xs wl/!))\n\n\n(defn TeX\n  \"UX fix. Passes the Wolfram expression to ToString[TeXForm[...]], as the unsuspecting coder might\n  not realise that 'ToString' is necessary.\"\n  [tex-form]\n  (w/ToString (w/TeXForm tex-form)))\n\n\n(defmacro TeX-&gt;\n  \"Extends the thread-first macro to automatically eval and prepare the expression for TeX display.\"\n  [& xs]\n  `(-&gt; ~@xs TeX wl/! k/tex))\n\nN.B. for those who’re still new, & introduces the rest parameter. This collects together all of the arguments given to the function after this point into a list called xs, i.e. all of the arguments in these cases. Another special form is ~@xs. This is what splices the arguments into the symbol expression.\nWith our new code, suddenly Wolfram-like nesting, e.g.\n\n(k/tex (wl/! (TeX (||2 (w/+ (w/* 'x w/I) 'y)))))\n\n\\[(y+i x) \\left(y^*-i x^*\\right)\\]\nbecomes\n\n(TeX-&gt; (w/* 'x w/I)\n       (w/+ 'y)\n       ||2)\n\n\\[(y+i x) \\left(y^*-i x^*\\right)\\]\n. Can you spot the difference :)? The result is the same, but the operation chaining is much cleaner and the Wolfram evaluation and preparation for TeX rendering has been swept under the carpet. Of course, function composition and abstraction is well supported in Wolfram, but here simple macros have allowed us to make changes at the level of the language.\nIt’s just a small example, but LisP is designed for metaprogramming and so the sky’s the limit when it comes to building more features around Wolfram functions. A sceptical reader may point out that eval and display are solved problems within the Mathematica system, but in my opinion there are solid reasons for not wanting to be confined to a specific IDE. Have a look at ‘Why literate programming?’ in the FAQs (Chapter 13) for more details.\nBefore we finish this part of the tutorial, let’s consider a (slightly) more realistic example.\nWolfram can be used to define quite general approximations, using the ‘Pattern’ system. For example, let us assume that we want to expand Cos(x) as a polynomial when x is small. First, we need to know what the expansion is. We can actually find out by using Wolfram! i.e. \n\n(eval-&gt; (Series (Cos 'x)\n                ['x 0 2])\n        Normal)\n\n\n(+ 1 (* -1/2 (** x 2)))\n\nNow that we know (or have remembered!) the form, we can create a general rule that is not limited to specific symbol definitions:\n\n(def small-angle\n  (w/_&gt; (Cos (Pattern 'x (Blank)))\n        (w/+ 1 (w/* -1/2 (w/** 'x 2)))))\n\n, where we have made use of Clojure’s native support for ratios. The rule can now be named and used for any Cos function with any argument. Which of course looks much nicer using TeX.\n\n(TeX-&gt; (w/x&gt;&gt; (Cos 'phi)\n              small-angle))\n\n\\[1-\\frac{\\phi ^2}{2}\\]\n\n(TeX-&gt; (w/x&gt;&gt; (Cos (w/+ 1 'phi))\n              small-angle))\n\n\\[1-\\frac{1}{2} (\\phi +1)^2\\]",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Wolframite for scientists I (Introduction)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.cavity_physics.html",
+    "href": "for_scientists.cavity_physics.html",
+    "title": "6  Wolframite for scientists II (Cavity physics)",
+    "section": "",
+    "text": "6.1 Cavities?\nCongratulations if you made it here from part I. In this part, rather than introducing Wolframite, per se, we’re going to solve a physics problem, such that Wolframite is simply a tool to get the job done.\nFirst of all, we redefine the shortcuts that we used in the previous part, before introducing the problem at hand.\nOutside of the operating room, the most common notion of cavities is, what we might otherwise call, an optical resonator. One way of looking at it, although quantum mechanics makes this more difficult, is that an optical cavity is simply just a light trap, such that once light gets in, it bounces around for a while and then leaves.\nFor demo purposes, our question then is ‘how can we model this?’ and ‘how does the light intensity, inside the cavity, depend on some experimental variables’?",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Wolframite for scientists II (Cavity physics)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.cavity_physics.html#setup",
+    "href": "for_scientists.cavity_physics.html#setup",
+    "title": "6  Wolframite for scientists II (Cavity physics)",
+    "section": "6.2 Setup",
+    "text": "6.2 Setup\nAssuming a simple two-mirror setup, with independent reflectivities and transmission, the system can be described as a ray oscillating between four key interfaces, as illustrated in the figure.\n\n(k/hiccup [:img {:src \"notebooks/for_scientists/Cavity-MirrorScatteringLoss.png\"}])\n\n\nWe must therefore consider the electric field at each interface, before solving for the intensity both inside and outside.",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Wolframite for scientists II (Cavity physics)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.cavity_physics.html#interfaces",
+    "href": "for_scientists.cavity_physics.html#interfaces",
+    "title": "6  Wolframite for scientists II (Cavity physics)",
+    "section": "6.3 Interfaces",
+    "text": "6.3 Interfaces\nSetting the incoming field amplitude to unity, then the value of the field at position one, after one round trip, is the sum of the transmission coefficient and the field travelling in the opposing direction e.g.\n\n(def E1\n  (w/+ 't1 (w/* 'r1 (w/- 'E4))))\n\nAt position two, the same field has travelled the full length of the cavity, L, and so has picked up a change in phase,\n\n(def phi\n  (w/* 'k 'L))\n\n, where k is the field wavenumber:\n\n(def E2\n  (w/* E1 (Exp (w/* I phi))))\n\n. Note how we are able to seamlessly mix Clojure and Wolfram expressions.\nAt position three, the field undergoes reflection and so now carries an additional reflection coefficient as well as an extra π phase change.\n\n(def E3\n  (w/* (w/- 'r2) E2))\n\nBy position four, the field has travelled a further distance L and so is now equal to\n\n(def E4\n  (w/* E3 (Exp (w/* I phi))))\n\n. Which we can evaluate and visualise with one of our handy macros.\n\n(TeX-&gt;&gt; E4\n        (w/== 'E4))\n\n\\[\\text{E4}=\\text{r2} \\left(-e^{2 i k L}\\right) (\\text{t1}-\\text{E4} \\text{r1})\\]",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Wolframite for scientists II (Cavity physics)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.cavity_physics.html#fields",
+    "href": "for_scientists.cavity_physics.html#fields",
+    "title": "6  Wolframite for scientists II (Cavity physics)",
+    "section": "6.4 Fields",
+    "text": "6.4 Fields\nUsing these expressions, we can now calculate the inner, transmitted and reflected fields of the cavity (with some subtle phase assumptions). Note how easy it is to, first of all, form an equation from the symbol ’E4 and the clojure variable E4, and, second of all, to rearrange the equation for a solution.\n\n(def e4 (-&gt; (w/== 'E4 E4)\n            (Solve 'E4)\n            First First))\n\n\n(TeX-&gt; e4)\n\n\\[\\text{E4}\\to \\frac{\\text{r2} \\text{t1} e^{2 i k L}}{-1+\\text{r1} \\text{r2} e^{2 i k L}}\\]\nSubstitution and simplification can then be used to arrive at the transmission and reflection, respectively.\n\n(def T (-&gt; (x&gt;&gt; (w/* E2 't2)\n                e4)\n           w/&gt;&gt;_&lt;&lt;))\n\n\n(TeX-&gt;&gt; T (w/== 'T))\n\n\\[T=\\frac{\\text{t1} \\text{t2} e^{i k L}}{1-\\text{r1} \\text{r2} e^{2 i k L}}\\]\n\n(def R (-&gt; (w/+ (w/* E4 't1) 'r1)\n           (x&gt;&gt; e4)\n           &gt;&gt;_&lt;&lt;\n           Together))\n\n\n(TeX-&gt;&gt; R (w/== 'R))\n\n\\[R=\\frac{\\text{r1}^2 \\text{r2} e^{2 i k L}+\\text{r2} \\text{t1}^2 e^{2 i k L}-\\text{r1}}{-1+\\text{r1} \\text{r2} e^{2 i k L}}\\]",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Wolframite for scientists II (Cavity physics)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.cavity_physics.html#observables",
+    "href": "for_scientists.cavity_physics.html#observables",
+    "title": "6  Wolframite for scientists II (Cavity physics)",
+    "section": "6.5 Observables",
+    "text": "6.5 Observables\nTaking the square of the fields (using the complex conjugate), gives the corresponding observables, i.e. things that can be actually measured.\n\n(def I4 (-&gt; (w/x&gt;&gt; 'E4 e4) ||2\n            ++&lt;_&gt;\n            &gt;&gt;_&lt;&lt;))\n\n\n(TeX-&gt; (w/== 'I4 (w/** (Abs 'E4) 2) I4))\n\n\\[\\text{I4}=| \\text{E4}| ^2=\\frac{\\text{r2}^2 \\text{t1}^2}{-2 \\text{r1} \\text{r2} \\cos (2 k L)+\\text{r1}^2 \\text{r2}^2+1}\\]\n\n(def Tsq (-&gt; T ||2\n             ++&lt;_&gt;\n             &gt;&gt;_&lt;&lt;))\n\n\n(TeX-&gt; (w/== (w/** 'T 2) Tsq))\n\n\\[T^2=\\frac{\\text{t1}^2 \\text{t2}^2}{-2 \\text{r1} \\text{r2} \\cos (2 k L)+\\text{r1}^2 \\text{r2}^2+1}\\]\n\n(def Rsq (-&gt; R ||2\n             ++&lt;_&gt;\n             &gt;&gt;_&lt;&lt;\n             Together))\n\n\n(TeX-&gt; (w/== (w/** 'R 2) Rsq))\n\n\\[R^2=\\frac{-2 \\text{r1}^3 \\text{r2} \\cos (2 k L)-2 \\text{r1} \\text{r2} \\text{t1}^2 \\cos (2 k L)+\\text{r1}^4 \\text{r2}^2+2 \\text{r1}^2 \\text{r2}^2 \\text{t1}^2+\\text{r1}^2+\\text{r2}^2 \\text{t1}^4}{-2 \\text{r1} \\text{r2} \\cos (2 k L)+\\text{r1}^2 \\text{r2}^2+1}\\]",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Wolframite for scientists II (Cavity physics)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.cavity_physics.html#observables-with-loss",
+    "href": "for_scientists.cavity_physics.html#observables-with-loss",
+    "title": "6  Wolframite for scientists II (Cavity physics)",
+    "section": "6.6 Observables with loss",
+    "text": "6.6 Observables with loss\nThe above result is a perfectly reasonable, but simple, model. More realistically, we want to be able to understand mirrors that have losses, i.e. that don’t just reflect or transmit light, but that actually absorb or ‘waste’ light.\nThis is one of the places that Wolfram really shines. Almost the entire engine is designed around replacement rules. And so we just have to define a substitution, which says that reflection + transmission + loss is equal to 1:\n\n(def losses\n  [(w/-&gt; (w/** 'r1 2)\n         (w/+ 1\n              (w/- 'l1)\n              (w/- (w/** 't1 2))))\n   (w/-&gt; (w/** 'r2 2)\n         (w/+ 1\n              (w/- 'l2)\n              (w/- (w/** 't2 2))))])\n\nand substitute these into the equations. We’re going to go a step further however…",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Wolframite for scientists II (Cavity physics)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.cavity_physics.html#approximations",
+    "href": "for_scientists.cavity_physics.html#approximations",
+    "title": "6  Wolframite for scientists II (Cavity physics)",
+    "section": "6.7 Approximations",
+    "text": "6.7 Approximations\nRather than just substitute the new rule into our expressions, we’re going to take this opportunity to define some other replacement rules. Now so far, we’ve been fairly mathematically pure, but a lot of physics is about knowing when (and being able) to make good approximations.\n\n(def approximations\n  [(w/-&gt; (w/* 'r1 'r2)\n         (let [vars [(w/** 't1 2) (w/** 't2 2) 'l1 'l2]]\n           (-&gt; (x&gt;&gt; (w/* (√ (w/** 'r1 2))\n                         (√ (w/** 'r2 2)))\n                    losses)\n               (Series ['t1 0 2]\n                       ['t2 0 2]\n                       ['l1 0 2]\n                       ['l2 0 2])\n               Normal\n               &lt;&lt;_&gt;&gt;\n               (x&gt;&gt; (mapv #(w/-&gt; % (w/* 'temp %)) vars))\n               (Series ['temp 0 1])\n               Normal\n               (x&gt;&gt; (w/-&gt; 'temp 1)))))])\n\n\n(TeX-&gt; approximations)\n\n\\[\\left\\{\\text{r1} \\text{r2}\\to \\frac{1}{2} \\left(-\\text{l1}-\\text{l2}-\\text{t1}^2-\\text{t2}^2\\right)+1\\right\\}\\]\nWhat’s happening here is that we are simplifying the expression for r1r2 by assuming that the transmission and loss for light going through a mirror is small. So small, that higher powers of these variabes are negligible. And so, we substitute the values into the expression, expand the functions in a power series and neglect any higher powers. The neglect is done by inserting ‘big O’ notation and then restricting the series to a single power in that variable. As we want to do this for multiple variables, then we map over each one. This is a complicated mathematical procedure, but Wolframite allows us to do this quite concisely, apart from some necessary Wolfram datatype conversions (e.g.* using the w/Normal function).",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Wolframite for scientists II (Cavity physics)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.cavity_physics.html#the-cavity-field",
+    "href": "for_scientists.cavity_physics.html#the-cavity-field",
+    "title": "6  Wolframite for scientists II (Cavity physics)",
+    "section": "6.8 The cavity field",
+    "text": "6.8 The cavity field\nWe remember (from part I) that Wolfram can define quite general approximations. With the small angle approximation, and those defined above, we can formulate our final expression for the optical intensity inside the cavity:\n\n(def small-angle\n  (_&gt; (Cos (Pattern 'x (Blank)))\n      (w/+ 1 (w/* -1/2 (w/** 'x 2)))))\n\n\n(def I4--approx\n  (eval-&gt; I4\n          (x&gt;&gt; (w/-&gt; (Cos (w/* 2 'k 'L))\n                     (Cos 'phi)))\n          (x&gt;&gt; approximations)\n          (x&gt;&gt; (w/-&gt; (w/** (w/* 'r1 'r2) 2)\n                     (-&gt; (x&gt;&gt; (w/* 'r1 'r2) approximations)\n                         (w/** 2))))\n          (x&gt;&gt; (conj losses small-angle))\n          &gt;_&lt;))\n\n\n(TeX-&gt;&gt; I4--approx\n        (w/== (w/** (Abs 'E4) 2)))\n\n\\[| \\text{E4}| ^2=\\frac{4 \\text{t1}^2 \\left(-\\text{l2}-\\text{t2}^2+1\\right)}{-2 \\left(\\phi ^2-2\\right) \\left(\\text{l1}+\\text{l2}+\\text{t1}^2+\\text{t2}^2-2\\right)+\\left(\\text{l1}+\\text{l2}+\\text{t1}^2+\\text{t2}^2-2\\right)^2+4}\\]",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Wolframite for scientists II (Cavity physics)</span>"
+    ]
+  },
+  {
+    "objectID": "for_scientists.cavity_physics.html#visualised",
+    "href": "for_scientists.cavity_physics.html#visualised",
+    "title": "6  Wolframite for scientists II (Cavity physics)",
+    "section": "6.9 Visualised",
+    "text": "6.9 Visualised\nSo we finally have an equation for the field inside the cavity. If we were mathematicians, then of course, we might have stopped here. Assuming that it’s only real scientists who’re reading this (shhh!), then the next step is to explore these equations graphically, under practical assumptions.\nFor this, we will define a few utility functions, that also demonstrate Wolfram’s conciseness.\n\n(defn linspace\n  \"A list of n numbers between a and b.\"\n  [a b n]\n  (let [d (/ (- b a) (dec n))]\n    (into []\n          (map (fn [x]\n                 (+ a\n                    (* x d)))\n               (range n)))))\n\n\n(defn coordinates\n  \"There's no numpy here, so what do we do? It turns out Wolfram can reimplement a meshgrid-like function very concisely (let's not talk about the performance though...).\"\n  [xmin xmax ymin ymax]\n  (eval-&gt; (Outer List\n                 (linspace xmin xmax 100)\n                 (linspace ymin ymax 100))\n          (Flatten 1)))\n\n\n(defn Efield\n  \"For convenience, we build a clojure function over the Wolfram expression created earlier.\"\n  [t1 t2 l1 l2 phi]\n  (-&gt; (x&gt;&gt; I4--approx\n           [(w/-&gt; 't1 t1)\n            (w/-&gt; 't2 t2)\n            (w/-&gt; 'l1 l1)\n            (w/-&gt; 'l2 l2)\n            (w/-&gt; 'phi phi)])\n      wl/!))\n\n\n(defn Efield--transmission-phase\n  \"This is just a function to reduce the number of variables over which we plot. We can't (easily) plot in 4-D!\"\n  [[t1 phase]]\n  [t1 phase (Efield t1 t1 20E-6 20E-6 phase)])\n\n\n(wl/! (w/_= 'nums (mapv Efield--transmission-phase\n                        (coordinates\n                         (math/sqrt 50E-6)\n                         (math/sqrt 700E-6)\n                         -0.001\n                         0.001))))\n\n\n(wh/show\n (w/ListPlot3D 'nums\n               (w/-&gt; PlotRange All)\n               (w/-&gt; Boxed false)\n               (w/-&gt; AxesLabel\n                     [\"Mirror transmission\" \"Phase\" \"Intracavity intensity\"])))\n\nListPlot3D[nums, Rule[PlotRange, All], Rule[Boxed, False], Rule[AxesLabel, {\"Mirror transmission\", \"Phase\", \"Intracavity intensity\"}]]\nAnd there you have it! It turns out that if you get the phase right and you buy high quality mirrors then you can massively amplify the laser light. In fact, if you add a ‘gain’ material in the middle then such light amplification by the stimulated emission of radiation has a catchier name: it’s called a Laser!",
+    "crumbs": [
+      "Tutorials for scientists",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Wolframite for scientists II (Cavity physics)</span>"
+    ]
+  },
+  {
+    "objectID": "for_developers.index.html",
+    "href": "for_developers.index.html",
+    "title": "7  Wolframite for Clojure developers",
+    "section": "",
+    "text": "This section is intended for you, a developer familiar with Clojure, who may know little or nothing about Wolfram.\nYou may decide whether you want to learn a little about Wolfram first in Chapter 8 or jump right to an example analysis of data with Wolfram in Chapter 9.\n\nsource: notebooks/for_developers/index.clj",
+    "crumbs": [
+      "Tutorials for developers",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Wolframite for Clojure developers</span>"
+    ]
+  },
+  {
+    "objectID": "for_developers.wolfram_for_clojurians.html",
+    "href": "for_developers.wolfram_for_clojurians.html",
+    "title": "8  Brief introduction into Wolfram Language for Clojure developers",
+    "section": "",
+    "text": "8.1 What is Wolfram?\nAccording to Wikipedia,\nMoreover, the Wolfram Language has the unique position of being not only a programming language but also a full-scale computational language, that incorporates vast amounts of computable knowledge and lets one broadly express things computationally.\n“Symbolic” means that everything is a symbolic expression and you can manipulate these expressions themselves - somewhat reminiscent of how you can transform code with Clojure macros.",
+    "crumbs": [
+      "Tutorials for developers",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Brief introduction into Wolfram Language for Clojure developers</span>"
+    ]
+  },
+  {
+    "objectID": "for_developers.wolfram_for_clojurians.html#what-is-wolfram",
+    "href": "for_developers.wolfram_for_clojurians.html#what-is-wolfram",
+    "title": "8  Brief introduction into Wolfram Language for Clojure developers",
+    "section": "",
+    "text": "The Wolfram Language is a proprietary, general, very high-level multi-paradigm programming language developed by Wolfram Research. It emphasizes symbolic computation, functional programming, and rule-based programming and can employ arbitrary structures and data. It is the programming language of the mathematical symbolic computation program Mathematica.",
+    "crumbs": [
+      "Tutorials for developers",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Brief introduction into Wolfram Language for Clojure developers</span>"
+    ]
+  },
+  {
+    "objectID": "for_developers.wolfram_for_clojurians.html#pitfalls",
+    "href": "for_developers.wolfram_for_clojurians.html#pitfalls",
+    "title": "8  Brief introduction into Wolfram Language for Clojure developers",
+    "section": "8.2 Pitfalls",
+    "text": "8.2 Pitfalls\nIn Wolfram, everything is global by default and you need to take care to avoid that, when necessary. w/Blockand w/Module may be useful here.",
+    "crumbs": [
+      "Tutorials for developers",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Brief introduction into Wolfram Language for Clojure developers</span>"
+    ]
+  },
+  {
+    "objectID": "for_developers.wolfram_for_clojurians.html#building-blocks",
+    "href": "for_developers.wolfram_for_clojurians.html#building-blocks",
+    "title": "8  Brief introduction into Wolfram Language for Clojure developers",
+    "section": "8.3 Building blocks",
+    "text": "8.3 Building blocks\n\n8.3.0.1 Symbolic expressions\nExpressions have the generic form head[arguments...], which becomes Wolframite (head arguments...)\nEx.: Plus[Power[x, 2], Times[3, Power[y, 3]]]. Notice that we can use undefined symbols, since this is just a symbolic expression, not (yet) a computation. In Clj:\n\n(wl/-&gt;clj \"Plus[Power[x, 2], Times[3, Power[y, 3]]]\")\n\n\n(+ (** x 2) (* 3 (** y 3)))\n\nAnd if we try to evaluate this:\n\n(wl/! (w/+ (w/** 'x 2) (w/* 3 (w/** 'y 3))))\n\n\n(+ (** x 2) (* 3 (** y 3)))\n\nwe get the same expression back, because x and y aren’t defined (yet).\nAn expression’s head identifies the type of data or operation being represented - f.ex. List or Plus.\n\n\n8.3.0.2 Functions\nThere are multiple ways to create a function.\nThe canonical way of defining a named function is using patterns (see Section 8.3.0.7): f[x_] := x^2, which defines the fn f.\nTo create an ad-hoc function, we can use Function similar to Clojure’s fn or anonymous function literals with body&, where the body may use #, #1, #2, ... or (Slot 1), (Slot 1), (Slot 2), ... equivalent to Clojure’s %, %1, %2, .... Ex.: Map[# + 2&,{1,2,3}].\nIn Wolframite, you’ll typically use w/fn or leverage the operator form of functions (see Section 8.3.0.9.1).\n\n\n8.3.0.3 Lists\nA Wolfram List {1, \"hello\", 3.14} becomes a vector in Wolframite: [1, \"hello\", 3.14].\nList access by indexing (from 1) via [[idx or a range a.k.a. Span]]. Here we access the first element:\n\n(wl/-&gt;clj \"{1,2,3}[[1]]\")\n\n\n(Part [1 2 3] 1)\n\n\n(wl/! (Part [1 2 3] 1))\n\n\n1\n\nHere we extract a sublist:\n\n(wl/-&gt;clj \"{1,2,3}[[1 ;; 2]]\")\n\n\n(Part [1 2 3] (Span 1 2))\n\n→\n\n(wl/! (Part [1 2 3] (Span 1 2)))\n\n\n[1 2]\n\nMany operations “thread” over lists, applying to each element:\n\n(wl/! (Plus [1 2 3] 10))\n\n\n[11 12 13]\n\n\n\n8.3.0.4 Iterators simplify repetitive operations\nTable[x^2, {x, 4, 20, 2}] in Wolfram is equivalent to Clojure’s (map (fn [x] (math/pow x 2)) (range 4 20 2)), while Table[x, n] functions as (repeat n x) in Clojure.\nSee also the List Manipulation reference.\n\n\n8.3.0.5 Associations\nSimilar to Clojure maps, with a unique syntax using Rules (see Section 8.3.0.6). Fortunately, in Clojure we can just use maps:\n\n(wl/-&gt;clj \"&lt;|\\\"a\\\" -&gt; x, \\\"b\\\" -&gt; y|&gt;\")\n\n\n{\"a\" x, \"b\" y}\n\n\n\n8.3.0.6 Rules\nRules, or rewrite rules, of the form key -&gt; value predate associations and are used where you’d have expected a map, often to define options to functions, as in here: Import[\"demo.csv.gz\", {\"Data\", 1 ;; 3}, \"HeaderLines\" -&gt; 1] (Think of this as saying “when evaluating the operation, replace HeaderLines with a truthy value.)\nIn Wolframite, we would write this as:\n\n(w/Import \"demo.csv.gz\" [\"Data\" (w/Span 1 3)] (w/-&gt; w/HeaderLines 1))\n\n\n(Import \"demo.csv.gz\" [\"Data\" (Span 1 3)] (-&gt; HeaderLines 1))\n\n\n\n8.3.0.7 Patterns\nare used to transform symbolic expressions into other symbolic expressions. F.ex. here we replace anything that matches f[singleArg] with the arg + 5:\n\n(wl/! \"Replace[f[100], f[x_] -&gt; x + 5]\")\n\n\n105\n\nHere, _ a.k.a. Blank is a pattern that matches any expression and a double blank __ matches any sequence of expressions. We can name the captured value by prepending a name, as in x_. There is also | for alternatives, _h to capture expressions with the head h, :&gt; for delayed rules.\nNotice that this provides one way to define what we would call functions. Function and lambdas are another way.\n\n\n8.3.0.8 Real-World Entities\nReal-world entities are symbolic expressions representing information about concepts, things etc. such as countries and chemicals.\nWe can use entity[“Properties”] to find a list of properties and EntityValue[entity, \"Population\"] to get the value of a property.\nWe have two ways to represent entities in Wolframite, which both may be useful:\n\n(def LA-expr (Entity \"City\" [\"LosAngeles\" \"California\" \"UnitedStates\"]))\n\n\n(wl/! (EntityValue LA-expr \"Population\"))\n\n\n(Quantity 3849297 \"People\")\n\n\n(def LA-evaled (wl/! LA-expr))\n\n\n(wl/! (EntityValue LA-evaled \"Population\"))\n\n\n(Quantity 3849297 \"People\")\n\nTo get entity properties, we need a small workaround - Wolfram allows someEntity[\"Properties\"] but in our case it would mean trying to use the list (Entity ...) as a function, which wouldn’t work. So we construct an expression list explicitly:\n\n(take 3 (wl/! (list (Entity \"City\" [\"LosAngeles\" \"California\" \"UnitedStates\"])\n                    \"Properties\")))\n\n\n((EntityProperty \"City\" \"ActiveHomeListingCount\")\n (EntityProperty \"City\" \"AdministrativeDivision\")\n (EntityProperty \"City\" \"AggravatedAssault\"))\n\n\n\n8.3.0.9 Various\n\nAssignments - = and :=; Module for scoping\nApplying Functions - Map with the shorthand /@, Apply with the shorthand @@\nUse ; to separate different side-effecting operations, as (do ...) would in Clojure (Wolframite: w/do)\nBooleans: True, False (Wolframite: true, false)\nString: “…”\nNote: Indices in Wolfram start from 1, not 0\n\n\n8.3.0.9.1 The “operator” form of functions\nMany functions are similar to Clojure transducers such as map in the regard that you can invoke them without the data they are intended to operate on, and they will return a function that can be applied to the data later. This is called the “operator” form. Examples are Map and AllTrue.\nSee Functionals & Operators for more info.\n\n\n\n8.3.0.10 Clojure &lt;-&gt; Wolfram\n\n\n\n\n\nClojure\nWolfram\nComments\n\n\n\n\napply\nApply\n\n\n\ncomp\nComposition\n\n\n\ncount\nLength\n\n\n\nfilter\nSelect\n\n\n\nnth\nPart\n1-based indexing\n\n\nmap\nMap\n\n\n\n(map f c1 c2)\n(MapThread f [c1 c2])\n\n\n\npartial\noperator form\n(see above)\n\n\nreduce\nFold\n\n\n\ntake\nPart\n\n\n\n\n\n\n\n\n8.3.0.11 Additional resources\nRead more in the online booklet The Wolfram Language: Fast Introduction for Programmers, which we have borrowed heavily from.\nThe dense one-page Wolfram Language Syntax may also be of use, especially when reading Wolfram code.\n\nsource: notebooks/for_developers/wolfram_for_clojurians.clj",
+    "crumbs": [
+      "Tutorials for developers",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Brief introduction into Wolfram Language for Clojure developers</span>"
+    ]
+  },
+  {
+    "objectID": "for_developers.demo_analysis_cycling.html",
+    "href": "for_developers.demo_analysis_cycling.html",
+    "title": "9  Using Wolframite to analyse cycle trips data",
+    "section": "",
+    "text": "(ns for-developers.demo-analysis-cycling\n  (:require\n   [clojure.java.io :as io]\n   [clojure.string :as str]\n   [wolframite.api.v1 :as wl]\n   [wolframite.lib.helpers :as h]\n   [wolframite.wolfram :as w :refer :all\n    :exclude [* + - -&gt; / &lt; &lt;= = == &gt; &gt;= fn\n              Byte Character Integer Number Short String Thread]]\n   [wolframite.impl.wolfram-syms.intern :as intern]\n   [scicloj.kindly.v4.kind :as k])\n  (:import (java.util.zip GZIPInputStream)))\n\nWe introduce you, the motivated Clojure developer, to using the Wolfram programming language as a Clojure library. Following some brief inspiration (why on earth should you do this?), and some getting started notes, we outline a ‘real’ workflow using the example of analysing data about bike trips.\nFirst, start & connect to a Wolfram Kernel (assuming all the common requires):\n\n(wl/start!)\n\n\n{:status :ok, :wolfram-version 14.2}\n\nNow, let’s play with some data! But first we will need to read them in from a CSV file. The docs tell us how to import the first ten lines of a CSV:\nImport[\"ExampleData/financialtimeseries.csv\", {\"Data\", 1 ;; 10}]\nHowever, how do we write the 1 ;; 10 in Wolframite?! Let’s ask!\n\n(wl/-&gt;clj \"1 ;; 10\")\n\n\n(Span 1 10)\n\nThus, we could write it as '(Span 1 10) (notice the important quote!), but we rather use our convenience functions:\n\n(w/Span 1 10)\n\n\n(Span 1 10)\n\nIdeally, we’d take the easy path and follow the docs and use the very smart and flexible Import on our 202304_divvy_tripdata.csv.gz. Sadly, the current version of Wolfram is not very efficient at this and with our 400k rows it is unbearably slow. I assume that with the shortened, 100k row file it wouldn’t be much different. All the smartness and auto-detection costs 🤷. If we read only a few rows then it is fine (±2s for 10s - 100s of rows):\n\n(k/table\n {:row-vectors\n  (-&gt; (w/Import (.getAbsolutePath (io/file \"docs-buildtime-data/202304_divvy_tripdata_first100k.csv.gz\"))\n                [\"Data\" (w/Span 1 3)])\n      wl/!)})\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nride_id\nrideable_type\nstarted_at\nended_at\nstart_station_name\nstart_station_id\nend_station_name\nend_station_id\nstart_lat\nstart_lng\nend_lat\nend_lng\nmember_casual\n\n\n8FE8F7D9C10E88C7\nelectric_bike\n\n(DateObject [2023 4 2 8 37 28] \"Second\" \"Gregorian\" None)\n\n\n(DateObject [2023 4 2 8 41 37] \"Second\" \"Gregorian\" None)\n\n\n(Missing \"NotAvailable\")\n\n\n(Missing \"NotAvailable\")\n\n\n(Missing \"NotAvailable\")\n\n\n(Missing \"NotAvailable\")\n\n41.8\n-87.6\n41.79\n-87.6\nmember\n\n\n34E4ED3ADF1D821B\nelectric_bike\n\n(DateObject [2023 4 19 11 29 2] \"Second\" \"Gregorian\" None)\n\n\n(DateObject [2023 4 19 11 52 12] \"Second\" \"Gregorian\" None)\n\n\n(Missing \"NotAvailable\")\n\n\n(Missing \"NotAvailable\")\n\n\n(Missing \"NotAvailable\")\n\n\n(Missing \"NotAvailable\")\n\n41.87\n-87.65\n41.93\n-87.68\nmember\n\n\n5296BF07A2F77CB5\nelectric_bike\n\n(DateObject [2023 4 19 8 41 22] \"Second\" \"Gregorian\" None)\n\n\n(DateObject [2023 4 19 8 43 22] \"Second\" \"Gregorian\" None)\n\n\n(Missing \"NotAvailable\")\n\n\n(Missing \"NotAvailable\")\n\n\n(Missing \"NotAvailable\")\n\n\n(Missing \"NotAvailable\")\n\n41.93\n-87.66\n41.93\n-87.66\nmember\n\n\n\n\n\nNote: Loading the ± 400k rows file with the awesome SciCloj tooling would take ± 3.5s. How amazing is that?!\nIt would be nice to load the data with SciCloj / dtype.next and send it to Wolfram as data, but I haven’t yet figured out a truly efficient way to share large binary data. (I need to explore 2D heterogeneous arrays more….)\nThus we will need a more DIY and lower-level approach to getting the data in, leveraging OpenRead and ReadList. Sadly, it cannot handle a gzpipped files (as far as I know) so we need to unzip it first:\n\n(when-not (.exists (io/file \"/tmp/huge.csv\"))\n  (let [zip (io/file \"docs-buildtime-data/202304_divvy_tripdata_first100k.csv.gz\")]\n    (with-open [zis (GZIPInputStream. (io/input-stream zip))]\n      (io/copy zis (io/file \"/tmp/huge.csv\"))))\n  :extracted)\n\n\n:extracted\n\nNow we are ready to read the data in. We will store them into a Wolfram-side var so that we can work with them further.\nFor readability and auto-completion, we will define vars for the names of the Wolfram-side vars that we need (notice Wolfram only supports alphanumeric names):\n\n(def csv \"Wolf var - whole content\" 'csv)\n\n\n(def rawRows \"Wolf var - unparsed data rows\" 'rawRows)\n\n\n(def rows \"Wolf var - parsed data rows\" 'rows)\n\n\n(wl/! (w/do (w/= 'f (w/OpenRead \"/tmp/huge.csv\"))\n            (w/= csv (w/ReadList 'f\n                                 w/Word\n                                 (w/-&gt; w/WordSeparators [\",\"])\n                                 (w/-&gt; w/RecordSeparators [\"\\n\" \"\\r\\n\" \"\\r\"])\n                                 (w/-&gt; w/NullWords true)\n                                 (w/-&gt; w/RecordLists true)))\n               ;; Let's return only the length instead of all the large data:\n            (w/Length csv)))\n\n\n100000\n\nWe leverage the flexibility of ReadList, instructing it to read “Words” separated by , (instead of applying the normal word separating characters), thus reading individual column values. It reads them as records, separated by the given separators (which are the same as the default, shown here for clarity). I.e. each line is considered to be a record. And with RecordLists -&gt; True we instruct it to put each record into a separate list and each row will thus become a list of values (instead of a single long list of all the column values in the whole file). Finally, we set NullWords -&gt; True not to skip empty column values, so that all rows will have the same number of elements.)\n(We could have instead used ReadList with something like (w/ReadList 'f (w/Table w/Record [13]) (w/-&gt; 'RecordSeparators [\",\" \"\\n\"])), telling it we have sequences of 13 records, where each record is separated by , (column separator) or \\n (row separator). But this requires us to count the number of columns up-front.)\nLet’s extract column names:\n\n(def headers (-&gt;&gt; (wl/! (w/Part csv 1))\n                  (map #(str/replace % \"\\\"\" \"\"))))\n\nLet’s have a look at row 98,765 to verify we get the data correctly:\n\n(k/table\n {:row-vectors (map vector\n                    headers\n                    (wl/! (w/Part csv 98765)))})\n\n\n\n\n\n\nride_id\n\"0D87A4BCFFB41FA9\"\n\n\nrideable_type\n\"electric_bike\"\n\n\nstarted_at\n\"2023-04-21 17:39:39\"\n\n\nended_at\n\"2023-04-21 18:03:34\"\n\n\nstart_station_name\n\"Wilton Ave & Diversey Pkwy\"\n\n\nstart_station_id\n\"TA1306000014\"\n\n\nend_station_name\n\n\n\nend_station_id\n\n\n\nstart_lat\n41.932472587\n\n\nstart_lng\n-87.652724147\n\n\nend_lat\n41.9\n\n\nend_lng\n-87.67\n\n\nmember_casual\n\"member\"\n\n\n\n\n\nNow, let’s make a few helpers:\n\n(def header-&gt;idx\n  \"Header -&gt; column index (1-based)\"\n  (zipmap headers (next (range))))\n\n\n(defn col [row-sym col-name]\n  (w/Part row-sym (header-&gt;idx col-name)))\n\n\n(defn rowvals\n  \"Return a Wolfram fn extracting values of the named columns and returning them as a Wolf list / Clj vector\"\n  [& col-names]\n  (w/fn [row] (mapv #(col row %) col-names)))\n\nNow, let’s parse strings into numbers so that we can use them in computations.\nThe recommended way is to use ToExpression, but it is too smart and thus slow. We will need to cheat and use the internal StringToMReal instead. I got these performance tips from SO. Let’s see how it works:\n\n(or (= 12.34 (wl/! '(Internal/StringToMReal \"12.34\")))\n    (throw (ex-info \"StringToMReal doesn't work/exist anymore?!\" {})))\n\n\ntrue\n\nLet’s make our life easier by creating a wrapper var for this function. It is somewhat of a cheat, since it isn’t a part of the public api (yet):\n\n(def StringToMReal (intern/wolfram-fn 'Internal/StringToMReal))\n\nWe can now get rid of the annoying quote, and it still works 🤞:\n\n(wl/! (StringToMReal \"12.34\"))\n\n\n12.34\n\nLet’s store the data without the header row as rawRows (and again, ensure we do not return the whole data set):\n\n(wl/! (w/Length (w/= rawRows (w/Drop csv 1))))\n\n\n99999\n\n\n(def loc-ks [\"start_lat\" \"start_lng\" \"end_lat\" \"end_lng\"])\n\nNow we extract and parse the columns of interest (processing all but displaying only the first 3 here):\n\n(k/table\n {:column-names [\"Start latitude\" \"Start longitude\"\n                 \"End latitude\" \"End longitude\"]\n  :row-vectors\n  (time ; 0.6s w/ Map only, ~2s with Select as well\n   (wl/! (-&gt; (w/= rows\n                  (-&gt;&gt; (w/Select rawRows (w/AllTrue (w/fn [v] (w/Not (w/== v \"\")))))\n                       (w/Map (w/Composition\n                               (w/Map StringToMReal)\n                               (apply rowvals loc-ks)))))\n             (w/Part (w/Range 1 3)))))})\n\n\n\n\n\n\nStart latitude\nStart longitude\nEnd latitude\nEnd longitude\n\n\n\n\n41.65186780228521\n-87.53967136144637\n41.65186780228521\n-87.53967136144637\n\n\n41.803038\n-87.606615\n41.803038\n-87.606615\n\n\n41.862429738\n-87.651152372\n41.862378\n-87.651062\n\n\n\n\n\nNotice few tricks here: 1. We leverage the operator form of AllTrue so we don’t need to wrap it in a function 2. We use Composition so that we can leverage our already defined rowvals to extract the values we care about, and then to parse them.\nLet’s update our helper to reflect the new columns of rows:\n\n(defn rowvals' [& col-names]\n  (let [header-&gt;idx' (zipmap loc-ks (next (range)))]\n    (w/fn [row] (mapv #(w/Part row (header-&gt;idx' %)) col-names))))\n\nFor me, it took ±0.8s to extract the 2 columns as text and 1.5s to parse them into numbers. With ToExpression it would take ±5s.\n\n9.0.0.1 Starting positions in a map\nOne interesting thing to look at is how the starting positions of the trips are distributed.\nIn a REPL session, we could have used the following, to show the graphic in a Java Swing window:\n\n(comment (-&gt;&gt; rows\n              (w/Map (rowvals' \"start_lat\" \"start_lng\"))\n              w/GeoHistogram\n              ((requiring-resolve 'wolframite.tools.graphics/show!))))\n\nbut for this web page, we want to export and include the graphic as an image:\n\n(let [file (io/file \"notebooks\" \"start-locs.webp\")]\n  (when-not (.exists file)\n    (time (wl/! (let [d (-&gt;&gt; rows\n                             (w/Map (rowvals' \"start_lat\" \"start_lng\"))\n                             w/GeoHistogram)]\n                  (w/Export (.getAbsolutePath file) d\n                            (w/-&gt; w/ImageSize 300)\n                            #_(w/-&gt; w/ImageSize w/Large))))))\n  (k/hiccup [:img {:src (.getPath file) #_#_:style {:width \"50%\" :height \"50%\"}}]))\n\n\nTO BE CONTINUED - featuring GeoDistance & more!\n\nsource: notebooks/for_developers/demo_analysis_cycling.clj",
+    "crumbs": [
+      "Tutorials for developers",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Using Wolframite to analyse cycle trips data</span>"
+    ]
+  },
+  {
+    "objectID": "clojure_primer.index.html",
+    "href": "clojure_primer.index.html",
+    "title": "10  Clojure primer",
+    "section": "",
+    "text": "10.1 The essence of Clojure\nA very brief introduction to Clojure for a would-be users of Wolframite not familiar with the language.\nIt’s impossible to summarize any language in just a few words. But we can say that simplicity and expressiveness are some of the core values of Clojure. It has been designed to allow you to express your thoughts concisely, to write programs that avoid some common sources of errors (especially those caused by shared mutable data), and produce code that is well suited to evolution over time.",
+    "crumbs": [
+      "Clojure primer",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Clojure primer</span>"
+    ]
+  },
+  {
+    "objectID": "clojure_primer.index.html#elementary-syntax",
+    "href": "clojure_primer.index.html#elementary-syntax",
+    "title": "10  Clojure primer",
+    "section": "10.2 Elementary syntax",
+    "text": "10.2 Elementary syntax\nLet’s start by comparing how adding a few elements to a list looks like in Wolfram, Python, and Clojure:\nLet’s start Wolfram to be ready for our examples underneath:\n\n(wl/start!)\n\n\n{:status :ok, :wolfram-version 14.2}\n\n\n\n\n\n\n\n\n\n\nWolfram\n  Join[{}, {\"first\", 2, &lt;|\"name\" -&gt; \"Ava\"|&gt;}]\n\n\nPython\n  []+[\"first\",2,{\"name\": \"Ava\"}]\n\n\nClojure\n\n(conj [] \"first\" 2 {\"name\" \"Ava\"})\n\n\n\n\n\n\nWe see here a few basic data structures: a [vector], similar to Wolfram/Python lists, and a map {\"key\": \"value\"}, similar to Python dictionaries / Wolfram associations. One interesting difference is that , commas in Clojure are optional.\n\"Strings\" and numbers 1, 2, ... are the same. Clojure’s nil is just like Python’s None\nNow, how would we define a function that sums two numbers?\n\n\n\n\n\n\n\n\n\nWolfram\n  plus[x_, y_] := Plus[x, y]\n\n\nPython\n  def plus(x, y):\n      return x + y\n\n\nClojure\n\n(defn plus [x y] (+ x y))\n\n\n\n\n\n\nNow we are ready to learn a little more about how to read Clojure code.\n\nClojure is a Lisp, i.e. the code consists of the same data you use as a programmer: lists, vectors, maps, symbols, etc.\nLists and vectors are both sequential data structures. Vectors support efficient access to any element, while lists are always read from start.\nKeywords are similar to strings, but tuned for use as keys in maps. Additionally, a keyword may be used as a function that takes a map and looks up the corresponding value:\n\n(:name {:name \"Ava\"})\n\n\n\"Ava\"\n\n\n(map :name [{:name \"Ava\"} {:name \"Boudicca\"}])\n\n\n(\"Ava\" \"Boudicca\")\n\nThis is the syntax, i.e. how characters become data. Now, on to semantics, i.e. what does the data mean:\n\nA list is interpreted as an invocation (e.g. a function call), where the first element is a symbol that resolves to something invocable (a function, a special form, or a macro; we don’t need to care about their differences here). All the other elements are arguments to the function.\nThe same code structure is used for everything, including defining functions:\n\nThe defnhere defines a new function called subtract-smaller, taking two arguments x and y.\nNoteworthy:\n&gt;, - are just function calls. if is a “special form” and defn is a macro, but they behave very similarly to functions.\nNotice there is no else. There are no reserved/special words in Clojure.",
+    "crumbs": [
+      "Clojure primer",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Clojure primer</span>"
+    ]
+  },
+  {
+    "objectID": "clojure_primer.index.html#basics",
+    "href": "clojure_primer.index.html#basics",
+    "title": "10  Clojure primer",
+    "section": "10.3 Basics",
+    "text": "10.3 Basics\n\nEverything returns a value (which may be nil). F.ex. if returns whatever the evaluated branch returned.\nClojure is very tolerant of nil, most functions treat it as an empty value - you can map over it (getting nil back), append to it (getting back a list with the appended element) etc.\nWhitespace is not significant. Commas are treated as a whitespace, and used occasionally for readability\nBooleans: true and false. All predicates and conditional expressions treat both false and nil as false and everything else as true (also called “truthy”).\nClojure runs on the Java Virtual Machine (JVM) and you can directly call Java methods. (Learn more about Clojure ↔︎ Java interoperability.)\nClojure is intended for interactive development, also known as REPL-driven development, where you build and evolve your application while it is running. You may be used to a very similar this style of development from Python or Wolfram notebooks.",
+    "crumbs": [
+      "Clojure primer",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Clojure primer</span>"
+    ]
+  },
+  {
+    "objectID": "clojure_primer.index.html#evaluation",
+    "href": "clojure_primer.index.html#evaluation",
+    "title": "10  Clojure primer",
+    "section": "10.4 Evaluation",
+    "text": "10.4 Evaluation\nNow is a good time to revisit Understanding Wolframite and read about the three forms of Wolframite expressions (raw, evaluated, and Wolfram string).\nA point worth re-iterating is that Wolframite expressions are not evaluated by Clojure but are sent ± as-is to Wolfram for evaluation. Thus, you may not mix Clojure and Wolframite expressions freely. But there is one exception to that - a Wolframite expression may contain Clojure expressions that can be evaluated fully on the Clojure side and replaced with the result, before being sent to Wolfram. Let’s have a look at a few examples:\nClojure-side only:\n\n(+ (* 3 (math/pow 2 2)))\n\n\n12.0\n\n12.0\nWolfram-only:\n\n(wl/! (w/+ (w/* 3 (w/Power 2 2))))\n\n\n12\n\nMixed, with Clojure evaluated before sending the form to Wolfram:\n\n(wl/! (w/+ (w/* 3 (w/Power (+ 1 1) 2))))\n\n\n12\n\nThis is how the expression is evaluated before we resolve aliases and turn it into Wolfram and send it over to the kernel:\n\n(w/+ (w/* 3 (w/Power (+ 1 1) 2)))\n\n\n(+ (* 3 (Power 2 2)))\n\nNotice that you may nest Clojure-only expression, which does not depend on the surrounding Wolfram context, inside a Wolframite expression, but you cannot do the opposite, i.e. nest a Wolframite expression inside a Clojure expression:\n\n(try\n  (wl/! (+ (w/* 3 (w/Power (+ 1 1) 2))))\n  (catch Exception e\n    (str e)))\n\n\n\"java.lang.ClassCastException: Cannot cast clojure.lang.PersistentList to java.lang.Number\"\n\nThis fails because we are passing a Wolframite expression (a list) to the Clojure + function, but it only works with numbers. We’d need to evaluate the expression first:\n\n(+ (wl/! (w/* 3 (w/Power (+ 1 1) 2))))\n\n\n12",
+    "crumbs": [
+      "Clojure primer",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Clojure primer</span>"
+    ]
+  },
+  {
+    "objectID": "clojure_primer.index.html#sec-clojure-repl",
+    "href": "clojure_primer.index.html#sec-clojure-repl",
+    "title": "10  Clojure primer",
+    "section": "10.5 How to work with Clojure: the REPL and interactive development",
+    "text": "10.5 How to work with Clojure: the REPL and interactive development\nContrary to most languages, Clojure is designed to be written incrementally, in an interactive session. While this is alien to most developers, who are used to the write-compile-run cycle, you may already be well familiar with this style of coding from Wolfram or Python notebooks. In both cases, your “program” is running all the time and you keep adding to it, building on the previous code and state, and can examine the state at any moment.\nYou can read more on Clojure’s take on interactive development a.k.a. REPL-driven development on the official Clojure website.",
+    "crumbs": [
+      "Clojure primer",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Clojure primer</span>"
+    ]
+  },
+  {
+    "objectID": "clojure_primer.index.html#resources-for-further-learning",
+    "href": "clojure_primer.index.html#resources-for-further-learning",
+    "title": "10  Clojure primer",
+    "section": "10.6 Resources for further learning",
+    "text": "10.6 Resources for further learning\n\nThe Clojure cheatsheat is a good place to look for functions.\nThe 100 Most Used Clojure Expressions\n\n\nsource: notebooks/clojure_primer/index.clj",
+    "crumbs": [
+      "Clojure primer",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Clojure primer</span>"
+    ]
+  },
+  {
+    "objectID": "advanced.customizing_wolframite.html",
+    "href": "advanced.customizing_wolframite.html",
+    "title": "11  Customizing Wolframite",
+    "section": "",
+    "text": "(ns advanced.customizing-wolframite\n  (:require [scicloj.kindly.v4.kind :as k]\n            [wolframite.api.v1 :as wl]))\n\nThere are several ways to customize Wolframite to your liking.\n\n11.0.1 Custom aliases\nWe’ve discussed Wolframite’s built-in aliases in Section 3.2.7. However, Wolframite allows you to individually tailor the user experience at the level of initialization:\n\n(wl/restart! {:aliases '{🔋 Power}})\n\n\n{:status :ok, :wolfram-version 14.2, :started? true}\n\n\n(wl/! '(🔋 2 5))\n\n\n32\n\n, and function call,\n\n(wl/restart!)\n\n\n{:status :ok, :wolfram-version 14.2, :started? true}\n\n\n(wl/! '(🔋🔋 2 5) {:aliases '{🔋🔋 Power}})\n\n\n32\n\nUse it how you want to!\nTIP: You can also get convenience vars for your aliases in wolframite.wolfram by running something like (wolframite.impl.wolfram-syms.write-ns/write-ns! &lt;path&gt; {:aliases '{🔋 Power}}). After you load the file, you’ll be able to use (wl/! (w/🔋 2 5) {:aliases '{🔋 Power}}).\n\nsource: notebooks/advanced/customizing_wolframite.clj",
+    "crumbs": [
+      "Advanced topics",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Customizing Wolframite</span>"
+    ]
+  },
+  {
+    "objectID": "advanced.packages.html",
+    "href": "advanced.packages.html",
+    "title": "12  Packages",
+    "section": "",
+    "text": "12.1 Tip: Shareable packages\nWorking with packages has never been easier! Following the Wolfram symbol convention, we introduce Wolframite’s version of &lt;&lt;, a.k.a. Get, to both load the given file (*.wl or *.m) into the working kernel and to attach the Wolfram context’s symbols (including functions) to a Clojure namespace. The name of the namespace defaults to the context’s name, but you can also define a custom name, passed in as a Clojure symbol.\nThe functions inside the Wolfram package can then be used just like any other Wolfram functions.\nFor example, try loading WolframPackageDemo.wl and running the two functions defined inside:\nand\n.\nThat’s it! As you can see, the functions are callable and the documentation is available too.\nIf you want to change the context name, e.g. to make it shorter, then this is also simple. In general, we allow for the package name and context name to be different, so the full call is (... path.wl context alias), i.e.\nAnd so, you have the whole power of Wolfram packages at your fingertips. And to be honest, this is actually easier to work with than using Wolfram’s contexts directly. Clojure does namespaces well.\nIt is fine to use the short version of Get when working in a notebook-like style, evaluating every expression as you go, but there is one problem with it: you won’t be able to require the resulting namespace to use it from other namespaces. This is because it creates a namespace for the package’s symbols on the fly, while the Clojure Reader expects all namespaces to exist already when it reads the code. One way to fix it is to manually create the target namespace, declare the symbols, and load the package there:\nNow you can safely (require '[my.package.demo :as demo]) and (demo/tryIt) from any namespace.",
+    "crumbs": [
+      "Advanced topics",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Packages</span>"
+    ]
+  },
+  {
+    "objectID": "advanced.packages.html#tip-shareable-packages",
+    "href": "advanced.packages.html#tip-shareable-packages",
+    "title": "12  Packages",
+    "section": "",
+    "text": "(ns my.package.demo\n  (:require [wolframite.core :as wl]))\n\n\n(declare additional tryIt)\n\n\n#'my.package.demo/tryIt\n\n\n(wl/&lt;&lt;! \"resources/WolframPackageDemo.wl\" \"WolframPackageDemo\" (ns-name *ns*))\n\n\nmy.package.demo\n\n\n\nsource: notebooks/advanced/packages.clj",
+    "crumbs": [
+      "Advanced topics",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Packages</span>"
+    ]
+  },
+  {
+    "objectID": "faq.html",
+    "href": "faq.html",
+    "title": "13  FAQ",
+    "section": "",
+    "text": "(ns faq\n  \"Anticipated and, potentially literally, frequently asked questions.\"\n  (:require\n   [scicloj.kindly.v4.kind :as k]\n   [wolframite.api.v1 :as wl]\n   [wolframite.wolfram :as w :refer :all\n    :exclude [* + - -&gt; / &lt; &lt;= = == &gt; &gt;= fn\n              Byte Character Integer Number Short String Thread]]))\n\n\n(wl/start!)\n\n\n{:status :ok, :wolfram-version 14.2}\n\n\n13.0.1 Why Wolfram? - From the horse’s mouth:\n\nWolfram Language is a symbolic language, deliberately designed with the breadth and unity needed to develop powerful programs quickly. By integrating high-level forms—like Image, GeoPolygon or Molecule—along with advanced superfunctions—such as ImageIdentify or ApplyReaction—Wolfram Language makes it possible to quickly express complex ideas in computational form.\n\nMore concretely, the Wolfram language, and associated ecosystem, is a powerful way of getting stuff done. As a high-level functional programming language, with more than 6000 functions from across mathematics and data processing, it is sometimes the only practical way of of getting things done. Particularly in explicitly scientific fields. What makes it potentially unique is its place in the Venn diagram of symbolic manipulation, built-in factual and computational knowledge and niche, fully implemented algorithms.\nCheck out the Wolfram Language Code Gallery for some amazing examples of what you can achieve with Wolfram much more easily than with any other programming language under the sun.\n\n\n13.0.2 Why Wolframite?\n‘Why Wolframite?’ is really just the combination of ‘Why Wolfram?’ (above) and ‘Why Clojure?’.\nIn a nutshell, the Wolfram programming language is ‘best-in-class’ for certain specialist tasks, like manipulating equations, but, to paraphrase Randall Munroe, &gt; Wolfram combines the flexibility and power of abstract mathematics with the intuitive clarity of abstract mathematics.\nClojure, on the other-hand, is a first-class, general-purpose, programming language whose core namespace and dynamical, functional, paradigm is well suited to data exploration and manipulation. So why don’t we call Wolfram from Clojure? It seems like the atypical ‘best of both worlds’.\nTo put it another way, Wolfram is a powerful tool in need of a toolbox. And so what language is best placed to be that ‘box’? Well, Wolfram is, underneath, built on LisP and so will naturally work better with a similar design philosophy (and way of thinking) than, say, with an object-oriented or scripting language. Furthermore, somewhat ironically, it has a very good ‘link’ to the Java ecosystem. In fact,\n\nFor all types of WSTP programs, J/Link provides a higher-level layer of functionality than the traditional C WSTP programming interface. This makes Java the easiest and most convenient language for writing programs to interact with the Wolfram Language.\n\nEven at a fundamental level therefore, our toolbox language should be a LisP with strong Java interop: mmm…!\nAt the usability layer, Clojure is a well-designed, ergonomic language that leaves its users happy! When it comes to working with mathematical expressions specifically, there are a few key features. First of all, for many people, Clojure was the first language to introduce ergonomic chaining of function expressions, e.g.\n\n(-&gt; (w/* 'x I)\n    (w/+ 'y)\n    Abs\n    (** 2)\n    ComplexExpand\n\n    TeXForm\n    ToString\n    wl/!\n    k/tex)\n\n\\[x^2+y^2\\]\n. In my view, chaining Wolfram function calls together with threading macros (e.g. -&gt; and -&gt;&gt; etc.) is actually a big usability improvement. Wolfram expressions can get pretty involved (it’s common to end up with expressions that hold 10s of symbols and operators and 100s are not unheard of) and trying to read and manipulate these from the inside out is just not natural for the average human. It stands to reason then that chaining functions together (and debugging them!) can really be a pain. In fact, Wolfram recognised this problem when it introduced the prefix operator, @, to help with function composition, e.g. f@g@h. Unfortunately however, this doesn’t work with multiple arguments. It is possible to do things like f@@args, and even things like f@@@{{a, b}, {c, d}}, but the readability quickly becomes dire. On the other hand, Clojure’s threading is simple, clear and scalable. Secondly, by using a LisP, you are automatically thinking (and evaluating) at the level of the symbolic expression (a.k.a. s-expression). This is in contrast to thinking at the level of ‘files’, lines or ‘cells’ of a notebook. This maps very well to the exploration of mathematical expressions. In fact, it’s almost surprising that Wolfram had such a big influence on the idea of notebook-style programming, considering that, at heart, it’s all LisP. In our view, Wolframite brings Wolfram back to a more fundamental form of literate programming.\n\n\n13.0.3 Why literate programming?\nOne of the key motivations of Wolframite is to integrate the power of Wolfram within a more general, more ergonomic programming environment. When it comes to solving complex problems however, it is also important to be able to document and visualise the process. In fact, this is a core part of the academic sciences and consumes a lot of time. Largely however, solving problems and documenting the results have been considered orthogonal processes: duplicating huge amounts of work\nIn contrast, what if\n\nPrograms are meant to be read by humans and only incidentally for computers to execute. [D. Knuth]?\n\nThis is the heart of literate programming.\nThe immediate question that flows from this however, is how? In TeX systems, the answer was to include executable code within running text. In Mathematica, which largely popularized the notebook model, a fully integrated IDE product was built around the underlying language. Jupyter carried on this idea, but universalized the concept by bringing the interaction into the browser.\nAnd yet, for programmers, both of these systems are the wrong way around. The core content and information is in the namespaces and the right level of abstraction is not at arbitrarily chosen cells, but rather evaluation at the level of expressions. Such is the case, a LisP-style evaluation model is one of the biggest advantages of Woframite, particularly when paired with notebooks as a namespace-style literate programming, e.g. clay and clerk. When it comes to analysis, being able to interrogate data interactively is often as, if not more, important than being able to run long simulations. With LisP-style literate programming this becomes even more powerful and the other thing to bear in mind is that with literate programming, the docs double as tests!\nFor more information about the downsides of the notebook-model, have a look at this paper, as cited by the Clerk document system.\n\n\n13.0.4 Why not Emmy?\nYou should use Emmy! Emmy is a fully Clojure(script) symbolic algebra engine that is built on the SCMUTILS system, orginally developed by G.J. Sussman and J. Wisdom. Emmy is a very exciting prospect for symbolic manipulation, but is only a subset of what Wolfram is capable of. In the future, we hope to integrate the two more closely. Our current advice though, is that where you have to do a lot of Solve-ing (i.e. rearranging of equations), or where you need a more powerful simplifier, use Wolframite.\n\n\n13.0.5 How do I translate Mathematica’s syntax sugar?\nSince Mathematica hides the internals of the Wolfram Language by default, it can sometimes be difficult to work out what functions are being called. If you’re in Mathematica, you can use FullForm@Unevaluated[...] to get a more understandable (if less concise) expression. Of course, you can also use Wolframite, i.e. (wl/-&gt;clj ...) !\n\n\n13.0.6 How to transfer large data between Wolframite and Wolfram?\nThe only large-ish data that can be transferred relatively efficiently is homogenous arrays (see wolframite.base.convert/supported-primitive-array?).\nWolfram 14.2 and newer have added feature to support handling enormous data sets, such as support for the Apache Arrow and Parquet, and out-of-core processing for bigger-than-memory processing, and more is on its way in the future.\n\n\n13.0.7 Where does Wolfram store intermediate files?\nIt depends. There is couple of vars you can check, such as $WolframDocumentsDirectory (used e.g. during video processing). See also $UserBaseDirectory, $UserDocumentsDirectory etc.\n\nsource: notebooks/faq.clj",
+    "crumbs": [
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>FAQ</span>"
+    ]
+  }
+]
