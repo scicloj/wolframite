@@ -27,7 +27,7 @@
             :exec-fn cognitect.test-runner.api/test}
 
            :jlink-jar ; useful for IntelliJ sometimes
-           {:deps {wolfram/jlink {:local/root "./symlink-jlink.jar"}}}
+           {:extra-deps {wolfram/jlink {:local/root "./symlink-jlink.jar"}}}
 
            :build ;; added by neil; 1) build with `clojure -T:build jar` then deploy with
            ;; `env CLOJARS_USERNAME=<tbd> CLOJARS_PASSWORD=<clojars-token>  clojure -T:build deploy`

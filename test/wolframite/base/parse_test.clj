@@ -9,6 +9,29 @@
 
 (deftest parse-test
   (#'wl/init-jlink! (deref #'wl/kernel-link-atom) {}) ; bypass private var via deref #'
+  (testing "atomic expr"
+    (is (= "str"
+           (parse/parse (convert/convert "str" nil) nil))
+        "string")
+    (is (= 1
+           (parse/parse (convert/convert 1 nil) nil))
+        "int")
+    (is (= Long/MAX_VALUE
+           (parse/parse (convert/convert Long/MAX_VALUE nil) nil))
+        "long")
+    (is (= 1.1
+           (parse/parse (convert/convert 1.1 nil) nil))
+        "float")
+    (is (= (bigint 333)
+           (parse/parse (convert/convert (bigint 333) nil) nil))
+        "bigint")
+    #_ ; Not sure how to test w/o actually calling eval...
+    (is (= (/ 1 3)
+           (parse/parse (convert/convert (/ 1 3) nil) nil))
+        "ratio")
+    (is (= 'MySym
+           (parse/parse (convert/convert 'MySym nil) nil))
+        "symbol"))
   (testing "maps"
     (is (= {"a" 1}
            (parse/parse (convert/convert {"a" 1} nil) nil)))
