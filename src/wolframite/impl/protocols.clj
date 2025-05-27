@@ -62,7 +62,7 @@
                            of 1+ jlink Exprs (which is interpreted as a fn call).
     * [type name] where type=:Expr/SYMBOL - create a Wolfram symbol")
   (->expr [this obj] "Turn the given obj into a jlink Expr via the loopback link 🤷")
-  (expr? [this x])
+  (expr? [this expr] "Is `expr` an instance of jlink Expr?")
   (expr-element-type [this container-type expr])
   (->expr-type [this type-kw])
   (kernel-link [_this])
