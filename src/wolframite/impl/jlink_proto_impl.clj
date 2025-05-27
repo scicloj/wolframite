@@ -1,7 +1,7 @@
 (ns wolframite.impl.jlink-proto-impl
   "The 'real' implementation of JLink, which does depend on JLink classes and thus
   cannot be loaded/required until JLink is on the classpath."
-  (:require [clojure.tools.logging :as log]
+  (:require [wolframite.impl.error-detection :as error-detection]
             [wolframite.impl.protocols :as proto])
   (:import (clojure.lang BigInt)
            [com.wolfram.jlink Expr KernelLink MathCanvas MathLink MathLinkException MathLinkFactory
@@ -59,6 +59,16 @@
       ;; JLink throws if not symbol / string
       (.asString head)))
   (list? [this] (.listQ this))
+  (atomic-expr [type-kw value]
+    (condp = type-kw
+      proto/type-bigdecimal (Expr. ^BigDecimal value)
+      proto/type-biginteger (Expr. ^BigInteger value)
+      proto/type-integer (Expr. (long value))
+      ;proto/type-rational (cast value(Expr. )
+      proto/type-real) (Expr. (double value))
+      proto/type-string (Expr. ^String value)
+      proto/type-symbol (Expr. Expr/SYMBOL ^String value)
+      (throw (IllegalArgumentException. (str "Unsupported/unknown type keyword " type-kw))))
   (number? [this]
     (or (.bigDecimalQ this)
         (.bigIntegerQ this)
@@ -153,9 +163,6 @@
   [^KernelLink link]
   (.addPacketListener link (PacketPrinter. System/out)))
 
-;; Wolfram sometimes indicates failure by returning the symbol $Failed
-(defonce failed-expr (Expr. Expr/SYMBOL "$Failed"))
-
 (defn- evaluate! [^KernelLink link packet-capture-atom ^Expr expr]
   (assert link "Kernel link not initialized?!")
   (io!
@@ -164,36 +171,10 @@
       ;; NOTE: There is also evaluateToImage => byte[] of GIF for graphics-returning fns such as Plot
       ;; NOTE 2: .waitForAnswer discard packets until ReturnPacket; our packet-listener collects those
       (doto link (.evaluate expr) (.waitForAnswer))
-      (let [res (.getExpr link)
-            messages (seq (first (reset-vals! packet-capture-atom nil)))
-            messages-text (mapv :content messages)]
-        (cond
-          (and (seq messages)
-               (or (= res failed-expr)
-                   (= res expr)))
-          ;; If input expr == output expr, this usually means the evaluation failed
-          ;; (or there was nothing to do); if there are also any extra text/message packets
-          ;; then it most likely has failed, and those messages explain what was wrong
-          (throw (ex-info (str "Evaluation seems to have failed. Result: "
-                               res
-                               " Details: "
-                               (cond-> messages-text
-                                       (= 1 (count messages-text))
-                                       first))
-                          {:expr expr
-                           :messages messages
-                           :result res}))
-
-          (= res failed-expr) ; but no messages
-          (throw (ex-info (str "Evaluation has failed. Result: "
-                               res
-                               " No details available.")
-                          {:expr expr :result res}))
-
-          :else
-          (do (when (seq messages)
-                (log/info "Messages retrieved during evaluation:" messages-text))
-              res))))))
+      (error-detection/ensure-no-eval-error
+        expr
+        (.getExpr link)
+        (seq (first (reset-vals! packet-capture-atom nil)))))))
 
 (defrecord JLinkImpl [opts kernel-link-atom packet-listener]
   proto/JLink

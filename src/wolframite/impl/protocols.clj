@@ -40,6 +40,7 @@
   (head [this] "Same as .head, i.e. the first part of the expression list")
   (head-sym-str [this] "Returns the head as a string when it is a Symbol, otherwise nil")
   (list? [this])
+  (atomic-expr [type-kwd value] "Returns a new jlink Expr of the given type, passing the constructor the `value` argument")
   (number? [this] "Is this a number? See also [[as-number]]"))
 
 (defprotocol JLink
