@@ -37,7 +37,7 @@
   (assert (proto/expr? jlink-instance expr))
 
   (if (options/flag?' (:flags opts) flags/serial)
-    (proto/evaluate! jlink-instance expr)
+    (proto/evaluate! jlink-instance expr) ; NOTE: This also handles error detection
     ;; Run expression on the next available parallel kernel
     ;; see https://reference.wolfram.com/language/ParallelTools/tutorial/ConcurrencyManagingParallelProcesses.html
     (let [opts' (update opts :flags conj flags/serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code

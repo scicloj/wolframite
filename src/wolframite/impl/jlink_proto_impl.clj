@@ -1,7 +1,9 @@
 (ns wolframite.impl.jlink-proto-impl
   "The 'real' implementation of JLink, which does depend on JLink classes and thus
   cannot be loaded/required until JLink is on the classpath."
-  (:require [wolframite.impl.error-detection :as error-detection]
+  (:require [clojure.tools.logging :as log]
+            [wolframite.impl.error-detection :as error-detection]
+            [wolframite.impl.internal-constants :as internal-constants]
             [wolframite.impl.protocols :as proto])
   (:import (clojure.lang BigInt)
            [com.wolfram.jlink Expr KernelLink MathCanvas MathLink MathLinkException MathLinkFactory
@@ -30,6 +32,9 @@
     proto/type-symbol Expr/SYMBOL
     (throw (IllegalArgumentException. (str "Unsupported/unknown type keyword " type-kw)))))
 
+;; Wolfram sometimes indicates failure by returning the symbol $Failed
+(defonce failed-expr (Expr. Expr/SYMBOL "$Failed"))
+
 (extend-protocol proto/JLinkExpr
   Expr
   (args [this] (.args this))
@@ -44,7 +49,7 @@
           :else (throw (IllegalArgumentException. "Not a number"))))
   (as-string [this]
     (.asString this)) ; Only works for Symbol, String; throws otherwise
-  (atomic-type [this] ; FIXME (jakub, 5/2025) use instead of JLink/expr-primitive-type when prevent-large-data merged
+  (atomic-type [this]
     (cond (.bigDecimalQ this) proto/type-bigdecimal
           (.bigIntegerQ this) proto/type-biginteger
           (.integerQ this) proto/type-integer
@@ -59,23 +64,7 @@
       ;; JLink throws if not symbol / string
       (.asString head)))
   (list? [this] (.listQ this))
-  (atomic-expr [type-kw value]
-    (condp = type-kw
-      proto/type-bigdecimal (Expr. ^BigDecimal value)
-      proto/type-biginteger (Expr. ^BigInteger value)
-      proto/type-integer (Expr. (long value))
-      ;proto/type-rational (cast value(Expr. )
-      proto/type-real) (Expr. (double value))
-      proto/type-string (Expr. ^String value)
-      proto/type-symbol (Expr. Expr/SYMBOL ^String value)
-      (throw (IllegalArgumentException. (str "Unsupported/unknown type keyword " type-kw))))
-  (number? [this]
-    (or (.bigDecimalQ this)
-        (.bigIntegerQ this)
-        (.integerQ this)
-        (.rationalQ this)
-        (.realQ this)
-        false)))
+  (failed? [this] (= this failed-expr)))
 
 (defn- array? [x]
   (some-> x class .isArray))
@@ -261,7 +250,6 @@
              (.matrixQ expr Expr/STRING) proto/type-string
              (.matrixQ expr Expr/SYMBOL) proto/type-symbol
              :else nil))))
-  (->expr-type [_this type-kw] (type-kwd->jlink-int type-kw))
   (kernel-link [_this] @kernel-link-atom)
   (kernel-link? [_this]
     (some->> @kernel-link-atom (instance? KernelLink)))

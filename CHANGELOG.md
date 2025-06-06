@@ -4,8 +4,14 @@ Changelog
 WIP
 ---
 
-1.2.0
------
+1.3.0 6/2025
+------------
+* [Feat] Detect large data in Wolfram results and return `:wolframite/large-data` instead, unless the flag `wolframite.flags/allow-large-data` is set. This prevents undesirably slow processing and avoidable memory issues.
+* [Fix] Support DelayedRules in Associations - the raw, unevaluted expression is now returned, with a metadata marking it as such
+* [Improvement] Detect a "delayed error message" (MessageTemplate) and throw an exception with the message instead
+
+1.2.0 5/2025
+------------
 
 * Re-generated `wolframite.wolfram` for Wolfram Language 14.2 (previously 14.0)
 * Expanded Gotchas doc page

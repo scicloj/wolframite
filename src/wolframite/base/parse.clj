@@ -2,7 +2,9 @@
   "Translate a jlink.Expr returned from an evaluation into Clojure data"
   (:require
     [clojure.set :as set]
+    [clojure.tools.logging :as log]
     [wolframite.flags :as flags]
+    [wolframite.impl.internal-constants :as internal-constants]
     [wolframite.impl.jlink-instance :as jlink-instance]
     [wolframite.impl.protocols :as proto]
     [wolframite.lib.options :as options]))
@@ -98,11 +100,16 @@
       rules
       (zipmap keys vals))))
 
-(defn parse-simple-atom [expr type opts]
-  (let [atomic-type (proto/atomic-type expr)]
-    (cond (proto/number? expr) (proto/as-number expr)
-          (= atomic-type proto/type-string) (proto/as-string expr)
-          (= atomic-type proto/type-symbol) (parse-symbol expr opts))))
+(defn parse-simple-atom
+  "Parse an atomic expression (i.e. a primitive value).
+  Return nil when not a simple atom."
+  ([expr opts]
+   (parse-simple-atom expr (proto/atomic-type expr) opts))
+  ([expr atomic-type opts]
+   (when atomic-type
+     (cond (proto/number-type? atomic-type) (proto/as-number expr)
+           (= atomic-type proto/type-string) (proto/as-string expr)
+           (= atomic-type proto/type-symbol) (parse-symbol expr opts)))))
 
 ;; parameters list used to be: [expr & [type]] (??)
 (defn parse-simple-vector [expr type {:keys [flags] :as opts}]
@@ -110,7 +117,7 @@
     (if (and (options/flag?' flags flags/arrays)
              ;; TODO Why only these types? W. supports boolean, byte, char, short, int, long, float, double, String arrays;
              ;; Though only byte, short, int, float, double have "fast" methods
-             (some #{:Expr/INTEGER :Expr/BIGINTEGER :Expr/REAL :Expr/BIGDECIMAL} #{type}))
+             (some #{proto/type-integer proto/type-biginteger proto/type-real proto/type-bigdecimal} #{type}))
       (proto/as-array-1d expr type)
       (bound-map (fn [e _opts] (parse-simple-atom e type opts)) (proto/args expr) opts))))
 
@@ -141,7 +148,7 @@
 (defn parse-complex-atom [expr opts]
   (let [head (proto/head-sym-str expr)
         maybe-type-kw (proto/atomic-type expr)]
-    (cond (proto/number? expr) (proto/as-number expr)
+    (cond (proto/number-type? maybe-type-kw) (proto/as-number expr)
           (= maybe-type-kw proto/type-string) (proto/as-string expr)
           (= maybe-type-kw proto/type-symbol) (parse-symbol expr opts)
           (= "Association" head) (parse-hash-map expr opts) #_(parse-generic-expression expr opts)
@@ -184,5 +191,33 @@
 (defmethod custom-parse :default [expr opts]
   (standard-parse expr opts))
 
-(defn parse [expr opts]
+(defn- unwrap-limit-size [jlink-expr {:keys [flags] :as opts}]
+  ;; There are multiple cases here:
+  ;; 1. We actually did evaluate and the data was small enough => it is returned => don't need to do anything
+  ;; 2. We did evaluate and the data was too large => translate the Wolfram marker to a keyword & return
+  ;; 3. Wolfram could not evaluate the expression and only did symbolic evaluation, returning it ± as-is but
+  ;;    with the call to our wrapper fn => unwrap it [TODO: is this true?]
+  ;; 4. We only do ->clj, i.e. no evaluation - `:wolframite.core/no-wolframite-wrapping` should have prevent us
+  ;;   from wrapping it in the first place
+  (if (and (not (options/flag?' flags flags/allow-large-data))
+           (try (= internal-constants/WolframiteLargeData (parse-simple-atom jlink-expr opts))
+                (catch Exception e
+                  (log/warn e "Error checking whether the response is the WolframiteLargeData marker")
+                  jlink-expr)))
+    :wolframite/large-data
+    jlink-expr))
+
+(defn parse
+  "Low-level parsing function for parsing either the root or any sub-expression."
+  [expr opts]
   (custom-parse expr opts))
+
+(defn unwrapping-parse
+  "Convert the jlink.Expr to a symbolic Clojure expression, after un-wrapping it from extra stuff that
+  may have been added by Wolframite in `wolframite.base.convert/wrapping-convert`"
+  [expr opts]
+  (let [unwrapped (unwrap-limit-size expr opts)]
+    ;; NOTE: `wolframite.impl.jlink-proto-impl/unchanged-expression?` is also wrapping-aware :'(
+    (if (keyword? unwrapped)
+      unwrapped
+      (custom-parse expr opts))))

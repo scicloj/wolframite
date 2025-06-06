@@ -14,6 +14,7 @@
    #{flags/parse flags/no-parse} flags/parse
    #{flags/evaluate flags/no-evaluate} flags/evaluate
    #{flags/convert flags/no-convert} flags/convert
+   #{flags/allow-large-data :no-allow-large-data} :no-allow-large-data
    ;#{:hash-maps :no-hash-maps} :hash-maps
    ;#{:functions :no-functions} :functions ;; ?? parse (Function ...) into our parse-fn instance?!
    ;#{:aliases :no-aliases}     :aliases   ;; Not used anywhere?!
@@ -85,11 +86,19 @@
 
 (def all-aliases base-aliases)
 
+(def default-large-data-threshold
+  "If the result of a computation appears to be larger than this then we return `:wolframite/large-data` instead,
+  unless `wolframite.flags/allow-large-data` is set.
+
+  BEWARE: Changing the value requires that you restart the kernel for it to take effect."
+  1000000) ; somewhat arbitrary, but should be large enough to not trigger on most normal cases
+
 ;; * Full config options
 
 (def default-options
   (merge flag-sets
          {#_#_:alias-list                 :clojure-aliases
-          :poll-interval              20 ;; ms
+          :poll-interval              20 ;; ms; for the flags/parallel eval?
           :clojure-aliases            base-aliases
-          :all-aliases all-aliases}))
+          :all-aliases all-aliases
+          :large-data-threshold default-large-data-threshold}))
