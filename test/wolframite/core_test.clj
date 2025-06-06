@@ -1,14 +1,15 @@
 (ns wolframite.core-test
-  (:require [clojure.test :refer [deftest testing is]]
+  (:require [clojure.test :refer :all]
             [wolframite.core :as wl]
             [wolframite.flags :as flags]
             [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
             [wolframite.runtime.defaults :as defaults]
             [wolframite.wolfram :as w :refer :all
              :exclude [* + - -> / < <= = == > >= fn
-                       Byte Character Integer Number Short String Thread]]
+                       Byte Character Integer Number Short String Thread Pattern]]
             [wolframite.wolfram :as w])
-  (:import (clojure.lang ExceptionInfo)))
+  (:import (clojure.lang ExceptionInfo)
+           (java.util.regex Pattern)))
 
 ;; * Basic Sanity Checks
 
@@ -133,7 +134,16 @@
            (wl/eval (w/Map (w/fn [x]
                              (w/Map (w/fn [x] (w/Minus x)) x))
                            [[1 2]])))
-        "Two nested uses of w/fn with arg shadowing should work")))
+        "Two nested uses of w/fn with arg shadowing should work"))
+  (testing "RuleDelayed errors"
+    ;; Some errors are returned as a MessageTemplate -> delayed call to get the message name, f.ex.
+    ;; `(wl/! (list (w/Interpreter "City") "San Francisco, US"))` while offline.
+    ;; Let's simulate that by evaluating what Wolfram would have returned
+    (is (thrown-with-msg?
+          ExceptionInfo
+          (re-pattern (Pattern/quote "The Wolfram Knowledgebase is not available. Try again later."))
+          (wl/eval (Association (RuleDelayed "MessageTemplate" (MessageName Interpreter "noknow")))))
+        "RuleDelayed MessageTemplate responses are turned into exceptions")))
 
 (deftest bug-fixes
   (wl/start!)

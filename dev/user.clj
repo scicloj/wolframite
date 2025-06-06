@@ -3,6 +3,8 @@
             [wolframite.wolfram :as w]
             [wolframite.runtime.system :as system]))
 
+(set! *warn-on-reflection* true) ; Doesn't seem to work?!
+
 (defn dev
   "Load and switch to the 'dev' namespace."
   []

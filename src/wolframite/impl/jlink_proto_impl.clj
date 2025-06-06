@@ -2,11 +2,82 @@
   "The 'real' implementation of JLink, which does depend on JLink classes and thus
   cannot be loaded/required until JLink is on the classpath."
   (:require [clojure.tools.logging :as log]
+            [wolframite.impl.error-detection :as error-detection]
             [wolframite.impl.internal-constants :as internal-constants]
             [wolframite.impl.protocols :as proto])
   (:import (clojure.lang BigInt)
            [com.wolfram.jlink Expr KernelLink MathCanvas MathLink MathLinkException MathLinkFactory
                               PacketListener PacketArrivedEvent PacketPrinter]))
+
+(defn parse-integer [^Expr expr]
+  (let [i (.asLong expr)]
+    (if (and (<= i Integer/MAX_VALUE)
+             (>= i Integer/MIN_VALUE))
+      (int i)
+      (long i))))
+
+(defn parse-rational [^Expr expr]
+  (let [numer (parse-integer (.part expr 1))
+        denom (parse-integer (.part expr 2))]
+    (/ numer denom)))
+
+(defn- type-kwd->jlink-int [type-kw]
+  (condp = type-kw
+    proto/type-bigdecimal Expr/BIGDECIMAL
+    proto/type-biginteger Expr/BIGINTEGER
+    proto/type-integer Expr/INTEGER
+    proto/type-rational Expr/RATIONAL
+    proto/type-real Expr/REAL
+    proto/type-string Expr/STRING
+    proto/type-symbol Expr/SYMBOL
+    (throw (IllegalArgumentException. (str "Unsupported/unknown type keyword " type-kw)))))
+
+(extend-protocol proto/JLinkExpr
+  Expr
+  (args [this] (.args this))
+  (as-array-1d [this elemen-type-kw]
+    (.asArray this (type-kwd->jlink-int elemen-type-kw) 1))
+  (as-number [expr]
+    (cond (.bigIntegerQ expr)   (.asBigInteger expr)
+          (.bigDecimalQ expr)   (.asBigDecimal expr)
+          (.integerQ expr)      (parse-integer expr)
+          (.realQ expr)         (.asDouble expr)
+          (.rationalQ expr)     (parse-rational expr)
+          :else (throw (IllegalArgumentException. "Not a number"))))
+  (as-string [this]
+    (.asString this)) ; Only works for Symbol, String; throws otherwise
+  (atomic-type [this] ; FIXME (jakub, 5/2025) use instead of JLink/expr-primitive-type when prevent-large-data merged
+    (cond (.bigDecimalQ this) proto/type-bigdecimal
+          (.bigIntegerQ this) proto/type-biginteger
+          (.integerQ this) proto/type-integer
+          (.rationalQ this) proto/type-rational
+          (.realQ this) proto/type-real
+          (.stringQ this) proto/type-string
+          (.symbolQ this) proto/type-symbol
+          :else nil))
+  (head [this] (.head this))
+  (head-sym-str [this]
+    (let [head (.head this)]
+      ;; JLink throws if not symbol / string
+      (.asString head)))
+  (list? [this] (.listQ this))
+  (atomic-expr [type-kw value]
+    (condp = type-kw
+      proto/type-bigdecimal (Expr. ^BigDecimal value)
+      proto/type-biginteger (Expr. ^BigInteger value)
+      proto/type-integer (Expr. (long value))
+      ;proto/type-rational (cast value(Expr. )
+      proto/type-real) (Expr. (double value))
+      proto/type-string (Expr. ^String value)
+      proto/type-symbol (Expr. Expr/SYMBOL ^String value)
+      (throw (IllegalArgumentException. (str "Unsupported/unknown type keyword " type-kw))))
+  (number? [this]
+    (or (.bigDecimalQ this)
+        (.bigIntegerQ this)
+        (.integerQ this)
+        (.rationalQ this)
+        (.realQ this)
+        false)))
 
 (defn- array? [x]
   (some-> x class .isArray))
@@ -21,18 +92,18 @@
       ;; Here, primitive-or-exprs could be an int, a String, long[], or similar
 
       (array? primitive-or-exprs)
-      (Expr. primitive-or-exprs)
+      (Expr. primitive-or-exprs) ; could be one of many array types, so reflection necessary...
 
       (string? primitive-or-exprs)
       (Expr. ^String primitive-or-exprs)
 
       (number? primitive-or-exprs)
       (condp = (type primitive-or-exprs)
-        Long    (Expr. ^long (.longValue primitive-or-exprs))
-        Double  (Expr. ^double (.doubleValue primitive-or-exprs))
-        Integer (Expr. ^int (.intValue primitive-or-exprs))
-        Float   (Expr. ^float (.floatValue primitive-or-exprs))
-        Short   (Expr. ^short (.shortValue primitive-or-exprs))
+        Long    (Expr. ^long (.longValue ^Long primitive-or-exprs))
+        Double  (Expr. ^double (.doubleValue ^Double primitive-or-exprs))
+        Integer (Expr. ^int (.intValue ^Integer primitive-or-exprs))
+        Float   (Expr. ^float (.floatValue ^Float primitive-or-exprs))
+        Short   (Expr. ^short (.shortValue ^Short primitive-or-exprs))
         BigDecimal (Expr. ^BigDecimal primitive-or-exprs)
         BigInt (Expr. (.toBigInteger ^BigInt primitive-or-exprs))
         BigInteger (Expr. ^BigInteger primitive-or-exprs))
@@ -60,14 +131,14 @@
   ;; and warning messages sent before a return packet.
   PacketListener
   (packetArrived [_this #_PacketArrivedEvent event]
-    (let [link (cast KernelLink (.getSource event))]
+    (let [link ^KernelLink (cast KernelLink (.getSource event))]
       (some->>
         (condp = (.getPktType event) ; note: `case` doesn't work 🤷
           MathLink/TEXTPKT
           {:type :text :content (.getString link)}
 
           MathLink/MESSAGEPKT
-          (let [expr (.getExpr link)]
+          (let [expr ^Expr (.getExpr link)]
             (when-not (.symbolQ expr)
               ;; not sure why these are sent, not useful; e.g. Get when a Get call failed etc.
              {:type :message :content expr}))
@@ -94,9 +165,6 @@
   [^KernelLink link]
   (.addPacketListener link (PacketPrinter. System/out)))
 
-;; Wolfram sometimes indicates failure by returning the symbol $Failed
-(defonce failed-expr (Expr. Expr/SYMBOL "$Failed"))
-
 (defn- unchanged-expression? [^Expr input, ^Expr output]
   (let [size-wrapper? (= (some-> input (.head) str)
                          (name internal-constants/wolframiteLimitSize))
@@ -113,36 +181,10 @@
       ;; NOTE: There is also evaluateToImage => byte[] of GIF for graphics-returning fns such as Plot
       ;; NOTE 2: .waitForAnswer discard packets until ReturnPacket; our packet-listener collects those
       (doto link (.evaluate expr) (.waitForAnswer))
-      (let [res (.getExpr link)
-            messages (seq (first (reset-vals! packet-capture-atom nil)))
-            messages-text (mapv :content messages)]
-        (cond
-          (and (seq messages)
-               (or (= res failed-expr)
-                   (unchanged-expression? expr res)))
-          ;; If input expr == output expr, this usually means the evaluation failed
-          ;; (or there was nothing to do); if there are also any extra text/message packets
-          ;; then it most likely has failed, and those messages explain what was wrong
-          (throw (ex-info (str "Evaluation seems to have failed. Result: "
-                               res
-                               " Details: "
-                               (cond-> messages-text
-                                       (= 1 (count messages-text))
-                                       first))
-                          {:expr expr
-                           :messages messages
-                           :result res}))
-
-          (= res failed-expr) ; but no messages
-          (throw (ex-info (str "Evaluation has failed. Result: "
-                               res
-                               " No details available.")
-                          {:expr expr :result res}))
-
-          :else
-          (do (when (seq messages)
-                (log/info "Messages retrieved during evaluation:" messages-text))
-              res))))))
+      (error-detection/ensure-no-eval-error ; FIXME this should use `(unchanged-expression? expr res)`
+        expr
+        (.getExpr link)
+        (seq (first (reset-vals! packet-capture-atom nil)))))))
 
 (defrecord JLinkImpl [opts kernel-link-atom packet-listener]
   proto/JLink
@@ -209,44 +251,27 @@
   (expr? [_this x]
     (instance? Expr x))
   (expr-element-type [_this container-type expr]
-    (case container-type
-      :vector
-      (cond (.vectorQ expr Expr/INTEGER)     :Expr/INTEGER
-            (.vectorQ expr Expr/BIGINTEGER)  :Expr/BIGINTEGER
-            (.vectorQ expr Expr/REAL)        :Expr/REAL
-            (.vectorQ expr Expr/BIGDECIMAL)  :Expr/BIGDECIMAL
-            (.vectorQ expr Expr/STRING)      :Expr/STRING
-            (.vectorQ expr Expr/RATIONAL)    :Expr/RATIONAL
-            (.vectorQ expr Expr/SYMBOL)      :Expr/SYMBOL
-            :else                            nil)
-      :matrix
-      (cond (.matrixQ expr Expr/INTEGER)     :Expr/INTEGER
-            (.matrixQ expr Expr/BIGINTEGER)  :Expr/BIGINTEGER
-            (.matrixQ expr Expr/REAL)        :Expr/REAL
-            (.matrixQ expr Expr/BIGDECIMAL)  :Expr/BIGDECIMAL
-            (.matrixQ expr Expr/STRING)      :Expr/STRING
-            (.matrixQ expr Expr/RATIONAL)    :Expr/RATIONAL
-            (.matrixQ expr Expr/SYMBOL)      :Expr/SYMBOL
-            :else                            nil)))
-  (expr-primitive-type [_this expr]
-    (cond (.bigDecimalQ expr) :Expr/BIGDECIMAL
-          (.bigIntegerQ expr) :Expr/BIGINTEGER
-          (.integerQ expr) :Expr/INTEGER
-          (.rationalQ expr) :Expr/RATIONAL
-          (.realQ expr) :Expr/REAL
-          (.stringQ expr) :Expr/STRING
-          (.symbolQ expr) :Expr/SYMBOL
-          :else nil))
-  (->expr-type [_this type-kw]
-    (case type-kw
-      :Expr/BIGDECIMAL Expr/BIGDECIMAL
-      :Expr/BIGINTEGER Expr/BIGINTEGER
-      :Expr/INTEGER Expr/INTEGER
-      :Expr/RATIONAL Expr/RATIONAL
-      :Expr/REAL Expr/REAL
-      :Expr/STRING Expr/STRING
-      :Expr/SYMBOL Expr/SYMBOL))
-
+    (let [expr ^Expr expr]
+     (case container-type
+       :vector
+       (cond (.vectorQ expr Expr/BIGDECIMAL) proto/type-bigdecimal
+             (.vectorQ expr Expr/BIGINTEGER) proto/type-biginteger
+             (.vectorQ expr Expr/INTEGER) proto/type-integer
+             (.vectorQ expr Expr/RATIONAL) proto/type-rational
+             (.vectorQ expr Expr/REAL) proto/type-real
+             (.vectorQ expr Expr/STRING) proto/type-string
+             (.vectorQ expr Expr/SYMBOL) proto/type-symbol
+             :else nil)
+       :matrix
+       (cond (.matrixQ expr Expr/BIGDECIMAL) proto/type-bigdecimal
+             (.matrixQ expr Expr/BIGINTEGER) proto/type-biginteger
+             (.matrixQ expr Expr/INTEGER) proto/type-integer
+             (.matrixQ expr Expr/RATIONAL) proto/type-rational
+             (.matrixQ expr Expr/REAL) proto/type-real
+             (.matrixQ expr Expr/STRING) proto/type-string
+             (.matrixQ expr Expr/SYMBOL) proto/type-symbol
+             :else nil))))
+  (->expr-type [_this type-kw] (type-kwd->jlink-int type-kw))
   (kernel-link [_this] @kernel-link-atom)
   (kernel-link? [_this]
     (some->> @kernel-link-atom (instance? KernelLink)))

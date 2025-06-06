@@ -4,6 +4,12 @@ Changelog
 WIP
 ---
 
+1.2.0
+-----
+
+* Re-generated `wolframite.wolfram` for Wolfram Language 14.2 (previously 14.0)
+* Expanded Gotchas doc page
+
 1.1.1
 -----
 

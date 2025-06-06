@@ -283,10 +283,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#function-names" id="toc-function-names" class="nav-link" data-scroll-target="#function-names"><span class="header-section-number">4.2.2</span> Function names</a></li>
   <li><a href="#other" id="toc-other" class="nav-link" data-scroll-target="#other"><span class="header-section-number">4.2.3</span> Other</a></li>
   </ul></li>
-  <li><a href="#wolframite-quirks" id="toc-wolframite-quirks" class="nav-link" data-scroll-target="#wolframite-quirks"><span class="header-section-number">4.3</span> Wolframite quirks</a>
-  <ul>
-  <li><a href="#limitations-of-wfn" id="toc-limitations-of-wfn" class="nav-link" data-scroll-target="#limitations-of-wfn"><span class="header-section-number">4.3.1</span> Limitations of <code>w/fn</code></a></li>
-  </ul></li>
   </ul>
 </nav>
     </div>
@@ -327,12 +323,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceClojure">
 <div class="sourceCode" id="cb1"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">ns</span> gotchas</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  [<span class="at">:require</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    [scicloj.kindly.v4.kind <span class="at">:as</span> k]</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    [wolframite.api.v1 <span class="at">:as</span> wl]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    [wolframite.flags <span class="at">:as</span> flags]</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    [wolframite.wolfram <span class="at">:as</span> w <span class="at">:refer</span> <span class="at">:all</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">:exclude</span> [<span class="kw">*</span> <span class="kw">+</span> <span class="kw">-</span> <span class="kw">-&gt;</span> <span class="kw">/</span> <span class="kw">&lt;</span> <span class="kw">&lt;=</span> <span class="kw">=</span> <span class="kw">==</span> <span class="kw">&gt;</span> <span class="kw">&gt;=</span> <span class="kw">fn</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>               Byte Character Integer Number Short String Thread]]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>   [scicloj.kindly.v4.kind <span class="at">:as</span> k]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>   [wolframite.api.v1 <span class="at">:as</span> wl]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>   [wolframite.wolfram <span class="at">:as</span> w <span class="at">:refer</span> <span class="at">:all</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">:exclude</span> [<span class="kw">*</span> <span class="kw">+</span> <span class="kw">-</span> <span class="kw">-&gt;</span> <span class="kw">/</span> <span class="kw">&lt;</span> <span class="kw">&lt;=</span> <span class="kw">=</span> <span class="kw">==</span> <span class="kw">&gt;</span> <span class="kw">&gt;=</span> <span class="kw">fn</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>              Byte Character Integer Number Short String Thread]]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
 <div class="sourceCode" id="cb2"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(wl/start!)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -348,26 +343,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="dont-transfer-huge-data-unnecessarily" class="level3" data-number="4.1.2">
 <h3 data-number="4.1.2" class="anchored" data-anchor-id="dont-transfer-huge-data-unnecessarily"><span class="header-section-number">4.1.2</span> Don’t: Transfer huge data unnecessarily</h3>
-<p>By default, <code>(wl/! &lt;expr&gt;)</code> will transfer the return value back to Clojure side and turn it into Clojure data. You <em>don’t</em> want to do that if the data is “big”. Wolframite will try to detect large data and will return <code>:wolframite/large-data</code> instead of the actual result in such a case. If you really want the actual result then set the flag</p>
-<div class="sourceClojure">
-<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>flags/allow-large-data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="printedClojure">
-<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">:allow-large-data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<p>By default, <code>(wl/! &lt;expr&gt;)</code> will transfer the return value back to Clojure side and turn it into Clojure data. You <em>don’t</em> want to do that if the data is big.</p>
 <p><strong>Do</strong>: Keep the data on Wolfram-side, assigning it to a symbol.</p>
 <p>Example:</p>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb6"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> csv </span><span class="st">"Make the Wolfram-side symbol easier to use in Clojure"</span> <span class="at">'csv</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> csv </span><span class="st">"Make the Wolfram-side symbol easier to use in Clojure"</span> <span class="at">'csv</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="sourceClojure">
-<div class="sourceCode" id="cb7"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(wl/! (w/do  (w/= csv <span class="st">"some really big value, read from a file..."</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>             (w/Length csv)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(wl/! (w/do  (w/= csv <span class="st">"some really big value, read from a file..."</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>             <span class="va">nil</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="printedClojure">
-<div class="sourceCode" id="cb8"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>We use <code>w/=</code> to assign the value to a Wolfram-side name, so that we can use it in subsequent expressions. Notice that <code>=</code> also returns the value, and Wolframite would normally turn that into <code>:wolframite/large-data</code>. But in this case, we want instead to see how long the data is.</p>
+<p>We use <code>w/=</code> to assign the value to a Wolfram-side name, so that we can use it in subsequent expressions. This also returns the value, which we want to ignore, so we wrap it with <code>w/do</code> and return something else - length, a small subset, or, as we do here, <code>nil</code>.</p>
 </section>
 </section>
 <section id="language-differences-between-wolfram-and-wolframite" class="level2" data-number="4.2">
@@ -391,15 +377,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Symbols within threading macros. - After spending so much time playing with symbols, be careful of slipping into things like <code>(-&gt; 'x '(Power 1))</code> This will not work because <code>'(Power 1)</code> is not evaluated, and so will be treated like any other symbol. However, if you use <code>w/Power</code> and friends then you do not have this problem.</p>
 <p><em>Symbols passed to Wolfram must be alphanumeric</em> - In the end, when they get passed to the Wolfram kernel, symbols must be strictly alphanumeric (apart from forward slashes and dollar signs), <em>i.e.</em> <code>r_2</code> is currently not allowed. This is due to underlying limitations of the Wolfram language. Much like with Mathematica however, we can get around this in general by using Wolframite’s aliasing system (see the relevant tutorials).</p>
 <p><em>Vectors, <code>[]</code>, vs lists, <code>()</code>.</em> - Lists are used to represent function calls and so when combining Clojure and Wolfram expressions, make sure that data literals are vectors. For example, <code>(wh/show (w/ListLinePlot (range 10)))</code> will fail (otherwise unexpectedly), but <code>(wh/show (w/ListLinePlot (into [] (range 10))))</code> will give you what you expect.</p>
-</section>
-</section>
-<section id="wolframite-quirks" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="wolframite-quirks"><span class="header-section-number">4.3</span> Wolframite quirks</h2>
-<section id="limitations-of-wfn" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="limitations-of-wfn"><span class="header-section-number">4.3.1</span> Limitations of <code>w/fn</code></h3>
-<ul>
-<li>No destructuring (yet)</li>
-</ul>
 <div style="background-color:grey;height:2px;width:100%;"></div>
 <div><pre><small><small>source: <a href="https://github.com/scicloj/wolframite/blob/main/notebooks/gotchas.clj">notebooks/gotchas.clj</a></small></small></pre></div>
 

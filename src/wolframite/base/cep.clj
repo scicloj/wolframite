@@ -1,6 +1,7 @@
 (ns wolframite.base.cep
   (:require
     [wolframite.flags :as flags]
+    [wolframite.impl.error-detection :as error-detection]
     [wolframite.lib.options :as options]
     [wolframite.base.convert :as convert]
     [wolframite.base.evaluate :as evaluate]
@@ -23,8 +24,13 @@
                    identity-first)
         parse (if (options/flag?' flags flags/parse)
                 parse/unwrapping-parse
-                identity-first)]
-    (-> expr
-        (convert opts)
-        (evaluate opts)
-        (parse opts))))
+                identity-first)
+        res (-> expr
+                (convert opts)
+                (evaluate opts)
+                (parse opts))]
+    (when-let [message-expr (error-detection/error-message-expr res)]
+      (throw (ex-info (str "Evaluation failed: " (cep message-expr opts))
+                      {:expression expr
+                       :result res})))
+    res))

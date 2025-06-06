@@ -9,12 +9,46 @@
 
 (deftest parse-test
   (#'wl/init-jlink! (deref #'wl/kernel-link-atom) {}) ; bypass private var via deref #'
+  (testing "atomic expr"
+    (is (= "str"
+           (parse/unwrapping-parse (convert/convert "str" nil) nil))
+        "string")
+    (is (= 1
+           (parse/unwrapping-parse (convert/convert 1 nil) nil))
+        "int")
+    (is (= Long/MAX_VALUE
+           (parse/unwrapping-parse (convert/convert Long/MAX_VALUE nil) nil))
+        "long")
+    (is (= 1.1
+           (parse/unwrapping-parse (convert/convert 1.1 nil) nil))
+        "float")
+    (is (= (bigint 333)
+           (parse/unwrapping-parse (convert/convert (bigint 333) nil) nil))
+        "bigint")
+    #_ ; Not sure how to test w/o actually calling eval...
+    (is (= (/ 1 3)
+           (parse/unwrapping-parse (convert/convert (/ 1 3) nil) nil))
+        "ratio")
+    (is (= 'MySym
+           (parse/unwrapping-parse (convert/convert 'MySym nil) nil))
+        "symbol"))
   (testing "maps"
     (is (= {"a" 1}
            (parse/unwrapping-parse (convert/convert {"a" 1} nil) nil)))
     (is (= {}
            (parse/unwrapping-parse (convert/convert {} nil) nil))
-        "Empty maps work too")))
+        "Empty maps work too"))
+  (testing "RuleDelayed"
+    ;; Some errors are returned as a MessageTemplate -> delayed call to get the message name, f.ex.
+    ;; `(wl/! (list (w/Interpreter "City") "San Francisco, US"))` while offline.
+    (let [parsed (-> (w/Association (w/RuleDelayed "MessageTemplate" (w/MessageName w/Interpreter "noknow")))
+                     (convert/convert nil)
+                     (parse/unwrapping-parse nil))]
+      (is (= {"MessageTemplate" '(MessageName Interpreter "noknow")}
+             parsed)
+          "We can parse RuleDelayed")
+      (is (= true
+             (-> parsed vals first meta :wolfram/delayed))))))
 
 (deftest custom-parse
   (wl/start!)

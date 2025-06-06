@@ -148,6 +148,14 @@ cases, your \"program\" is running all the time and you keep adding to it, build
 
 You can read more on Clojure's take on [interactive development](https://clojure.org/guides/repl/introduction) a.k.a. REPL-driven development on the official Clojure website.")
 
+(k/md "## Error handling
+
+In some cases, when evaluation fails, Wolframite throws a Java exception. You can use the handy Clojure functions `ex-message` and `ex-data` to learn more about the problem:
+")
+(def fake-exception (ex-info "Something blew up" {:some-details "It was bad"}))
+(ex-message fake-exception)
+(ex-data fake-exception)
+
 (k/md "## Resources for further learning
 
 * The [Clojure cheatsheat](http://jafingerhut.github.io/cheatsheet/clojuredocs/cheatsheet-tiptip-cdocs-summary.html)\nis a good place to look for functions.
