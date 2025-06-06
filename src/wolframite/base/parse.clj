@@ -203,7 +203,7 @@
            (try (= internal-constants/WolframiteLargeData (parse-simple-atom jlink-expr opts))
                 (catch Exception e
                   (log/warn e "Error checking whether the response is the WolframiteLargeData marker")
-                  false)))
+                  jlink-expr)))
     :wolframite/large-data
     jlink-expr))
 
