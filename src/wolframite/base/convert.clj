@@ -6,6 +6,7 @@
             [wolframite.impl.protocols :as proto]
             [wolframite.impl.wolfram-syms.intern :as intern]
             [wolframite.base.express :as express]
+            [wolframite.lib.options :as options]
             [wolframite.runtime.defaults :as defaults]))
 
 ;; (remove-ns 'wolframite.base.convert)

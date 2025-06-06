@@ -4,11 +4,6 @@
             [wolframite.impl.internal-constants :as internal-constants]
             [wolframite.impl.protocols :as proto]))
 
-;; Wolfram sometimes indicates failure by returning the symbol $Failed, at least in some cases
-(defonce ^:private failed-expr-p
-         ;; Delay b/c we need to wait until JLink is loaded
-         (delay (proto/atomic-expr proto/type-symbol "$Failed")))
-
 (defn error-message-expr
   "Does the result represent a (delayed) error message template, which we can evaluate
   to get the actual message?"
@@ -30,10 +25,11 @@
     (= unwrapped-input output)))
 
 (defn ensure-no-eval-error [expr eval-result eval-messages]
-  (let [messages-text (mapv :content eval-messages)]
+  (let [messages-text (mapv :content eval-messages)
+        failed-sym? (proto/failed? eval-result)]
     (cond
       (and (seq eval-messages)
-           (or (= eval-result @failed-expr-p)
+           (or failed-sym? ; FIXME / verify
                (unchanged-expression? expr eval-result)))
       ;; If input expr == output expr, this usually means the evaluation failed
       ;; (or there was nothing to do); if there are also any extra text/message packets
@@ -48,7 +44,7 @@
                        :messages eval-messages
                        :result eval-result}))
 
-      (= eval-result @failed-expr-p) ; but no messages
+      failed-sym? ; but no messages
       (throw (ex-info (str "Evaluation has failed. Result: "
                            eval-result
                            " No details available.")

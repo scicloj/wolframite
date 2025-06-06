@@ -176,7 +176,10 @@
   (wl/start!)
   (is (thrown? ExceptionInfo
                (wl/eval (w/FromDigits "-87.6")))
-      "Should throw on invalid Wolfram expression"))
+      "Should throw on invalid Wolfram expression (when output = input and some messages outputted)")
+  (is (thrown? ExceptionInfo
+               (wl/eval (w/OpenRead "./nu-such-file.exists")))
+      "Should throw when Wolfram returns the `$Failed` error marker symbol"))
 
 (deftest kindly-support
   (wl/start!)

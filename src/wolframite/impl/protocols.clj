@@ -49,7 +49,7 @@
   (head [this] "Same as .head, i.e. the first part of the expression list")
   (head-sym-str [this] "Returns the head as a string when it is a Symbol, otherwise nil")
   (list? [this])
-  (atomic-expr [type-kwd value] "Returns a new jlink Expr of the given type, passing the constructor the `value` argument"))
+  (failed? [this] "True if this is the `$Failed` symbol that Wolfram sometimes returns to indicate an error."))
 
 (defprotocol JLink
   "A protocol to divorce the code from a direct dependency on JLink, so that it can be loaded

@@ -32,6 +32,9 @@
     proto/type-symbol Expr/SYMBOL
     (throw (IllegalArgumentException. (str "Unsupported/unknown type keyword " type-kw)))))
 
+;; Wolfram sometimes indicates failure by returning the symbol $Failed
+(defonce failed-expr (Expr. Expr/SYMBOL "$Failed"))
+
 (extend-protocol proto/JLinkExpr
   Expr
   (args [this] (.args this))
@@ -61,16 +64,7 @@
       ;; JLink throws if not symbol / string
       (.asString head)))
   (list? [this] (.listQ this))
-  (atomic-expr [type-kw value]
-    (condp = type-kw
-      proto/type-bigdecimal (Expr. ^BigDecimal value)
-      proto/type-biginteger (Expr. ^BigInteger value)
-      proto/type-integer (Expr. (long value))
-      ;proto/type-rational (cast value(Expr. )
-      proto/type-real) (Expr. (double value))
-      proto/type-string (Expr. ^String value)
-      proto/type-symbol (Expr. Expr/SYMBOL ^String value)
-      (throw (IllegalArgumentException. (str "Unsupported/unknown type keyword " type-kw)))))
+  (failed? [this] (= this failed-expr)))
 
 (defn- array? [x]
   (some-> x class .isArray))
