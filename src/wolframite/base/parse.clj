@@ -78,13 +78,17 @@
 
 (defn parse-hash-map [expr opts]
   (let [inside    (first (proto/args expr))
-        ;; inside    (first (proto/args expr))
-        all-rules? (every? true? (map #(= "Rule" (proto/head-sym-str %)) (proto/args expr)))
+        all-rules? (empty? (remove #(#{"Rule" "RuleDelayed"} (proto/head-sym-str %)) (proto/args expr)))
         rules     (cond (some-> inside proto/list?) (parse inside opts)
                         all-rules? (into {}
                                          (map (fn [kv]
-                                                (bound-map (fn [x _opts] (parse x opts)) kv opts))
-                                              (proto/args expr)))
+                                                (let [head (proto/head-sym-str kv)
+                                                      [k v] (seq kv)]
+                                                 [(parse k opts)
+                                                  (cond-> (parse v opts)
+                                                          (= head "RuleDelayed")
+                                                          (with-meta {:wolfram/delayed true}))])))
+                                         (proto/args expr))
                         (= "Dispatch" (proto/head-sym-str inside)) (parse (first (proto/args inside)) opts)
                         :else (assert (or (proto/list? inside)
                                           (= "Dispatch" (proto/head-sym-str inside)))))

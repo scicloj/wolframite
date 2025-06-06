@@ -37,7 +37,18 @@
            (parse/parse (convert/convert {"a" 1} nil) nil)))
     (is (= {}
            (parse/parse (convert/convert {} nil) nil))
-        "Empty maps work too")))
+        "Empty maps work too"))
+  (testing "RuleDelayed"
+    ;; Some errors are returned as a MessageTemplate -> delayed call to get the message name, f.ex.
+    ;; `(wl/! (list (w/Interpreter "City") "San Francisco, US"))` while offline.
+    (let [parsed (-> (w/Association (w/RuleDelayed "MessageTemplate" (w/MessageName w/Interpreter "noknow")))
+                     (convert/convert nil)
+                     (parse/parse nil))]
+      (is (= {"MessageTemplate" '(MessageName Interpreter "noknow")}
+             parsed)
+          "We can parse RuleDelayed")
+      (is (= true
+             (-> parsed vals first meta :wolfram/delayed))))))
 
 (deftest custom-parse
   (wl/start!)
