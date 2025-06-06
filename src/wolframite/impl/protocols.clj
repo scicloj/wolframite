@@ -98,8 +98,6 @@
     (throw (IllegalStateException. "JLink not loaded!")))
   (expr-element-type [this container-type expr]
     (throw (IllegalStateException. "JLink not loaded!")))
-  (expr-primitive-type [this expr]
-    (throw (IllegalStateException. "JLink not loaded!")))
   (kernel-link [_this]
     (throw (IllegalStateException. "JLink not loaded!")))
   (kernel-link? [_this]

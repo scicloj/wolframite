@@ -29,7 +29,7 @@
         failed-sym? (proto/failed? eval-result)]
     (cond
       (and (seq eval-messages)
-           (or failed-sym? ; FIXME / verify
+           (or failed-sym?
                (unchanged-expression? expr eval-result)))
       ;; If input expr == output expr, this usually means the evaluation failed
       ;; (or there was nothing to do); if there are also any extra text/message packets
