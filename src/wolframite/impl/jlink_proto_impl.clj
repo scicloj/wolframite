@@ -46,7 +46,7 @@
           :else (throw (IllegalArgumentException. "Not a number"))))
   (as-string [this]
     (.asString this)) ; Only works for Symbol, String; throws otherwise
-  (atomic-type [this] ; FIXME (jakub, 5/2025) use instead of JLink/expr-primitive-type when prevent-large-data merged
+  (atomic-type [this]
     (cond (.bigDecimalQ this) proto/type-bigdecimal
           (.bigIntegerQ this) proto/type-biginteger
           (.integerQ this) proto/type-integer
@@ -70,14 +70,7 @@
       proto/type-real) (Expr. (double value))
       proto/type-string (Expr. ^String value)
       proto/type-symbol (Expr. Expr/SYMBOL ^String value)
-      (throw (IllegalArgumentException. (str "Unsupported/unknown type keyword " type-kw))))
-  (number? [this]
-    (or (.bigDecimalQ this)
-        (.bigIntegerQ this)
-        (.integerQ this)
-        (.rationalQ this)
-        (.realQ this)
-        false)))
+      (throw (IllegalArgumentException. (str "Unsupported/unknown type keyword " type-kw)))))
 
 (defn- array? [x]
   (some-> x class .isArray))
@@ -165,14 +158,6 @@
   [^KernelLink link]
   (.addPacketListener link (PacketPrinter. System/out)))
 
-(defn- unchanged-expression? [^Expr input, ^Expr output]
-  (let [size-wrapper? (= (some-> input (.head) str)
-                         (name internal-constants/wolframiteLimitSize))
-        unwrapped-input (if size-wrapper?
-                          (-> input (.args) first)
-                          input)]
-   (= unwrapped-input output)))
-
 (defn- evaluate! [^KernelLink link packet-capture-atom ^Expr expr]
   (assert link "Kernel link not initialized?!")
   (io!
@@ -181,7 +166,7 @@
       ;; NOTE: There is also evaluateToImage => byte[] of GIF for graphics-returning fns such as Plot
       ;; NOTE 2: .waitForAnswer discard packets until ReturnPacket; our packet-listener collects those
       (doto link (.evaluate expr) (.waitForAnswer))
-      (error-detection/ensure-no-eval-error ; FIXME this should use `(unchanged-expression? expr res)`
+      (error-detection/ensure-no-eval-error
         expr
         (.getExpr link)
         (seq (first (reset-vals! packet-capture-atom nil)))))))
@@ -271,7 +256,6 @@
              (.matrixQ expr Expr/STRING) proto/type-string
              (.matrixQ expr Expr/SYMBOL) proto/type-symbol
              :else nil))))
-  (->expr-type [_this type-kw] (type-kwd->jlink-int type-kw))
   (kernel-link [_this] @kernel-link-atom)
   (kernel-link? [_this]
     (some->> @kernel-link-atom (instance? KernelLink)))

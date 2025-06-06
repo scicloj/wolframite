@@ -24,6 +24,15 @@
   "Keyword representing the corresponding atomic jlink.Expr type. See [[atomic-type]]."
   :Expr/SYMBOL)
 
+(def ^:private number-types #{type-bigdecimal
+                              type-biginteger
+                              type-integer
+                              type-rational
+                              type-real})
+
+(defn number-type? [atomic-type-kw]
+  (contains? number-types atomic-type-kw))
+
 (defprotocol JLinkExpr
   "A protocol for `com.wolfram.jlink.Expr`, so that we can divorce the code from a direct dependency
   on JLink, so that it can be loaded even before the JLink jar is added to the classpath.
@@ -40,8 +49,7 @@
   (head [this] "Same as .head, i.e. the first part of the expression list")
   (head-sym-str [this] "Returns the head as a string when it is a Symbol, otherwise nil")
   (list? [this])
-  (atomic-expr [type-kwd value] "Returns a new jlink Expr of the given type, passing the constructor the `value` argument")
-  (number? [this] "Is this a number? See also [[as-number]]"))
+  (atomic-expr [type-kwd value] "Returns a new jlink Expr of the given type, passing the constructor the `value` argument"))
 
 (defprotocol JLink
   "A protocol to divorce the code from a direct dependency on JLink, so that it can be loaded
@@ -64,8 +72,7 @@
     * [type name] where type=:Expr/SYMBOL - create a Wolfram symbol")
   (->expr [this obj] "Turn the given obj into a jlink Expr via the loopback link 🤷")
   (expr? [this expr] "Is `expr` an instance of jlink Expr?")
-  (expr-element-type [this container-type expr]) ; FIXME rm?
-  (->expr-type [this type-kw]) ; FIXME rm?
+  (expr-element-type [this container-type expr] "Return the type of elements in an array/list/...")
   (kernel-link [_this])
   (kernel-link? [_this])
   (^Component make-math-canvas!
@@ -92,8 +99,6 @@
   (expr-element-type [this container-type expr]
     (throw (IllegalStateException. "JLink not loaded!")))
   (expr-primitive-type [this expr]
-    (throw (IllegalStateException. "JLink not loaded!")))
-  (->expr-type [this type-kw]
     (throw (IllegalStateException. "JLink not loaded!")))
   (kernel-link [_this]
     (throw (IllegalStateException. "JLink not loaded!")))

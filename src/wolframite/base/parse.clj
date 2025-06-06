@@ -101,12 +101,15 @@
       (zipmap keys vals))))
 
 (defn parse-simple-atom
-  "Parse an atomic expression (i.e. a primitive value). Return nil when not a simple atom."
-  [expr type opts] ; FIXME remove type arg
-  (when-let [atomic-type (proto/atomic-type expr)]
-    (cond (proto/number? expr) (proto/as-number expr)
-          (= atomic-type proto/type-string) (proto/as-string expr)
-          (= atomic-type proto/type-symbol) (parse-symbol expr opts))))
+  "Parse an atomic expression (i.e. a primitive value).
+  Return nil when not a simple atom."
+  ([expr opts]
+   (parse-simple-atom expr (proto/atomic-type expr) opts))
+  ([expr atomic-type opts]
+   (when atomic-type
+     (cond (proto/number-type? atomic-type) (proto/as-number expr)
+           (= atomic-type proto/type-string) (proto/as-string expr)
+           (= atomic-type proto/type-symbol) (parse-symbol expr opts)))))
 
 ;; parameters list used to be: [expr & [type]] (??)
 (defn parse-simple-vector [expr type {:keys [flags] :as opts}]
@@ -114,7 +117,7 @@
     (if (and (options/flag?' flags flags/arrays)
              ;; TODO Why only these types? W. supports boolean, byte, char, short, int, long, float, double, String arrays;
              ;; Though only byte, short, int, float, double have "fast" methods
-             (some #{:Expr/INTEGER :Expr/BIGINTEGER :Expr/REAL :Expr/BIGDECIMAL} #{type}))
+             (some #{proto/type-integer proto/type-biginteger proto/type-real proto/type-bigdecimal} #{type}))
       (proto/as-array-1d expr type)
       (bound-map (fn [e _opts] (parse-simple-atom e type opts)) (proto/args expr) opts))))
 
@@ -145,7 +148,7 @@
 (defn parse-complex-atom [expr opts]
   (let [head (proto/head-sym-str expr)
         maybe-type-kw (proto/atomic-type expr)]
-    (cond (proto/number? expr) (proto/as-number expr)
+    (cond (proto/number-type? maybe-type-kw) (proto/as-number expr)
           (= maybe-type-kw proto/type-string) (proto/as-string expr)
           (= maybe-type-kw proto/type-symbol) (parse-symbol expr opts)
           (= "Association" head) (parse-hash-map expr opts) #_(parse-generic-expression expr opts)
