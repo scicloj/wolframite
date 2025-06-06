@@ -1,5 +1,46 @@
 (ns wolframite.impl.protocols
+  (:refer-clojure :exclude [list? number?])
   (:import (java.awt Component)))
+
+(def type-bigdecimal
+  "Keyword representing the corresponding atomic jlink.Expr type. See [[atomic-type]]."
+  :Expr/BIGDECIMAL)
+(def type-biginteger
+  "Keyword representing the corresponding atomic jlink.Expr type. See [[atomic-type]]."
+  :Expr/BIGINTEGER)
+(def type-integer
+  "Keyword representing the corresponding atomic jlink.Expr type. See [[atomic-type]]."
+  :Expr/INTEGER)
+(def type-rational
+  "Keyword representing the corresponding atomic jlink.Expr type. See [[atomic-type]]."
+  :Expr/RATIONAL)
+(def type-real
+  "Keyword representing the corresponding atomic jlink.Expr type. See [[atomic-type]]."
+  :Expr/REAL)
+(def type-string
+  "Keyword representing the corresponding atomic jlink.Expr type. See [[atomic-type]]."
+  :Expr/STRING)
+(def type-symbol
+  "Keyword representing the corresponding atomic jlink.Expr type. See [[atomic-type]]."
+  :Expr/SYMBOL)
+
+(defprotocol JLinkExpr
+  "A protocol for `com.wolfram.jlink.Expr`, so that we can divorce the code from a direct dependency
+  on JLink, so that it can be loaded even before the JLink jar is added to the classpath.
+  (Though the methods fail at runtime until this is done.)
+  "
+  (args [this] "Same as .args, i.e. the remaining parts of the expression list")
+  (as-array-1d [this element-type-kw] "Return this Expr as Java array with the given element type, such as [[type-integer]]")
+  (as-number [this] "Calls .asBigInteger/Double/... or throws if not a number")
+  (as-string [this] "If String/Symbol, returns it as str.")
+  (atomic-type [this]
+    "If this Expr represents an atomic type then return its type as a keyword,
+      f.ex. :Expr/SYMBOL. Nil otherwise.
+      See [[atomic-type]].")
+  (head [this] "Same as .head, i.e. the first part of the expression list")
+  (head-sym-str [this] "Returns the head as a string when it is a Symbol, otherwise nil")
+  (list? [this])
+  (number? [this] "Is this a number? See also [[as-number]]"))
 
 (defprotocol JLink
   "A protocol to divorce the code from a direct dependency on JLink, so that it can be loaded

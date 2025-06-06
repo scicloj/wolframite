@@ -8,7 +8,7 @@
   (:import
     [com.wolfram.jlink MathGraphicsJPanel]
     [java.awt Component Dimension Image]
-    (java.awt.event ActionListener ComponentAdapter MouseAdapter)
+    (java.awt.event ActionListener ComponentAdapter MouseAdapter MouseEvent)
     (java.awt.image BufferedImage)
     (javax.imageio ImageIO)
     [javax.swing JFileChooser JFrame JMenuItem JOptionPane JPanel JPopupMenu JScrollPane JViewport SwingUtilities Timer]))
@@ -50,7 +50,7 @@
     (.getSize scroll-pane-viewport)))
 
 (defn- ensure-math-sized-to-frame!
-  ([math frame]
+  ([^MathGraphicsJPanel math ^JFrame frame]
    (let [new-math-size (available-math-size frame math)]
      (doto math
        ;; The next two are essential to resizing, in this particular order:
@@ -131,14 +131,14 @@
     (.addMouseListener
       math
       (proxy [MouseAdapter] []
-        (mousePressed [e]
+        (mousePressed [^MouseEvent e]
           (when (.isPopupTrigger e)
             (.show popup math (.getX e) (.getY e))))
-        (mouseReleased [e]
+        (mouseReleased [^MouseEvent e]
           (when (.isPopupTrigger e)
             (.show popup math (.getX e) (.getY e))))))))
 
-(defn- show-on-swing-thread [wl-expr-str {:keys [math frame] :as app} {:keys [jlink-instance scale-with-window?] :as _opts}]
+(defn- show-on-swing-thread [wl-expr-str {:keys [^MathGraphicsJPanel math ^JFrame frame] :as app} {:keys [jlink-instance scale-with-window?] :as _opts}]
   (do
     ;; Essential: this ensures sizes are >= min. size and thus non-zero, which we
     ;; need for the size-related call(s) below

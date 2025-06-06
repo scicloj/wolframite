@@ -3,9 +3,7 @@
   (:require [wolframite.impl.jlink-instance :as jlink-instance]
             [wolframite.impl.protocols :as proto]
             [wolframite.impl.wolfram-syms.intern :as intern]
-            [wolframite.lib.options :as options]
             [wolframite.base.express :as express]
-            [wolframite.base.expr :as expr]
             [wolframite.runtime.defaults :as defaults]))
 
 ;; (remove-ns 'wolframite.base.convert)
@@ -165,12 +163,14 @@
                                                                 (pr-str clj-expr))
                                                            {:expr clj-expr}))
           ;; Originally we called `(express/express arg opts)` but it fails b/c it only handles strings
-          :else (expr/expr-from-parts
-                  (cons (convert head
-                                 (cond-> opts
-                                         (symbol? head)
-                                         (assoc ::args tail)))
-                        (doall (map #(convert % opts) tail)))))))
+          :else
+          (let [expr-coll (cons (convert head
+                                         (cond-> opts
+                                                 (symbol? head)
+                                                 (assoc ::args tail)))
+                                (doall (map #(convert % opts) tail)))]
+           (assert (every? #(proto/expr? (jlink-instance/get) %) expr-coll))
+           (proto/expr (jlink-instance/get) expr-coll)))))
 
 (comment
   (convert '(whatever 1) nil)
