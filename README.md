@@ -145,7 +145,16 @@ create a `./symlink-jlink.jar` symlink and then run the tests:
 clojure -X:run-tests
 ```
 
-### Deployment
+### Deployment and release
+
+The release process is:
+
+0. _Clear_ (`rm -rf ./target`)
+1. Run _tests_ (see above, `clojure -X:run-tests`).
+2. Update _version_ (see below) and make sure `CHANGELOG.md` is updated as well
+3. Build and deploy to _Clojars_ - see below
+4. Make and push a _tag_ with the version (e.g. `git tag v1.3.0 && git push --tags`)
+5. Rebuild, commit, and push the _site_ (`clojure -T:build site` + commit, push)
 
 If required, update version in `deps.edn` under `:aliases - :neil - :project - :version` (possibly using `neil`).
 
