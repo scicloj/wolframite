@@ -290,7 +290,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#development" id="toc-development" class="nav-link" data-scroll-target="#development"><span class="header-section-number">1.5</span> Development</a>
   <ul class="collapse">
   <li><a href="#running-tests" id="toc-running-tests" class="nav-link" data-scroll-target="#running-tests"><span class="header-section-number">1.5.1</span> Running tests</a></li>
-  <li><a href="#deployment" id="toc-deployment" class="nav-link" data-scroll-target="#deployment"><span class="header-section-number">1.5.2</span> Deployment</a>
+  <li><a href="#deployment-and-release" id="toc-deployment-and-release" class="nav-link" data-scroll-target="#deployment-and-release"><span class="header-section-number">1.5.2</span> Deployment and release</a>
   <ul class="collapse">
   <li><a href="#writing-documentation" id="toc-writing-documentation" class="nav-link" data-scroll-target="#writing-documentation"><span class="header-section-number">1.5.2.1</span> Writing documentation</a></li>
   </ul></li>
@@ -451,8 +451,17 @@ user&gt; (ch/clerk-watch! ["dev/notebook"])</code></pre>
 <p>To run tests from the command line, you need to add JLink to the classpath (only REPL supports dynamically loading jars) - create a <code>./symlink-jlink.jar</code> symlink and then run the tests:</p>
 <pre class="shell"><code>clojure -X:run-tests</code></pre>
 </section>
-<section id="deployment" class="level3" data-number="1.5.2">
-<h3 data-number="1.5.2" class="anchored" data-anchor-id="deployment"><span class="header-section-number">1.5.2</span> Deployment</h3>
+<section id="deployment-and-release" class="level3" data-number="1.5.2">
+<h3 data-number="1.5.2" class="anchored" data-anchor-id="deployment-and-release"><span class="header-section-number">1.5.2</span> Deployment and release</h3>
+<p>The release process is:</p>
+<ol start="0" type="1">
+<li><em>Clear</em> (<code>rm -rf ./target</code>)</li>
+<li>Run <em>tests</em> (see above, <code>clojure -X:run-tests</code>).</li>
+<li>Update <em>version</em> (see below) and make sure <code>CHANGELOG.md</code> is updated as well</li>
+<li>Build and deploy to <em>Clojars</em> - see below</li>
+<li>Make and push a <em>tag</em> with the version (e.g.&nbsp;<code>git tag v1.3.0 &amp;&amp; git push --tags</code>)</li>
+<li>Rebuild, commit, and push the <em>site</em> (<code>clojure -T:build site</code> + commit, push)</li>
+</ol>
 <p>If required, update version in <code>deps.edn</code> under <code>:aliases - :neil - :project - :version</code> (possibly using <code>neil</code>).</p>
 <p>then build the jar with <code>clojure -T:build jar</code> then deploy with <code>env CLOJARS_USERNAME=&lt;tbd&gt; CLOJARS_PASSWORD=&lt;clojars-token&gt; clojure -T:build deploy</code>.</p>
 <p>Note: You need to log in to Clojars and generate a deployment token. You also need to be added to the SciCloj group there by an admin.</p>

@@ -277,7 +277,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#basics" id="toc-basics" class="nav-link" data-scroll-target="#basics"><span class="header-section-number">10.3</span> Basics</a></li>
   <li><a href="#evaluation" id="toc-evaluation" class="nav-link" data-scroll-target="#evaluation"><span class="header-section-number">10.4</span> Evaluation</a></li>
   <li><a href="#sec-clojure-repl" id="toc-sec-clojure-repl" class="nav-link" data-scroll-target="#sec-clojure-repl"><span class="header-section-number">10.5</span> How to work with Clojure: the REPL and interactive development</a></li>
-  <li><a href="#resources-for-further-learning" id="toc-resources-for-further-learning" class="nav-link" data-scroll-target="#resources-for-further-learning"><span class="header-section-number">10.6</span> Resources for further learning</a></li>
+  <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling"><span class="header-section-number">10.6</span> Error handling</a></li>
+  <li><a href="#resources-for-further-learning" id="toc-resources-for-further-learning" class="nav-link" data-scroll-target="#resources-for-further-learning"><span class="header-section-number">10.7</span> Resources for further learning</a></li>
   </ul>
 </nav>
     </div>
@@ -480,8 +481,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Contrary to most languages, Clojure is designed to be written incrementally, in an interactive session. While this is alien to most developers, who are used to the write-compile-run cycle, you may already be well familiar with this style of coding from Wolfram or Python notebooks. In both cases, your “program” is running all the time and you keep adding to it, building on the previous code and state, and can examine the state at any moment.</p>
 <p>You can read more on Clojure’s take on <a href="https://clojure.org/guides/repl/introduction">interactive development</a> a.k.a. REPL-driven development on the official Clojure website.</p>
 </section>
-<section id="resources-for-further-learning" class="level2" data-number="10.6">
-<h2 data-number="10.6" class="anchored" data-anchor-id="resources-for-further-learning"><span class="header-section-number">10.6</span> Resources for further learning</h2>
+<section id="error-handling" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="error-handling"><span class="header-section-number">10.6</span> Error handling</h2>
+<p>In some cases, when evaluation fails, Wolframite throws a Java exception. You can use the handy Clojure functions <code>ex-message</code> and <code>ex-data</code> to learn more about the problem:</p>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb21"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>(<span class="bu">def</span><span class="fu"> fake-exception </span>(ex-info <span class="st">"Something blew up"</span> {<span class="at">:some-details</span> <span class="st">"It was bad"</span>}))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb22"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>(ex-message fake-exception)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb23"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="st">"Something blew up"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="sourceClojure">
+<div class="sourceCode" id="cb24"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>(ex-data fake-exception)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="printedClojure">
+<div class="sourceCode" id="cb25"><pre class="sourceCode clojure code-with-copy"><code class="sourceCode clojure"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>{<span class="at">:some-details</span> <span class="st">"It was bad"</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="resources-for-further-learning" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="resources-for-further-learning"><span class="header-section-number">10.7</span> Resources for further learning</h2>
 <ul>
 <li>The <a href="http://jafingerhut.github.io/cheatsheet/clojuredocs/cheatsheet-tiptip-cdocs-summary.html">Clojure cheatsheat</a> is a good place to look for functions.</li>
 <li><a href="https://ericnormand.me/article/100-most-used-clojure-expressions">The 100 Most Used Clojure Expressions</a></li>
