@@ -8,12 +8,17 @@ An interface between Clojure and the Wolfram Language (Supports [Mathematica](ht
 
 Stable
 
+## TL;DR!
+
+Our introductory reClojure [talk](https://www.youtube.com/watch?v=rQ1hpYZSjuY&list=PLtw0bWXdq7pMmm1ALroZ_c5aZB-l4V06V&index=7).
+
 ## What is Wolframite? ##
 
 Wolframite (formerly Clojuratica) brings together two of today's most exciting tools for high-performance, parallel computation.
 
 [Clojure](http://clojure.org) is a dynamic functional programming language with a compelling approach to concurrency and state, a strong cast of persistent immutable data structures, and a growing reputation for doing all the right things.
 [Wolfram Mathematica](https://www.wolfram.com/mathematica/) is arguably the world's most powerful integrated tool for numerical computation, symbolic mathematics, optimization, and visualization and is build on top of its own splendid functional programming language, [Wolfram Language](https://www.wolfram.com/language/).
+
 
 By linking the two:
 
