@@ -9,8 +9,11 @@ An interface between Clojure and the Wolfram Language (Supports [Mathematica](ht
 Stable
 
 ## TL;DR!
+Our introductory [reClojure](https://www.reclojure.org/schedule.html) talk.
 
-Our introductory reClojure [talk](https://www.youtube.com/watch?v=rQ1hpYZSjuY&list=PLtw0bWXdq7pMmm1ALroZ_c5aZB-l4V06V&index=7).
+[![talk](https://img.youtube.com/vi/rQ1hpYZSjuY/0.jpg)](https://www.youtube.com/watch?v=rQ1hpYZSjuY).
+
+
 
 ## What is Wolframite? ##
 
