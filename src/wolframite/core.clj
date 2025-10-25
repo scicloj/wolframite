@@ -58,7 +58,7 @@
   ;; and https://reference.wolfram.com/language/tutorial/RunningTheWolframSystemFromWithinAnExternalProgram.html for the options
   ["-linkmode" "launch"
    "-linkname"
-   (format "\"/%s\" -mathlink"
+   (format "\"%s\" -mathlink"
            (or mathlink-path
                (system/path--kernel path--root)
                (throw (IllegalStateException. "mathlink path neither provided nor auto-detected"))))])
