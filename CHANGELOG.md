@@ -4,6 +4,11 @@ Changelog
 WIP
 ---
 
+1.3.1 10/2025
+-------------
+
+* [Fix] #160 - correct Wolfram arguments used on Windows (and elsewhere), that prevented it from connecting correctly
+
 1.3.0 6/2025
 ------------
 * [Feat] Detect large data in Wolfram results and return `:wolframite/large-data` instead, unless the flag `wolframite.flags/allow-large-data` is set. This prevents undesirably slow processing and avoidable memory issues.
