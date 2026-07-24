@@ -4,6 +4,12 @@ Changelog
 WIP
 ---
 
+1.5.0 7/2026
+------------
+* [Feat] Re-generated `wolframite.wolfram` for [Wolfram Language 15](https://www.wolfram.com/language/new-in-15/) ([announcment post](https://writings.stephenwolfram.com/2026/06/launching-version-15-of-wolfram-language-mathematica-built-in-useful-ai-lots-of-new-core-functionality/), [detailed summary](https://reference.wolfram.com/language/guide/SummaryOfNewFeaturesIn150.html)) (previously 14.2)
+
+PS: I skipped v1.4 just because it seemed nicer to have Wolframite 1.5 with Wolfram 15 :)
+
 1.3.0 6/2025
 ------------
 * [Feat] Detect large data in Wolfram results and return `:wolframite/large-data` instead, unless the flag `wolframite.flags/allow-large-data` is set. This prevents undesirably slow processing and avoidable memory issues.
