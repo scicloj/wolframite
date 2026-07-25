@@ -34,8 +34,5 @@
 ;; so this is a hacky way to watch paths
 (defn clerk-watch!
   [watch-paths]
-  (webserver/start! {:port 7777})
-  (future
-    (reset! clerk/!watcher {:paths watch-paths
-                            :watcher (apply beholder/watch-blocking #(clerk/file-event %) watch-paths)}))
+  (clerk/serve! {:watch-paths watch-paths})
   (prn "Clerk Started!"))
