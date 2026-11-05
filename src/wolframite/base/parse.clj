@@ -111,22 +111,54 @@
            (= atomic-type proto/type-string) (proto/as-string expr)
            (= atomic-type proto/type-symbol) (parse-symbol expr opts)))))
 
+(defn- fast-array-type?
+  "Can we turn an array of this type into a Java array (for flags/arrays)?"
+  [type]
+  (contains? #{proto/type-integer proto/type-real} type))
+
+(defn- fast-parse-type?
+  "Can we parse an array of this type via a Java array, instead of element by element?
+  (Much faster for large arrays.)
+  Not integers: JLink's asArray silently truncates those that don't fit into an int."
+  [type]
+  (= type proto/type-real))
+
+(defn- primitive-array->clj [arr opts]
+  (bound-map (fn [x _opts] x) arr opts))
+
 ;; parameters list used to be: [expr & [type]] (??)
 (defn parse-simple-vector [expr type {:keys [flags] :as opts}]
   (let [type (or type (simple-vector-type expr))]
-    (if (and (options/flag?' flags flags/arrays)
-             ;; TODO Why only these types? W. supports boolean, byte, char, short, int, long, float, double, String arrays;
-             ;; Though only byte, short, int, float, double have "fast" methods
-             (some #{proto/type-integer proto/type-biginteger proto/type-real proto/type-bigdecimal} #{type}))
-      (proto/as-array-1d expr type)
+    (cond
+      (and (options/flag?' flags flags/arrays)
+           ;; TODO Why only these types? W. supports boolean, byte, char, short, int, long, float, double, String arrays;
+           ;; Though only byte, short, int, float, double have "fast" methods
+           (some #{proto/type-integer proto/type-biginteger proto/type-real proto/type-bigdecimal} #{type}))
+      (proto/as-array expr type 1)
+
+      (fast-parse-type? type)
+      (primitive-array->clj (proto/as-array expr type 1) opts)
+
+      :else
       (bound-map (fn [e _opts] (parse-simple-atom e type opts)) (proto/args expr) opts))))
 
-(defn parse-simple-matrix [expr type opts]
+(defn parse-simple-matrix [expr type {:keys [flags] :as opts}]
   (let [type (or type (simple-matrix-type expr))]
-    (bound-map (fn process-bound-map [a _opts]
-                 (parse-simple-vector a type opts))
-               (proto/args expr)
-               opts)))
+    (cond
+      (and (options/flag?' flags flags/arrays)
+           (fast-array-type? type))
+      (proto/as-array expr type 2)
+
+      (fast-parse-type? type)
+      (bound-map (fn [row _opts] (primitive-array->clj row opts))
+                 (proto/as-array expr type 2)
+                 opts)
+
+      :else
+      (bound-map (fn process-bound-map [a _opts]
+                   (parse-simple-vector a type opts))
+                 (proto/args expr)
+                 opts))))
 
 (defn parse-fn
   "Return a function that invokes the Wolfram expression `expr` (typically just a symbol naming a fn),

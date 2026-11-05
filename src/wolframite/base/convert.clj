@@ -21,7 +21,10 @@
 
 (defn- supported-primitive-array? [xs]
   ;; See jlink.Expr constructor for the types actually supported
-  (some-> xs .getClass .componentType (#{Byte/TYPE Double/TYPE Integer/TYPE Long/TYPE Short/TYPE})))
+  (contains? #{byte/1 double/1 int/1 long/1 short/1
+               byte/2 double/2 int/2 long/2 short/2
+               byte/3 double/3 int/3 long/3 short/3}
+             (some-> xs .getClass)))
 
 (defn- dispatch [obj]
   (cond (and (list? obj)
@@ -49,6 +52,14 @@
     clj-expr
     (list internal-constants/wolframiteLimitSize clj-expr)))
 
+(defn- wrap-fast-array [clj-expr {:keys [flags] :wolframite.core/keys [no-wolframite-wrapping] :as _opts}]
+  ;; See also wolframite.impl.jlink-proto-impl/read-result
+  ;; Parallel evaluation reads results via ParallelSubmit & co., not directly => no point in tagging
+  (if (or no-wolframite-wrapping
+          (options/flag?' flags flags/parallel))
+    clj-expr
+    (list internal-constants/wolframiteFastArray clj-expr)))
+
 (defn wrapping-convert
   "Convert the symbolic Clojure expression to jlink.Expr, after wrapping it in extra Wolframite code.
   See also `wolframite.base.parse/unwrapping-parse`."
@@ -56,6 +67,7 @@
   ;; NOTE Error detection is handled in wolframite.impl.jlink-proto-impl/evaluate!
   (-> clj-expr
       (wrap-limit-size opts)
+      (wrap-fast-array opts)
       (convert opts)))
 
 ;; * Helpers
@@ -67,6 +79,35 @@
 (defn- simple-matrix? [coll opts]
   (and (sequential? coll)
        (every? #(simple-vector? % opts) coll)))
+
+(defn- coll->primitive-array
+  "Turn a non-empty collection of only doubles or only longs into a Java array.
+  Nil otherwise (incl. mixed types)."
+  [coll]
+  (when (seq coll)
+    (condp every? coll
+      #(instance? Double %) (double-array coll)
+      #(instance? Long %) (long-array coll)
+      nil)))
+
+(defn- ->primitive-array
+  "Turn a large collection of only doubles or only longs into a Java array, which is much faster to
+  send to Wolfram than a list of individual numbers. Nil otherwise, incl. for small collections,
+  where it doesn't matter."
+  [coll]
+  (when (>= (count coll) internal-constants/fast-array-min-size)
+    (coll->primitive-array coll)))
+
+(defn- ->primitive-array-2d
+  "Same as [[->primitive-array]] for a matrix, i.e. equally long rows of the same type."
+  [rows]
+  (when (and (every? sequential? rows)
+             (>= (* (count rows) (count (first rows))) internal-constants/fast-array-min-size)
+             (apply = (map count rows)))
+    (let [arrays (mapv coll->primitive-array rows)]
+      (when (and (every? some? arrays)
+                 (apply = (map class arrays)))
+        (into-array (class (first arrays)) arrays)))))
 
 (defn- cexpr-from-postfix-form [cexprs]
   (assert (sequential? cexprs))
@@ -165,9 +206,11 @@
       (convert (to-array converted-parts) opts))))
 
 (defmethod convert :list [coll opts]
-  (cond (simple-matrix? coll opts) (convert (to-array-2d coll) opts)
-        (simple-vector? coll opts) (convert (to-array coll) opts)
-        :else (convert-non-simple-list coll opts)))
+  (if-let [arr (or (->primitive-array coll) (->primitive-array-2d coll))]
+    (convert arr opts)
+    (cond (simple-matrix? coll opts) (convert (to-array-2d coll) opts)
+          (simple-vector? coll opts) (convert (to-array coll) opts)
+          :else (convert-non-simple-list coll opts))))
 
 (defmethod convert :expr [[head & tail :as clj-expr] opts]
   (let [macro head

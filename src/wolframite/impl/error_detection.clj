@@ -16,13 +16,19 @@
          (when (-> MessageTemplate meta :wolfram/delayed)
            MessageTemplate))))
 
+(def ^:private wrapper-names
+  #{(name internal-constants/wolframiteLimitSize)
+    (name internal-constants/wolframiteFastArray)})
+
+(defn- unwrap [input]
+  (if (contains? wrapper-names
+                 ;; head-sym-str throws if the head is not a symbol, e.g. for f[x][y]
+                 (try (proto/head-sym-str input) (catch Exception _ nil)))
+    (recur (-> input proto/args first))
+    input))
+
 (defn- unchanged-expression? [input output]
-  (let [size-wrapper? (= (proto/head-sym-str input)
-                         (name internal-constants/wolframiteLimitSize))
-        unwrapped-input (if size-wrapper?
-                          (-> input proto/args first)
-                          input)]
-    (= unwrapped-input output)))
+  (= (unwrap input) output))
 
 (defn ensure-no-eval-error [expr eval-result eval-messages]
   (let [messages-text (mapv :content eval-messages)

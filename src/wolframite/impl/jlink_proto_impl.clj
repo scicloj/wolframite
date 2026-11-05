@@ -7,7 +7,7 @@
             [wolframite.impl.protocols :as proto])
   (:import (clojure.lang BigInt)
            [com.wolfram.jlink Expr KernelLink MathCanvas MathLink MathLinkException MathLinkFactory
-                              PacketListener PacketArrivedEvent PacketPrinter]))
+                              MLFunction PacketListener PacketArrivedEvent PacketPrinter]))
 
 (defn parse-integer [^Expr expr]
   (let [i (.asLong expr)]
@@ -38,8 +38,8 @@
 (extend-protocol proto/JLinkExpr
   Expr
   (args [this] (.args this))
-  (as-array-1d [this elemen-type-kw]
-    (.asArray this (type-kwd->jlink-int elemen-type-kw) 1))
+  (as-array [this element-type-kw depth]
+    (.asArray this (type-kwd->jlink-int element-type-kw) depth))
   (as-number [expr]
     (cond (.bigIntegerQ expr)   (.asBigInteger expr)
           (.bigDecimalQ expr)   (.asBigDecimal expr)
@@ -152,6 +152,46 @@
   [^KernelLink link]
   (.addPacketListener link (PacketPrinter. System/out)))
 
+(defn- packed-array-marker? [^MLFunction f]
+  (and (= (.name f) (name internal-constants/WolframitePackedArray))
+       (= (.argCount f) 3)))
+
+(defn- strip-packed-array-marker [^Expr expr]
+  (if (and (.symbolQ (.head expr))
+           (= (.asString (.head expr)) (name internal-constants/WolframitePackedArray)))
+    (.part expr 3)
+    expr))
+
+(defn- read-result
+  "Read the result of an evaluation from the link.
+
+  A large packed numeric array is tagged by Wolframite as `WolframitePackedArray[type, depth, data]`
+  (see `wolframite.core/evaluator-init`) and we read it directly as a Java array. This is much
+  faster than `.getExpr`, because the Expr it returns is lazy and the first access to it would
+  unpack the array element by element (~1s for 1M doubles). Anything else is read as usual."
+  ^Expr [^KernelLink link]
+  (let [mark (.createMark link)]
+    (try
+      (if (and (= MathLink/MLTKFUNC (.getNext link))
+               (packed-array-marker? (.getFunction link)))
+        (let [type (.getString link)
+              depth (.getInteger link)]
+          (if (contains? internal-constants/packed-array-types type)
+            (Expr. (.getArray link
+                              (if (= type "Real64") MathLink/TYPE_DOUBLE MathLink/TYPE_INT)
+                              depth))  ; Expr. has a constructor for each array type and depth 1-3
+            (do (.seekMark link mark)
+                (strip-packed-array-marker (.getExpr link)))))
+        (do (.seekMark link mark)
+            (.getExpr link)))
+      (catch MathLinkException e
+        (log/debug e "Failed to read the result directly, falling back to getExpr")
+        (.clearError link)
+        (.seekMark link mark)
+        (strip-packed-array-marker (.getExpr link)))
+      (finally
+        (.destroyMark link mark)))))
+
 (defn- evaluate! [^KernelLink link packet-capture-atom ^Expr expr]
   (assert link "Kernel link not initialized?!")
   (io!
@@ -162,7 +202,7 @@
       (doto link (.evaluate expr) (.waitForAnswer))
       (error-detection/ensure-no-eval-error
         expr
-        (.getExpr link)
+        (read-result link)
         (seq (first (reset-vals! packet-capture-atom nil)))))))
 
 (defrecord JLinkImpl [opts kernel-link-atom packet-listener]
