@@ -75,6 +75,20 @@
                               (w/fn [expr] (w/If (w/> (w/ByteCount expr) large-data-threshold)
                                                  internal-constants/WolframiteLargeData
                                                  expr)))))
+    ;; Tag large packed numeric arrays so that we can read them directly from the link as Java arrays,
+    ;; which is much faster than via Expr; see wolframite.impl.jlink-proto-impl/read-result
+    (wl-eval (wl-convert (convert/->wolfram-str-expr
+                          (format "%s = Function[expr, Which[
+                                     !Developer`PackedArrayQ[expr] || ArrayDepth[expr] > 3
+                                       || Times @@ Dimensions[expr] < %d, expr,
+                                     Developer`PackedArrayQ[expr, Real], %s[\"Real64\", ArrayDepth[expr], expr],
+                                     Developer`PackedArrayQ[expr, Integer] && Max[expr] < 2^31 && Min[expr] >= -2^31,
+                                       %s[\"Integer32\", ArrayDepth[expr], expr],
+                                     True, expr]]"
+                                  internal-constants/wolframiteFastArray
+                                  internal-constants/fast-array-min-size
+                                  internal-constants/WolframitePackedArray
+                                  internal-constants/WolframitePackedArray))))
     ;; Make sure the custom definitions that we've added are available in all parallel kernels
     ;; (essential when using flags/parallel evaluation)
     (wl-eval (wl-convert (w/DistributeDefinitions internal-constants/wolframiteLimitSize))))) ; TODO Check that this works

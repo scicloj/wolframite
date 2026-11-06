@@ -39,7 +39,7 @@
   (Though the methods fail at runtime until this is done.)
   "
   (args [this] "Same as .args, i.e. the remaining parts of the expression list")
-  (as-array-1d [this element-type-kw] "Return this Expr as Java array with the given element type, such as [[type-integer]]")
+  (as-array [this element-type-kw depth] "Return this Expr as Java array of the given depth (1-3) with the given element type, such as [[type-integer]]")
   (as-number [this] "Calls .asBigInteger/Double/... or throws if not a number")
   (as-string [this] "If String/Symbol, returns it as str.")
   (atomic-type [this]

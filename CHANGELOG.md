@@ -3,6 +3,10 @@ Changelog
 
 WIP
 ---
+* [Improvement] Much faster transfer of large numeric arrays (#113). E.g. receiving 1M doubles takes ~50 ms instead of ~1.5 s
+  (~15 ms with `flags/arrays`), sending a vector of 1M doubles ~60 ms instead of ~350 ms. Applies to packed arrays of reals and
+  32-bit integers of up to 3 dimensions from Wolfram, and to vectors/matrices of only doubles or only longs and 2D/3D Java arrays to Wolfram.
+* [Change] With `flags/arrays`, a matrix of reals or integers is now returned as a 2D Java array (e.g. `double[][]`) instead of a vector of 1D arrays
 
 1.5.0 7/2026
 ------------

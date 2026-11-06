@@ -41,6 +41,19 @@ flags/allow-large-data
 ;; Notice that `=` also returns the value, and Wolframite would normally turn that into `:wolframite/large-data`.
 ;; But in this case, we want instead to see how long the data is.
 
+(k/md "
+**Do**: When you need to transfer large numeric data, use arrays of reals or (32-bit) integers.
+
+Wolframite transfers these much faster than other data - e.g. 1M doubles in tens of ms. Large vectors
+(and matrices) of only doubles or only longs, and Java arrays (`double-array` etc.) of up to 3 dimensions,
+are sent fast. Large packed arrays of reals or integers that fit into 32 bits, of up to 3 dimensions, are received fast.
+Set the flag below to get the result as Java arrays (e.g. `double[][]` for a matrix) instead of Clojure vectors,
+which is even faster. (Notice that the data is always copied, since the Wolfram Kernel is a separate process.
+Libraries such as dtype-next can wrap a Java array without copying it.)
+")
+
+flags/arrays
+
 (k/md "## Language differences between Wolfram and Wolframite
 
 Although we try to avoid such things, sometimes, when you're fighting the host language, it's just not practical to carry over the original conventions. Here we will try to keep an up-to-date list of possible surprises, when coming from Wolfram to Wolframite (that are not easy to 'fix').
