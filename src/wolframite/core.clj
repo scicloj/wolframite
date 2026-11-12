@@ -107,9 +107,11 @@
 
 (defn- init-kernel!
   ([jlink-impl]
-   (init-kernel! jlink-impl {:path--root (system/root (system/info))}))
-  ([jlink-impl {:keys [path--root] :as init-opts}]
-   (->> (kernel-link-opts init-opts)
+   (init-kernel! jlink-impl {}))
+  ([jlink-impl {:keys [path--root mathlink-path] :as init-opts}]
+   (->> (kernel-link-opts (cond-> init-opts
+                            (not (or path--root mathlink-path))
+                            (assoc :path--root (system/root (system/info)))))
         (proto/create-kernel-link jlink-impl))))
 
 (declare eval)
@@ -124,7 +126,8 @@
   ; => {:wolfram-version 14.0
   ;     :wolfram-kernel-name \"Wolfram Language 14.0.0 Engine\"
   ;     :max-license-processes 2} ; how many concurrent kernels (=> Wolframite REPLs/processes) may we run
-  ```"
+  ```
+  Replaced with a new, empty promise by [[stop!]]."
   (promise))
 
 (defn kernel-info!
@@ -155,6 +158,8 @@
         translated into Wolfram ones. See Wolframite docs.
      -  `:flags #{kwd ...}` - various on/off toggles for how Wolframite processes inputs/results,
         passed e.g. to the `custom-parse` multimethod; see also wolframite.runtime.defaults/default-flags
+     - `:mathlink-path` - the path to the Wolfram kernel executable (e.g. `WolframKernel`), if you need
+        to override the auto-detected one
 
   See also [[stop!]]"
   ([] (start! defaults/default-options))
@@ -166,7 +171,7 @@
       (let [jlink-inst (or (jlink-instance/get)
                            (init-jlink! kernel-link-atom opts))]
 
-        (init-kernel! jlink-inst)
+        (init-kernel! jlink-inst (select-keys opts [:path--root :mathlink-path]))
         (evaluator-init (merge {:jlink-instance jlink-inst}
                                opts))
         (let [{:keys [wolfram-version]}
@@ -190,6 +195,7 @@
   (some-> (jlink-instance/get) (proto/terminate-kernel!))
   (jlink-instance/reset!)
   (reset! kernel-link-atom nil)
+  (alter-var-root #'kernel-info (constantly (promise))) ; the next kernel may be a different one
   {:status :ok})
 
 (defn restart!

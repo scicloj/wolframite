@@ -72,7 +72,9 @@ export WOLFRAM_INSTALL_PATH="/Applications/Wolfram Engine.app/Contents/Resources
 ```shell
 aliases {... :alias-name  {:jvm-opts ["-DWOLFRAM_INSTALL_PATH=/usr/local/Wolfram/WolframEngine/14.2"]}
 ```
-, (the latter takes priority) to point to the correct location. 
+, (the latter takes priority) to point to the correct location.
+
+If only the JLink JAR is in an unusual place, you can point `JLINK_JAR_PATH` (env. variable or Java property) to it, e.g. `.../SystemFiles/Links/JLink/JLink.jar`. 
 
 
 

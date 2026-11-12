@@ -1,5 +1,6 @@
 (ns wolframite.core-test
   (:require [clojure.test :refer :all]
+            [wolframite.base.parse :as parse]
             [wolframite.core :as wl]
             [wolframite.flags :as flags]
             [wolframite.impl.wolfram-syms.wolfram-syms :as wolfram-syms]
@@ -119,6 +120,25 @@
            (wl/eval '(pow 2 3)))
         "Now, `pow` is an alias for Power (and 2^3 is 8)")))
 
+(deftest kernel-options-test
+  (testing "start! uses the given :mathlink-path"
+    (wl/stop!)
+    ;; Don't launch it, as JLink would wait forever for a non-existent kernel
+    (let [init-opts (atom nil)]
+      (with-redefs [wolframite.core/init-kernel! (fn [_ opts]
+                                                   (reset! init-opts opts)
+                                                   (throw (ex-info "Not launching the kernel in this test" {})))]
+        (is (thrown? ExceptionInfo (wl/start! {:mathlink-path "/custom/WolframKernel"}))))
+      (is (= "/custom/WolframKernel" (:mathlink-path @init-opts))))
+    (is (= :ok (:status (wl/start!)))))
+  (testing "kernel-info is reset by stop!"
+    (wl/start!)
+    (is (realized? wl/kernel-info))
+    (wl/stop!)
+    (is (not (realized? wl/kernel-info)) "The next kernel may be a different one")
+    (wl/start!)
+    (is (number? (:wolfram-version @wl/kernel-info)))))
+
 (deftest quoted-symbols-test
   (wl/start!)
   (testing "Wolfram namespaces"
@@ -211,6 +231,10 @@
           (wl/eval '(+ 1 2 z)))
        "We don't 'leak' the size-limiting fn call to the user when the expression cannot be fully
        evaluated (v2)."))
+  (testing "an error while checking for the large data marker"
+    (with-redefs [parse/parse-simple-atom (fn [& _] (throw (IllegalStateException. "test error")))]
+      (is (= 3 (wl/eval '(Plus 1 2)))
+          "Does not make the result look like large data")))
   (testing "unwrapping in ->clj"
     (is (= '(+ 1 2)
            (wl/->clj "Plus[1,2]"))

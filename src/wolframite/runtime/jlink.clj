@@ -21,13 +21,15 @@
 (def ^:private default-jlink-path-under-root "SystemFiles/Links/JLink/JLink.jar")
 
 (defn- path--jlink
-  "The full path to jlink.
+  "The full path to jlink - JLINK_JAR_PATH if it is set to a jar, otherwise under the Wolfram root dir.
 
   NOTE: Returns a string."
 
-  ;; TODO: Should WOLFRAM_INSTALL_PATH take priority over JLINK_JAR_PATH?
-
-  ([] (path--jlink (system/root (system/info))))
+  ([] (let [info (system/info)
+            jar-path (get-in info [:user-paths "JLINK_JAR_PATH"])]
+        (if (system/jar-path? jar-path)
+          jar-path
+          (path--jlink (system/root info)))))
   ([base-path]
    (->  base-path
         (fs/path default-jlink-path-under-root)
@@ -57,7 +59,7 @@
                     (when (neg? (compare ((juxt :major :minor) *clojure-version*) [1 12]))
                       (throw (UnsupportedOperationException. "Adding Wolfram's JLink lib to the REPL dynamically requires Clojure 1.12 or later. Alternatively, ensure it is already on the classpath")))
                     (when-not @(requiring-resolve 'clojure.core/*repl*)
-                      (throw (throw (UnsupportedOperationException. "JLink jar not on the classpath and can't be loaded because we are not in a dynamic context, such as REPL"))))
+                      (throw (UnsupportedOperationException. "JLink jar not on the classpath and can't be loaded because we are not in a dynamic context, such as REPL")))
                     (log/info "=== Adding path to classpath: " p " ===")
                     ((requiring-resolve 'clojure.repl.deps/add-lib) 'w/w {:local/root p}) ; dyn require so we can give good error on older clj
                     nil)]

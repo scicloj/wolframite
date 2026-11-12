@@ -3,6 +3,11 @@ Changelog
 
 WIP
 ---
+* [Fix] Retrying to start the kernel link (3 retries) never happened, as the error was thrown immediately
+* [Fix] An error while checking for the large data marker made `eval` return `:wolframite/large-data`
+* [Fix] `start!` ignored the `:mathlink-path` option (the path to the kernel executable)
+* [Fix] `kernel-info` kept the info of the first kernel after a restart; `stop!` now resets it
+* [Fix] `JLINK_JAR_PATH` can now point to the JLink JAR itself (a directory is still treated as the Wolfram root dir, as before)
 
 1.6.1 11/2026
 -------------

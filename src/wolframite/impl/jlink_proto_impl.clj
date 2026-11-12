@@ -225,22 +225,24 @@
                             (reset! kernel-link-atom))]
                    ;(.getError kernel-link) (.getErrorMessage kernel-link)
                    kernel-link)
+                 ;; NOTE: We return the exceptions, so that the loop can retry
                  (catch MathLinkException e
                    (if (= (ex-message e) "MathLink connection was lost.")
-                     (throw (ex-info (str "MathLink connection was lost. Perhaps you need to activate Mathematica first,"
-                                          " you are trying to start multiple concurrent connections (from separate REPLs),"
-                                          " or there is some other issue and you need to retry, or restart and retry."
-                                          " You may want to try running Wolfram Kernel from the command line to learn more.")
-                                     {:kernel-link-opts (cond-> kernel-link-opts
-                                                          (array? kernel-link-opts)
-                                                          vec)
-                                      :cause e}))
-                     (throw e)))
+                     (ex-info (str "MathLink connection was lost. Perhaps you need to activate Mathematica first,"
+                                   " you are trying to start multiple concurrent connections (from separate REPLs),"
+                                   " or there is some other issue and you need to retry, or restart and retry."
+                                   " You may want to try running Wolfram Kernel from the command line to learn more.")
+                              {:kernel-link-opts (cond-> kernel-link-opts
+                                                   (array? kernel-link-opts)
+                                                   vec)}
+                              e)
+                     e))
                  (catch Exception e
-                   (throw (ex-info (str "Failed to start a Math/Wolfram Kernel process: "
-                                        (ex-message e)
-                                        " Verify the settings are correct: `" kernel-link-opts "`")
-                                   {:kernel-opts kernel-link-opts}))))]
+                   (ex-info (str "Failed to start a Math/Wolfram Kernel process: "
+                                 (ex-message e)
+                                 " Verify the settings are correct: `" kernel-link-opts "`")
+                            {:kernel-opts kernel-link-opts}
+                            e)))]
         (if (instance? Exception res)
           (if (pos? attempts)
             (do (Thread/sleep wait-ms)

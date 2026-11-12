@@ -158,12 +158,18 @@
             first)
        (update :root ->version-path))))
 
+(defn jar-path?
+  "Is the given path (string) that of a jar file, as opposed to a directory?"
+  [path]
+  (boolean (some-> path (str/ends-with? ".jar"))))
+
 (defn root
   "The root directory under which the kernel and JLink path can be found."
   [info]
   (let [{:keys [user-paths defaults]} info
         {:strs [JLINK_JAR_PATH WOLFRAM_INSTALL_PATH]} user-paths]
-    (->version-path (or JLINK_JAR_PATH
+    (->version-path (or (when-not (jar-path? JLINK_JAR_PATH)
+                          JLINK_JAR_PATH) ; legacy: the root dir; see wolframite.runtime.jlink for a jar path
                         WOLFRAM_INSTALL_PATH
                         (:root defaults)))))
 
