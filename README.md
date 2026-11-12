@@ -1,6 +1,6 @@
 # Wolframite
 
-[![Clojars download](https://img.shields.io/clojars/v/org.scicloj/wolframite.svg)](https://clojars.org/org.scicloj/wolframite) [Wolframite sources](https://github.com/scicloj/wolframite/)
+[![Clojars download](https://img.shields.io/clojars/v/org.scicloj/wolframite.svg)](https://clojars.org/org.scicloj/wolframite) [![Tests passing on 2026-11-12](https://img.shields.io/badge/tests-passing%20%282026--11--12%29-brightgreen)](#running-tests) [Wolframite sources](https://github.com/scicloj/wolframite/)
 
 An interface between Clojure and the Wolfram Language (Supports [Mathematica](https://www.wolfram.com/mathematica/) and [Wolfram Engine](https://www.wolfram.com/engine/)).
 
@@ -153,12 +153,14 @@ create a `./symlink-jlink.jar` symlink and then run the tests:
 clojure -X:run-tests
 ```
 
+There is no CI for the tests, as they need a licensed Wolfram kernel. The tests badge at the top of this README is updated by hand with the date of the last successful local run.
+
 ### Deployment and release
 
 The release process is:
 
 0. _Clear_ (`rm -rf ./target`)
-1. Run _tests_ (see above, `clojure -X:run-tests`).
+1. Run _tests_ (see above, `clojure -X:run-tests`) and update the date in the tests badge at the top of this README.
 2. Update _version_ (see below) and make sure `CHANGELOG.md` is updated as well
 3. Build and deploy to _Clojars_ - see below
 4. Make and push a _tag_ with the version (e.g. `git tag v1.3.0 && git push --tags`)
