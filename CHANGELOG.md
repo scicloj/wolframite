@@ -3,6 +3,8 @@ Changelog
 
 WIP
 ---
+* [Fix] `flags/parallel` evaluation failed with a StackOverflowError; it also polled the parallel kernels without the intended `:poll-interval` pause
+* [Fix] With `flags/arrays`, integers that don't fit into an int were silently truncated; such vectors/matrices are now returned as `long[]` / `long[][]`
 
 1.6.0 11/2026
 -------------

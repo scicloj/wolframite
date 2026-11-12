@@ -27,7 +27,15 @@
            (wl/eval (w/ConstantArray (w/Power 2 40) n) large))
         "Integers beyond 32 bits are not truncated")
     (is (= [1099511627776 1] (wl/eval [(w/Power 2 40) 1]))
-        "Integers beyond 32 bits are not truncated in small arrays either"))
+        "Integers beyond 32 bits are not truncated in small arrays either")
+    (let [res (wl/eval (w/Range (w/Power 2 32) (w/+ (w/Power 2 32) 2)) {:flags #{flags/arrays}})]
+      (is (= long/1 (type res)) "With flags/arrays, integers beyond 32 bits are returned as long[]")
+      (is (= [4294967296 4294967297 4294967298] (vec res))
+          "Integers beyond 32 bits are not truncated with flags/arrays"))
+    (let [res (wl/eval [(w/Range (w/Power 2 32) (w/+ (w/Power 2 32) 2)) [1 2 3]] {:flags #{flags/arrays}})]
+      (is (= long/2 (type res)))
+      (is (= [[4294967296 4294967297 4294967298] [1 2 3]] (mapv vec res))
+          "Integers beyond 32 bits are not truncated in matrices with flags/arrays")))
   (testing "matrices and 3D arrays"
     (is (= (repeat 3 (range 1 (inc n)))
            (wl/eval (w/Table (w/Range n) 3) large)))

@@ -216,6 +216,15 @@
            (wl/->clj "Plus[1,2]"))
         "We don't 'leak' the size-limiting fn call to the user when converting Wolfram to Wolframite")))
 
+(deftest parallel-evaluation-test
+  (wl/start!)
+  (is (= 3 (wl/eval '(Plus 1 2) {:flags #{flags/parallel}}))
+      "A simple expression")
+  (is (= [1 4 9] (wl/eval (w/Map (w/fn [x] (w/Power x 2)) [1 2 3]) {:flags [flags/parallel]}))
+      "A more complex expression, with flags given as a vector")
+  (is (= 2 (wl/eval '(Plus 1 1)))
+      "Serial evaluation still works afterwards"))
+
 (comment
   (wl/->wl (w/Map (w/fn [] (w/+ (w/Slot 1) 1)) [1 3]))
   (wl/eval (w/Map (w/fn [x] (w/Plus x 1)) [1 2 3]))

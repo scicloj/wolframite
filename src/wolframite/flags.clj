@@ -49,6 +49,7 @@
   "Return sequences from Wolfram as Java arrays, not Clojure vectors. This is more efficient
   for large arrays of primitive types, primarily floats, doubles, and ints.
   Vectors are returned as 1D arrays and matrices of reals or integers as 2D arrays (e.g. `double[][]`).
+  Integers come as `int`s, or as `long`s if any of them doesn't fit into an int.
   Opposite of [[no-arrays]]."
   :arrays)
 

@@ -3,7 +3,8 @@
   (:require [wolframite.flags :as flags]
             [wolframite.impl.protocols :as proto]
             [wolframite.lib.options :as options]
-            [wolframite.base.convert :as convert]))
+            [wolframite.base.convert :as convert]
+            [wolframite.runtime.defaults :as defaults]))
 
 (declare evaluate)
 
@@ -17,19 +18,27 @@
           :else
           (throw (Exception. (str "Error! State unrecognized: " state-expr))))))
 
-(defn queue-run-or-wait [{:keys [flags config] :as opts}]
+(defn queue-run-or-wait
+  "Run the parallel kernels' queue, unless we did so less than `:poll-interval` ms ago, in which case
+  wait until then. `last-run-atom` holds the System/nanoTime of the last run (or nil)."
+  [last-run-atom {:keys [flags poll-interval] :as opts}]
   (assert (options/flag?' flags flags/serial))
-  (let [lqr-atom (atom nil)
-        lqr-time @lqr-atom
-        nano-pi  (* 1000000 (:poll-interval config))
+  (let [lqr-time @last-run-atom
+        nano-pi  (* 1000000 poll-interval)
         run-in   (when lqr-time (- (+ lqr-time nano-pi) (System/nanoTime)))]
     (if (or (nil? run-in) (neg? run-in))
       (do
         ;; TODO: add debug logging "QueueRunning at time"
         (evaluate (convert/convert '(QueueRun) opts) opts)
-        (swap! lqr-atom (fn [_] (System/nanoTime))))
+        (reset! last-run-atom (System/nanoTime)))
       ;; TODO: else branch: add debug logging "Sleeping for"
       (Thread/sleep ^long (quot run-in 1000000)))))
+
+(defn- serial-opts
+  "The `opts` with the parallel flag replaced by the serial one, for the evaluations
+  we need to do to manage a parallel one."
+  [opts]
+  (update opts :flags #(-> (set %) (disj flags/parallel) (conj flags/serial))))
 
 (defn evaluate [expr {:keys [jlink-instance]
                       :as   opts}]
@@ -40,24 +49,26 @@
     (proto/evaluate! jlink-instance expr) ; NOTE: This also handles error detection
     ;; Run expression on the next available parallel kernel
     ;; see https://reference.wolfram.com/language/ParallelTools/tutorial/ConcurrencyManagingParallelProcesses.html
-    (let [opts' (update opts :flags conj flags/serial) ;; FIXME: make sure this is supposed to be `:serial`, it's what I gather from previous version of the code
+    (let [opts' (merge {:poll-interval (:poll-interval defaults/default-options)}
+                       (serial-opts opts))
           ;; Generate a new, unique symbol for a ref to the submitted computation (~ Java Future?)
           pid-expr (evaluate (convert/convert
                                (list 'Unique
                                      ; Beware: technically, this is an invalid clj symbol due to the slashes:
                                      (symbol "Wolframite/Concurrent/process")) opts')
-                             opts)]
+                             opts')
+          last-run-atom (atom nil)]
       ;; Submit the expr for evaluation on the next available parallel kernel
-      (evaluate (convert/convert (list '= pid-expr (list 'ParallelSubmit expr)) opts') opts)
-      (evaluate (convert/convert '(QueueRun) opts') opts)
+      (evaluate (convert/convert (list '= pid-expr (list 'ParallelSubmit expr)) opts') opts')
+      (queue-run-or-wait last-run-atom opts')
       (loop []
-        (let [[state result] (process-state pid-expr opts)]
+        (let [[state result] (process-state pid-expr opts')]
           (if (not= :finished state)
             (do
-              (queue-run-or-wait opts)
+              (queue-run-or-wait last-run-atom opts')
               (recur))
             (do
-              (evaluate (convert/convert (list 'Remove pid-expr) opts') opts)
+              (evaluate (convert/convert (list 'Remove pid-expr) opts') opts')
               result)))))))
 
 ;; Explanation, in Wolfram:

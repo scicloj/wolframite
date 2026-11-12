@@ -123,6 +123,27 @@
   [type]
   (= type proto/type-real))
 
+(defn- within-int-range? [^doubles arr]
+  (areduce arr i ok true
+           (and ok (<= Integer/MIN_VALUE (aget arr i) Integer/MAX_VALUE))))
+
+(defn- integer-array
+  "Return the integer vector (`depth` 1) or matrix (2) `expr` as a Java array - of ints if they
+  all fit into an int, otherwise of longs.
+  (JLink's asArray silently truncates integers that don't fit into an int.)"
+  [expr depth]
+  ;; Reading the values as doubles is a cheap way to check their range. That fails for an Expr made
+  ;; from an int[] (see wolframite.impl.jlink-proto-impl/read-result) - but then they do fit.
+  (let [doubles (try (proto/as-array expr proto/type-real depth)
+                     (catch Exception _ nil))]
+    (if (or (nil? doubles)
+            (every? within-int-range? (if (= 1 depth) [doubles] doubles)))
+      (proto/as-array expr proto/type-integer depth)
+      (let [->longs #(long-array (map proto/as-number (proto/args %)))]
+        (if (= 1 depth)
+          (->longs expr)
+          (into-array long/1 (map ->longs (proto/args expr))))))))
+
 (defn- primitive-array->clj [arr opts]
   (bound-map (fn [x _opts] x) arr opts))
 
@@ -134,7 +155,9 @@
            ;; TODO Why only these types? W. supports boolean, byte, char, short, int, long, float, double, String arrays;
            ;; Though only byte, short, int, float, double have "fast" methods
            (some #{proto/type-integer proto/type-biginteger proto/type-real proto/type-bigdecimal} #{type}))
-      (proto/as-array expr type 1)
+      (if (= type proto/type-integer)
+        (integer-array expr 1)
+        (proto/as-array expr type 1))
 
       (fast-parse-type? type)
       (primitive-array->clj (proto/as-array expr type 1) opts)
@@ -147,7 +170,9 @@
     (cond
       (and (options/flag?' flags flags/arrays)
            (fast-array-type? type))
-      (proto/as-array expr type 2)
+      (if (= type proto/type-integer)
+        (integer-array expr 2)
+        (proto/as-array expr type 2))
 
       (fast-parse-type? type)
       (bound-map (fn [row _opts] (primitive-array->clj row opts))
