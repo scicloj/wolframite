@@ -3,6 +3,9 @@ Changelog
 
 WIP
 ---
+
+1.6.2 11/2026
+-------------
 * [Fix] Retrying to start the kernel link (3 retries) never happened, as the error was thrown immediately
 * [Fix] An error while checking for the large data marker made `eval` return `:wolframite/large-data`
 * [Fix] `start!` ignored the `:mathlink-path` option (the path to the kernel executable)
