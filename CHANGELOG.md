@@ -16,6 +16,10 @@ WIP
 * [Fix] Lists of booleans, keywords or JLink Exprs, and empty lists, were converted via a JLink loopback link that was never closed;
   such lists are now built directly, and the remaining fallback closes its link (#35)
 * [Fix] `eval` threw `Assert failed: expr` for any result that is `False`, e.g. `(wl/eval '(EvenQ 3))`
+* [Improvement] A string expression, e.g. `(wl/eval "Plus[1,2]")`, is parsed and evaluated in one round-trip to the kernel instead of two
+  (except with `flags/parallel`, `no-evaluate` or `no-convert`). An invalid string now throws an `ExceptionInfo` (with any Wolfram messages
+  in its data) instead of a plain `Exception`, with the same message.
+* [Improvement] Less per-node overhead when converting and parsing (no `assert` on every sub-expression)
 
 1.6.1 11/2026
 -------------

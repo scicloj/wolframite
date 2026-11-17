@@ -211,6 +211,27 @@
                (wl/eval (w/OpenRead "./nu-such-file.exists")))
       "Should throw when Wolfram returns the `$Failed` error marker symbol"))
 
+(deftest string-evaluation
+  ;; Strings are parsed & evaluated in one kernel round-trip (via wolframiteEvalString), except with
+  ;; flags/parallel, no-evaluate or no-convert; these test that it behaves as when parsed separately
+  (wl/start!)
+  (is (= 3 (wl/eval "Plus[1,2]")))
+  (is (= 'x (wl/eval "x")) "An unchanged result w/o messages is fine")
+  (is (= 2 (wl/eval "a=1; a+1")))
+  (is (= 2 (wl/eval "Unevaluated[1+1]")) "Unevaluated is stripped, as before")
+  (is (= '(Hold (+ 1 1)) (wl/eval "Hold[1+1]")))
+  (is (false? (wl/eval "EvenQ[3]")))
+  (is (thrown? ExceptionInfo (wl/eval "FromDigits[\"-87.6\"]"))
+      "Should throw when the result is unchanged and there are messages")
+  (is (thrown-with-msg? Exception #"Invalid expression `1 \+`" (wl/eval "1 +"))
+      "A syntax error")
+  (is (thrown-with-msg? Exception #"Output lenght expected 1, was 2" (wl/eval "1, 2"))
+      "More than one expression")
+  (is (= double/1 (type (wl/eval "Range[2000] * 1.0" {:flags #{flags/arrays}})))
+      "Large packed arrays are still read fast")
+  (is (= 3 (wl/eval "Plus[1,2]" {:flags #{flags/parallel}}))
+      "Parallel evaluation parses the string separately"))
+
 (deftest kindly-support
   (wl/start!)
   (let [res (wl/eval (w/Video "test/empty.mp4"))

@@ -30,12 +30,33 @@
 (defn- unchanged-expression? [input output]
   (= (unwrap input) output))
 
+(defn- head-name [expr]
+  ;; head-sym-str throws if the head is not a symbol, e.g. for f[x][y]
+  (try (proto/head-sym-str expr) (catch Exception _ nil)))
+
+(defn- throw-if-invalid-string!
+  "Throw if `eval-result` is the `WolframiteInvalidString[str, n]` marker of `wolframiteEvalString`,
+  i.e. the string we were to evaluate didn't parse into exactly one expression."
+  [eval-result eval-messages]
+  (when (= (name internal-constants/WolframiteInvalidString) (head-name eval-result))
+    (let [[s n] (proto/args eval-result)]
+      ;; Same message as `wolframite.base.express/express` uses, when we parse the string separately
+      (throw (ex-info (format "Invalid expression `%s`. Output lenght expected 1, was %d"
+                              (proto/as-string s) (proto/as-number n))
+                      {:messages eval-messages})))))
+
 (defn ensure-no-eval-error [expr eval-result eval-messages]
-  (let [messages-text (mapv :content eval-messages)
+  (throw-if-invalid-string! eval-result eval-messages)
+  (let [;; `wolframiteEvalString` (string input) checks itself whether the result is unchanged
+        unevaluated-marker? (= (name internal-constants/WolframiteUnevaluated) (head-name eval-result))
+        eval-result (cond-> eval-result
+                      unevaluated-marker? (-> proto/args first))
+        messages-text (mapv :content eval-messages)
         failed-sym? (proto/failed? eval-result)]
     (cond
       (and (seq eval-messages)
            (or failed-sym?
+               unevaluated-marker?
                (unchanged-expression? expr eval-result)))
       ;; If input expr == output expr, this usually means the evaluation failed
       ;; (or there was nothing to do); if there are also any extra text/message packets
