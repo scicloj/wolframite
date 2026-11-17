@@ -30,6 +30,18 @@
     (testing "Vector is W. list"
       (is (= (str (convert '[1 2] nil)) "{1, 2}")
           "Vector becomes Wolfram list"))
+    (testing "Lists are built directly, incl. ones w/ booleans or Exprs"
+      (is (= "{}" (str (convert [] nil))))
+      (is (= "{True, False, x}" (str (convert '[true false x] nil))))
+      (is (= "{{True}, {False}}" (str (convert [[true] [false]] nil))))
+      (is (= "{1, x}" (str (convert [(convert 1 nil) 'x] nil))) "Exprs are passed through"))
+    (testing "Aliases"
+      (is (= "Times[2, 3]" (str (convert '(* 2 3) nil))) "default alias")
+      (is (= "Power[2, 3]" (str (convert '(pow 2 3) {:aliases '{pow Power}}))) "user alias")
+      (is (= "Divide[2, 3]" (str (convert '(* 2 3) {:aliases '{* Divide}})))
+          "a user alias wins over a default one")
+      (is (= "Plus[2, 3]" (str (convert '(+ 2 3) {:aliases '{pow Power}})))
+          "defaults still apply when there are user aliases"))
     (testing "Clojure map ..."
       (is (= (str (convert '{:evil 1, "good" 2} nil))
              "Association[Rule[\":evil\", 1], Rule[\"good\", 2]]")

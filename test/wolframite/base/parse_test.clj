@@ -32,6 +32,16 @@
     (is (= 'MySym
            (parse/unwrapping-parse (convert/convert 'MySym nil) nil))
         "symbol"))
+  (testing "symbols are turned back into their aliases"
+    (let [parse-sym #(parse/unwrapping-parse (convert/convert % nil) nil)]
+      (doseq [_ (range 2)] ; 2nd round uses the memoized reverse alias map
+        (is (= '* (parse-sym 'Times)) "plain alias")
+        (is (= '** (parse-sym 'Power)))
+        (is (= '- (parse-sym 'Minus)) "smart alias, 1st target")
+        (is (= '- (parse-sym 'Subtract)) "smart alias, 2nd target")
+        (is (= 'Foo (parse-sym 'Foo)) "no alias")
+        (is (= 'Internal/Foo (parse-sym 'Internal/Foo)) "Wolfram context becomes ns")
+        (is (= [true false nil] (mapv parse-sym '[True False Null])) "special symbols"))))
   (testing "maps"
     (is (= {"a" 1}
            (parse/unwrapping-parse (convert/convert {"a" 1} nil) nil)))
