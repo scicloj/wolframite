@@ -56,20 +56,26 @@
 (defn parse-complex-list [expr opts]
   (bound-map parse (proto/args expr) opts))
 
+(def ^:private wolf->alias-map
+  "Invert the given alias->wolfram map, so that we can turn Wolfram symbols back into aliases.
+  Memoized, as it is needed for every symbol we parse but the alias map rarely ever changes."
+  (memoize
+   (fn [alias->wolf]
+     (let [smart-aliases (keep (fn [[alias wolf]]
+                                 (when (fn? wolf) alias))
+                               alias->wolf)
+           wolf->smart-alias (into {} (for [[alias smart-fn] (select-keys alias->wolf smart-aliases)
+                                            wolf-sym (-> smart-fn meta :wolframite.alias/targets)
+                                            :when wolf-sym]
+                                        [wolf-sym alias]))]
+       (-> (apply dissoc alias->wolf smart-aliases)
+           set/map-invert
+           (merge wolf->smart-alias))))))
+
 (defn parse-symbol [expr {:keys [aliases/base-list]}]
-  (let [alias->wolf (options/aliases base-list)
-        smart-aliases (keep (fn [[alias wolf]]
-                              (when (fn? wolf) alias))
-                            alias->wolf)
-        wolf->smart-alias (into {} (for [[alias smart-fn] (select-keys alias->wolf smart-aliases)
-                                         wolf-sym (-> smart-fn meta :wolframite.alias/targets)
-                                         :when wolf-sym]
-                                     [wolf-sym alias]))
-        wolf->alias (-> (apply dissoc alias->wolf smart-aliases)
-                        set/map-invert
-                        (merge wolf->smart-alias))
-        s       (proto/as-string expr)
-        sym     (symbol (apply str (replace {\` \/} s)))]
+  (let [wolf->alias (wolf->alias-map (options/aliases base-list))
+        ^String s (proto/as-string expr)
+        sym     (symbol (.replace s \` \/))]
     (if-let [alias (get wolf->alias sym)]
       alias
       (case s

@@ -263,12 +263,16 @@
   (expr [_this type name]
     (Expr. ^int (case type
                   :Expr/SYMBOL  Expr/SYMBOL)
-           ^String (apply str (replace {\/ \`} name))))
+           (.replace (str name) \/ \`)))
   (->expr [_this obj] ; fallback for transforming anything we don't handle manually, via JLink itself
-    (.getExpr
-     (doto (MathLinkFactory/createLoopbackLink)
-       (.put obj)
-       (.endPacket))))
+    (let [link (MathLinkFactory/createLoopbackLink)]
+      (try
+        (doto link
+          (.put obj)
+          (.endPacket))
+        (.getExpr link)
+        (finally
+          (.close link)))))
   (expr? [_this x]
     (instance? Expr x))
   (expr-element-type [_this container-type expr]

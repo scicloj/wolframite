@@ -33,8 +33,16 @@
 (defn flag? [current-options flag]
   (not (nil? (some #{flag} (vals (filter-flags current-options))))))
 
+(def ^:private effective-flags
+  "The set of flags in effect given the `user-flags`, i.e. the defaults overridden by the user's.
+  Memoized, as this is checked many times per evaluation (incl. for every parsed (sub)expression),
+  while the user flags are typically one of very few sets."
+  (memoize
+   (fn [user-flags]
+     (set (vals (filter-flags (flags-into defaults/default-options user-flags)))))))
+
 (defn flag?' [user-flags flag]
-  (flag? (flags-into defaults/default-options user-flags) flag))
+  (contains? (effective-flags user-flags) flag))
 
 (defn set-flag [flags f]
   (flags-into flags [f]))

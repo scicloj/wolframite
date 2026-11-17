@@ -33,6 +33,7 @@
         (or (vector? obj)
             (list? obj)) :list
         (ratio? obj) :rational
+        (boolean? obj) :boolean
         (primitive? obj) :primitive
         (map? obj) :hash-map
         (symbol? obj) :symbol
@@ -71,14 +72,6 @@
       (convert opts)))
 
 ;; * Helpers
-
-(defn- simple-vector? [coll _]
-  (and (sequential? coll)
-       (not-any? dispatch coll)))
-
-(defn- simple-matrix? [coll opts]
-  (and (sequential? coll)
-       (every? #(simple-vector? % opts) coll)))
 
 (defn- coll->primitive-array
   "Turn a non-empty collection of only doubles or only longs into a Java array.
@@ -153,6 +146,10 @@
 (defmethod convert :rational [n opts]
   (convert (list 'Rational (.numerator n) (.denominator n)) opts))
 
+(defmethod convert :boolean [b _opts]
+  ;; Create the symbol directly, skipping the alias & validity checks of `convert :symbol`
+  (proto/expr (jlink-instance/get) :Expr/SYMBOL (if b "True" "False")))
+
 (defmethod convert :primitive [primitive _opts]
   (proto/expr (jlink-instance/get) primitive))
 
@@ -176,8 +173,11 @@
     (convert (apply list 'Association (for [[key value] map] (list 'Rule key value))) opts)))
 
 (defmethod convert :symbol [sym {:keys [aliases] ::keys [args] :as opts}]
-  (let [all-aliases (merge defaults/all-aliases aliases)]
-    (if-let [alias-sym-or-fn (all-aliases sym)]
+  ;; Same as looking `sym` up in (merge defaults/all-aliases aliases), w/o merging the maps for every symbol
+  (let [alias-sym-or-fn (if (contains? aliases sym)
+                          (get aliases sym)
+                          (get defaults/all-aliases sym))]
+    (if alias-sym-or-fn
       (if (defaults/experimental-fn-alias? alias-sym-or-fn)
         (convert (alias-sym-or-fn args) opts)
         (convert alias-sym-or-fn opts))
@@ -197,20 +197,14 @@
                              :known-symbols (keys aliases)}))
             (proto/expr (jlink-instance/get) :Expr/SYMBOL s)))))))
 
-(defn- convert-non-simple-list [elms opts]
-  (let [converted-parts (map #(cond-> % (dispatch %) (convert opts)) elms)]
-    (if (every? (partial proto/expr? (jlink-instance/get)) converted-parts)
-      (proto/expr (jlink-instance/get)
-                  (cons (convert 'List opts)
-                        converted-parts))
-      (convert (to-array converted-parts) opts))))
-
 (defmethod convert :list [coll opts]
   (if-let [arr (or (->primitive-array coll) (->primitive-array-2d coll))]
     (convert arr opts)
-    (cond (simple-matrix? coll opts) (convert (to-array-2d coll) opts)
-          (simple-vector? coll opts) (convert (to-array coll) opts)
-          :else (convert-non-simple-list coll opts))))
+    ;; Build List[...] from the converted elements. (We used to turn some lists into Object[] and
+    ;; convert those via a JLink loopback link, which is slower and was never closed.)
+    (proto/expr (jlink-instance/get)
+                (cons (convert 'List opts)
+                      (mapv #(convert % opts) coll)))))
 
 (defmethod convert :expr [[head & tail :as clj-expr] opts]
   (let [macro head

@@ -8,6 +8,10 @@ WIP
 * [Fix] `start!` ignored the `:mathlink-path` option (the path to the kernel executable)
 * [Fix] `kernel-info` kept the info of the first kernel after a restart; `stop!` now resets it
 * [Fix] `JLINK_JAR_PATH` can now point to the JLink JAR itself (a directory is still treated as the Wolfram root dir, as before)
+* [Improvement] Faster conversion and parsing, especially of symbolic results: e.g. `Expand[(a+b+c+d+e)^8]` takes ~8 ms instead of ~22 ms
+  and converting `[true false x]` ~2 µs instead of ~11 µs. The reverse alias map and the active flags are no longer recomputed for every (sub)expression.
+* [Fix] Lists of booleans, keywords or JLink Exprs, and empty lists, were converted via a JLink loopback link that was never closed;
+  such lists are now built directly, and the remaining fallback closes its link (#35)
 
 1.6.1 11/2026
 -------------
