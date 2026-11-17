@@ -26,7 +26,7 @@
   ^:kind/video {:src (video->url expr)})
 
 (defn maybe-add-kindly-meta [expr]
-  {:pre [expr]}
+  {:pre [(some? expr)]} ; NOTE: `false` is a valid result, e.g. of EvenQ[3]
   (if (instance? IObj expr)
     (->> (cond
            (= (head expr) 'Video)

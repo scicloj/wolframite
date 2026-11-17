@@ -46,6 +46,7 @@
     [wolframite.impl.jlink-instance :as jlink-instance]
     [wolframite.impl.kindly-support :as kindly-support]
     [wolframite.impl.protocols :as proto]
+    [wolframite.lib.options :as options]
     [wolframite.runtime.defaults :as defaults]
     [wolframite.runtime.jlink :as jlink]
     [wolframite.runtime.system :as system]
@@ -89,6 +90,21 @@
                                   internal-constants/fast-array-min-size
                                   internal-constants/WolframitePackedArray
                                   internal-constants/WolframitePackedArray))))
+    ;; Parse & evaluate a string of Wolfram code in one round-trip (instead of parsing it via
+    ;; `express` first). We wrap it in HoldComplete[...] exactly as `express` does, so it is parsed
+    ;; the same way (e.g. a newline means multiplication), and mark the results that the error
+    ;; detection needs to know about; see wolframite.impl.error-detection/ensure-no-eval-error
+    (wl-eval (wl-convert (convert/->wolfram-str-expr
+                          (format "%s = Function[s, Module[{held = ToExpression[\"HoldComplete[\" <> s <> \"]\"], res},
+                                     Which[
+                                       Head[held] =!= HoldComplete, %s[s, 0],
+                                       Length[held] =!= 1, %s[s, Length[held]],
+                                       True, res = Identity @@ held; (* not ReleaseHold, so that Unevaluated[..] is stripped, as for a fn arg *)
+                                             If[held === (HoldComplete @@ {res}), %s[res], res]]]]"
+                                  internal-constants/wolframiteEvalString
+                                  internal-constants/WolframiteInvalidString
+                                  internal-constants/WolframiteInvalidString
+                                  internal-constants/WolframiteUnevaluated))))
     ;; Make sure the custom definitions that we've added are available in all parallel kernels
     ;; (essential when using flags/parallel evaluation)
     (wl-eval (wl-convert (w/DistributeDefinitions internal-constants/wolframiteLimitSize))))) ; TODO Check that this works
@@ -203,6 +219,15 @@
   ([] (stop!) (start!))
   ([opts] (stop!) (start! opts)))
 
+(defn- one-trip-string-eval?
+  "Can we send a string expression for parsing and evaluation together (via `wolframiteEvalString`)?
+  Not when we don't convert or evaluate it, or evaluate it in parallel (the parallel kernels don't
+  have the definition); then we parse it via `express` first, as before."
+  [flags]
+  (and (options/flag?' flags flags/serial)
+       (options/flag?' flags flags/evaluate)
+       (options/flag?' flags flags/convert)))
+
 (defn eval
   "Evaluate the given Wolfram expression (a string, or a Clojure data) and return the result as Clojure data.
 
@@ -232,7 +257,12 @@
      (let [with-eval-opts (merge {:jlink-instance jlink-inst}
                                  (:opts jlink-inst)
                                  eval-opts)
-           expr' (if (string? expr) (express/express expr with-eval-opts) expr)]
+           expr' (cond
+                   (not (string? expr)) expr
+                   ;; Parse & evaluate in a single kernel round-trip, when we do evaluate it serially
+                   (one-trip-string-eval? (:flags with-eval-opts))
+                   (list internal-constants/wolframiteEvalString expr)
+                   :else (express/express expr with-eval-opts))]
        (some-> (cep/cep expr' with-eval-opts)
                kindly-support/maybe-add-kindly-meta))
      (throw (IllegalStateException. "Not initialized, call start! first")))))

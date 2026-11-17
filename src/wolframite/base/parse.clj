@@ -56,20 +56,26 @@
 (defn parse-complex-list [expr opts]
   (bound-map parse (proto/args expr) opts))
 
+(def ^:private wolf->alias-map
+  "Invert the given alias->wolfram map, so that we can turn Wolfram symbols back into aliases.
+  Memoized, as it is needed for every symbol we parse but the alias map rarely ever changes."
+  (memoize
+   (fn [alias->wolf]
+     (let [smart-aliases (keep (fn [[alias wolf]]
+                                 (when (fn? wolf) alias))
+                               alias->wolf)
+           wolf->smart-alias (into {} (for [[alias smart-fn] (select-keys alias->wolf smart-aliases)
+                                            wolf-sym (-> smart-fn meta :wolframite.alias/targets)
+                                            :when wolf-sym]
+                                        [wolf-sym alias]))]
+       (-> (apply dissoc alias->wolf smart-aliases)
+           set/map-invert
+           (merge wolf->smart-alias))))))
+
 (defn parse-symbol [expr {:keys [aliases/base-list]}]
-  (let [alias->wolf (options/aliases base-list)
-        smart-aliases (keep (fn [[alias wolf]]
-                              (when (fn? wolf) alias))
-                            alias->wolf)
-        wolf->smart-alias (into {} (for [[alias smart-fn] (select-keys alias->wolf smart-aliases)
-                                         wolf-sym (-> smart-fn meta :wolframite.alias/targets)
-                                         :when wolf-sym]
-                                     [wolf-sym alias]))
-        wolf->alias (-> (apply dissoc alias->wolf smart-aliases)
-                        set/map-invert
-                        (merge wolf->smart-alias))
-        s       (proto/as-string expr)
-        sym     (symbol (apply str (replace {\` \/} s)))]
+  (let [wolf->alias (wolf->alias-map (options/aliases base-list))
+        ^String s (proto/as-string expr)
+        sym     (symbol (.replace s \` \/))]
     (if-let [alias (get wolf->alias sym)]
       alias
       (case s
@@ -217,7 +223,7 @@
           :else                    (parse-generic-expression expr opts))))
 
 (defn standard-parse [expr {:keys [flags] :as opts}]
-  (assert (proto/expr? (jlink-instance/get) expr))
+  ;; NOTE: We check that `expr` is an Expr only once, in `unwrapping-parse`, not for every sub-expression
   (cond
     ;(options/flag?' flags :as-function)                   (parse-fn expr opts)
     (or (atom? expr) (options/flag?' flags :full-form))   (parse-complex-atom expr opts)
@@ -273,6 +279,7 @@
   "Convert the jlink.Expr to a symbolic Clojure expression, after un-wrapping it from extra stuff that
   may have been added by Wolframite in `wolframite.base.convert/wrapping-convert`"
   [expr opts]
+  (assert (proto/expr? (jlink-instance/get) expr) (str "Expected a JLink Expr, got " (type expr)))
   (let [unwrapped (unwrap-limit-size expr opts)]
     ;; NOTE: `wolframite.impl.jlink-proto-impl/unchanged-expression?` is also wrapping-aware :'(
     (if (keyword? unwrapped)

@@ -3,11 +3,23 @@ Changelog
 
 WIP
 ---
+
+1.6.2 11/2026
+-------------
 * [Fix] Retrying to start the kernel link (3 retries) never happened, as the error was thrown immediately
 * [Fix] An error while checking for the large data marker made `eval` return `:wolframite/large-data`
 * [Fix] `start!` ignored the `:mathlink-path` option (the path to the kernel executable)
 * [Fix] `kernel-info` kept the info of the first kernel after a restart; `stop!` now resets it
 * [Fix] `JLINK_JAR_PATH` can now point to the JLink JAR itself (a directory is still treated as the Wolfram root dir, as before)
+* [Improvement] Faster conversion and parsing, especially of symbolic results: e.g. `Expand[(a+b+c+d+e)^8]` takes ~8 ms instead of ~22 ms
+  and converting `[true false x]` ~2 µs instead of ~11 µs. The reverse alias map and the active flags are no longer recomputed for every (sub)expression.
+* [Fix] Lists of booleans, keywords or JLink Exprs, and empty lists, were converted via a JLink loopback link that was never closed;
+  such lists are now built directly, and the remaining fallback closes its link (#35)
+* [Fix] `eval` threw `Assert failed: expr` for any result that is `False`, e.g. `(wl/eval '(EvenQ 3))`
+* [Improvement] A string expression, e.g. `(wl/eval "Plus[1,2]")`, is parsed and evaluated in one round-trip to the kernel instead of two
+  (except with `flags/parallel`, `no-evaluate` or `no-convert`). An invalid string now throws an `ExceptionInfo` (with any Wolfram messages
+  in its data) instead of a plain `Exception`, with the same message.
+* [Improvement] Less per-node overhead when converting and parsing (no `assert` on every sub-expression)
 
 1.6.1 11/2026
 -------------
