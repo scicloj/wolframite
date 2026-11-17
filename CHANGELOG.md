@@ -12,6 +12,7 @@ WIP
   and converting `[true false x]` ~2 µs instead of ~11 µs. The reverse alias map and the active flags are no longer recomputed for every (sub)expression.
 * [Fix] Lists of booleans, keywords or JLink Exprs, and empty lists, were converted via a JLink loopback link that was never closed;
   such lists are now built directly, and the remaining fallback closes its link (#35)
+* [Fix] `eval` threw `Assert failed: expr` for any result that is `False`, e.g. `(wl/eval '(EvenQ 3))`
 
 1.6.1 11/2026
 -------------

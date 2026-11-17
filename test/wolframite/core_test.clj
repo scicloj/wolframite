@@ -36,6 +36,16 @@
   (is (= {"key" "value"}
          (wl/eval (Association (w/-> "key" "value"))))
       "Map")
+  (testing "booleans"
+    (is (false? (wl/eval (EvenQ 3)))
+        "A False result is returned, not rejected (regression)")
+    (is (true? (wl/eval (EvenQ 2))))
+    (is (= [true false]
+           (wl/eval [true false]))
+        "Clj booleans are sent as True/False")
+    (is (= [true false 'x]
+           (wl/eval [true false 'x]))
+        "Booleans mixed with symbols in a list"))
   (is (= [1 2]
          (wl/eval (Join [1] [2])))
       "Wolf List <-> Clj vector")
