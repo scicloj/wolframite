@@ -94,8 +94,10 @@
 (defn- ->primitive-array-2d
   "Same as [[->primitive-array]] for a matrix, i.e. equally long rows of the same type."
   [rows]
-  (when (and (every? sequential? rows)
+  ;; Cheap checks first, so that we quickly give up on ordinary lists
+  (when (and (sequential? (first rows))
              (>= (* (count rows) (count (first rows))) internal-constants/fast-array-min-size)
+             (every? sequential? rows)
              (apply = (map count rows)))
     (let [arrays (mapv coll->primitive-array rows)]
       (when (and (every? some? arrays)
@@ -225,8 +227,8 @@
                                          (cond-> opts
                                                  (symbol? head)
                                                  (assoc ::args tail)))
-                                (doall (map #(convert % opts) tail)))]
-           (assert (every? #(proto/expr? (jlink-instance/get) %) expr-coll))
+                                (mapv #(convert % opts) tail))]
+           ;; NOTE: No need to check that all are Exprs, `proto/expr` throws a clear error if not
            (proto/expr (jlink-instance/get) expr-coll)))))
 
 (comment

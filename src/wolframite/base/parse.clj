@@ -223,7 +223,7 @@
           :else                    (parse-generic-expression expr opts))))
 
 (defn standard-parse [expr {:keys [flags] :as opts}]
-  (assert (proto/expr? (jlink-instance/get) expr))
+  ;; NOTE: We check that `expr` is an Expr only once, in `unwrapping-parse`, not for every sub-expression
   (cond
     ;(options/flag?' flags :as-function)                   (parse-fn expr opts)
     (or (atom? expr) (options/flag?' flags :full-form))   (parse-complex-atom expr opts)
@@ -279,6 +279,7 @@
   "Convert the jlink.Expr to a symbolic Clojure expression, after un-wrapping it from extra stuff that
   may have been added by Wolframite in `wolframite.base.convert/wrapping-convert`"
   [expr opts]
+  (assert (proto/expr? (jlink-instance/get) expr) (str "Expected a JLink Expr, got " (type expr)))
   (let [unwrapped (unwrap-limit-size expr opts)]
     ;; NOTE: `wolframite.impl.jlink-proto-impl/unchanged-expression?` is also wrapping-aware :'(
     (if (keyword? unwrapped)
