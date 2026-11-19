@@ -31,3 +31,4 @@ symlink-jlink.jar
 .calva/
 .vscode/
 .portal/
+notebooks/generated/
